@@ -96,7 +96,10 @@ export function calculateQuote(input: QuoteInput, rate: ExchangeRate): CalcResul
   // 단기가 적용 여부 — 총 주수가 4 미만일 때만
   const isShortTerm = school.allowShortTerm && totalWeeks < 4
 
-  // 비용 인상 체크
+  // 24주 이상 → 반드시 학원 문의 안내
+  if (totalWeeks >= 24) {
+    warnings.push(`⚠️ 24주 이상 장기 연수입니다. 정확한 학비 및 조건은 반드시 학원에 직접 문의하세요.`)
+  }
   const today = new Date().toISOString().split('T')[0]
   const pi = school.priceIncrease
   const increaseActive = pi && pi.fromDate <= today
@@ -172,9 +175,13 @@ export function calculateQuote(input: QuoteInput, rate: ExchangeRate): CalcResul
   let surchargeDiscount = 0
 
   for (const promo of (school.promotions ?? [])) {
-    if (!promo.startDate || !promo.endDate) continue
-    const checkDate = promo.basisType === 'start_date' ? startDate : enrollmentDate
-    if (!isInRange(checkDate, promo.startDate, promo.endDate)) continue
+    if (!promo.startDate && !promo.alwaysApply) continue
+    // 항상 적용이 아닌 경우 날짜 체크
+    if (!promo.alwaysApply) {
+      if (!promo.endDate) continue
+      const checkDate = promo.basisType === 'start_date' ? startDate : enrollmentDate
+      if (!isInRange(checkDate, promo.startDate, promo.endDate)) continue
+    }
     if (promo.condition) notes.push(`ℹ️ 프로모션 조건: ${promo.condition}`)
 
     // 적용 대상 (기본값: 전체 적용)

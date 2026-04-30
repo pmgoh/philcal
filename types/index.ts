@@ -61,15 +61,15 @@ export interface Promotion {
   id: string
   label: string
   basisType: PromotionBasis
+  alwaysApply: boolean          // true이면 날짜 무관하게 항상 적용
   startDate: string
   endDate: string
   discountType: 'percent' | 'amount'
   discountValue: number
   currency?: Currency
-  // 적용 대상 (미설정 시 전체 적용)
-  applyToCourses: boolean       // 코스 학비에 적용
-  applyToDorms: boolean         // 기숙사비에 적용
-  applyToSurcharge: boolean     // 서차지에 적용 (구 discountAllowed)
+  applyToCourses: boolean
+  applyToDorms: boolean
+  applyToSurcharge: boolean
   condition?: string
   note?: string
 }
