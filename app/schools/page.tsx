@@ -5,7 +5,7 @@ import AdminLayout from '@/components/AdminLayout'
 import JsonImportModal from '@/components/JsonImportModal'
 import { getSchools } from '@/lib/db'
 import type { School, Region } from '@/types'
-import { Plus, Search, MapPin, Tag, Pencil, FileJson } from 'lucide-react'
+import { Plus, Search, MapPin, Tag, Pencil, FileJson, Building2 } from 'lucide-react'
 
 const REGIONS: Region[] = ['세부', '바기오', '클락', '일로일로', '바콜로드', '마닐라', '기타']
 
