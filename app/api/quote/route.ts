@@ -7,7 +7,8 @@ import type { School, LocalFee, ExchangeRate } from '@/types'
 const EXTRACT_PROMPT = `당신은 필리핀 어학연수 견적 AI입니다. 엠버시유학 내부 전용 시스템입니다.
 
 [절대 규칙]
-- 응답은 JSON 객체 하나만. 첫 글자 반드시 {
+- 응답은 JSON 객체 딱 하나만. 두 개 이상 절대 금지.
+- 첫 글자 반드시 {, 마지막 글자 반드시 }
 - 생각 과정, 설명, 코드블록 전부 금지
 
 [핵심 원칙]
@@ -67,11 +68,25 @@ ${school.generalNotes ? `유의사항:\n${school.generalNotes}\n` : ''}
 
 function extractJson(text: string): Record<string, unknown> | null {
   const stripped = text.replace(/```(?:json)?\n?/g, '').replace(/```/g, '').trim()
+
+  // 순수 JSON이면 바로 파싱
   try { return JSON.parse(stripped) } catch {}
-  const start = stripped.indexOf('{')
-  const end = stripped.lastIndexOf('}')
-  if (start !== -1 && end > start) {
-    try { return JSON.parse(stripped.slice(start, end + 1)) } catch {}
+
+  // 첫 번째 완성된 JSON 객체만 추출 (중첩 브라켓 추적)
+  let depth = 0
+  let start = -1
+  for (let i = 0; i < stripped.length; i++) {
+    if (stripped[i] === '{') {
+      if (depth === 0) start = i
+      depth++
+    } else if (stripped[i] === '}') {
+      depth--
+      if (depth === 0 && start !== -1) {
+        try {
+          return JSON.parse(stripped.slice(start, i + 1))
+        } catch { start = -1 }
+      }
+    }
   }
   return null
 }
