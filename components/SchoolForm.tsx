@@ -6,7 +6,7 @@ import AdminLayout from '@/components/AdminLayout'
 import { getSchool, saveSchool, deleteSchool } from '@/lib/db'
 import type {
   School, Course, Dormitory, ShortTermRates,
-  Surcharge, Promotion, LocalFee, Package, RegistrationFee, PriceIncrease,
+  Surcharge, Promotion, PromotionBasis, LocalFee, Package, RegistrationFee, PriceIncrease,
   Region, SchoolType, ProgramTag, Currency, LocalFeeCondition
 } from '@/types'
 import { calcShortTermPrice } from '@/types'
@@ -379,7 +379,8 @@ export default function SchoolForm({ schoolId }: Props) {
                 <button onClick={() => update('promotions', [...school.promotions, {
                   id: uuid(), label: '', basisType: 'start_date' as const,
                   startDate: '', endDate: '', discountType: 'percent' as const,
-                  discountValue: 10, surchargeCompatible: false
+                  discountValue: 10,
+                  applyToCourses: true, applyToDorms: true, applyToSurcharge: false,
                 }])} className="btn-secondary flex items-center gap-2 text-sm w-full justify-center py-2.5 border-dashed">
                   <Plus size={14} /> 프로모션 추가
                 </button>
@@ -714,6 +715,10 @@ function SurchargeRow({ surcharge, onChange, onDelete }: {
 function PromotionRow({ promotion, onChange, onDelete }: {
   promotion: Promotion; onChange: (p: Promotion) => void; onDelete: () => void
 }) {
+  const toCourses   = promotion.applyToCourses   !== false
+  const toDorms     = promotion.applyToDorms     !== false
+  const toSurcharge = promotion.applyToSurcharge === true
+
   return (
     <div className="bg-gray-50 p-3 rounded-lg space-y-2">
       <div className="grid grid-cols-12 gap-2 items-end">
@@ -723,11 +728,13 @@ function PromotionRow({ promotion, onChange, onDelete }: {
             className="input-field text-sm" placeholder="비수기 할인" />
         </div>
         <div className="col-span-2">
-          <label className="block text-xs text-gray-500 mb-1">기준</label>
-          <select value={promotion.basisType} onChange={e => onChange({ ...promotion, basisType: e.target.value as 'enrollment_date' | 'start_date' })}
+          <label className="block text-xs text-gray-500 mb-1">기준일</label>
+          <select value={promotion.basisType} onChange={e => onChange({ ...promotion, basisType: e.target.value as Promotion['basisType'] })}
             className="input-field text-sm">
             <option value="start_date">연수 시작일</option>
             <option value="enrollment_date">등록일</option>
+            <option value="contract_date">계약일</option>
+            <option value="departure_date">출국일</option>
           </select>
         </div>
         <div className="col-span-2">
@@ -749,7 +756,7 @@ function PromotionRow({ promotion, onChange, onDelete }: {
           </select>
         </div>
         <div className="col-span-1">
-          <label className="block text-xs text-gray-500 mb-1">값</label>
+          <label className="block text-xs text-gray-500 mb-1">{promotion.discountType === 'percent' ? '할인%' : '금액'}</label>
           <input type="number" value={promotion.discountValue}
             onChange={e => onChange({ ...promotion, discountValue: Number(e.target.value) })}
             className="input-field text-sm" />
@@ -760,17 +767,25 @@ function PromotionRow({ promotion, onChange, onDelete }: {
           </button>
         </div>
       </div>
-      <div className="grid grid-cols-2 gap-2">
-        <div>
-          <label className="block text-xs text-gray-400 mb-1">조건</label>
+
+      {/* 적용 대상 + 조건 */}
+      <div className="flex items-center gap-4 flex-wrap pt-1">
+        <span className="text-xs text-gray-500 font-medium">적용 대상:</span>
+        {[
+          { key: 'applyToCourses', label: '코스 학비', checked: toCourses },
+          { key: 'applyToDorms',   label: '기숙사비', checked: toDorms },
+          { key: 'applyToSurcharge', label: '서차지', checked: toSurcharge },
+        ].map(({ key, label, checked }) => (
+          <label key={key} className="flex items-center gap-1.5 text-xs text-gray-600 cursor-pointer">
+            <input type="checkbox" checked={checked}
+              onChange={e => onChange({ ...promotion, [key]: e.target.checked })}
+              className="w-3.5 h-3.5 accent-blue-600" />
+            {label}
+          </label>
+        ))}
+        <div className="flex-1 min-w-32">
           <input value={promotion.condition ?? ''} onChange={e => onChange({ ...promotion, condition: e.target.value })}
-            className="input-field text-sm" placeholder="12주 이상" />
-        </div>
-        <div className="flex items-center gap-3 pt-4">
-          <label className="text-xs text-gray-500">서차지 기간 적용 가능</label>
-          <input type="checkbox" checked={promotion.surchargeCompatible}
-            onChange={e => onChange({ ...promotion, surchargeCompatible: e.target.checked })}
-            className="w-4 h-4 accent-blue-600" />
+            className="input-field text-xs py-1.5" placeholder="조건 메모 (예: 12주 이상)" />
         </div>
       </div>
     </div>

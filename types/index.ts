@@ -55,17 +55,22 @@ export interface Surcharge {
 }
 
 // ─── 프로모션 ─────────────────────────────────────────────────────────────────
+export type PromotionBasis = 'enrollment_date' | 'start_date' | 'contract_date' | 'departure_date'
+
 export interface Promotion {
   id: string
   label: string
-  basisType: 'enrollment_date' | 'start_date'
+  basisType: PromotionBasis
   startDate: string
   endDate: string
   discountType: 'percent' | 'amount'
   discountValue: number
   currency?: Currency
+  // 적용 대상 (미설정 시 전체 적용)
+  applyToCourses: boolean       // 코스 학비에 적용
+  applyToDorms: boolean         // 기숙사비에 적용
+  applyToSurcharge: boolean     // 서차지에 적용 (구 discountAllowed)
   condition?: string
-  surchargeCompatible: boolean  // 서차지 기간에도 (학비+기숙사에) 할인 적용 가능
   note?: string
 }
 

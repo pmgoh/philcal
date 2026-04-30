@@ -248,6 +248,9 @@ export async function POST(req: NextRequest) {
         localFeePhp: calcResult.localFeePhp,
         localFeeKrwEstimate: calcResult.localFeeKrwEstimate,
         weeksForFees: calcResult.totalWeeks,
+        startDate: parsed.startDate,
+        totalWeeks: calcResult.totalWeeks,
+        surchargeItems: calcResult.surchargeItems.map(s => ({ label: s.label, weeks: s.weeks })),
       })
     }
 

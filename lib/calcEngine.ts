@@ -38,10 +38,23 @@ export interface CalcResult {
 
 function findCourse(courses: Course[], key: string): Course | undefined {
   if (!key) return undefined
-  const lower = key.toLowerCase()
-  return courses.find(c => c.id === key)
-    ?? courses.find(c => c.name.toLowerCase() === lower)
-    ?? courses.find(c => c.name.toLowerCase().includes(lower) || lower.includes(c.name.toLowerCase()))
+  const lower = key.toLowerCase().trim()
+  // 1순위: ID 정확 일치
+  const byId = courses.find(c => c.id === key)
+  if (byId) return byId
+  // 2순위: 이름 정확 일치
+  const byExact = courses.find(c => c.name.toLowerCase() === lower)
+  if (byExact) return byExact
+  // 3순위: 단어 단위 포함 (단어 경계 기준)
+  const byWord = courses.find(c => {
+    const cWords = c.name.toLowerCase().split(/[\s\-_]+/)
+    const kWords = lower.split(/[\s\-_]+/)
+    // 검색어의 모든 단어가 코스명에 포함되어야 함
+    return kWords.every(kw => cWords.some(cw => cw === kw))
+  })
+  if (byWord) return byWord
+  // 4순위: 부분 포함 (마지막 수단)
+  return courses.find(c => c.name.toLowerCase().includes(lower))
 }
 
 function findDorm(dorms: Dormitory[], key: string): Dormitory | undefined {
@@ -163,17 +176,31 @@ export function calculateQuote(input: QuoteInput, rate: ExchangeRate): CalcResul
     const checkDate = promo.basisType === 'start_date' ? startDate : enrollmentDate
     if (!isInRange(checkDate, promo.startDate, promo.endDate)) continue
     if (promo.condition) notes.push(`ℹ️ 프로모션 조건: ${promo.condition}`)
+
+    // 적용 대상 (기본값: 전체 적용)
+    const toCourses   = promo.applyToCourses   !== false
+    const toDorms     = promo.applyToDorms     !== false
+    const toSurcharge = promo.applyToSurcharge !== false
+
+    const targetKrw = (toCourses ? courseItems.reduce((s,i)=>s+i.krwAmount,0) : 0)
+                    + (toDorms   ? dormItems.reduce((s,i)=>s+i.krwAmount,0)   : 0)
+
     if (promo.discountType === 'percent') {
-      const rate2 = promo.discountValue / 100
-      promotionDiscount = Math.round(baseKrw * rate2)
+      const discRate = promo.discountValue / 100
+      promotionDiscount = Math.round(targetKrw * discRate)
       for (const sd of surchargeDetails) {
-        if (sd.discountAllowed) surchargeDiscount += Math.round(sd.krw * rate2)
-        else notes.push(`ℹ️ ${sd.label}: 서차지엔 유학원 할인 미적용`)
+        if (toSurcharge && sd.discountAllowed) {
+          surchargeDiscount += Math.round(sd.krw * discRate)
+        } else if (!sd.discountAllowed) {
+          notes.push(`ℹ️ ${sd.label}: 서차지엔 유학원 할인 미적용`)
+        }
       }
     } else {
       promotionDiscount = toKrw(promo.discountValue, promo.currency ?? 'KRW', rate)
     }
     promotionLabel = promo.label
+    if (!toCourses && toDorms) notes.push(`ℹ️ ${promo.label}: 기숙사비에만 적용`)
+    if (toCourses && !toDorms) notes.push(`ℹ️ ${promo.label}: 코스 학비에만 적용`)
     break
   }
 
@@ -191,7 +218,10 @@ export function calculateQuote(input: QuoteInput, rate: ExchangeRate): CalcResul
     if (cond === 'optional') continue
     if (cond === 'one_time')  { localFeePhp += lf.amount; continue }
     if (cond === 'per_week')  { localFeePhp += lf.amount * totalWeeks; continue }
-    if (cond === 'min_weeks' && totalWeeks >= (lf.minWeeks??1)) { localFeePhp += lf.amount; continue }
+    if (cond === 'min_weeks') {
+      // minWeeks가 명시된 경우에만, 그리고 totalWeeks가 그 이상일 때만 포함
+      if (lf.minWeeks && totalWeeks >= lf.minWeeks) { localFeePhp += lf.amount; continue }
+    }
   }
 
   return {
