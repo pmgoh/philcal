@@ -51,8 +51,11 @@ export async function getAllUsers(): Promise<AppUser[]> {
   try {
     const snap = await getDocs(collection(db, 'users'))
     const users = snap.docs.map(d => d.data() as AppUser)
-    // createdAt 기준 내림차순 정렬 (클라이언트에서)
-    return users.sort((a, b) => (b.createdAt ?? '').localeCompare(a.createdAt ?? ''))
+    return users.sort((a, b) => {
+      const ta = typeof a.createdAt === 'string' ? a.createdAt : ''
+      const tb = typeof b.createdAt === 'string' ? b.createdAt : ''
+      return tb.localeCompare(ta)
+    })
   } catch (e) {
     console.error('[getAllUsers] error:', e)
     return []
