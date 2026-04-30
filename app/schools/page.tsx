@@ -150,7 +150,7 @@ function SchoolCard({ school }: { school: School }) {
       <div className="flex items-start justify-between mb-3">
         <div className="flex-1 min-w-0">
           <h3 className="font-semibold text-gray-900 truncate">{school.name}</h3>
-          <div className="flex items-center gap-1.5 mt-1">
+          <div className="flex items-center gap-1.5 mt-1 flex-wrap">
             <MapPin size={12} className="text-gray-400 flex-shrink-0" />
             <span className={`tag border text-xs ${regionColor[school.region]}`}>
               {school.region}
@@ -158,6 +158,15 @@ function SchoolCard({ school }: { school: School }) {
             <span className="text-xs text-gray-400">
               {school.schoolType === 'sparta' ? '스파르타' : school.schoolType === 'general' ? '일반' : '스파르타/일반'}
             </span>
+            {school.priceIncrease && (() => {
+              const today = new Date().toISOString().split('T')[0]
+              const active = school.priceIncrease.fromDate <= today
+              return (
+                <span className={`text-xs px-1.5 py-0.5 rounded font-medium ${active ? 'bg-orange-100 text-orange-700' : 'bg-blue-50 text-blue-600'}`}>
+                  {active ? '🔴 인상 적용 중' : `📢 ${school.priceIncrease.fromDate} 인상예정`}
+                </span>
+              )
+            })()}
           </div>
         </div>
         <Link

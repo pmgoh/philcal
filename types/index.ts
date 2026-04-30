@@ -104,6 +104,15 @@ export interface Package {
   note?: string
 }
 
+// ─── 비용 인상 ───────────────────────────────────────────────────────────────
+export interface PriceIncrease {
+  fromDate: string      // YYYY-MM-DD 이 날짜부터 적용
+  courseAdd: number     // 코스 전체 추가 금액
+  dormAdd: number       // 기숙사 전체 추가 금액
+  currency: Currency
+  label?: string        // 예: "2026 하반기 인상"
+}
+
 // ─── 학원 ────────────────────────────────────────────────────────────────────
 export interface School {
   id: string
@@ -113,9 +122,10 @@ export interface School {
   programTags: ProgramTag[]
   minWeeks: number
   allowShortTerm: boolean
-  courseShortTermRates?: ShortTermRates   // 전체 코스에 적용
-  dormShortTermRates?: ShortTermRates     // 전체 기숙사에 적용
+  courseShortTermRates?: ShortTermRates
+  dormShortTermRates?: ShortTermRates
   registrationFee?: RegistrationFee
+  priceIncrease?: PriceIncrease         // 예정 비용 인상
   courses: Course[]
   dormitories: Dormitory[]
   surcharges: Surcharge[]

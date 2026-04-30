@@ -68,6 +68,17 @@ export function calculateQuote(input: QuoteInput, rate: ExchangeRate): CalcResul
   const courses = school.courses ?? []
   const dorms   = school.dormitories ?? []
 
+  // 비용 인상 적용 여부 체크
+  const today = new Date().toISOString().split('T')[0]
+  const pi = school.priceIncrease
+  const increaseActive = pi && pi.fromDate <= today
+  const courseAddKrw = increaseActive ? toKrw(pi!.courseAdd, pi!.currency, rate) : 0
+  const dormAddKrw   = increaseActive ? toKrw(pi!.dormAdd,   pi!.currency, rate) : 0
+
+  if (increaseActive && pi!.courseAdd > 0) {
+    notes.push(`ℹ️ ${pi!.label ?? '비용 인상'} 적용 중 (${pi!.fromDate}~): 코스 +${pi!.courseAdd.toLocaleString()}${pi!.currency}, 기숙사 +${pi!.dormAdd.toLocaleString()}${pi!.currency}`)
+  }
+
   const course = findCourse(courses, courseId)
   const dorm   = findDorm(dorms, dormitoryId)
 
@@ -94,7 +105,7 @@ export function calculateQuote(input: QuoteInput, rate: ExchangeRate): CalcResul
       price = Math.round(p4w / 4 * weeks)
       label = `코스: ${course.name} (${p4w.toLocaleString()}${course.currency}/4주 × ${weeks}주)`
     }
-    items.push({ label, weeks, unitPrice: Math.round(price / weeks), currency: course.currency, krwAmount: toKrw(price, course.currency, rate) })
+    items.push({ label, weeks, unitPrice: Math.round(price / weeks), currency: course.currency, krwAmount: toKrw(price, course.currency, rate) + courseAddKrw * weeks })
   }
 
   // ── 기숙사 가격 계산 (price4Weeks 기준, 구 데이터 pricePerWeek 호환) ─────────
@@ -119,7 +130,7 @@ export function calculateQuote(input: QuoteInput, rate: ExchangeRate): CalcResul
       price = Math.round(p4w / 4 * weeks)
       label = `기숙사: ${dorm.name} (${p4w.toLocaleString()}${dorm.currency}/4주 × ${weeks}주)`
     }
-    items.push({ label, weeks, unitPrice: Math.round(price / weeks), currency: dorm.currency, krwAmount: toKrw(price, dorm.currency, rate) })
+    items.push({ label, weeks, unitPrice: Math.round(price / weeks), currency: dorm.currency, krwAmount: toKrw(price, dorm.currency, rate) + dormAddKrw * weeks })
   }
 
   const baseKrw = items.reduce((s, i) => s + i.krwAmount, 0)

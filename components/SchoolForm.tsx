@@ -6,7 +6,7 @@ import AdminLayout from '@/components/AdminLayout'
 import { getSchool, saveSchool, deleteSchool } from '@/lib/db'
 import type {
   School, Course, Dormitory, ShortTermRates,
-  Surcharge, Promotion, LocalFee, Package, RegistrationFee,
+  Surcharge, Promotion, LocalFee, Package, RegistrationFee, PriceIncrease,
   Region, SchoolType, ProgramTag, Currency, LocalFeeCondition
 } from '@/types'
 import { calcShortTermPrice } from '@/types'
@@ -28,6 +28,7 @@ const EMPTY_SCHOOL: Omit<School, 'id' | 'createdAt' | 'updatedAt'> = {
   courseShortTermRates: undefined,
   dormShortTermRates: undefined,
   registrationFee: undefined,
+  priceIncrease: undefined,
   courses: [], dormitories: [],
   surcharges: [], promotions: [], localFees: [], packages: [],
   refundPolicy: '', dormitoryRules: '', generalNotes: '', isActive: true,
@@ -243,6 +244,41 @@ export default function SchoolForm({ schoolId }: Props) {
                 <RegistrationFeeEditor
                   fee={school.registrationFee}
                   onChange={v => update('registrationFee', v)}
+                />
+              </div>
+            )}
+          </div>
+
+          {/* ── 비용 인상 ── */}
+          <div className="card overflow-hidden">
+            {section('priceIncrease', '비용 인상 예정')}
+            {openSection === 'priceIncrease' && (
+              <div className="px-5 pb-5 border-t border-gray-100 pt-4">
+                <p className="text-xs text-gray-500 mb-3">
+                  설정한 날짜가 되면 코스·기숙사 가격에 자동 반영됩니다. 반영 후 "기본가에 적용" 버튼으로 정리하세요.
+                </p>
+                <PriceIncreaseEditor
+                  pi={school.priceIncrease}
+                  courses={school.courses}
+                  dormitories={school.dormitories}
+                  onChange={v => update('priceIncrease', v)}
+                  onApply={async () => {
+                    if (!school.priceIncrease) return
+                    if (!confirm('코스·기숙사 기본가에 인상분을 반영하고 인상 설정을 초기화할까요?')) return
+                    const pi = school.priceIncrease
+                    const rate = { phpToKrw: 25, usdToKrw: 1380 }
+                    const add = pi.currency === 'KRW' ? pi.courseAdd : pi.courseAdd * (pi.currency === 'USD' ? rate.usdToKrw : rate.phpToKrw)
+                    const dAdd = pi.currency === 'KRW' ? pi.dormAdd : pi.dormAdd * (pi.currency === 'USD' ? rate.usdToKrw : rate.phpToKrw)
+                    update('courses', school.courses.map(c => ({
+                      ...c,
+                      price4Weeks: ((c as unknown as Record<string,number>).price4Weeks ?? 0) + add * 4,
+                    })))
+                    update('dormitories', school.dormitories.map(d => ({
+                      ...d,
+                      price4Weeks: ((d as unknown as Record<string,number>).price4Weeks ?? 0) + dAdd * 4,
+                    })))
+                    update('priceIncrease', undefined)
+                  }}
                 />
               </div>
             )}
@@ -891,6 +927,109 @@ function PackageRow({ pkg, onChange, onDelete }: {
       </div>
       <textarea value={pkg.includes} onChange={e => onChange({ ...pkg, includes: e.target.value })}
         className="input-field text-sm h-14 resize-none" placeholder="학비, 기숙사, 식사, 액티비티 포함..." />
+    </div>
+  )
+}
+
+// ── PriceIncreaseEditor ────────────────────────────────────────────────────
+function PriceIncreaseEditor({ pi, courses, dormitories, onChange, onApply }: {
+  pi?: PriceIncrease
+  courses: Course[]
+  dormitories: Dormitory[]
+  onChange: (v: PriceIncrease | undefined) => void
+  onApply: () => void
+}) {
+  const enabled = !!pi
+  const today = new Date().toISOString().split('T')[0]
+  const isActive = pi && pi.fromDate <= today
+  const p = pi ?? { fromDate: '', courseAdd: 0, dormAdd: 0, currency: 'KRW' as Currency, label: '' }
+
+  // 대표 코스/기숙사 현재가 (미리보기용)
+  const firstCourse = courses[0]
+  const firstDorm = dormitories[0]
+  const cBase = firstCourse ? ((firstCourse as unknown as Record<string,number>).price4Weeks ?? 0) : 0
+  const dBase = firstDorm ? ((firstDorm as unknown as Record<string,number>).price4Weeks ?? 0) : 0
+
+  return (
+    <div>
+      <div className="flex items-center gap-3 mb-3">
+        <label className="text-sm font-medium text-gray-700">비용 인상 예정 있음</label>
+        <input type="checkbox" checked={enabled}
+          onChange={e => onChange(e.target.checked ? p : undefined)}
+          className="w-4 h-4 accent-blue-600" />
+        {isActive && (
+          <span className="text-xs px-2 py-0.5 bg-orange-100 text-orange-700 rounded-full font-medium animate-pulse">
+            🔴 현재 적용 중
+          </span>
+        )}
+        {pi && !isActive && (
+          <span className="text-xs px-2 py-0.5 bg-blue-100 text-blue-700 rounded-full font-medium">
+            📢 {pi.fromDate}부터 예정
+          </span>
+        )}
+      </div>
+
+      {enabled && (
+        <div className="space-y-3 bg-orange-50 border border-orange-200 rounded-xl p-4">
+          <div className="grid grid-cols-12 gap-2 items-end">
+            <div className="col-span-3">
+              <label className="block text-xs text-gray-600 mb-1">인상 적용일</label>
+              <input type="date" value={p.fromDate}
+                onChange={e => onChange({ ...p, fromDate: e.target.value })}
+                className="input-field text-sm" />
+            </div>
+            <div className="col-span-3">
+              <label className="block text-xs text-gray-600 mb-1">구분명</label>
+              <input value={p.label ?? ''} onChange={e => onChange({ ...p, label: e.target.value })}
+                className="input-field text-sm" placeholder="2026 하반기 인상" />
+            </div>
+            <div className="col-span-2">
+              <label className="block text-xs text-gray-600 mb-1">통화</label>
+              <select value={p.currency} onChange={e => onChange({ ...p, currency: e.target.value as Currency })}
+                className="input-field text-sm">
+                {CURRENCIES.map(c => <option key={c}>{c}</option>)}
+              </select>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 gap-3">
+            <div className="bg-white rounded-lg p-3 border border-orange-100">
+              <label className="block text-xs text-gray-600 mb-1">코스 인상 (주당 추가금액)</label>
+              <input type="number" value={p.courseAdd}
+                onChange={e => onChange({ ...p, courseAdd: Number(e.target.value) })}
+                className="input-field text-sm" placeholder="0" />
+              {cBase > 0 && p.courseAdd > 0 && (
+                <p className="text-xs text-orange-600 mt-1">
+                  예: {firstCourse?.name} 4주 기준 {cBase.toLocaleString()} → {(cBase + p.courseAdd * 4).toLocaleString()}{p.currency}
+                </p>
+              )}
+            </div>
+            <div className="bg-white rounded-lg p-3 border border-orange-100">
+              <label className="block text-xs text-gray-600 mb-1">기숙사 인상 (주당 추가금액)</label>
+              <input type="number" value={p.dormAdd}
+                onChange={e => onChange({ ...p, dormAdd: Number(e.target.value) })}
+                className="input-field text-sm" placeholder="0" />
+              {dBase > 0 && p.dormAdd > 0 && (
+                <p className="text-xs text-orange-600 mt-1">
+                  예: {firstDorm?.name} 4주 기준 {dBase.toLocaleString()} → {(dBase + p.dormAdd * 4).toLocaleString()}{p.currency}
+                </p>
+              )}
+            </div>
+          </div>
+
+          {isActive && (
+            <div className="flex items-center gap-3 pt-1">
+              <p className="text-xs text-orange-700 flex-1">
+                인상이 적용 중입니다. 기본가에 반영하면 코스·기숙사 가격이 업데이트되고 이 설정이 초기화됩니다.
+              </p>
+              <button type="button" onClick={onApply}
+                className="flex-shrink-0 px-3 py-1.5 bg-orange-600 hover:bg-orange-700 text-white text-xs font-medium rounded-lg transition-colors">
+                기본가에 반영 후 초기화
+              </button>
+            </div>
+          )}
+        </div>
+      )}
     </div>
   )
 }
