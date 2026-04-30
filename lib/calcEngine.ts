@@ -61,7 +61,9 @@ export function calculateQuote(input: QuoteInput, rate: ExchangeRate): CalcResul
   const items: QuoteItem[] = []
   const surchargeItems: QuoteItem[] = []
 
-  if (weeks < school.minWeeks) {
+  // allowShortTerm이 true면 1~3주도 가능 → minWeeks 경고 제외
+  const effectiveMinWeeks = school.allowShortTerm ? 1 : school.minWeeks
+  if (weeks < effectiveMinWeeks) {
     warnings.push(`⚠️ ${school.name}의 최소 수강 기간은 ${school.minWeeks}주입니다.`)
   }
 

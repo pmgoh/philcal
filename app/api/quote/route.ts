@@ -20,6 +20,8 @@ const EXTRACT_PROMPT = `당신은 필리핀 어학연수 견적 AI입니다. 엠
 - price4Weeks: 4주 기준 총액
 - N주 계산: price4Weeks / 4 × N
 - 서차지: 주당 금액 × 해당 주수
+- allowShortTerm: true → 1~3주 단기 등록 가능 (effectiveMinWeeks=1), minWeeks와 무관
+- allowShortTerm: false → minWeeks 미만 등록 불가
 
 [응답 형식]
 
@@ -187,7 +189,9 @@ export async function POST(req: NextRequest) {
     // 1차: 파라미터 추출 (규정 미포함)
     const schoolsSummary = schools.map(s => ({
       id: s.id, name: s.name, region: s.region,
-      minWeeks: s.minWeeks, allowShortTerm: s.allowShortTerm,
+      minWeeks: s.minWeeks,
+      allowShortTerm: s.allowShortTerm,   // true이면 1~3주 단기 등록 가능 (minWeeks 무관)
+      effectiveMinWeeks: s.allowShortTerm ? 1 : s.minWeeks,  // 실제 최소 주수
       programTags: s.programTags ?? [],
       courses: (s.courses ?? []).map(c => ({
         id: c.id, name: c.name, target: c.target,

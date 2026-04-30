@@ -65,8 +65,19 @@ export default function SchoolForm({ schoolId }: Props) {
         if (s) setSchool({
           ...s,
           programTags:    s.programTags    ?? [],
-          courses:        s.courses        ?? [],
-          dormitories:    s.dormitories    ?? [],
+          // pricePerWeek → price4Weeks 마이그레이션
+          courses: (s.courses ?? []).map(c => ({
+            ...c,
+            price4Weeks: (c as unknown as Record<string,number>).price4Weeks
+              ?? (c as unknown as Record<string,number>).pricePerWeek
+              ?? 0,
+          })),
+          dormitories: (s.dormitories ?? []).map(d => ({
+            ...d,
+            price4Weeks: (d as unknown as Record<string,number>).price4Weeks
+              ?? (d as unknown as Record<string,number>).pricePerWeek
+              ?? 0,
+          })),
           surcharges:     s.surcharges     ?? [],
           promotions:     s.promotions     ?? [],
           localFees:      s.localFees      ?? [],
@@ -563,7 +574,7 @@ function CourseRow({ course, onChange, onDelete }: {
         </div>
         <div className="col-span-3">
           <label className="block text-xs text-gray-500 mb-1">4주 기준 가격</label>
-          <input type="number" value={course.price4Weeks}
+          <input type="number" value={(course as unknown as Record<string,number>).price4Weeks ?? (course as unknown as Record<string,number>).pricePerWeek ?? 0}
             onChange={e => onChange({ ...course, price4Weeks: Number(e.target.value) })}
             className="input-field text-sm" />
         </div>
@@ -610,7 +621,7 @@ function DormRow({ dorm, onChange, onDelete }: {
         </div>
         <div className="col-span-3">
           <label className="block text-xs text-gray-500 mb-1">4주 기준 가격</label>
-          <input type="number" value={dorm.price4Weeks}
+          <input type="number" value={(dorm as unknown as Record<string,number>).price4Weeks ?? (dorm as unknown as Record<string,number>).pricePerWeek ?? 0}
             onChange={e => onChange({ ...dorm, price4Weeks: Number(e.target.value) })}
             className="input-field text-sm" />
         </div>
