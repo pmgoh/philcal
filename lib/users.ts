@@ -1,4 +1,4 @@
-import { doc, getDoc, setDoc, collection, getDocs, updateDoc, query, orderBy } from 'firebase/firestore'
+import { doc, getDoc, setDoc, collection, getDocs, updateDoc } from 'firebase/firestore'
 import { db } from './firebase'
 import type { AppUser, UserRole, UserStatus } from '@/types'
 
@@ -36,9 +36,15 @@ export async function getCurrentUser(uid: string): Promise<AppUser | null> {
 }
 
 export async function getAllUsers(): Promise<AppUser[]> {
-  const q = query(collection(db, 'users'), orderBy('createdAt', 'desc'))
-  const snap = await getDocs(q)
-  return snap.docs.map(d => d.data() as AppUser)
+  try {
+    const snap = await getDocs(collection(db, 'users'))
+    const users = snap.docs.map(d => d.data() as AppUser)
+    // createdAt 기준 내림차순 정렬 (클라이언트에서)
+    return users.sort((a, b) => (b.createdAt ?? '').localeCompare(a.createdAt ?? ''))
+  } catch (e) {
+    console.error('[getAllUsers] error:', e)
+    return []
+  }
 }
 
 export async function updateUserStatus(uid: string, status: UserStatus, approvedBy: string): Promise<void> {
