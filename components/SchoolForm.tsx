@@ -240,7 +240,7 @@ export default function SchoolForm({ schoolId }: Props) {
                   />
                 ))}
                 <button onClick={() => update('courses', [...school.courses, {
-                  id: uuid(), name: '', target: '성인', pricePerWeek: 0, currency: 'KRW'
+                  id: uuid(), name: '', target: '성인', price4Weeks: 0, currency: 'KRW'
                 }])} className="btn-secondary flex items-center gap-2 text-sm w-full justify-center py-2.5 border-dashed">
                   <Plus size={14} /> 코스 추가
                 </button>
@@ -263,7 +263,7 @@ export default function SchoolForm({ schoolId }: Props) {
                   />
                 ))}
                 <button onClick={() => update('dormitories', [...school.dormitories, {
-                  id: uuid(), name: '', target: '성인', pricePerWeek: 0, currency: 'KRW'
+                  id: uuid(), name: '', target: '성인', price4Weeks: 0, currency: 'KRW'
                 }])} className="btn-secondary flex items-center gap-2 text-sm w-full justify-center py-2.5 border-dashed">
                   <Plus size={14} /> 기숙사 추가
                 </button>
@@ -284,7 +284,7 @@ export default function SchoolForm({ schoolId }: Props) {
                 ))}
                 <button onClick={() => update('surcharges', [...school.surcharges, {
                   id: uuid(), label: '', startDate: '', endDate: '',
-                  pricePerWeek: 50000, currency: 'KRW', discountAllowed: true
+                  price4Weeks: 50000, currency: 'KRW', discountAllowed: true
                 }])} className="btn-secondary flex items-center gap-2 text-sm w-full justify-center py-2.5 border-dashed">
                   <Plus size={14} /> 서차지 추가
                 </button>
@@ -392,15 +392,15 @@ export default function SchoolForm({ schoolId }: Props) {
 }
 
 // ── 단기가 설정 서브컴포넌트 ──────────────────────────────────────────────────
-function ShortTermRatesEditor({ pricePerWeek, rates, onChange }: {
-  pricePerWeek: number
+function ShortTermRatesEditor({ price4Weeks, rates, onChange }: {
+  price4Weeks: number
   rates?: ShortTermRates
   onChange: (r: ShortTermRates | undefined) => void
 }) {
   const enabled = !!rates
   const r = rates ?? { mode: 'percent', week1: 40, week2: 65, week3: 80, week4Included: false }
 
-  const base4w = pricePerWeek * 4
+  const base4w = price4Weeks
 
   const toggle = () => onChange(enabled ? undefined : r)
   const set = (patch: Partial<ShortTermRates>) => onChange({ ...r, ...patch })
@@ -435,7 +435,7 @@ function ShortTermRatesEditor({ pricePerWeek, rates, onChange }: {
             const val = isWeek4 ? (r.week4 ?? base4w) : r[fieldKey as 'week1' | 'week2' | 'week3']
             const preview = isWeek4
               ? (r.week4Included ? r.week4 ?? base4w : base4w)
-              : calcShortTermPrice(pricePerWeek, w as 1|2|3, r)
+              : calcShortTermPrice(price4Weeks, w as 1|2|3, r)
 
             return (
               <div key={w} className={`rounded-lg p-2 ${isWeek4 && !r.week4Included ? 'bg-gray-50 opacity-60' : 'bg-indigo-50'}`}>
@@ -460,9 +460,9 @@ function ShortTermRatesEditor({ pricePerWeek, rates, onChange }: {
                     placeholder={r.mode === 'percent' ? '예: 40' : '금액'}
                   />
                 ) : (
-                  <div className="text-xs text-gray-400 py-1">자동 ({(pricePerWeek * 4).toLocaleString()})</div>
+                  <div className="text-xs text-gray-400 py-1">자동 ({(price4Weeks * 4).toLocaleString()})</div>
                 )}
-                {pricePerWeek > 0 && preview > 0 && (
+                {price4Weeks > 0 && preview > 0 && (
                   <div className="text-xs text-indigo-600 mt-0.5 font-medium">
                     {r.mode === 'percent' && !isWeek4 ? `→ ${preview.toLocaleString()}` : ''}
                     {(isWeek4 && r.week4Included) || r.mode === 'fixed' ? `${preview.toLocaleString()}` : ''}
@@ -499,9 +499,9 @@ function CourseRow({ course, allowShortTerm, onChange, onDelete }: {
             className="input-field text-sm" placeholder="성인" />
         </div>
         <div className="col-span-3">
-          <label className="block text-xs text-gray-500 mb-1">주당 가격 (4주 기준)</label>
-          <input type="number" value={course.pricePerWeek}
-            onChange={e => onChange({ ...course, pricePerWeek: Number(e.target.value) })}
+          <label className="block text-xs text-gray-500 mb-1">4주 기준 가격</label>
+          <input type="number" value={course.price4Weeks}
+            onChange={e => onChange({ ...course, price4Weeks: Number(e.target.value) })}
             className="input-field text-sm" />
         </div>
         <div className="col-span-2">
@@ -524,7 +524,7 @@ function CourseRow({ course, allowShortTerm, onChange, onDelete }: {
       </div>
       {allowShortTerm && (
         <ShortTermRatesEditor
-          pricePerWeek={course.pricePerWeek}
+          price4Weeks={course.price4Weeks}
           rates={course.shortTermRates}
           onChange={r => onChange({ ...course, shortTermRates: r })}
         />
@@ -552,9 +552,9 @@ function DormRow({ dorm, allowShortTerm, onChange, onDelete }: {
             className="input-field text-sm" placeholder="성인" />
         </div>
         <div className="col-span-3">
-          <label className="block text-xs text-gray-500 mb-1">주당 가격 (4주 기준)</label>
-          <input type="number" value={dorm.pricePerWeek}
-            onChange={e => onChange({ ...dorm, pricePerWeek: Number(e.target.value) })}
+          <label className="block text-xs text-gray-500 mb-1">4주 기준 가격</label>
+          <input type="number" value={dorm.price4Weeks}
+            onChange={e => onChange({ ...dorm, price4Weeks: Number(e.target.value) })}
             className="input-field text-sm" />
         </div>
         <div className="col-span-2">
@@ -586,7 +586,7 @@ function DormRow({ dorm, allowShortTerm, onChange, onDelete }: {
       </div>
       {allowShortTerm && (
         <ShortTermRatesEditor
-          pricePerWeek={dorm.pricePerWeek}
+          price4Weeks={dorm.price4Weeks}
           rates={dorm.shortTermRates}
           onChange={r => onChange({ ...dorm, shortTermRates: r })}
         />

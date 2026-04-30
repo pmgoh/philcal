@@ -54,7 +54,7 @@ function validate(data: ReturnType<typeof normalizeSchool>): ValidationError[] {
   if (data.dormitories.length === 0) errors.push({ field: 'dormitories', message: '기숙사가 하나도 없습니다.' })
   data.courses.forEach((c, i) => {
     if (!c.name) errors.push({ field: `courses[${i}]`, message: `코스 ${i + 1}번 이름이 없습니다.` })
-    if (!c.pricePerWeek) errors.push({ field: `courses[${i}].price`, message: `코스 "${c.name}" 가격이 0입니다.` })
+    if (!c.price4Weeks) errors.push({ field: `courses[${i}].price`, message: `코스 "${c.name}" 가격이 0입니다.` })
   })
   data.dormitories.forEach((d, i) => {
     if (!d.name) errors.push({ field: `dormitories[${i}]`, message: `기숙사 ${i + 1}번 이름이 없습니다.` })
@@ -214,7 +214,7 @@ export default function JsonImportModal({ onClose, onImported }: Props) {
                     {parsed.courses.slice(0, 3).map((c, i) => (
                       <div key={i} className="flex justify-between text-xs text-blue-700 bg-white/60 rounded px-2 py-1">
                         <span>{c.name} <span className="text-blue-400">({c.target})</span></span>
-                        <span className="font-medium">{c.pricePerWeek.toLocaleString()}{c.currency === 'KRW' ? '원' : c.currency}/주</span>
+                        <span className="font-medium">{c.price4Weeks.toLocaleString()}{c.currency === 'KRW' ? '원' : c.currency}/주</span>
                       </div>
                     ))}
                     {parsed.courses.length > 3 && (

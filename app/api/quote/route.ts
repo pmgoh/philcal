@@ -7,32 +7,42 @@ const SYSTEM_PROMPT = `당신은 필리핀 어학연수 견적 AI입니다. 엠�
 
 [절대 규칙]
 - 응답은 JSON 객체 하나만. 첫 글자 반드시 {
-- 생각 과정, 설명, 코드블록 전부 금지. 다른 텍스트 없이 JSON만.
+- 생각 과정, 설명, 코드블록 전부 금지
+
+[핵심 원칙]
+- 코스와 기숙사가 모두 확정되어야만 견적 계산 가능
+- 코스 미지정 → 반드시 되물음 (자동 선택 절대 금지)
+- 기숙사 미지정 → 반드시 되물음 (자동 선택 절대 금지)
+- 학원명이 여러 캠퍼스에 걸칠 경우 → 되물음
+
+[가격 구조 이해]
+- price4Weeks: 4주 기준 총액 (예: 1,800,000원)
+- N주 계산: price4Weeks / 4 × N
+- 예: 8주 = 1,800,000 / 4 × 8 = 3,600,000원
+- 서차지: 주당 금액 × 해당 주수 (별도 계산)
+- 할인: 학비+기숙사에 적용, 서차지엔 discountAllowed 따라
 
 [응답 형식]
 
-단일 견적 (weeks는 반드시 숫자):
+단일 견적:
 {"action":"calculate","schoolId":"ID","courseId":"코스ID또는이름","dormitoryId":"기숙사ID또는이름","weeks":8,"startDate":"YYYY-MM-DD","enrollmentDate":"YYYY-MM-DD","message":"요약"}
 
-복수 견적 (1인실+2인실 등):
+복수 견적 (1인실+2인실 같이):
 {"action":"multi_calculate","items":[{"label":"1인실","schoolId":"ID","courseId":"ID","dormitoryId":"ID","weeks":8,"startDate":"YYYY-MM-DD","enrollmentDate":"YYYY-MM-DD"},{"label":"2인실","schoolId":"ID","courseId":"ID","dormitoryId":"ID","weeks":8,"startDate":"YYYY-MM-DD","enrollmentDate":"YYYY-MM-DD"}]}
 
-정보 부족 (질문 + 선택지):
-{"action":"need_info","question":"질문 문장","type":"select","suggestions":["선택지1","선택지2","선택지3"],"allowFreeText":true}
+정보 부족 (코스/기숙사 미지정):
+{"action":"need_info","question":"질문","type":"select","suggestions":["선택지1","선택지2"],"allowFreeText":false}
 
-일반 질문:
-{"action":"answer","message":"답변"}
+일반 질문 (규정, 서차지 안내 등):
+{"action":"answer","message":"답변 - 해당 학원 규정을 참고해서 구체적으로"}
 
 [매칭 규칙]
-- 학원명: 부분 일치 (CIA→Cebu CIA, JIC→BAGUIO JIC)
-- 코스: 이름으로 매칭 (인텐시브→Intensive/Power, 일반→General/ESL/Regular)
-- 기숙사: 인실 숫자 (1인실→Single/1인실, 2인실→Twin/Double)
-- 날짜 없으면 오늘+30일 사용
-- 코스 미지정시 첫 번째 코스 자동선택, message에 "코스는 [코스명]으로 계산했습니다" 명시
-- weeks는 반드시 정수 숫자로`
+- 학원명: 부분 일치
+- 날짜 없으면 오늘+30일
+- weeks는 반드시 정수`
 
 function extractJson(text: string): Record<string, unknown> | null {
-  const stripped = text.replace(/```(?:json)?\n?/g, '').replace(/```/g, '').trim()
+  const stripped = text.replace(/\`\`\`(?:json)?\n?/g, '').replace(/\`\`\`/g, '').trim()
   try { return JSON.parse(stripped) } catch {}
   const start = stripped.indexOf('{')
   const end = stripped.lastIndexOf('}')
@@ -42,100 +52,78 @@ function extractJson(text: string): Record<string, unknown> | null {
   return null
 }
 
-function buildQuoteMessage(
-  school: School,
-  weeks: number,
-  startDate: string,
-  calcResult: CalcResult,
-  label?: string
-): string {
+function buildQuoteMessage(school: School, weeks: number, startDate: string, calcResult: CalcResult, label?: string): string {
   const endDate = new Date(startDate)
   endDate.setDate(endDate.getDate() + weeks * 7)
-  const endDateStr = endDate.toISOString().split('T')[0]
+  const endStr = endDate.toISOString().split('T')[0]
 
   const lines: string[] = []
-  const header = label ? `## ${school.name} — ${label}` : `## ${school.name}`
-  lines.push(header)
-  lines.push(`**${startDate} ~ ${endDateStr} (${weeks}주)**`)
+  lines.push(label ? `## ${school.name} — ${label}` : `## ${school.name}`)
+  lines.push(`**${startDate} ~ ${endStr} (${weeks}주)**`)
   lines.push('')
+  lines.push('### 비용 내역')
 
   for (const item of calcResult.items) {
-    const unitStr = `${item.unitPrice.toLocaleString()}${item.currency === 'KRW' ? '원' : item.currency}/주`
-    lines.push(`- ${item.label}: ${unitStr} × ${item.weeks}주 = **${formatKrw(item.krwAmount)}**`)
+    lines.push(`- ${item.label}: **${formatKrw(item.krwAmount)}**`)
     if (item.currency !== 'KRW') lines.push(`  *(${formatCurrency(item.unitPrice * item.weeks, item.currency)} 기준)*`)
   }
 
   if (calcResult.surchargeItems.length > 0) {
-    lines.push('\n**성수기 서차지**')
+    lines.push('')
+    lines.push('**성수기 서차지**')
     for (const sc of calcResult.surchargeItems) {
-      lines.push(`- ${sc.label}: ${sc.unitPrice.toLocaleString()}원/주 × ${sc.weeks}주 = **+${formatKrw(sc.krwAmount)}**`)
+      lines.push(`- ${sc.label}: **+${formatKrw(sc.krwAmount)}**`)
     }
   }
 
-  if (calcResult.promotionLabel && calcResult.promotionDiscount > 0) {
-    lines.push(`\n**프로모션: ${calcResult.promotionLabel}**`)
-    lines.push(`- 할인: **-${formatKrw(calcResult.promotionDiscount)}**`)
+  const totalDiscount = calcResult.promotionDiscount + calcResult.surchargeDiscount
+  if (calcResult.promotionLabel && totalDiscount > 0) {
+    lines.push('')
+    lines.push(`**유학원 할인: ${calcResult.promotionLabel}**`)
+    if (calcResult.promotionDiscount > 0) lines.push(`- 학비+기숙사 할인: **-${formatKrw(calcResult.promotionDiscount)}**`)
+    if (calcResult.surchargeDiscount > 0) lines.push(`- 서차지 할인: **-${formatKrw(calcResult.surchargeDiscount)}**`)
   }
 
   if (calcResult.registrationFee && calcResult.registrationFeeKrw > 0) {
     const rf = calcResult.registrationFee
-    const rfStr = rf.currency === 'KRW'
-      ? `${rf.amount.toLocaleString()}원`
-      : `${formatCurrency(rf.amount, rf.currency)} (${formatKrw(calcResult.registrationFeeKrw)} 환산)`
-    lines.push(`\n**등록비** (1회)`)
-    lines.push(`- **+${rfStr}**${rf.note ? ` *(${rf.note})*` : ''}`)
+    lines.push('')
+    lines.push(`**등록비 (1회)**: ${rf.currency === 'KRW' ? formatKrw(rf.amount) : formatCurrency(rf.amount, rf.currency)}${rf.note ? ` *(${rf.note})*` : ''}`)
   }
 
-  lines.push('\n---')
+  lines.push('')
+  lines.push('---')
   lines.push(`### 💰 총 견적: **${formatKrw(calcResult.totalKrw)}**`)
-  lines.push('*(현지납부비 별도)*')
+  lines.push('*(현지납부비 별도 — 아래 버튼에서 확인)*')
 
-  if (calcResult.warnings.length > 0) {
-    lines.push('\n⚠️ ' + calcResult.warnings.join('\n⚠️ '))
-  }
-  if (calcResult.notes.length > 0) {
-    lines.push('\n' + calcResult.notes.join('\n'))
-  }
+  if (calcResult.warnings.length > 0) lines.push('\n' + calcResult.warnings.join('\n'))
+  if (calcResult.notes.length > 0) lines.push('\n' + calcResult.notes.join('\n'))
 
   return lines.join('\n')
 }
 
-function buildEvidenceMessage(
-  school: School,
-  weeks: number,
-  startDate: string,
-  calcResult: CalcResult,
-  rate: ExchangeRate
-): string {
-  const lines: string[] = []
-  lines.push('**📎 견적 근거 데이터**')
-  lines.push(`- 학원: ${school.name} (${school.region})`)
+function buildEvidenceMessage(school: School, weeks: number, startDate: string, calcResult: CalcResult, rate: ExchangeRate): string {
+  const lines: string[] = ['**📎 계산 근거**']
   if (calcResult.courseUsed) {
     const c = calcResult.courseUsed
-    lines.push(`- 코스: ${c.name} (대상: ${c.target}) — ${c.pricePerWeek.toLocaleString()}${c.currency}/주`)
+    lines.push(`- 코스: ${c.name} — 4주 기준 ${c.price4Weeks.toLocaleString()}${c.currency} → ${weeks}주 = ${formatKrw(calcResult.items.find(i => i.label.includes('코스'))?.krwAmount ?? 0)}`)
   }
   if (calcResult.dormUsed) {
     const d = calcResult.dormUsed
-    lines.push(`- 기숙사: ${d.name} (대상: ${d.target}) — ${d.pricePerWeek.toLocaleString()}${d.currency}/주`)
+    lines.push(`- 기숙사: ${d.name} — 4주 기준 ${d.price4Weeks.toLocaleString()}${d.currency} → ${weeks}주 = ${formatKrw(calcResult.items.find(i => i.label.includes('기숙사'))?.krwAmount ?? 0)}`)
   }
-  lines.push(`- 기간: ${weeks}주`)
-
   if (calcResult.surchargeItems.length > 0) {
-    for (const sc of calcResult.surchargeItems) {
-      lines.push(`- 서차지 적용: ${sc.weeks}주 해당 (${sc.unitPrice.toLocaleString()}${sc.currency}/주)`)
-    }
+    for (const sc of calcResult.surchargeItems) lines.push(`- ${sc.label}`)
   }
-
   if (calcResult.promotionLabel) {
     lines.push(`- 프로모션: ${calcResult.promotionLabel}`)
+    if (calcResult.promotionDiscount > 0) lines.push(`  학비+기숙사 할인: -${formatKrw(calcResult.promotionDiscount)}`)
+    if (calcResult.surchargeDiscount > 0) lines.push(`  서차지 할인: -${formatKrw(calcResult.surchargeDiscount)}`)
   }
-
   if (calcResult.registrationFee) {
     const rf = calcResult.registrationFee
-    lines.push(`- 등록비: ${rf.amount.toLocaleString()}${rf.currency}${rf.note ? ` (${rf.note})` : ''}`)
+    lines.push(`- 등록비: ${rf.amount.toLocaleString()}${rf.currency}`)
   }
-  lines.push(`- 적용 환율: ₱1 = ${rate.phpToKrw}원 / $1 = ${rate.usdToKrw}원`)
-
+  lines.push(`- 적용 환율: ₱1=${rate.phpToKrw}원 / $1=${rate.usdToKrw}원`)
   return lines.join('\n')
 }
 
@@ -147,11 +135,32 @@ export async function POST(req: NextRequest) {
 
     const schoolsSummary = schools.map(s => ({
       id: s.id, name: s.name, region: s.region,
-      courses:     (s.courses     ?? []).map(c => ({ id: c.id, name: c.name, target: c.target, price: c.pricePerWeek, currency: c.currency })),
-      dormitories: (s.dormitories ?? []).map(d => ({ id: d.id, name: d.name, target: d.target, price: d.pricePerWeek, currency: d.currency })),
-      surcharges:  (s.surcharges  ?? []).map(sc => ({ label: sc.label, start: sc.startDate, end: sc.endDate, pricePerWeek: sc.pricePerWeek, currency: sc.currency })),
-      promotions:  (s.promotions  ?? []).map(p => ({ label: p.label, basisType: p.basisType, start: p.startDate, end: p.endDate, discount: `${p.discountValue}${p.discountType === 'percent' ? '%' : '원'}`, condition: p.condition })),
       minWeeks: s.minWeeks, allowShortTerm: s.allowShortTerm,
+      programTags: s.programTags ?? [],
+      courses: (s.courses ?? []).map(c => ({
+        id: c.id, name: c.name, target: c.target,
+        price4Weeks: c.price4Weeks,  // 4주 총액
+        currency: c.currency,
+      })),
+      dormitories: (s.dormitories ?? []).map(d => ({
+        id: d.id, name: d.name, target: d.target,
+        price4Weeks: d.price4Weeks,
+        currency: d.currency,
+      })),
+      surcharges: (s.surcharges ?? []).map(sc => ({
+        label: sc.label, start: sc.startDate, end: sc.endDate,
+        pricePerWeek: sc.pricePerWeek, currency: sc.currency,
+        discountAllowed: sc.discountAllowed,
+      })),
+      promotions: (s.promotions ?? []).map(p => ({
+        label: p.label, basisType: p.basisType,
+        start: p.startDate, end: p.endDate,
+        discount: `${p.discountValue}${p.discountType === 'percent' ? '%' : p.currency ?? 'KRW'}`,
+        condition: p.condition,
+      })),
+      refundPolicy: s.refundPolicy ? s.refundPolicy.slice(0, 200) : '',
+      dormitoryRules: s.dormitoryRules ? s.dormitoryRules.slice(0, 100) : '',
+      generalNotes: s.generalNotes ? s.generalNotes.slice(0, 100) : '',
     }))
 
     const apiKey = process.env.ANTHROPIC_API_KEY
@@ -171,7 +180,7 @@ export async function POST(req: NextRequest) {
     if (!res.ok) {
       const errText = await res.text()
       console.error('[quote] Anthropic error', res.status, errText)
-      return NextResponse.json({ action: 'answer', message: `AI 오류 (${res.status}): ${errText.slice(0, 200)}` }, { status: 500 })
+      return NextResponse.json({ action: 'answer', message: `AI 오류 (${res.status})` }, { status: 500 })
     }
 
     const aiData = await res.json()
@@ -184,11 +193,10 @@ export async function POST(req: NextRequest) {
     // ── 단일 견적 ──────────────────────────────────────────────────────────
     if (parsed.action === 'calculate') {
       const school = schools.find(s => s.id === parsed.schoolId)
-      if (!school) return NextResponse.json({ action: 'need_info', question: `학원을 찾을 수 없습니다. 아래 학원 중에서 선택해주세요.`, type: 'select', suggestions: schools.map(s => s.name), allowFreeText: false })
+      if (!school) return NextResponse.json({ action: 'need_info', question: '학원을 찾을 수 없습니다. 학원을 다시 선택해주세요.', type: 'select', suggestions: schools.map(s => s.name), allowFreeText: false })
 
       const calcResult = calculateQuote({
-        school,
-        weeks: Number(parsed.weeks),
+        school, weeks: Number(parsed.weeks),
         startDate: parsed.startDate as string,
         enrollmentDate: (parsed.enrollmentDate as string) || (parsed.startDate as string),
         courseId: (parsed.courseId as string) || '',
@@ -197,11 +205,12 @@ export async function POST(req: NextRequest) {
 
       return NextResponse.json({
         action: 'result',
-        message: (parsed.message ? `*${parsed.message}*\n\n` : '') + buildQuoteMessage(school, Number(parsed.weeks), parsed.startDate as string, calcResult),
+        message: buildQuoteMessage(school, Number(parsed.weeks), parsed.startDate as string, calcResult),
         evidenceMessage: buildEvidenceMessage(school, Number(parsed.weeks), parsed.startDate as string, calcResult, rate),
         localFees: calcResult.localFees,
         localFeePhp: calcResult.localFeePhp,
         localFeeKrwEstimate: calcResult.localFeeKrwEstimate,
+        weeksForFees: Number(parsed.weeks),
       })
     }
 
@@ -210,10 +219,10 @@ export async function POST(req: NextRequest) {
       type MultiItem = { label: string; schoolId: string; courseId: string; dormitoryId: string; weeks: number; startDate: string; enrollmentDate: string }
       const items = (parsed.items as MultiItem[]) ?? []
       const resultParts: string[] = []
-      let combinedLocalFees: LocalFee[] = []
-      let totalLocalFeePhp = 0
-      let totalLocalFeeKrw = 0
       const evidenceParts: string[] = []
+      let combinedLocalFees: LocalFee[] = []
+      let maxLocalFeePhp = 0
+      let maxLocalFeeKrw = 0
 
       for (const item of items) {
         const school = schools.find(s => s.id === item.schoolId)
@@ -228,8 +237,8 @@ export async function POST(req: NextRequest) {
         resultParts.push(buildQuoteMessage(school, Number(item.weeks), item.startDate, calcResult, item.label))
         evidenceParts.push(buildEvidenceMessage(school, Number(item.weeks), item.startDate, calcResult, rate))
         if (combinedLocalFees.length === 0) combinedLocalFees = calcResult.localFees
-        totalLocalFeePhp = Math.max(totalLocalFeePhp, calcResult.localFeePhp)
-        totalLocalFeeKrw = Math.max(totalLocalFeeKrw, calcResult.localFeeKrwEstimate)
+        maxLocalFeePhp = Math.max(maxLocalFeePhp, calcResult.localFeePhp)
+        maxLocalFeeKrw = Math.max(maxLocalFeeKrw, calcResult.localFeeKrwEstimate)
       }
 
       return NextResponse.json({
@@ -237,8 +246,9 @@ export async function POST(req: NextRequest) {
         message: resultParts.join('\n\n---\n\n'),
         evidenceMessage: evidenceParts.join('\n\n'),
         localFees: combinedLocalFees,
-        localFeePhp: totalLocalFeePhp,
-        localFeeKrwEstimate: totalLocalFeeKrw,
+        localFeePhp: maxLocalFeePhp,
+        localFeeKrwEstimate: maxLocalFeeKrw,
+        weeksForFees: items[0]?.weeks ?? 0,
       })
     }
 

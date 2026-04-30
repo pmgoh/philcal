@@ -6,24 +6,27 @@ export type ProgramTag =
   | '성인일반' | '가족연수' | '주니어' | 'IELTS' | 'TOEIC' | 'TOEFL'
   | '비즈니스' | '시니어' | '골프' | '워킹홀리데이' | '공무원연수'
 
-// ─── 단기가 설정 ─────────────────────────────────────────────────────────────
-// mode: 'percent' → 4주가격 대비 %, 'fixed' → 직접 금액 입력
-// 4주 가격 = pricePerWeek × 4 (별도 입력 없음)
+// ─── 단기가 (1~3주) ───────────────────────────────────────────────────────────
+// mode: 'percent' → 4주 총액 대비 %, 'fixed' → 직접 금액
 export interface ShortTermRates {
   mode: 'percent' | 'fixed'
-  week1: number   // percent 모드: 예) 40 → 4주가격의 40% / fixed 모드: 직접 금액
+  week1: number
   week2: number
   week3: number
-  week4Included: boolean  // 4주도 별도 가격으로 덮어쓸지 여부 (false면 pricePerWeek×4)
-  week4?: number          // week4Included=true일 때만 사용
+  week4Included: boolean   // 4주도 별도 가격으로 덮어쓸지
+  week4?: number
 }
+
+// price4Weeks: 4주 기준 총 금액 (주당이 아님)
+// 예: 인텐시브 4주 = 1,800,000원 → price4Weeks=1800000
+// N주 계산: price4Weeks / 4 * N
 
 // ─── 코스 ────────────────────────────────────────────────────────────────────
 export interface Course {
   id: string
   name: string
   target: string
-  pricePerWeek: number
+  price4Weeks: number       // 4주 기준 총액
   currency: Currency
   shortTermRates?: ShortTermRates
   note?: string
@@ -34,13 +37,10 @@ export interface Dormitory {
   id: string
   name: string
   target: string
-  pricePerWeek: number
+  price4Weeks: number       // 4주 기준 총액
   currency: Currency
   shortTermRates?: ShortTermRates
-  operationPeriod?: {
-    startDate: string   // "MM-DD"
-    endDate: string
-  }
+  operationPeriod?: { startDate: string; endDate: string }
   note?: string
 }
 
@@ -50,9 +50,9 @@ export interface Surcharge {
   label: string
   startDate: string
   endDate: string
-  pricePerWeek: number
+  pricePerWeek: number      // 서차지는 주당 금액 (별도)
   currency: Currency
-  discountAllowed: boolean
+  discountAllowed: boolean  // 서차지 금액에 유학원 할인 적용 가능 여부
   note?: string
 }
 
@@ -67,30 +67,26 @@ export interface Promotion {
   discountValue: number
   currency?: Currency
   condition?: string
-  surchargeCompatible: boolean
+  surchargeCompatible: boolean  // 서차지 기간에도 (학비+기숙사에) 할인 적용 가능
+  note?: string
+}
+
+// ─── 등록비 ───────────────────────────────────────────────────────────────────
+export interface RegistrationFee {
+  amount: number
+  currency: Currency
   note?: string
 }
 
 // ─── 현지납부비 ───────────────────────────────────────────────────────────────
-export type LocalFeeCondition =
-  | 'one_time'    // 1회성 (무조건 1번 납부)
-  | 'per_week'    // 주당 (amount × weeks)
-  | 'min_weeks'   // 특정 주수 이상일 때만
-  | 'optional'    // 옵션 (선택 납부, 총액 미포함)
+export type LocalFeeCondition = 'one_time' | 'per_week' | 'min_weeks' | 'optional'
 
 export interface LocalFee {
   id: string
   name: string
-  amount: number            // PHP 금액
-  condition: LocalFeeCondition
-  minWeeks?: number         // condition='min_weeks'일 때 최소 주수
-  note?: string
-}
-
-// ─── 등록비 (현지납부비와 별도, 보통 KRW) ───────────────────────────────────
-export interface RegistrationFee {
   amount: number
-  currency: Currency
+  condition: LocalFeeCondition
+  minWeeks?: number
   note?: string
 }
 
@@ -99,9 +95,9 @@ export interface Package {
   id: string
   label: string
   condition: string
-  weeks?: number          // 해당 패키지 적용 주수 (예: 4, 8, 12)
-  minWeeks?: number       // 최소 주수 조건
-  maxWeeks?: number       // 최대 주수 조건
+  weeks?: number
+  minWeeks?: number
+  maxWeeks?: number
   totalPrice: number
   currency: Currency
   includes: string
@@ -119,12 +115,12 @@ export interface School {
   programTags: ProgramTag[]
   minWeeks: number
   allowShortTerm: boolean
-  registrationFee?: RegistrationFee   // 등록비 (현지납부비 별도)
+  registrationFee?: RegistrationFee
   courses: Course[]
   dormitories: Dormitory[]
   surcharges: Surcharge[]
   promotions: Promotion[]
-  localFees: LocalFee[]               // 현지납부비 (PHP)
+  localFees: LocalFee[]
   packages: Package[]
   refundPolicy: string
   dormitoryRules: string
@@ -168,21 +164,35 @@ export interface QuoteResult {
 }
 
 // ─── 단기가 계산 헬퍼 ──────────────────────────────────────────────────────────
+// price4Weeks: 4주 총액
 export function calcShortTermPrice(
-  pricePerWeek: number,
+  price4Weeks: number,
   weeks: 1 | 2 | 3 | 4,
   rates?: ShortTermRates
 ): number {
-  const base4w = pricePerWeek * 4
-
   if (weeks === 4) {
     if (rates?.week4Included && rates.week4) return rates.week4
-    return base4w
+    return price4Weeks
   }
-
-  if (!rates) return pricePerWeek * weeks  // fallback: 주당가 × 주수
-
+  if (!rates) return Math.round(price4Weeks / 4 * weeks)  // fallback: 4주가격 / 4 * 주수
   const raw = rates[`week${weeks}` as 'week1' | 'week2' | 'week3']
-  if (rates.mode === 'percent') return Math.round(base4w * raw / 100)
+  if (rates.mode === 'percent') return Math.round(price4Weeks * raw / 100)
   return raw  // fixed
+}
+
+// ─── 사용자 권한 ──────────────────────────────────────────────────────────────
+export type UserRole = 'master' | 'admin' | 'staff'
+export type UserStatus = 'pending' | 'approved' | 'rejected'
+
+export interface AppUser {
+  uid: string
+  email: string
+  displayName: string
+  photoURL?: string
+  role: UserRole
+  status: UserStatus
+  createdAt: string
+  approvedAt?: string
+  approvedBy?: string
+  memo?: string
 }

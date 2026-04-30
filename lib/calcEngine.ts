@@ -4,10 +4,10 @@ import { toKrw } from './utils'
 
 export interface QuoteInput {
   school: School
-  weeks: number         // 반드시 Number (string 혼입 방지용 강제 변환)
+  weeks: number
   startDate: string
   enrollmentDate: string
-  courseId: string      // UUID 또는 코스명 (fallback 매칭)
+  courseId: string
   dormitoryId: string
 }
 
@@ -15,11 +15,14 @@ export interface CalcResult {
   items: QuoteItem[]
   surchargeItems: QuoteItem[]
   promotionLabel?: string
-  promotionDiscount: number
-  subtotal: number              // 코스+기숙사+서차지-프로모션
+  promotionDiscount: number       // 학비+기숙사에 적용된 할인
+  surchargeDiscount: number       // 서차지에 적용된 할인 (discountAllowed=true일 때)
+  baseKrw: number                 // 학비+기숙사 합계
+  surchargeKrw: number
+  subtotal: number                // baseKrw + surchargeKrw - promotionDiscount - surchargeDiscount
   registrationFee?: RegistrationFee
-  registrationFeeKrw: number    // 등록비 원화 환산
-  totalKrw: number              // subtotal + 등록비 (현지납부비 제외)
+  registrationFeeKrw: number
+  totalKrw: number                // subtotal + 등록비 (현지납부비 제외)
   localFees: LocalFee[]
   localFeePhp: number
   localFeeKrwEstimate: number
@@ -29,31 +32,27 @@ export interface CalcResult {
   notes: string[]
 }
 
-// ID 또는 이름으로 코스 매칭 (대소문자 무시, 부분 일치 포함)
 function findCourse(courses: Course[], key: string): Course | undefined {
-  if (!key) return courses[0]
+  if (!key) return undefined
   const lower = key.toLowerCase()
   return (
     courses.find(c => c.id === key) ??
-    courses.find(c => c.id.toLowerCase() === lower) ??
     courses.find(c => c.name.toLowerCase() === lower) ??
     courses.find(c => c.name.toLowerCase().includes(lower) || lower.includes(c.name.toLowerCase()))
   )
 }
 
 function findDorm(dorms: Dormitory[], key: string): Dormitory | undefined {
-  if (!key) return dorms[0]
+  if (!key) return undefined
   const lower = key.toLowerCase()
   return (
     dorms.find(d => d.id === key) ??
-    dorms.find(d => d.id.toLowerCase() === lower) ??
     dorms.find(d => d.name.toLowerCase() === lower) ??
     dorms.find(d => d.name.toLowerCase().includes(lower) || lower.includes(d.name.toLowerCase()))
   )
 }
 
 export function calculateQuote(input: QuoteInput, rate: ExchangeRate): CalcResult {
-  // weeks를 반드시 정수로 강제 변환 (AI가 string으로 줄 수 있음)
   const weeks = Math.max(1, Math.round(Number(input.weeks) || 1))
   const { school, startDate, enrollmentDate, courseId, dormitoryId } = input
 
@@ -72,85 +71,57 @@ export function calculateQuote(input: QuoteInput, rate: ExchangeRate): CalcResul
   const course = findCourse(courses, courseId)
   const dorm   = findDorm(dorms, dormitoryId)
 
-  if (!course && courses.length > 0) warnings.push(`코스 "${courseId}"를 찾을 수 없어 첫 번째 코스로 대체했습니다.`)
-  if (!dorm   && dorms.length > 0)   warnings.push(`기숙사 "${dormitoryId}"를 찾을 수 없어 첫 번째 기숙사로 대체했습니다.`)
-
-  const effectiveCourse = course ?? courses[0]
-  const effectiveDorm   = dorm   ?? dorms[0]
-
-  // ── 코스 가격 ─────────────────────────────────────────────────────────────
-  if (effectiveCourse) {
+  // ── 코스 가격 계산 (price4Weeks 기준) ───────────────────────────────────────
+  if (course) {
+    const p4w = course.price4Weeks
     const useShort = school.allowShortTerm && weeks <= 3
-    const use4wOverride = school.allowShortTerm && weeks === 4 && effectiveCourse.shortTermRates?.week4Included
+    const use4wOverride = school.allowShortTerm && weeks === 4 && course.shortTermRates?.week4Included
+
+    let price: number
+    let label: string
 
     if (useShort) {
-      const price = calcShortTermPrice(effectiveCourse.pricePerWeek, weeks as 1|2|3, effectiveCourse.shortTermRates)
-      items.push({
-        label: `코스: ${effectiveCourse.name} (${weeks}주 단기가)`,
-        weeks, unitPrice: price,
-        currency: effectiveCourse.currency,
-        krwAmount: toKrw(price, effectiveCourse.currency, rate),
-      })
+      price = calcShortTermPrice(p4w, weeks as 1|2|3, course.shortTermRates)
+      label = `코스: ${course.name} (${weeks}주 단기가)`
     } else if (use4wOverride) {
-      const price = effectiveCourse.shortTermRates!.week4 ?? effectiveCourse.pricePerWeek * 4
-      items.push({
-        label: `코스: ${effectiveCourse.name} (4주 특별가)`,
-        weeks, unitPrice: price,
-        currency: effectiveCourse.currency,
-        krwAmount: toKrw(price, effectiveCourse.currency, rate),
-      })
+      price = course.shortTermRates!.week4 ?? p4w
+      label = `코스: ${course.name} (4주 특별가)`
     } else {
-      // 일반: 주당가 × 주수
-      const totalPrice = effectiveCourse.pricePerWeek * weeks
-      items.push({
-        label: `코스: ${effectiveCourse.name}`,
-        weeks,
-        unitPrice: effectiveCourse.pricePerWeek,
-        currency: effectiveCourse.currency,
-        krwAmount: toKrw(totalPrice, effectiveCourse.currency, rate),
-      })
+      // 일반: 4주 가격 ÷ 4 × 주수
+      price = Math.round(p4w / 4 * weeks)
+      label = `코스: ${course.name} (${p4w.toLocaleString()}${course.currency}/4주 × ${weeks}주)`
     }
+    items.push({ label, weeks, unitPrice: Math.round(price / weeks), currency: course.currency, krwAmount: toKrw(price, course.currency, rate) })
   }
 
-  // ── 기숙사 가격 ───────────────────────────────────────────────────────────
-  if (effectiveDorm) {
+  // ── 기숙사 가격 계산 (price4Weeks 기준) ─────────────────────────────────────
+  if (dorm) {
+    const p4w = dorm.price4Weeks
     const useShort = school.allowShortTerm && weeks <= 3
-    const use4wOverride = school.allowShortTerm && weeks === 4 && effectiveDorm.shortTermRates?.week4Included
+    const use4wOverride = school.allowShortTerm && weeks === 4 && dorm.shortTermRates?.week4Included
+
+    let price: number
+    let label: string
 
     if (useShort) {
-      const price = calcShortTermPrice(effectiveDorm.pricePerWeek, weeks as 1|2|3, effectiveDorm.shortTermRates)
-      items.push({
-        label: `기숙사: ${effectiveDorm.name} (${weeks}주 단기가)`,
-        weeks, unitPrice: price,
-        currency: effectiveDorm.currency,
-        krwAmount: toKrw(price, effectiveDorm.currency, rate),
-      })
+      price = calcShortTermPrice(p4w, weeks as 1|2|3, dorm.shortTermRates)
+      label = `기숙사: ${dorm.name} (${weeks}주 단기가)`
     } else if (use4wOverride) {
-      const price = effectiveDorm.shortTermRates!.week4 ?? effectiveDorm.pricePerWeek * 4
-      items.push({
-        label: `기숙사: ${effectiveDorm.name} (4주 특별가)`,
-        weeks, unitPrice: price,
-        currency: effectiveDorm.currency,
-        krwAmount: toKrw(price, effectiveDorm.currency, rate),
-      })
+      price = dorm.shortTermRates!.week4 ?? p4w
+      label = `기숙사: ${dorm.name} (4주 특별가)`
     } else {
-      const totalPrice = effectiveDorm.pricePerWeek * weeks
-      items.push({
-        label: `기숙사: ${effectiveDorm.name}`,
-        weeks,
-        unitPrice: effectiveDorm.pricePerWeek,
-        currency: effectiveDorm.currency,
-        krwAmount: toKrw(totalPrice, effectiveDorm.currency, rate),
-      })
+      price = Math.round(p4w / 4 * weeks)
+      label = `기숙사: ${dorm.name} (${p4w.toLocaleString()}${dorm.currency}/4주 × ${weeks}주)`
     }
+    items.push({ label, weeks, unitPrice: Math.round(price / weeks), currency: dorm.currency, krwAmount: toKrw(price, dorm.currency, rate) })
   }
 
   const baseKrw = items.reduce((s, i) => s + i.krwAmount, 0)
 
   // ── 서차지 ────────────────────────────────────────────────────────────────
   let surchargeKrw = 0
-  let surchargeDiscountAllowed = true
   const endDate = addWeeks(startDate, weeks)
+  const surchargeDetails: Array<{ krw: number; discountAllowed: boolean; label: string }> = []
 
   for (const sc of (school.surcharges ?? [])) {
     if (!sc.startDate || !sc.endDate) continue
@@ -158,91 +129,83 @@ export function calculateQuote(input: QuoteInput, rate: ExchangeRate): CalcResul
     if (overlap > 0) {
       const krw = toKrw(sc.pricePerWeek * overlap, sc.currency, rate)
       surchargeItems.push({
-        label: `서차지: ${sc.label} (${overlap}주)`,
+        label: `서차지: ${sc.label} (${overlap}주 × ${sc.pricePerWeek.toLocaleString()}${sc.currency}/주)`,
         weeks: overlap, unitPrice: sc.pricePerWeek,
         currency: sc.currency, krwAmount: krw,
       })
       surchargeKrw += krw
-      if (!sc.discountAllowed) {
-        surchargeDiscountAllowed = false
-        notes.push(`ℹ️ ${sc.label}: 서차지 기간에는 유학원 할인이 적용되지 않습니다.`)
-      }
+      surchargeDetails.push({ krw, discountAllowed: sc.discountAllowed, label: sc.label })
     }
   }
 
-  const subtotalBeforePromo = baseKrw + surchargeKrw
-
-  // ── 프로모션 ──────────────────────────────────────────────────────────────
+  // ── 프로모션: 학비+기숙사에 항상 적용, 서차지엔 discountAllowed 따라 적용 ──
   let promotionLabel: string | undefined
   let promotionDiscount = 0
+  let surchargeDiscount = 0
 
   for (const promo of (school.promotions ?? [])) {
     if (!promo.startDate || !promo.endDate) continue
     const checkDate = promo.basisType === 'start_date' ? startDate : enrollmentDate
     if (!isInRange(checkDate, promo.startDate, promo.endDate)) continue
     if (promo.condition) notes.push(`ℹ️ 프로모션 조건: ${promo.condition}`)
-    if (surchargeItems.length > 0 && !promo.surchargeCompatible) {
-      notes.push(`ℹ️ ${promo.label}: 성수기 서차지 기간에는 적용 불가합니다.`)
-      continue
+
+    // 학비+기숙사 할인 (항상 적용)
+    const discountRate = promo.discountType === 'percent' ? promo.discountValue / 100 : 0
+    if (promo.discountType === 'percent') {
+      promotionDiscount = Math.round(baseKrw * discountRate)
+      // 서차지 중 할인 가능한 것에도 적용
+      for (const sd of surchargeDetails) {
+        if (sd.discountAllowed) {
+          surchargeDiscount += Math.round(sd.krw * discountRate)
+        } else {
+          notes.push(`ℹ️ ${sd.label}: 서차지 금액에는 유학원 할인이 적용되지 않습니다.`)
+        }
+      }
+    } else {
+      promotionDiscount = toKrw(promo.discountValue, promo.currency ?? 'KRW', rate)
     }
-    const base = surchargeDiscountAllowed ? subtotalBeforePromo : baseKrw
-    promotionDiscount = promo.discountType === 'percent'
-      ? Math.round(base * promo.discountValue / 100)
-      : toKrw(promo.discountValue, promo.currency ?? 'KRW', rate)
     promotionLabel = promo.label
     break
   }
 
-  const subtotal = subtotalBeforePromo - promotionDiscount
+  const subtotal = baseKrw + surchargeKrw - promotionDiscount - surchargeDiscount
 
-  // 등록비 (현지납부비와 별도)
+  // 등록비
   const regFee = school.registrationFee
   const registrationFeeKrw = regFee ? toKrw(regFee.amount, regFee.currency, rate) : 0
 
-  // 현지납부비: 조건별 계산, totalKrw에서 제외, 별도 반환
+  // 현지납부비 (조건별)
   const localFees = school.localFees ?? []
   let localFeePhp = 0
-  const localFeePhpOptional: number[] = []
-
   for (const lf of localFees) {
     const cond = lf.condition ?? 'one_time'
-    if (cond === 'optional') {
-      localFeePhpOptional.push(lf.amount)
-      continue
-    }
+    if (cond === 'optional') continue
     if (cond === 'one_time') { localFeePhp += lf.amount; continue }
     if (cond === 'per_week') { localFeePhp += lf.amount * weeks; continue }
     if (cond === 'min_weeks' && weeks >= (lf.minWeeks ?? 1)) { localFeePhp += lf.amount; continue }
   }
-
   const localFeeKrwEstimate = toKrw(localFeePhp, 'PHP', rate)
 
   return {
     items, surchargeItems,
-    promotionLabel, promotionDiscount,
+    promotionLabel, promotionDiscount, surchargeDiscount,
+    baseKrw, surchargeKrw,
     subtotal,
     registrationFee: regFee,
     registrationFeeKrw,
-    totalKrw: subtotal + registrationFeeKrw,  // 등록비 포함, 현지납부비 제외
+    totalKrw: subtotal + registrationFeeKrw,
     localFees, localFeePhp, localFeeKrwEstimate,
-    courseUsed: effectiveCourse,
-    dormUsed: effectiveDorm,
+    courseUsed: course, dormUsed: dorm,
     warnings, notes,
   }
 }
 
 function addWeeks(d: string, w: number): string {
-  const dt = new Date(d)
-  dt.setDate(dt.getDate() + Math.round(w) * 7)
-  return dt.toISOString().split('T')[0]
+  const dt = new Date(d); dt.setDate(dt.getDate() + Math.round(w) * 7); return dt.toISOString().split('T')[0]
 }
-
 function getOverlapWeeks(s1: string, e1: string, s2: string, e2: string): number {
   const s = Math.max(new Date(s1).getTime(), new Date(s2).getTime())
   const e = Math.min(new Date(e1).getTime(), new Date(e2).getTime())
   return e <= s ? 0 : Math.ceil((e - s) / 604800000)
 }
-
-function isInRange(d: string, s: string, e: string): boolean {
-  return d >= s && d <= e
-}
+function isInRange(d: string, s: string, e: string): boolean { return d >= s && d <= e }
