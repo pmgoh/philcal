@@ -78,16 +78,16 @@ export function calculateQuote(input: QuoteInput, rate: ExchangeRate): CalcResul
       ?? 0
     const p4w = rawPrice
     const useShort = school.allowShortTerm && weeks <= 3
-    const use4wOverride = school.allowShortTerm && weeks === 4 && course.shortTermRates?.week4Included
+    const use4wOverride = school.allowShortTerm && weeks === 4 && school.courseShortTermRates?.week4Included
 
     let price: number
     let label: string
 
     if (useShort) {
-      price = calcShortTermPrice(p4w, weeks as 1|2|3, course.shortTermRates)
+      price = calcShortTermPrice(p4w, weeks as 1|2|3, school.courseShortTermRates)
       label = `코스: ${course.name} (${weeks}주 단기가)`
     } else if (use4wOverride) {
-      price = course.shortTermRates!.week4 ?? p4w
+      price = school.courseShortTermRates?.week4 ?? p4w
       label = `코스: ${course.name} (4주 특별가)`
     } else {
       // 일반: 4주 가격 ÷ 4 × 주수
@@ -104,16 +104,16 @@ export function calculateQuote(input: QuoteInput, rate: ExchangeRate): CalcResul
       ?? 0
     const p4w = rawPrice
     const useShort = school.allowShortTerm && weeks <= 3
-    const use4wOverride = school.allowShortTerm && weeks === 4 && dorm.shortTermRates?.week4Included
+    const use4wOverride = school.allowShortTerm && weeks === 4 && school.dormShortTermRates?.week4Included
 
     let price: number
     let label: string
 
     if (useShort) {
-      price = calcShortTermPrice(p4w, weeks as 1|2|3, dorm.shortTermRates)
+      price = calcShortTermPrice(p4w, weeks as 1|2|3, school.dormShortTermRates)
       label = `기숙사: ${dorm.name} (${weeks}주 단기가)`
     } else if (use4wOverride) {
-      price = dorm.shortTermRates!.week4 ?? p4w
+      price = school.dormShortTermRates?.week4 ?? p4w
       label = `기숙사: ${dorm.name} (4주 특별가)`
     } else {
       price = Math.round(p4w / 4 * weeks)

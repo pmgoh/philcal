@@ -25,6 +25,8 @@ const CURRENCIES: Currency[] = ['KRW', 'PHP', 'USD']
 const EMPTY_SCHOOL: Omit<School, 'id' | 'createdAt' | 'updatedAt'> = {
   name: '', region: '세부', schoolType: 'general', programTags: [],
   minWeeks: 4, allowShortTerm: false,
+  courseShortTermRates: undefined,
+  dormShortTermRates: undefined,
   registrationFee: undefined,
   courses: [], dormitories: [],
   surcharges: [], promotions: [], localFees: [], packages: [],
@@ -188,6 +190,29 @@ export default function SchoolForm({ schoolId }: Props) {
                     </select>
                   </div>
                 </div>
+                {/* 단기가 설정 — 4주 미만 등록 가능일 때만 표시 */}
+                {school.allowShortTerm && (
+                  <div className="grid grid-cols-2 gap-4 pt-2 border-t border-gray-100">
+                    <div>
+                      <p className="text-sm font-medium text-gray-700 mb-2">코스 단기가 설정 <span className="text-xs text-gray-400">(전체 코스 공통 적용)</span></p>
+                      <ShortTermRatesEditor
+                        price4Weeks={school.courses[0]?.price4Weeks ?? 0}
+                        rates={school.courseShortTermRates}
+                        onChange={r => update('courseShortTermRates', r)}
+                        label="코스"
+                      />
+                    </div>
+                    <div>
+                      <p className="text-sm font-medium text-gray-700 mb-2">기숙사 단기가 설정 <span className="text-xs text-gray-400">(전체 기숙사 공통 적용)</span></p>
+                      <ShortTermRatesEditor
+                        price4Weeks={school.dormitories[0]?.price4Weeks ?? 0}
+                        rates={school.dormShortTermRates}
+                        onChange={r => update('dormShortTermRates', r)}
+                        label="기숙사"
+                      />
+                    </div>
+                  </div>
+                )}
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">지원 프로그램</label>
                   <div className="flex flex-wrap gap-2">
@@ -234,7 +259,6 @@ export default function SchoolForm({ schoolId }: Props) {
                 {school.courses.map((course, i) => (
                   <CourseRow
                     key={course.id} course={course}
-                    allowShortTerm={school.allowShortTerm}
                     onChange={c => update('courses', school.courses.map((x, j) => j === i ? c : x))}
                     onDelete={() => update('courses', school.courses.filter((_, j) => j !== i))}
                   />
@@ -257,7 +281,6 @@ export default function SchoolForm({ schoolId }: Props) {
                 {school.dormitories.map((dorm, i) => (
                   <DormRow
                     key={dorm.id} dorm={dorm}
-                    allowShortTerm={school.allowShortTerm}
                     onChange={d => update('dormitories', school.dormitories.map((x, j) => j === i ? d : x))}
                     onDelete={() => update('dormitories', school.dormitories.filter((_, j) => j !== i))}
                   />
@@ -392,10 +415,11 @@ export default function SchoolForm({ schoolId }: Props) {
 }
 
 // ── 단기가 설정 서브컴포넌트 ──────────────────────────────────────────────────
-function ShortTermRatesEditor({ price4Weeks, rates, onChange }: {
+function ShortTermRatesEditor({ price4Weeks, rates, onChange, label = '' }: {
   price4Weeks: number
   rates?: ShortTermRates
   onChange: (r: ShortTermRates | undefined) => void
+  label?: string
 }) {
   const enabled = !!rates
   const r = rates ?? { mode: 'percent', week1: 40, week2: 65, week3: 80, week4Included: false }
@@ -481,8 +505,8 @@ function ShortTermRatesEditor({ price4Weeks, rates, onChange }: {
 }
 
 // ── CourseRow ──────────────────────────────────────────────────────────────────
-function CourseRow({ course, allowShortTerm, onChange, onDelete }: {
-  course: Course; allowShortTerm: boolean
+function CourseRow({ course, onChange, onDelete }: {
+  course: Course
   onChange: (c: Course) => void; onDelete: () => void
 }) {
   return (
@@ -522,20 +546,14 @@ function CourseRow({ course, allowShortTerm, onChange, onDelete }: {
           </button>
         </div>
       </div>
-      {allowShortTerm && (
-        <ShortTermRatesEditor
-          price4Weeks={course.price4Weeks}
-          rates={course.shortTermRates}
-          onChange={r => onChange({ ...course, shortTermRates: r })}
-        />
-      )}
+
     </div>
   )
 }
 
 // ── DormRow ────────────────────────────────────────────────────────────────────
-function DormRow({ dorm, allowShortTerm, onChange, onDelete }: {
-  dorm: Dormitory; allowShortTerm: boolean
+function DormRow({ dorm, onChange, onDelete }: {
+  dorm: Dormitory
   onChange: (d: Dormitory) => void; onDelete: () => void
 }) {
   return (
@@ -584,13 +602,7 @@ function DormRow({ dorm, allowShortTerm, onChange, onDelete }: {
             className="input-field text-sm" placeholder="08-31" />
         </div>
       </div>
-      {allowShortTerm && (
-        <ShortTermRatesEditor
-          price4Weeks={dorm.price4Weeks}
-          rates={dorm.shortTermRates}
-          onChange={r => onChange({ ...dorm, shortTermRates: r })}
-        />
-      )}
+
     </div>
   )
 }

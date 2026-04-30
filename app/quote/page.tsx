@@ -15,6 +15,7 @@ interface AssistantResultMessage extends BaseMessage {
   role: 'assistant'
   type: 'result'
   evidenceMessage?: string
+  regulationWarning?: string
   localFees?: LocalFee[]
   localFeePhp?: number
   localFeeKrwEstimate?: number
@@ -258,6 +259,7 @@ export default function QuotePage() {
           role: 'assistant', type: 'result',
           content: data.message,
           evidenceMessage: data.evidenceMessage,
+          regulationWarning: data.regulationWarning,
           localFees: data.localFees ?? [],
           localFeePhp: data.localFeePhp ?? 0,
           localFeeKrwEstimate: data.localFeeKrwEstimate ?? 0,
@@ -355,6 +357,13 @@ export default function QuotePage() {
                     return (
                       <div className="bg-white border border-blue-100 rounded-2xl rounded-tl-sm px-4 py-3 shadow-sm">
                         <MarkdownText text={m.content} />
+                        {/* 규정 검토 결과 */}
+                        {m.regulationWarning && (
+                          <div className="mt-3 bg-amber-50 border border-amber-200 rounded-xl px-4 py-3">
+                            <p className="text-xs font-semibold text-amber-700 mb-1.5">📋 규정 검토 결과</p>
+                            <div className="text-sm text-amber-800 whitespace-pre-line leading-relaxed">{m.regulationWarning}</div>
+                          </div>
+                        )}
                         {m.localFees && m.localFees.length > 0 && (
                           <LocalFeePanel
                             fees={m.localFees}

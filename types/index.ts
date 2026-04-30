@@ -26,9 +26,8 @@ export interface Course {
   id: string
   name: string
   target: string
-  price4Weeks: number       // 4주 기준 총액
+  price4Weeks: number
   currency: Currency
-  shortTermRates?: ShortTermRates
   note?: string
 }
 
@@ -37,9 +36,8 @@ export interface Dormitory {
   id: string
   name: string
   target: string
-  price4Weeks: number       // 4주 기준 총액
+  price4Weeks: number
   currency: Currency
-  shortTermRates?: ShortTermRates
   operationPeriod?: { startDate: string; endDate: string }
   note?: string
 }
@@ -115,6 +113,8 @@ export interface School {
   programTags: ProgramTag[]
   minWeeks: number
   allowShortTerm: boolean
+  courseShortTermRates?: ShortTermRates   // 전체 코스에 적용
+  dormShortTermRates?: ShortTermRates     // 전체 기숙사에 적용
   registrationFee?: RegistrationFee
   courses: Course[]
   dormitories: Dormitory[]
