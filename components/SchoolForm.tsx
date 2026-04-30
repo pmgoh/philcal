@@ -474,8 +474,6 @@ function ShortTermRatesEditor({ price4Weeks, rates, onChange, label = '' }: {
   const enabled = !!rates
   const r = rates ?? { mode: 'percent', week1: 40, week2: 65, week3: 80, week4Included: false }
 
-  const base4w = price4Weeks
-
   const toggle = () => onChange(enabled ? undefined : r)
   const set = (patch: Partial<ShortTermRates>) => onChange({ ...r, ...patch })
 
@@ -485,7 +483,7 @@ function ShortTermRatesEditor({ price4Weeks, rates, onChange, label = '' }: {
         <button type="button" onClick={toggle}
           className={`flex items-center gap-1.5 text-xs px-2.5 py-1 rounded-full border transition-colors ${enabled ? 'bg-indigo-50 text-indigo-700 border-indigo-200' : 'bg-gray-50 text-gray-400 border-gray-200 hover:border-gray-300'}`}>
           <Settings2 size={11} />
-          단기가 설정 {enabled ? '켜짐' : '꺼짐'}
+          {label} 단기가 설정 {enabled ? '켜짐' : '꺼짐'}
         </button>
         {enabled && (
           <div className="flex gap-1">
@@ -495,59 +493,60 @@ function ShortTermRatesEditor({ price4Weeks, rates, onChange, label = '' }: {
             </button>
             <button type="button" onClick={() => set({ mode: 'fixed' })}
               className={`text-xs px-2 py-0.5 rounded border transition-colors ${r.mode === 'fixed' ? 'bg-indigo-600 text-white border-indigo-600' : 'bg-white text-gray-500 border-gray-300'}`}>
-              직접 입력
+              주당 고정금액
             </button>
           </div>
         )}
       </div>
 
       {enabled && (
-        <div className="grid grid-cols-4 gap-2">
+        <div className="space-y-2">
+          {r.mode === 'percent' && (
+            <p className="text-xs text-gray-400">각 코스·기숙사 4주 가격의 몇 %를 받을지 입력하세요.</p>
+          )}
+          {r.mode === 'fixed' && (
+            <p className="text-xs text-gray-400">주당 고정금액 입력 시 모든 코스·기숙사에 동일 금액이 적용됩니다.</p>
+          )}
+          <div className="grid grid-cols-4 gap-2">
           {([1, 2, 3, 4] as const).map(w => {
             const isWeek4 = w === 4
             const fieldKey = `week${w}` as 'week1' | 'week2' | 'week3' | 'week4'
-            const val = isWeek4 ? (r.week4 ?? base4w) : r[fieldKey as 'week1' | 'week2' | 'week3']
-            const preview = isWeek4
-              ? (r.week4Included ? r.week4 ?? base4w : base4w)
-              : calcShortTermPrice(price4Weeks, w as 1|2|3, r)
+            const val = isWeek4 ? (r.week4 ?? 0) : r[fieldKey as 'week1' | 'week2' | 'week3']
 
             return (
-              <div key={w} className={`rounded-lg p-2 ${isWeek4 && !r.week4Included ? 'bg-gray-50 opacity-60' : 'bg-indigo-50'}`}>
+              <div key={w} className={`rounded-lg p-2 ${isWeek4 && !r.week4Included ? 'bg-gray-50 opacity-50' : 'bg-indigo-50'}`}>
                 <div className="flex items-center justify-between mb-1">
                   <span className="text-xs font-medium text-gray-600">{w}주</span>
                   {isWeek4 && (
                     <input type="checkbox" checked={r.week4Included}
                       onChange={e => set({ week4Included: e.target.checked })}
-                      className="w-3 h-3 accent-indigo-600" title="4주도 별도 입력" />
+                      className="w-3 h-3 accent-indigo-600" title="4주도 별도 설정" />
                   )}
                 </div>
                 {(!isWeek4 || r.week4Included) ? (
-                  <input
-                    type="number"
-                    value={isWeek4 ? (r.week4 ?? base4w) : val}
-                    onChange={e => {
-                      const n = Number(e.target.value)
-                      if (isWeek4) set({ week4: n })
-                      else set({ [fieldKey]: n } as Partial<ShortTermRates>)
-                    }}
-                    className="w-full text-xs border border-indigo-200 rounded px-1.5 py-1 bg-white"
-                    placeholder={r.mode === 'percent' ? '예: 40' : '금액'}
-                  />
-                ) : (
-                  <div className="text-xs text-gray-400 py-1">자동 ({(price4Weeks * 4).toLocaleString()})</div>
-                )}
-                {price4Weeks > 0 && preview > 0 && (
-                  <div className="text-xs text-indigo-600 mt-0.5 font-medium">
-                    {r.mode === 'percent' && !isWeek4 ? `→ ${preview.toLocaleString()}` : ''}
-                    {(isWeek4 && r.week4Included) || r.mode === 'fixed' ? `${preview.toLocaleString()}` : ''}
+                  <div>
+                    <input
+                      type="number"
+                      value={val}
+                      onChange={e => {
+                        const n = Number(e.target.value)
+                        if (isWeek4) set({ week4: n })
+                        else set({ [fieldKey]: n } as Partial<ShortTermRates>)
+                      }}
+                      className="w-full text-xs border border-indigo-200 rounded px-1.5 py-1 bg-white text-right"
+                      placeholder="0"
+                    />
+                    <p className="text-xs text-indigo-500 text-right mt-0.5">
+                      {r.mode === 'percent' ? `${val}%` : `${(val as number).toLocaleString()}원/주`}
+                    </p>
                   </div>
-                )}
-                {r.mode === 'percent' && !isWeek4 && (
-                  <div className="text-xs text-gray-400">{val}%</div>
+                ) : (
+                  <div className="text-xs text-gray-400 py-1 text-center">4주가격 그대로</div>
                 )}
               </div>
             )
           })}
+          </div>
         </div>
       )}
     </div>
