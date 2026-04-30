@@ -66,7 +66,7 @@ export async function updateUserStatus(uid: string, status: UserStatus, approved
   await updateDoc(doc(db, 'users', uid), {
     status,
     approvedAt: new Date().toISOString(),
-    approvedBy,
+    approvedBy: approvedBy || 'unknown',
   })
 }
 

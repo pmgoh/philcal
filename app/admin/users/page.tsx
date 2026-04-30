@@ -49,12 +49,14 @@ export default function UsersPage() {
   }, [router])
 
   const approve = async (uid: string) => {
-    await updateUserStatus(uid, 'approved', currentUser!.uid)
+    const by = currentUser?.uid ?? currentUser?.email ?? 'master'
+    await updateUserStatus(uid, 'approved', by)
     setUsers(prev => prev.map(u => u.uid === uid ? { ...u, status: 'approved' as UserStatus } : u))
   }
 
   const reject = async (uid: string) => {
-    await updateUserStatus(uid, 'rejected', currentUser!.uid)
+    const by = currentUser?.uid ?? currentUser?.email ?? 'master'
+    await updateUserStatus(uid, 'rejected', by)
     setUsers(prev => prev.map(u => u.uid === uid ? { ...u, status: 'rejected' as UserStatus } : u))
   }
 
