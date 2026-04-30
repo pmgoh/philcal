@@ -6,27 +6,39 @@ const MASTER_EMAIL = process.env.NEXT_PUBLIC_MASTER_EMAIL ?? 'pmgoh.works@gmail.
 
 export async function getOrCreateUser(uid: string, email: string, displayName: string, photoURL?: string): Promise<AppUser> {
   const ref = doc(db, 'users', uid)
-  const snap = await getDoc(ref)
   const isMaster = email === MASTER_EMAIL
 
-  if (snap.exists()) {
-    const existing = snap.data() as AppUser
-    // 마스터 계정인데 pending이면 자동 복구
-    if (isMaster && existing.status !== 'approved') {
-      await updateDoc(ref, { role: 'master', status: 'approved', approvedAt: new Date().toISOString() })
-      return { ...existing, role: 'master', status: 'approved' }
-    }
-    return existing
-  }
+  try {
+    const snap = await getDoc(ref)
 
-  const user: AppUser = {
-    uid, email, displayName, photoURL: photoURL ?? '',
-    role: isMaster ? 'master' : 'staff',
-    status: isMaster ? 'approved' : 'pending',
-    createdAt: new Date().toISOString(),
+    if (snap.exists()) {
+      const existing = snap.data() as AppUser
+      if (isMaster && existing.status !== 'approved') {
+        await updateDoc(ref, { role: 'master', status: 'approved', approvedAt: new Date().toISOString() })
+        return { ...existing, role: 'master', status: 'approved' }
+      }
+      return existing
+    }
+
+    const user: AppUser = {
+      uid, email, displayName, photoURL: photoURL ?? '',
+      role: isMaster ? 'master' : 'staff',
+      status: isMaster ? 'approved' : 'pending',
+      createdAt: new Date().toISOString(),
+    }
+    await setDoc(ref, user)
+    console.log('[getOrCreateUser] created:', email, user.status)
+    return user
+  } catch (e) {
+    console.error('[getOrCreateUser] failed for', email, e)
+    // 실패해도 pending 상태 객체 반환 (UI는 보여주되 DB 저장 실패)
+    return {
+      uid, email, displayName, photoURL: photoURL ?? '',
+      role: isMaster ? 'master' : 'staff',
+      status: 'pending',
+      createdAt: new Date().toISOString(),
+    }
   }
-  await setDoc(ref, user)
-  return user
 }
 
 export async function getCurrentUser(uid: string): Promise<AppUser | null> {
