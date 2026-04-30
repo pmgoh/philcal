@@ -105,11 +105,15 @@ function buildEvidenceMessage(school: School, weeks: number, startDate: string, 
   const lines: string[] = ['**📎 계산 근거**']
   if (calcResult.courseUsed) {
     const c = calcResult.courseUsed
-    lines.push(`- 코스: ${c.name} — 4주 기준 ${c.price4Weeks.toLocaleString()}${c.currency} → ${weeks}주 = ${formatKrw(calcResult.items.find(i => i.label.includes('코스'))?.krwAmount ?? 0)}`)
+    const p4w = (c as unknown as Record<string,number>).price4Weeks ?? (c as unknown as Record<string,number>).pricePerWeek ?? 0
+    const krw = calcResult.items.find(i => i.label.includes('코스'))?.krwAmount ?? 0
+    lines.push(`- 코스: ${c.name} — 4주 기준 ${p4w.toLocaleString()}${c.currency} → ${weeks}주 = ${formatKrw(krw)}`)
   }
   if (calcResult.dormUsed) {
     const d = calcResult.dormUsed
-    lines.push(`- 기숙사: ${d.name} — 4주 기준 ${d.price4Weeks.toLocaleString()}${d.currency} → ${weeks}주 = ${formatKrw(calcResult.items.find(i => i.label.includes('기숙사'))?.krwAmount ?? 0)}`)
+    const p4w = (d as unknown as Record<string,number>).price4Weeks ?? (d as unknown as Record<string,number>).pricePerWeek ?? 0
+    const krw = calcResult.items.find(i => i.label.includes('기숙사'))?.krwAmount ?? 0
+    lines.push(`- 기숙사: ${d.name} — 4주 기준 ${p4w.toLocaleString()}${d.currency} → ${weeks}주 = ${formatKrw(krw)}`)
   }
   if (calcResult.surchargeItems.length > 0) {
     for (const sc of calcResult.surchargeItems) lines.push(`- ${sc.label}`)
@@ -121,7 +125,7 @@ function buildEvidenceMessage(school: School, weeks: number, startDate: string, 
   }
   if (calcResult.registrationFee) {
     const rf = calcResult.registrationFee
-    lines.push(`- 등록비: ${rf.amount.toLocaleString()}${rf.currency}`)
+    lines.push(`- 등록비: ${(rf.amount ?? 0).toLocaleString()}${rf.currency}`)
   }
   lines.push(`- 적용 환율: ₱1=${rate.phpToKrw}원 / $1=${rate.usdToKrw}원`)
   return lines.join('\n')
@@ -139,12 +143,12 @@ export async function POST(req: NextRequest) {
       programTags: s.programTags ?? [],
       courses: (s.courses ?? []).map(c => ({
         id: c.id, name: c.name, target: c.target,
-        price4Weeks: c.price4Weeks,  // 4주 총액
+        price4Weeks: (c as unknown as Record<string,number>).price4Weeks ?? (c as unknown as Record<string,number>).pricePerWeek ?? 0,
         currency: c.currency,
       })),
       dormitories: (s.dormitories ?? []).map(d => ({
         id: d.id, name: d.name, target: d.target,
-        price4Weeks: d.price4Weeks,
+        price4Weeks: (d as unknown as Record<string,number>).price4Weeks ?? (d as unknown as Record<string,number>).pricePerWeek ?? 0,
         currency: d.currency,
       })),
       surcharges: (s.surcharges ?? []).map(sc => ({

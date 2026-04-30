@@ -71,9 +71,12 @@ export function calculateQuote(input: QuoteInput, rate: ExchangeRate): CalcResul
   const course = findCourse(courses, courseId)
   const dorm   = findDorm(dorms, dormitoryId)
 
-  // ── 코스 가격 계산 (price4Weeks 기준) ───────────────────────────────────────
+  // ── 코스 가격 계산 (price4Weeks 기준, 구 데이터 pricePerWeek 호환) ──────────
   if (course) {
-    const p4w = course.price4Weeks
+    const rawPrice = (course as unknown as Record<string,number>).price4Weeks
+      ?? (course as unknown as Record<string,number>).pricePerWeek
+      ?? 0
+    const p4w = rawPrice
     const useShort = school.allowShortTerm && weeks <= 3
     const use4wOverride = school.allowShortTerm && weeks === 4 && course.shortTermRates?.week4Included
 
@@ -94,9 +97,12 @@ export function calculateQuote(input: QuoteInput, rate: ExchangeRate): CalcResul
     items.push({ label, weeks, unitPrice: Math.round(price / weeks), currency: course.currency, krwAmount: toKrw(price, course.currency, rate) })
   }
 
-  // ── 기숙사 가격 계산 (price4Weeks 기준) ─────────────────────────────────────
+  // ── 기숙사 가격 계산 (price4Weeks 기준, 구 데이터 pricePerWeek 호환) ─────────
   if (dorm) {
-    const p4w = dorm.price4Weeks
+    const rawPrice = (dorm as unknown as Record<string,number>).price4Weeks
+      ?? (dorm as unknown as Record<string,number>).pricePerWeek
+      ?? 0
+    const p4w = rawPrice
     const useShort = school.allowShortTerm && weeks <= 3
     const use4wOverride = school.allowShortTerm && weeks === 4 && dorm.shortTermRates?.week4Included
 
