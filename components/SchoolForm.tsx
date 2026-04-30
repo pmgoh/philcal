@@ -266,17 +266,20 @@ export default function SchoolForm({ schoolId }: Props) {
                     if (!school.priceIncrease) return
                     if (!confirm('코스·기숙사 기본가에 인상분을 반영하고 인상 설정을 초기화할까요?')) return
                     const pi = school.priceIncrease
-                    const rate = { phpToKrw: 25, usdToKrw: 1380 }
-                    const add = pi.currency === 'KRW' ? pi.courseAdd : pi.courseAdd * (pi.currency === 'USD' ? rate.usdToKrw : rate.phpToKrw)
-                    const dAdd = pi.currency === 'KRW' ? pi.dormAdd : pi.dormAdd * (pi.currency === 'USD' ? rate.usdToKrw : rate.phpToKrw)
-                    update('courses', school.courses.map(c => ({
-                      ...c,
-                      price4Weeks: ((c as unknown as Record<string,number>).price4Weeks ?? 0) + add * 4,
-                    })))
-                    update('dormitories', school.dormitories.map(d => ({
-                      ...d,
-                      price4Weeks: ((d as unknown as Record<string,number>).price4Weeks ?? 0) + dAdd * 4,
-                    })))
+                    const toKrwSimple = (a: number, cur: string) =>
+                      cur === 'USD' ? a * 1380 : cur === 'PHP' ? a * 25 : a
+                    update('courses', school.courses.map(c => {
+                      const item = pi.courses.find(x => x.id === c.id)
+                      if (!item || item.add === 0) return c
+                      const base = (c as unknown as Record<string,number>).price4Weeks ?? 0
+                      return { ...c, price4Weeks: base + toKrwSimple(item.add, pi.currency) * 4 }
+                    }))
+                    update('dormitories', school.dormitories.map(d => {
+                      const item = pi.dormitories.find(x => x.id === d.id)
+                      if (!item || item.add === 0) return d
+                      const base = (d as unknown as Record<string,number>).price4Weeks ?? 0
+                      return { ...d, price4Weeks: base + toKrwSimple(item.add, pi.currency) * 4 }
+                    }))
                     update('priceIncrease', undefined)
                   }}
                 />
@@ -942,20 +945,49 @@ function PriceIncreaseEditor({ pi, courses, dormitories, onChange, onApply }: {
   const enabled = !!pi
   const today = new Date().toISOString().split('T')[0]
   const isActive = pi && pi.fromDate <= today
-  const p = pi ?? { fromDate: '', courseAdd: 0, dormAdd: 0, currency: 'KRW' as Currency, label: '' }
 
-  // 대표 코스/기숙사 현재가 (미리보기용)
-  const firstCourse = courses[0]
-  const firstDorm = dormitories[0]
-  const cBase = firstCourse ? ((firstCourse as unknown as Record<string,number>).price4Weeks ?? 0) : 0
-  const dBase = firstDorm ? ((firstDorm as unknown as Record<string,number>).price4Weeks ?? 0) : 0
+  // 체크박스 켜면 기존 코스/기숙사 목록으로 초기화
+  const initPI = (): PriceIncrease => ({
+    fromDate: '',
+    label: '',
+    currency: 'KRW' as Currency,
+    courses: courses.map(c => ({ id: c.id, name: c.name, add: 0 })),
+    dormitories: dormitories.map(d => ({ id: d.id, name: d.name, add: 0 })),
+  })
+
+  // 기존 pi에 없는 코스/기숙사가 추가됐을 때 동기화
+  const syncedPI = (): PriceIncrease => {
+    if (!pi) return initPI()
+    const syncedCourses = courses.map(c => ({
+      id: c.id, name: c.name,
+      add: pi.courses.find(x => x.id === c.id)?.add ?? 0,
+    }))
+    const syncedDorms = dormitories.map(d => ({
+      id: d.id, name: d.name,
+      add: pi.dormitories.find(x => x.id === d.id)?.add ?? 0,
+    }))
+    return { ...pi, courses: syncedCourses, dormitories: syncedDorms }
+  }
+
+  const p = syncedPI()
+
+  const setAdd = (type: 'courses' | 'dormitories', id: string, add: number) => {
+    onChange({
+      ...p,
+      [type]: p[type].map(x => x.id === id ? { ...x, add } : x),
+    })
+  }
+
+  const getBase4w = (item: Course | Dormitory) =>
+    (item as unknown as Record<string,number>).price4Weeks
+    ?? (item as unknown as Record<string,number>).pricePerWeek ?? 0
 
   return (
     <div>
       <div className="flex items-center gap-3 mb-3">
         <label className="text-sm font-medium text-gray-700">비용 인상 예정 있음</label>
         <input type="checkbox" checked={enabled}
-          onChange={e => onChange(e.target.checked ? p : undefined)}
+          onChange={e => onChange(e.target.checked ? initPI() : undefined)}
           className="w-4 h-4 accent-blue-600" />
         {isActive && (
           <span className="text-xs px-2 py-0.5 bg-orange-100 text-orange-700 rounded-full font-medium animate-pulse">
@@ -970,21 +1002,22 @@ function PriceIncreaseEditor({ pi, courses, dormitories, onChange, onApply }: {
       </div>
 
       {enabled && (
-        <div className="space-y-3 bg-orange-50 border border-orange-200 rounded-xl p-4">
-          <div className="grid grid-cols-12 gap-2 items-end">
-            <div className="col-span-3">
+        <div className="space-y-4 bg-orange-50 border border-orange-200 rounded-xl p-4">
+          {/* 기본 설정 */}
+          <div className="grid grid-cols-3 gap-3">
+            <div>
               <label className="block text-xs text-gray-600 mb-1">인상 적용일</label>
               <input type="date" value={p.fromDate}
                 onChange={e => onChange({ ...p, fromDate: e.target.value })}
                 className="input-field text-sm" />
             </div>
-            <div className="col-span-3">
+            <div>
               <label className="block text-xs text-gray-600 mb-1">구분명</label>
               <input value={p.label ?? ''} onChange={e => onChange({ ...p, label: e.target.value })}
                 className="input-field text-sm" placeholder="2026 하반기 인상" />
             </div>
-            <div className="col-span-2">
-              <label className="block text-xs text-gray-600 mb-1">통화</label>
+            <div>
+              <label className="block text-xs text-gray-600 mb-1">인상액 통화</label>
               <select value={p.currency} onChange={e => onChange({ ...p, currency: e.target.value as Currency })}
                 className="input-field text-sm">
                 {CURRENCIES.map(c => <option key={c}>{c}</option>)}
@@ -992,35 +1025,78 @@ function PriceIncreaseEditor({ pi, courses, dormitories, onChange, onApply }: {
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-3">
-            <div className="bg-white rounded-lg p-3 border border-orange-100">
-              <label className="block text-xs text-gray-600 mb-1">코스 인상 (주당 추가금액)</label>
-              <input type="number" value={p.courseAdd}
-                onChange={e => onChange({ ...p, courseAdd: Number(e.target.value) })}
-                className="input-field text-sm" placeholder="0" />
-              {cBase > 0 && p.courseAdd > 0 && (
-                <p className="text-xs text-orange-600 mt-1">
-                  예: {firstCourse?.name} 4주 기준 {cBase.toLocaleString()} → {(cBase + p.courseAdd * 4).toLocaleString()}{p.currency}
-                </p>
-              )}
+          {/* 코스별 인상 */}
+          {p.courses.length > 0 && (
+            <div>
+              <p className="text-xs font-semibold text-gray-600 mb-2">코스별 인상 (주당 추가금액)</p>
+              <div className="space-y-1.5">
+                {p.courses.map(item => {
+                  const course = courses.find(c => c.id === item.id)
+                  const base = course ? getBase4w(course) : 0
+                  return (
+                    <div key={item.id} className="flex items-center gap-3 bg-white rounded-lg px-3 py-2 border border-orange-100">
+                      <span className="text-sm text-gray-700 flex-1 min-w-0 truncate">{item.name}</span>
+                      <span className="text-xs text-gray-400 w-36 text-right flex-shrink-0">
+                        4주 {base.toLocaleString()}{course?.currency}
+                      </span>
+                      <div className="flex items-center gap-1 flex-shrink-0">
+                        <span className="text-xs text-orange-500">+</span>
+                        <input type="number" value={item.add} min={0}
+                          onChange={e => setAdd('courses', item.id, Number(e.target.value))}
+                          className="w-24 border border-orange-200 rounded px-2 py-1 text-sm text-right bg-white focus:ring-1 focus:ring-orange-300 outline-none"
+                          placeholder="0" />
+                        <span className="text-xs text-gray-500">{p.currency}/주</span>
+                      </div>
+                      {item.add > 0 && (
+                        <span className="text-xs text-orange-600 flex-shrink-0 w-28 text-right">
+                          → 4주 {(base + item.add * 4).toLocaleString()}
+                        </span>
+                      )}
+                    </div>
+                  )
+                })}
+              </div>
             </div>
-            <div className="bg-white rounded-lg p-3 border border-orange-100">
-              <label className="block text-xs text-gray-600 mb-1">기숙사 인상 (주당 추가금액)</label>
-              <input type="number" value={p.dormAdd}
-                onChange={e => onChange({ ...p, dormAdd: Number(e.target.value) })}
-                className="input-field text-sm" placeholder="0" />
-              {dBase > 0 && p.dormAdd > 0 && (
-                <p className="text-xs text-orange-600 mt-1">
-                  예: {firstDorm?.name} 4주 기준 {dBase.toLocaleString()} → {(dBase + p.dormAdd * 4).toLocaleString()}{p.currency}
-                </p>
-              )}
+          )}
+
+          {/* 기숙사별 인상 */}
+          {p.dormitories.length > 0 && (
+            <div>
+              <p className="text-xs font-semibold text-gray-600 mb-2">기숙사별 인상 (주당 추가금액)</p>
+              <div className="space-y-1.5">
+                {p.dormitories.map(item => {
+                  const dorm = dormitories.find(d => d.id === item.id)
+                  const base = dorm ? getBase4w(dorm) : 0
+                  return (
+                    <div key={item.id} className="flex items-center gap-3 bg-white rounded-lg px-3 py-2 border border-orange-100">
+                      <span className="text-sm text-gray-700 flex-1 min-w-0 truncate">{item.name}</span>
+                      <span className="text-xs text-gray-400 w-36 text-right flex-shrink-0">
+                        4주 {base.toLocaleString()}{dorm?.currency}
+                      </span>
+                      <div className="flex items-center gap-1 flex-shrink-0">
+                        <span className="text-xs text-orange-500">+</span>
+                        <input type="number" value={item.add} min={0}
+                          onChange={e => setAdd('dormitories', item.id, Number(e.target.value))}
+                          className="w-24 border border-orange-200 rounded px-2 py-1 text-sm text-right bg-white focus:ring-1 focus:ring-orange-300 outline-none"
+                          placeholder="0" />
+                        <span className="text-xs text-gray-500">{p.currency}/주</span>
+                      </div>
+                      {item.add > 0 && (
+                        <span className="text-xs text-orange-600 flex-shrink-0 w-28 text-right">
+                          → 4주 {(base + item.add * 4).toLocaleString()}
+                        </span>
+                      )}
+                    </div>
+                  )
+                })}
+              </div>
             </div>
-          </div>
+          )}
 
           {isActive && (
-            <div className="flex items-center gap-3 pt-1">
+            <div className="flex items-center gap-3 pt-1 border-t border-orange-200">
               <p className="text-xs text-orange-700 flex-1">
-                인상이 적용 중입니다. 기본가에 반영하면 코스·기숙사 가격이 업데이트되고 이 설정이 초기화됩니다.
+                인상이 적용 중입니다. 기본가에 반영하면 각 코스·기숙사 가격이 업데이트되고 이 설정이 초기화됩니다.
               </p>
               <button type="button" onClick={onApply}
                 className="flex-shrink-0 px-3 py-1.5 bg-orange-600 hover:bg-orange-700 text-white text-xs font-medium rounded-lg transition-colors">

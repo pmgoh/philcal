@@ -72,11 +72,9 @@ export function calculateQuote(input: QuoteInput, rate: ExchangeRate): CalcResul
   const today = new Date().toISOString().split('T')[0]
   const pi = school.priceIncrease
   const increaseActive = pi && pi.fromDate <= today
-  const courseAddKrw = increaseActive ? toKrw(pi!.courseAdd, pi!.currency, rate) : 0
-  const dormAddKrw   = increaseActive ? toKrw(pi!.dormAdd,   pi!.currency, rate) : 0
 
-  if (increaseActive && pi!.courseAdd > 0) {
-    notes.push(`ℹ️ ${pi!.label ?? '비용 인상'} 적용 중 (${pi!.fromDate}~): 코스 +${pi!.courseAdd.toLocaleString()}${pi!.currency}, 기숙사 +${pi!.dormAdd.toLocaleString()}${pi!.currency}`)
+  if (increaseActive) {
+    notes.push(`ℹ️ ${pi!.label ?? '비용 인상'} 적용 중 (${pi!.fromDate}~)`)
   }
 
   const course = findCourse(courses, courseId)
@@ -105,6 +103,10 @@ export function calculateQuote(input: QuoteInput, rate: ExchangeRate): CalcResul
       price = Math.round(p4w / 4 * weeks)
       label = `코스: ${course.name} (${p4w.toLocaleString()}${course.currency}/4주 × ${weeks}주)`
     }
+    // 개별 코스 인상액 조회
+    const courseAddKrw = increaseActive
+      ? toKrw(pi!.courses.find(c => c.id === course.id)?.add ?? 0, pi!.currency, rate)
+      : 0
     items.push({ label, weeks, unitPrice: Math.round(price / weeks), currency: course.currency, krwAmount: toKrw(price, course.currency, rate) + courseAddKrw * weeks })
   }
 
@@ -130,6 +132,10 @@ export function calculateQuote(input: QuoteInput, rate: ExchangeRate): CalcResul
       price = Math.round(p4w / 4 * weeks)
       label = `기숙사: ${dorm.name} (${p4w.toLocaleString()}${dorm.currency}/4주 × ${weeks}주)`
     }
+    // 개별 기숙사 인상액 조회
+    const dormAddKrw = increaseActive
+      ? toKrw(pi!.dormitories.find(d => d.id === dorm.id)?.add ?? 0, pi!.currency, rate)
+      : 0
     items.push({ label, weeks, unitPrice: Math.round(price / weeks), currency: dorm.currency, krwAmount: toKrw(price, dorm.currency, rate) + dormAddKrw * weeks })
   }
 

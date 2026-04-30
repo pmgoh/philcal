@@ -105,12 +105,18 @@ export interface Package {
 }
 
 // ─── 비용 인상 ───────────────────────────────────────────────────────────────
+export interface PriceIncreaseItem {
+  id: string       // courseId 또는 dormitoryId
+  name: string     // 표시용
+  add: number      // 추가 금액 (주당)
+}
+
 export interface PriceIncrease {
-  fromDate: string      // YYYY-MM-DD 이 날짜부터 적용
-  courseAdd: number     // 코스 전체 추가 금액
-  dormAdd: number       // 기숙사 전체 추가 금액
+  fromDate: string
+  label?: string
   currency: Currency
-  label?: string        // 예: "2026 하반기 인상"
+  courses: PriceIncreaseItem[]
+  dormitories: PriceIncreaseItem[]
 }
 
 // ─── 학원 ────────────────────────────────────────────────────────────────────
