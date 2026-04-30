@@ -7,11 +7,18 @@ const MASTER_EMAIL = process.env.NEXT_PUBLIC_MASTER_EMAIL ?? 'pmgoh.works@gmail.
 export async function getOrCreateUser(uid: string, email: string, displayName: string, photoURL?: string): Promise<AppUser> {
   const ref = doc(db, 'users', uid)
   const snap = await getDoc(ref)
-
-  if (snap.exists()) return snap.data() as AppUser
-
-  // 마스터 이메일이면 자동 승인
   const isMaster = email === MASTER_EMAIL
+
+  if (snap.exists()) {
+    const existing = snap.data() as AppUser
+    // 마스터 계정인데 pending이면 자동 복구
+    if (isMaster && existing.status !== 'approved') {
+      await updateDoc(ref, { role: 'master', status: 'approved', approvedAt: new Date().toISOString() })
+      return { ...existing, role: 'master', status: 'approved' }
+    }
+    return existing
+  }
+
   const user: AppUser = {
     uid, email, displayName, photoURL: photoURL ?? '',
     role: isMaster ? 'master' : 'staff',
