@@ -92,52 +92,22 @@ function PeriodTimeline({ startDate, totalWeeks, surchargeItems }: {
   surchargeItems?: Array<{ label: string; weeks: number }>
 }) {
   if (!startDate || !totalWeeks) return null
-  const start = new Date(startDate)
-  const end   = new Date(startDate)
+  const end = new Date(startDate)
   end.setDate(end.getDate() + totalWeeks * 7)
 
-  const fmt = (d: Date) => `${d.getMonth()+1}/${d.getDate()}`
-  const totalDays = totalWeeks * 7
-
   return (
-    <div className="mt-3 bg-slate-50 border border-slate-200 rounded-xl px-4 py-3">
-      <p className="text-xs font-semibold text-slate-600 mb-2">📅 연수 기간</p>
-      <div className="flex items-center gap-1 text-xs text-slate-500 mb-2">
-        <span className="font-medium text-slate-700">{startDate}</span>
-        <span>~</span>
-        <span className="font-medium text-slate-700">{end.toISOString().split('T')[0]}</span>
-        <span className="ml-1 text-blue-600 font-semibold">({totalWeeks}주)</span>
+    <div className="mt-3 bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 space-y-1.5">
+      <div className="flex items-center gap-2 text-sm">
+        <span className="text-slate-500">📅 연수기간</span>
+        <span className="font-semibold text-slate-800">{startDate} ~ {end.toISOString().split('T')[0]}</span>
+        <span className="text-blue-600 font-bold">({totalWeeks}주)</span>
       </div>
-      {/* 타임바 */}
-      <div className="relative h-6 bg-blue-100 rounded-full overflow-hidden">
-        <div className="absolute inset-0 bg-blue-200 rounded-full" />
-        {(surchargeItems ?? []).map((sc, i) => {
-          // 서차지 위치는 메시지에서 "X주" 정보를 파싱해서 근사 표시
-          const scWeeks = sc.weeks
-          const offset = Math.max(0, (totalWeeks - scWeeks) / totalWeeks * 100)
-          const width  = scWeeks / totalWeeks * 100
-          return (
-            <div key={i}
-              className="absolute top-0 bottom-0 bg-orange-400 opacity-80"
-              style={{ left: `${offset}%`, width: `${width}%` }}
-              title={sc.label}
-            />
-          )
-        })}
-        {/* 주 눈금 */}
-        {Array.from({ length: totalWeeks - 1 }, (_, i) => (
-          <div key={i}
-            className="absolute top-0 bottom-0 w-px bg-blue-300 opacity-50"
-            style={{ left: `${(i+1)/totalWeeks*100}%` }}
-          />
-        ))}
-      </div>
-      {(surchargeItems ?? []).length > 0 && (
-        <div className="flex items-center gap-1.5 mt-1.5">
-          <div className="w-3 h-3 bg-orange-400 rounded-sm opacity-80" />
-          <span className="text-xs text-orange-700">성수기 서차지 구간</span>
+      {(surchargeItems ?? []).map((sc, i) => (
+        <div key={i} className="flex items-center gap-2 text-xs text-orange-700">
+          <span>🔥 서차지 구간</span>
+          <span className="font-medium">{sc.label}</span>
         </div>
-      )}
+      ))}
     </div>
   )
 }
@@ -330,7 +300,8 @@ export default function QuotePage() {
           totalWeeks: data.totalWeeks,
           surchargeItems: data.surchargeItems ?? [],
           calcResult: data.calcResult,
-          school: data.schoolData,
+          school: data.schoolData
+            ?? (data.calcResult ? schools.find(s => s.id === data.schoolId) : undefined),
         }
         setMessages(prev => [...prev, resultMsg])
       } else if (data.action === 'need_info') {

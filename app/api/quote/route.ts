@@ -10,10 +10,14 @@ const EXTRACT_PROMPT = `당신은 필리핀 어학연수 견적 AI입니다. 엠
 - 첫 글자 반드시 {, 마지막 글자 반드시 }
 - 생각 과정, 설명, 코드블록 전부 금지
 
-[핵심 원칙]
+[핵심 원칙 — 반드시 지킬 것]
 - 코스와 기숙사 모두 확정되어야 견적 계산 가능
 - 코스 미지정 → 반드시 되물음 (자동 선택 절대 금지)
 - 기숙사 미지정 → 반드시 되물음 (자동 선택 절대 금지)
+- 시작일(startDate) 반드시 확인 — 아래 규칙 적용:
+  · "8월 초" → 8-04(월), "8월 중순" → 8-11(월), "8월 말" → 8-25(월) 로 추정 가능
+  · "7월" 처럼 월만 있으면 → 정확한 날짜 되물음
+  · 날짜가 전혀 없으면 → 반드시 되물음 (오늘+30일 자동 사용 금지)
 
 [코스/기숙사 독립 구조]
 - 코스와 기숙사는 완전히 독립 계산
@@ -253,6 +257,7 @@ export async function POST(req: NextRequest) {
         surchargeItems: calcResult.surchargeItems.map(s => ({ label: s.label, weeks: s.weeks })),
         calcResult,
         schoolData: school,
+        schoolId: school.id,
       })
     }
 
