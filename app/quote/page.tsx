@@ -403,13 +403,18 @@ export default function QuotePage() {
                           surchargeItems={m.surchargeItems}
                         />
                         {/* 견적서 뽑기 버튼 */}
-                        {m.calcResult && m.school && (
-                          <button
-                            onClick={() => setQuoteModal({ calcResult: m.calcResult!, school: m.school!, startDate: m.startDate ?? '' })}
-                            className="mt-3 w-full flex items-center justify-center gap-2 px-3 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-sm font-semibold transition-colors">
-                            <FileText size={15} /> 견적서 뽑기
-                          </button>
-                        )}
+                        {m.totalWeeks && m.totalWeeks > 0 && (() => {
+                          const school = m.school ?? schools.find(s => m.content.includes(s.name))
+                          const calcResult = m.calcResult
+                          if (!school || !calcResult) return null
+                          return (
+                            <button
+                              onClick={() => setQuoteModal({ calcResult, school, startDate: m.startDate ?? '' })}
+                              className="mt-3 w-full flex items-center justify-center gap-2 px-3 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-sm font-semibold transition-colors">
+                              <FileText size={15} /> 견적서 뽑기
+                            </button>
+                          )
+                        })()}
                         {/* 규정 검토 결과 */}
                         {m.regulationWarning && (
                           <div className="mt-3 bg-amber-50 border border-amber-200 rounded-xl px-4 py-3">
