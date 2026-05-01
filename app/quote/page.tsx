@@ -3,8 +3,10 @@ import { useState, useEffect, useRef } from 'react'
 import AdminLayout from '@/components/AdminLayout'
 import { getSchools, getExchangeRate } from '@/lib/db'
 import type { School, ExchangeRate, LocalFee } from '@/types'
-import { Send, RotateCcw, Copy, Check, ChevronDown, ChevronUp, DollarSign } from 'lucide-react'
+import { Send, RotateCcw, Copy, Check, ChevronDown, ChevronUp, DollarSign, FileText } from 'lucide-react'
 import { formatKrw } from '@/lib/utils'
+import QuoteFormModal from '@/components/QuoteFormModal'
+import type { CalcResult } from '@/lib/calcEngine'
 
 // ── 메시지 타입 ───────────────────────────────────────────────────────────────
 type MessageRole = 'user' | 'assistant'
@@ -22,6 +24,8 @@ interface AssistantResultMessage extends BaseMessage {
   startDate?: string
   totalWeeks?: number
   surchargeItems?: Array<{ label: string; weeks: number }>
+  calcResult?: CalcResult
+  school?: School
 }
 
 interface AssistantNeedInfoMessage extends BaseMessage {
@@ -273,6 +277,7 @@ export default function QuotePage() {
   const [input, setInput] = useState('')
   const [loading, setLoading] = useState(false)
   const [copied, setCopied] = useState(false)
+  const [quoteModal, setQuoteModal] = useState<{ calcResult: CalcResult; school: School; startDate: string } | null>(null)
   const bottomRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
@@ -324,6 +329,8 @@ export default function QuotePage() {
           startDate: data.startDate,
           totalWeeks: data.totalWeeks,
           surchargeItems: data.surchargeItems ?? [],
+          calcResult: data.calcResult,
+          school: data.schoolData,
         }
         setMessages(prev => [...prev, resultMsg])
       } else if (data.action === 'need_info') {
@@ -424,6 +431,14 @@ export default function QuotePage() {
                           totalWeeks={m.totalWeeks}
                           surchargeItems={m.surchargeItems}
                         />
+                        {/* 견적서 뽑기 버튼 */}
+                        {m.calcResult && m.school && (
+                          <button
+                            onClick={() => setQuoteModal({ calcResult: m.calcResult!, school: m.school!, startDate: m.startDate ?? '' })}
+                            className="mt-3 w-full flex items-center justify-center gap-2 px-3 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-sm font-semibold transition-colors">
+                            <FileText size={15} /> 견적서 뽑기
+                          </button>
+                        )}
                         {/* 규정 검토 결과 */}
                         {m.regulationWarning && (
                           <div className="mt-3 bg-amber-50 border border-amber-200 rounded-xl px-4 py-3">
@@ -511,6 +526,17 @@ export default function QuotePage() {
           <p className="text-xs text-gray-400 mt-1.5">Enter 전송 · Shift+Enter 줄바꿈</p>
         </div>
       </div>
+
+      {/* 견적서 모달 */}
+      {quoteModal && (
+        <QuoteFormModal
+          school={quoteModal.school}
+          calcResult={quoteModal.calcResult}
+          startDate={quoteModal.startDate}
+          phpToKrw={rate.phpToKrw}
+          onClose={() => setQuoteModal(null)}
+        />
+      )}
     </AdminLayout>
   )
 }

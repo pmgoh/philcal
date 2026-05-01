@@ -251,6 +251,8 @@ export async function POST(req: NextRequest) {
         startDate: parsed.startDate,
         totalWeeks: calcResult.totalWeeks,
         surchargeItems: calcResult.surchargeItems.map(s => ({ label: s.label, weeks: s.weeks })),
+        calcResult,
+        schoolData: school,
       })
     }
 
