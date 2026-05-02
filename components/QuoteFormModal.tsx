@@ -128,8 +128,8 @@ export default function QuoteFormModal({ school, calcResult, startDate, phpToKrw
   }, [school.name, weeks])
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] flex flex-col">
+    <div className="fixed inset-0 z-50 flex items-end md:items-center justify-center bg-black/50 p-0 md:p-4">
+      <div className="bg-white rounded-t-2xl md:rounded-2xl shadow-2xl w-full md:max-w-2xl h-[92dvh] md:max-h-[90vh] flex flex-col">
 
         {/* 헤더 */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
@@ -251,33 +251,26 @@ export default function QuoteFormModal({ school, calcResult, startDate, phpToKrw
 
             <div className="space-y-1.5">
               {items.map(item => (
-                <div key={item.id} className="flex items-center gap-2 bg-gray-50 rounded-lg px-3 py-2">
-                  {/* 할인 여부 */}
+                <div key={item.id} className="flex items-center gap-1.5 bg-gray-50 rounded-lg px-2.5 py-2">
                   <input type="checkbox" checked={item.isDiscount} title="할인 항목"
                     onChange={e => updateItem(item.id, { isDiscount: e.target.checked })}
                     className="w-3.5 h-3.5 accent-red-500 flex-shrink-0" />
-
-                  {/* 항목명 */}
                   {editingId === item.id ? (
                     <input autoFocus value={item.label}
                       onChange={e => updateItem(item.id, { label: e.target.value })}
                       onBlur={() => setEditingId(null)}
                       onKeyDown={e => e.key === 'Enter' && setEditingId(null)}
-                      className="flex-1 border border-blue-300 rounded px-2 py-0.5 text-sm bg-white" />
+                      className="flex-1 border border-blue-300 rounded px-2 py-0.5 text-sm bg-white min-w-0" />
                   ) : (
-                    <span className={`flex-1 text-sm cursor-pointer hover:text-blue-600 ${item.isDiscount ? 'text-red-500' : 'text-gray-700'}`}
+                    <span className={`flex-1 text-sm cursor-pointer hover:text-blue-600 truncate ${item.isDiscount ? 'text-red-500' : 'text-gray-700'}`}
                       onClick={() => setEditingId(item.id)}>
                       {item.label}
-                      <Pencil size={10} className="inline ml-1 opacity-40" />
                     </span>
                   )}
-
-                  {/* 금액 */}
                   <input type="number" value={item.amount} min={0}
                     onChange={e => updateItem(item.id, { amount: Number(e.target.value) })}
-                    className="w-32 border border-gray-200 rounded px-2 py-1 text-sm text-right bg-white" />
+                    className="w-24 md:w-32 border border-gray-200 rounded px-2 py-1 text-sm text-right bg-white flex-shrink-0" />
                   <span className="text-xs text-gray-400 flex-shrink-0">원</span>
-
                   <button onClick={() => deleteItem(item.id)}
                     className="p-1 text-red-300 hover:text-red-500 flex-shrink-0">
                     <Trash2 size={13} />

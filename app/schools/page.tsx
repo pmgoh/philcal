@@ -43,7 +43,7 @@ export default function SchoolsPage() {
 
   return (
     <AdminLayout>
-      <div className="p-8">
+      <div className="p-4 md:p-8">
         {showImport && (
           <JsonImportModal
             onClose={() => setShowImport(false)}
@@ -54,9 +54,9 @@ export default function SchoolsPage() {
           />
         )}
         {/* 헤더 */}
-        <div className="flex items-center justify-between mb-6">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4 md:mb-6">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">학원 관리</h1>
+            <h1 className="text-xl md:text-2xl font-bold text-gray-900">학원 관리</h1>
             <p className="text-sm text-gray-500 mt-0.5">총 {schools.length}개 캠퍼스 등록됨</p>
           </div>
           <div className="flex gap-2">
@@ -65,7 +65,7 @@ export default function SchoolsPage() {
               className="btn-secondary flex items-center gap-2"
             >
               <FileJson size={16} />
-              JSON 가져오기
+              <span>JSON 가져오기</span>
             </button>
             <Link href="/schools/new" className="btn-primary flex items-center gap-2">
               <Plus size={16} />

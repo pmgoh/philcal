@@ -78,7 +78,7 @@ export default function UsersPage() {
 
   if (error) return (
     <AdminLayout>
-      <div className="p-8 max-w-3xl mx-auto">
+      <div className="p-4 md:p-8 max-w-3xl mx-auto">
         <div className="bg-red-50 border border-red-200 rounded-xl p-4 text-red-700 text-sm">
           오류: {error}
         </div>
@@ -88,7 +88,7 @@ export default function UsersPage() {
 
   return (
     <AdminLayout>
-      <div className="p-8 max-w-3xl mx-auto">
+      <div className="p-4 md:p-8 max-w-3xl mx-auto">
         <div className="flex items-center gap-3 mb-6">
           <div className="w-10 h-10 bg-blue-100 rounded-xl flex items-center justify-center">
             <Users size={20} className="text-blue-600" />

@@ -30,3 +30,9 @@
     @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium;
   }
 }
+
+/* 모바일 safe area */
+@supports (padding: max(0px)) {
+  .pb-safe { padding-bottom: max(16px, env(safe-area-inset-bottom)); }
+  .bottom-safe { bottom: env(safe-area-inset-bottom); }
+}

@@ -142,7 +142,7 @@ export default function SchoolForm({ schoolId }: Props) {
 
   return (
     <AdminLayout>
-      <div className="p-8 max-w-4xl mx-auto">
+      <div className="p-4 md:p-8 max-w-4xl mx-auto">
         {/* 헤더 */}
         <div className="flex items-center gap-4 mb-6">
           <button onClick={() => router.back()} className="btn-secondary p-2">
@@ -168,7 +168,7 @@ export default function SchoolForm({ schoolId }: Props) {
             {section('basic', '기본 정보')}
             {openSection === 'basic' && (
               <div className="px-5 pb-5 border-t border-gray-100 space-y-4 pt-4">
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">학원명 *</label>
                     <input value={school.name} onChange={e => update('name', e.target.value)}
@@ -181,7 +181,7 @@ export default function SchoolForm({ schoolId }: Props) {
                     </select>
                   </div>
                 </div>
-                <div className="grid grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">학원 형태</label>
                     <select value={school.schoolType} onChange={e => update('schoolType', e.target.value as SchoolType)} className="input-field">
@@ -574,24 +574,24 @@ function CourseRow({ course, onChange, onDelete }: {
 }) {
   return (
     <div className="bg-gray-50 p-3 rounded-lg">
-      <div className="grid grid-cols-12 gap-2 items-end">
-        <div className="col-span-3">
+      <div className="grid grid-cols-6 md:grid-cols-12 gap-2 items-end">
+        <div className="col-span-6 md:col-span-3">
           <label className="block text-xs text-gray-500 mb-1">코스명</label>
           <input value={course.name} onChange={e => onChange({ ...course, name: e.target.value })}
             className="input-field text-sm" placeholder="인텐시브" />
         </div>
-        <div className="col-span-2">
+        <div className="col-span-3 md:col-span-2">
           <label className="block text-xs text-gray-500 mb-1">대상</label>
           <input value={course.target} onChange={e => onChange({ ...course, target: e.target.value })}
             className="input-field text-sm" placeholder="성인" />
         </div>
-        <div className="col-span-3">
+        <div className="col-span-6 md:col-span-3">
           <label className="block text-xs text-gray-500 mb-1">4주 기준 가격</label>
           <input type="number" value={(course as unknown as Record<string,number>).price4Weeks ?? (course as unknown as Record<string,number>).pricePerWeek ?? 0}
             onChange={e => onChange({ ...course, price4Weeks: Number(e.target.value) })}
             className="input-field text-sm" />
         </div>
-        <div className="col-span-2">
+        <div className="col-span-3 md:col-span-2">
           <label className="block text-xs text-gray-500 mb-1">통화</label>
           <select value={course.currency} onChange={e => onChange({ ...course, currency: e.target.value as Currency })}
             className="input-field text-sm">
@@ -621,31 +621,31 @@ function DormRow({ dorm, onChange, onDelete }: {
 }) {
   return (
     <div className="bg-gray-50 p-3 rounded-lg space-y-2">
-      <div className="grid grid-cols-12 gap-2 items-end">
-        <div className="col-span-3">
+      <div className="grid grid-cols-6 md:grid-cols-12 gap-2 items-end">
+        <div className="col-span-6 md:col-span-3">
           <label className="block text-xs text-gray-500 mb-1">기숙사명</label>
           <input value={dorm.name} onChange={e => onChange({ ...dorm, name: e.target.value })}
             className="input-field text-sm" placeholder="1인실" />
         </div>
-        <div className="col-span-2">
+        <div className="col-span-3 md:col-span-2">
           <label className="block text-xs text-gray-500 mb-1">대상</label>
           <input value={dorm.target} onChange={e => onChange({ ...dorm, target: e.target.value })}
             className="input-field text-sm" placeholder="성인" />
         </div>
-        <div className="col-span-3">
+        <div className="col-span-6 md:col-span-3">
           <label className="block text-xs text-gray-500 mb-1">4주 기준 가격</label>
           <input type="number" value={(dorm as unknown as Record<string,number>).price4Weeks ?? (dorm as unknown as Record<string,number>).pricePerWeek ?? 0}
             onChange={e => onChange({ ...dorm, price4Weeks: Number(e.target.value) })}
             className="input-field text-sm" />
         </div>
-        <div className="col-span-2">
+        <div className="col-span-3 md:col-span-2">
           <label className="block text-xs text-gray-500 mb-1">통화</label>
           <select value={dorm.currency} onChange={e => onChange({ ...dorm, currency: e.target.value as Currency })}
             className="input-field text-sm">
             {CURRENCIES.map(c => <option key={c}>{c}</option>)}
           </select>
         </div>
-        <div className="col-span-2 flex justify-end items-end">
+        <div className="col-span-3 md:col-span-2 flex justify-end items-end">
           <button onClick={onDelete} className="p-2 text-red-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors">
             <Trash2 size={14} />
           </button>
@@ -676,23 +676,23 @@ function SurchargeRow({ surcharge, onChange, onDelete }: {
 }) {
   return (
     <div className="bg-gray-50 p-3 rounded-lg space-y-2">
-      <div className="grid grid-cols-12 gap-2 items-end">
-        <div className="col-span-3">
+      <div className="grid grid-cols-6 md:grid-cols-12 gap-2 items-end">
+        <div className="col-span-6 md:col-span-3">
           <label className="block text-xs text-gray-500 mb-1">구분명</label>
           <input value={surcharge.label} onChange={e => onChange({ ...surcharge, label: e.target.value })}
             className="input-field text-sm" placeholder="2026 여름 서차지" />
         </div>
-        <div className="col-span-2">
+        <div className="col-span-3 md:col-span-2">
           <label className="block text-xs text-gray-500 mb-1">시작일</label>
           <input type="date" value={surcharge.startDate} onChange={e => onChange({ ...surcharge, startDate: e.target.value })}
             className="input-field text-sm" />
         </div>
-        <div className="col-span-2">
+        <div className="col-span-3 md:col-span-2">
           <label className="block text-xs text-gray-500 mb-1">종료일</label>
           <input type="date" value={surcharge.endDate} onChange={e => onChange({ ...surcharge, endDate: e.target.value })}
             className="input-field text-sm" />
         </div>
-        <div className="col-span-2">
+        <div className="col-span-3 md:col-span-2">
           <label className="block text-xs text-gray-500 mb-1">주당 금액</label>
           <input type="number" value={surcharge.pricePerWeek}
             onChange={e => onChange({ ...surcharge, pricePerWeek: Number(e.target.value) })}
@@ -714,7 +714,7 @@ function SurchargeRow({ surcharge, onChange, onDelete }: {
             <option value="no">불가</option>
           </select>
         </div>
-        <div className="col-span-1 flex justify-end items-end">
+        <div className="col-span-1 md:col-span-1 flex justify-end items-end">
           <button onClick={onDelete} className="p-2 text-red-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors">
             <Trash2 size={14} />
           </button>
@@ -735,13 +735,13 @@ function PromotionRow({ promotion, onChange, onDelete }: {
   return (
     <div className="bg-gray-50 p-3 rounded-lg space-y-2">
       {/* 프로모션명 + 할인 + 삭제 */}
-      <div className="grid grid-cols-12 gap-2 items-end">
+      <div className="grid grid-cols-6 md:grid-cols-12 gap-2 items-end">
         <div className="col-span-5">
           <label className="block text-xs text-gray-500 mb-1">프로모션명</label>
           <input value={promotion.label} onChange={e => onChange({ ...promotion, label: e.target.value })}
             className="input-field text-sm" placeholder="유학원 자체 할인 / 비수기 할인" />
         </div>
-        <div className="col-span-2">
+        <div className="col-span-3 md:col-span-2">
           <label className="block text-xs text-gray-500 mb-1">타입</label>
           <select value={promotion.discountType} onChange={e => onChange({ ...promotion, discountType: e.target.value as 'percent' | 'amount' })}
             className="input-field text-sm">
@@ -749,14 +749,14 @@ function PromotionRow({ promotion, onChange, onDelete }: {
             <option value="amount">금액</option>
           </select>
         </div>
-        <div className="col-span-2">
+        <div className="col-span-3 md:col-span-2">
           <label className="block text-xs text-gray-500 mb-1">{promotion.discountType === 'percent' ? '할인 %' : '할인 금액'}</label>
           <input type="number" value={promotion.discountValue}
             onChange={e => onChange({ ...promotion, discountValue: Number(e.target.value) })}
             className="input-field text-sm" />
         </div>
         <div className="col-span-2" />
-        <div className="col-span-1 flex justify-end items-end">
+        <div className="col-span-1 md:col-span-1 flex justify-end items-end">
           <button onClick={onDelete} className="p-2 text-red-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors">
             <Trash2 size={14} />
           </button>
@@ -764,7 +764,7 @@ function PromotionRow({ promotion, onChange, onDelete }: {
       </div>
 
       {/* 항상 적용 토글 + 날짜 */}
-      <div className="grid grid-cols-12 gap-2 items-end">
+      <div className="grid grid-cols-6 md:grid-cols-12 gap-2 items-end">
         <div className="col-span-2 flex items-center gap-2 pb-1">
           <label className="flex items-center gap-1.5 text-xs font-medium text-gray-600 cursor-pointer">
             <input type="checkbox" checked={!!promotion.alwaysApply}
@@ -775,7 +775,7 @@ function PromotionRow({ promotion, onChange, onDelete }: {
         </div>
         {!promotion.alwaysApply && (
           <>
-            <div className="col-span-2">
+            <div className="col-span-3 md:col-span-2">
               <label className="block text-xs text-gray-500 mb-1">기준일</label>
               <select value={promotion.basisType} onChange={e => onChange({ ...promotion, basisType: e.target.value as Promotion['basisType'] })}
                 className="input-field text-sm">
@@ -785,12 +785,12 @@ function PromotionRow({ promotion, onChange, onDelete }: {
                 <option value="departure_date">출국일</option>
               </select>
             </div>
-            <div className="col-span-2">
+            <div className="col-span-3 md:col-span-2">
               <label className="block text-xs text-gray-500 mb-1">시작일</label>
               <input type="date" value={promotion.startDate} onChange={e => onChange({ ...promotion, startDate: e.target.value })}
                 className="input-field text-sm" />
             </div>
-            <div className="col-span-2">
+            <div className="col-span-3 md:col-span-2">
               <label className="block text-xs text-gray-500 mb-1">종료일</label>
               <input type="date" value={promotion.endDate} onChange={e => onChange({ ...promotion, endDate: e.target.value })}
                 className="input-field text-sm" />
@@ -856,25 +856,25 @@ function LocalFeeRow({ fee, onChange, onDelete }: {
   return (
     <div className={`rounded-lg border p-3 space-y-2 ${isOptional ? 'border-gray-200 bg-gray-50' : 'border-indigo-100 bg-indigo-50/30'}`}>
       {/* 행 1: 항목명 + 금액 + 범위최대 + 통화 + 삭제 */}
-      <div className="grid grid-cols-12 gap-2 items-end">
-        <div className="col-span-4">
+      <div className="grid grid-cols-6 md:grid-cols-12 gap-2 items-end">
+        <div className="col-span-6 md:col-span-4">
           <label className="block text-xs text-gray-500 mb-1">항목명</label>
           <input value={fee.name} onChange={e => onChange({ ...fee, name: e.target.value })}
             className="input-field text-sm" placeholder="SSP, 비자연장비, 셔틀비..." />
         </div>
-        <div className="col-span-2">
+        <div className="col-span-3 md:col-span-2">
           <label className="block text-xs text-gray-500 mb-1">금액</label>
           <input type="number" value={fee.amount} min={0}
             onChange={e => onChange({ ...fee, amount: Number(e.target.value) })}
             className="input-field text-sm text-right" />
         </div>
-        <div className="col-span-2">
+        <div className="col-span-3 md:col-span-2">
           <label className="block text-xs text-gray-500 mb-1">최대 (범위)</label>
           <input type="number" value={fee.amountMax ?? ''} min={0}
             onChange={e => onChange({ ...fee, amountMax: e.target.value ? Number(e.target.value) : undefined })}
             className="input-field text-sm text-right" placeholder="없으면 비움" />
         </div>
-        <div className="col-span-2">
+        <div className="col-span-3 md:col-span-2">
           <label className="block text-xs text-gray-500 mb-1">통화</label>
           <select value={fee.currency ?? 'PHP'}
             onChange={e => onChange({ ...fee, currency: e.target.value as Currency })}
@@ -882,7 +882,7 @@ function LocalFeeRow({ fee, onChange, onDelete }: {
             {CURRENCIES.map(c => <option key={c}>{c}</option>)}
           </select>
         </div>
-        <div className="col-span-2 flex justify-end items-end">
+        <div className="col-span-3 md:col-span-2 flex justify-end items-end">
           <button onClick={onDelete} className="p-2 text-red-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors">
             <Trash2 size={14} />
           </button>
@@ -950,7 +950,7 @@ function RegistrationFeeEditor({ fee, onChange }: {
               onChange={e => onChange({ ...f, amount: Number(e.target.value) })}
               className="input-field text-sm" placeholder="0" />
           </div>
-          <div className="col-span-3">
+          <div className="col-span-6 md:col-span-3">
             <label className="block text-xs text-gray-500 mb-1">통화</label>
             <select value={f.currency}
               onChange={e => onChange({ ...f, currency: e.target.value as Currency })}
@@ -958,7 +958,7 @@ function RegistrationFeeEditor({ fee, onChange }: {
               {CURRENCIES.map(c => <option key={c}>{c}</option>)}
             </select>
           </div>
-          <div className="col-span-4">
+          <div className="col-span-6 md:col-span-4">
             <label className="block text-xs text-gray-500 mb-1">메모</label>
             <input value={f.note ?? ''} onChange={e => onChange({ ...f, note: e.target.value })}
               className="input-field text-sm" placeholder="예: 신규 등록 시 1회" />
