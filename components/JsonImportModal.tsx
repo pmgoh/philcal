@@ -218,11 +218,12 @@ export default function JsonImportModal({ onClose, onImported }: Props) {
             </div>
           )}
 
-          {/* 파싱 성공 - 배열 미리보기 */}
+          {/* 배열 미리보기 */}
           {parsedArray && (
             <div className="space-y-3">
               <div className="bg-green-50 border border-green-200 rounded-xl p-4">
-                <p className="font-semibold text-green-900 mb-2">📦 {parsedArray.length}개 학원 일괄 등록 준비됨</p>
+                <p className="font-semibold text-green-900 mb-1">📦 {parsedArray.length}개 학원 등록/업데이트 준비됨</p>
+                <p className="text-xs text-green-700 mb-2">JSON에 <code>id</code> 필드가 있으면 기존 학원을 덮어씁니다. 없으면 새로 추가됩니다.</p>
                 <div className="space-y-1">
                   {parsedArray.map((s, i) => (
                     <div key={i} className="flex justify-between text-xs text-green-700 bg-white/70 rounded px-2 py-1.5">

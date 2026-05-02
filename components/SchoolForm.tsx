@@ -154,7 +154,21 @@ export default function SchoolForm({ schoolId }: Props) {
             </h1>
             <p className="text-sm text-gray-500 mt-0.5">{isNew ? '새 캠퍼스를 등록합니다' : '학원 정보를 수정합니다'}</p>
           </div>
-          <div className="flex gap-2">
+          <div className="flex gap-2 flex-wrap">
+            {!isNew && (
+              <button onClick={() => {
+                const exportData = { ...school }
+                const blob = new Blob([JSON.stringify([exportData], null, 2)], { type: 'application/json' })
+                const url = URL.createObjectURL(blob)
+                const a = document.createElement('a')
+                a.href = url
+                a.download = `${school.name}_${new Date().toISOString().split('T')[0]}.json`
+                a.click()
+                URL.revokeObjectURL(url)
+              }} className="btn-secondary flex items-center gap-1.5 text-sm">
+                <span>⬇</span> JSON 내보내기
+              </button>
+            )}
             {!isNew && <button onClick={handleDelete} className="btn-danger">삭제</button>}
             <button onClick={handleSave} disabled={saving} className="btn-primary flex items-center gap-2">
               {saved ? <><Check size={14} /> 저장됨</> : saving ? '저장 중...' : <><Save size={14} /> 저장</>}
