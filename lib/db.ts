@@ -1,6 +1,6 @@
 import {
   collection, doc, getDocs, getDoc,
-  setDoc, updateDoc, deleteDoc,
+  setDoc, deleteDoc,
   query, orderBy, serverTimestamp
 } from 'firebase/firestore'
 import { db } from './firebase'
@@ -22,7 +22,8 @@ export async function getSchool(id: string): Promise<School | null> {
 export async function saveSchool(school: Partial<School> & { id?: string }): Promise<string> {
   const now = new Date().toISOString()
   if (school.id) {
-    await updateDoc(doc(db, 'schools', school.id), { ...school, updatedAt: now })
+    // setDoc: 없으면 생성, 있으면 덮어쓰기 (updateDoc은 없으면 404 에러)
+    await setDoc(doc(db, 'schools', school.id), { ...school, updatedAt: now }, { merge: false })
     return school.id
   } else {
     const ref = doc(collection(db, 'schools'))
