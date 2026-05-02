@@ -33,18 +33,23 @@ function buildInitialItems(school: School, calc: CalcResult): QuoteLineItem[] {
     items.push({ id: uid(), label: '입학금', amount: calc.registrationFeeKrw, isDiscount: false, editable: true })
   }
 
+  // 패키지
+  for (const pi of (calc.packageItems ?? [])) {
+    items.push({ id: uid(), label: `${pi.pkg.label} / ${pi.columnLabel} / ${pi.weeks}주`, amount: pi.totalKrw, isDiscount: false, editable: true })
+  }
+
   // 코스
-  for (const ci of calc.courseItems) {
+  for (const ci of (calc.courseItems ?? [])) {
     items.push({ id: uid(), label: ci.label.replace('코스: ', '학비 '), amount: ci.krwAmount, isDiscount: false, editable: true })
   }
 
   // 기숙사
-  for (const di of calc.dormItems) {
+  for (const di of (calc.dormItems ?? [])) {
     items.push({ id: uid(), label: di.label.replace('기숙사: ', '기숙사비 '), amount: di.krwAmount, isDiscount: false, editable: true })
   }
 
   // 서차지
-  for (const sc of calc.surchargeItems) {
+  for (const sc of (calc.surchargeItems ?? [])) {
     items.push({ id: uid(), label: sc.label.replace('서차지: ', '성수기 추가 비용 '), amount: sc.krwAmount, isDiscount: false, editable: true })
   }
 

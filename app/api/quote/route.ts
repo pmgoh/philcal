@@ -112,7 +112,7 @@ function buildQuoteMessage(school: School, calcResult: CalcResult): string {
   lines.push('')
 
   // 패키지 항목
-  if (calcResult.packageItems.length > 0) {
+  if ((calcResult.packageItems ?? []).length > 0) {
     lines.push('**패키지 구성**')
     for (const pi of calcResult.packageItems) {
       lines.push(`- ${pi.pkg.label} / ${pi.columnLabel} / ${pi.weeks}주: **${formatKrw(pi.baseAmount)}**`)
@@ -184,14 +184,14 @@ function buildQuoteMessage(school: School, calcResult: CalcResult): string {
 
 function buildEvidenceMessage(school: School, calcResult: CalcResult, rate: ExchangeRate): string {
   const lines: string[] = ['**📎 계산 근거**']
-  for (const pi of calcResult.packageItems) {
+  for (const pi of (calcResult.packageItems ?? [])) {
     lines.push(`- 패키지: ${pi.pkg.label} / ${pi.columnLabel} / ${pi.weeks}주 = ${formatKrw(pi.baseAmount)}`)
     if (pi.additionalAmount > 0) lines.push(`  추가규정: +${formatKrw(pi.additionalAmount)}`)
   }
-  for (const item of calcResult.courseItems) lines.push(`- ${item.label} = ${formatKrw(item.krwAmount)}`)
-  for (const item of calcResult.dormItems)   lines.push(`- ${item.label} = ${formatKrw(item.krwAmount)}`)
+  for (const item of (calcResult.courseItems ?? [])) lines.push(`- ${item.label} = ${formatKrw(item.krwAmount)}`)
+  for (const item of (calcResult.dormItems ?? []))   lines.push(`- ${item.label} = ${formatKrw(item.krwAmount)}`)
   lines.push(`- 총 ${calcResult.totalWeeks}주 기준`)
-  for (const sc of calcResult.surchargeItems) lines.push(`- ${sc.label}`)
+  for (const sc of (calcResult.surchargeItems ?? [])) lines.push(`- ${sc.label}`)
   if (calcResult.promotionLabel) {
     lines.push(`- 프로모션: ${calcResult.promotionLabel}`)
     if (calcResult.promotionDiscount > 0) lines.push(`  할인: -${formatKrw(calcResult.promotionDiscount)}`)
@@ -285,8 +285,9 @@ export async function POST(req: NextRequest) {
         schoolId: parsed.schoolId as string,
         startDate: parsed.startDate as string,
         enrollmentDate: parsed.enrollmentDate as string,
-        courses: parsed.courses as CourseItem[],
-        dormitories: parsed.dormitories as DormItem[],
+        courses: (parsed.courses as CourseItem[]) ?? [],
+        dormitories: (parsed.dormitories as DormItem[]) ?? [],
+        packages: (parsed.packages as PackageInput[]) ?? [],
       }, rate)
 
       const courseSummary = calcResult.courseItems.map(i => i.label).join(', ')
