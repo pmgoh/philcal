@@ -217,19 +217,33 @@ export function calculateQuote(input: QuoteInput, rate: ExchangeRate): CalcResul
   const regFee = school.registrationFee
   const registrationFeeKrw = regFee ? toKrw(regFee.amount, regFee.currency, rate) : 0
 
-  // 현지납부비 (총 주수 기준)
+  // 현지납부비 (총 주수 기준, 새 trigger 구조 + 구 condition 하위호환)
   const localFees = school.localFees ?? []
   let localFeePhp = 0
+  let localFeeKrw = 0
+
   for (const lf of localFees) {
-    const cond = lf.condition ?? 'one_time'
-    if (cond === 'optional') continue
-    if (cond === 'one_time')  { localFeePhp += lf.amount; continue }
-    if (cond === 'per_week')  { localFeePhp += lf.amount * totalWeeks; continue }
-    if (cond === 'min_weeks') {
-      // minWeeks가 명시된 경우에만, 그리고 totalWeeks가 그 이상일 때만 포함
-      if (lf.minWeeks && totalWeeks >= lf.minWeeks) { localFeePhp += lf.amount; continue }
+    const raw = lf as unknown as Record<string, unknown>
+    const trigger = lf.trigger ?? (raw.condition === 'one_time' ? 'always'
+      : raw.condition === 'min_weeks' ? 'over_weeks'
+      : raw.condition as string ?? 'always')
+    if (trigger === 'optional') continue
+
+    const isKrw = lf.currency === 'KRW'
+    const amt = lf.amount ?? 0
+
+    const add = (v: number) => isKrw ? (localFeeKrw += v) : (localFeePhp += v)
+
+    if (trigger === 'always')     { add(amt) }
+    else if (trigger === 'per_week')   { add(amt * totalWeeks) }
+    else if (trigger === 'per_4weeks') { add(amt * Math.ceil(totalWeeks / 4)) }
+    else if (trigger === 'over_weeks') {
+      const threshold = lf.triggerWeeks ?? (raw.minWeeks as number) ?? 4
+      if (totalWeeks > threshold) add(amt)
     }
   }
+
+  const localFeeKrwEstimate = toKrw(localFeePhp, 'PHP', rate) + localFeeKrw
 
   return {
     courseItems, dormItems, surchargeItems,
@@ -239,7 +253,7 @@ export function calculateQuote(input: QuoteInput, rate: ExchangeRate): CalcResul
     totalKrw: subtotal + registrationFeeKrw,
     totalWeeks, courseTotalWeeks, dormTotalWeeks,
     localFees, localFeePhp,
-    localFeeKrwEstimate: toKrw(localFeePhp, 'PHP', rate),
+    localFeeKrwEstimate,
     warnings, notes,
   }
 }

@@ -32,6 +32,10 @@ function normalizeSchool(raw: Record<string, unknown>): Omit<School, 'id' | 'cre
     programTags:      (raw.programTags as School['programTags']) ?? [],
     minWeeks:         (raw.minWeeks as number)         ?? 4,
     allowShortTerm:   (raw.allowShortTerm as boolean)  ?? false,
+    registrationFee:  (raw.registrationFee as School['registrationFee']) ?? undefined,
+    courseShortTermRates: (raw.courseShortTermRates as School['courseShortTermRates']) ?? undefined,
+    dormShortTermRates:   (raw.dormShortTermRates   as School['dormShortTermRates'])   ?? undefined,
+    priceIncrease:    (raw.priceIncrease as School['priceIncrease']) ?? undefined,
     courses,
     dormitories,
     surcharges:       ((raw.surcharges  as School['surcharges'])  ?? []).map(s => ({ ...s, id: s.id || uuid() })),
@@ -45,13 +49,16 @@ function normalizeSchool(raw: Record<string, unknown>): Omit<School, 'id' | 'cre
   }
 }
 
-// 기본 유효성 검사
+// 기본 유효성 검사 (패키지 전용 학원은 courses/dormitories 없어도 허용)
 function validate(data: ReturnType<typeof normalizeSchool>): ValidationError[] {
   const errors: ValidationError[] = []
   if (!data.name?.trim()) errors.push({ field: 'name', message: '학원명이 없습니다.' })
   if (!data.region) errors.push({ field: 'region', message: '지역이 없습니다.' })
-  if (data.courses.length === 0) errors.push({ field: 'courses', message: '코스가 하나도 없습니다.' })
-  if (data.dormitories.length === 0) errors.push({ field: 'dormitories', message: '기숙사가 하나도 없습니다.' })
+
+  // 코스도 없고 패키지도 없을 때만 에러
+  if (data.courses.length === 0 && data.packages.length === 0) {
+    errors.push({ field: 'courses', message: '코스 또는 패키지가 하나도 없습니다.' })
+  }
   data.courses.forEach((c, i) => {
     if (!c.name) errors.push({ field: `courses[${i}]`, message: `코스 ${i + 1}번 이름이 없습니다.` })
     if (!c.price4Weeks) errors.push({ field: `courses[${i}].price`, message: `코스 "${c.name}" 가격이 0입니다.` })
@@ -66,6 +73,7 @@ export default function JsonImportModal({ onClose, onImported }: Props) {
   const fileRef = useRef<HTMLInputElement>(null)
   const [jsonText, setJsonText] = useState('')
   const [parsed, setParsed] = useState<ReturnType<typeof normalizeSchool> | null>(null)
+  const [parsedArray, setParsedArray] = useState<ReturnType<typeof normalizeSchool>[] | null>(null)
   const [errors, setErrors] = useState<ValidationError[]>([])
   const [parseError, setParseError] = useState('')
   const [saving, setSaving] = useState(false)
@@ -89,12 +97,24 @@ export default function JsonImportModal({ onClose, onImported }: Props) {
     setParseError('')
     setErrors([])
     setParsed(null)
+    setParsedArray(null)
     try {
       const raw = JSON.parse(text)
-      const normalized = normalizeSchool(raw)
-      const errs = validate(normalized)
-      setParsed(normalized)
-      setErrors(errs)
+      if (Array.isArray(raw)) {
+        // 배열 모드: 여러 학원 일괄 import
+        const normalized = raw.map(r => normalizeSchool(r as Record<string, unknown>))
+        const allErrors = normalized.flatMap((n, i) =>
+          validate(n).map(e => ({ ...e, field: `[${i}] ${n.name}: ${e.field}` }))
+        )
+        setParsedArray(normalized)
+        setErrors(allErrors)
+      } else {
+        // 단일 객체 모드
+        const normalized = normalizeSchool(raw)
+        const errs = validate(normalized)
+        setParsed(normalized)
+        setErrors(errs)
+      }
     } catch {
       setParseError('JSON 형식이 올바르지 않습니다. 형식을 확인해주세요.')
     }
@@ -103,12 +123,19 @@ export default function JsonImportModal({ onClose, onImported }: Props) {
   const handlePaste = () => processJson(jsonText)
 
   const handleSave = async () => {
-    if (!parsed) return
+    if (!parsed && !parsedArray) return
     setSaving(true)
     try {
-      // undefined 등 Firestore 불가 값 제거
-      const clean = JSON.parse(JSON.stringify(parsed))
-      await saveSchool(clean)
+      if (parsedArray) {
+        // 배열 일괄 저장
+        for (const school of parsedArray) {
+          const clean = JSON.parse(JSON.stringify(school))
+          await saveSchool(clean)
+        }
+      } else if (parsed) {
+        const clean = JSON.parse(JSON.stringify(parsed))
+        await saveSchool(clean)
+      }
       setSaved(true)
       setTimeout(() => { onImported(); onClose() }, 1200)
     } catch (e) {
@@ -120,8 +147,9 @@ export default function JsonImportModal({ onClose, onImported }: Props) {
   }
 
   const hasBlockingErrors = errors.some(e =>
-    e.field === 'name' || e.field === 'region'
+    e.field === 'name' || e.field === 'region' || e.field.includes('학원명')
   )
+  const isReady = (parsed !== null || parsedArray !== null) && !hasBlockingErrors
 
   return (
     <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-4">
@@ -190,7 +218,34 @@ export default function JsonImportModal({ onClose, onImported }: Props) {
             </div>
           )}
 
-          {/* 파싱 성공 - 미리보기 */}
+          {/* 파싱 성공 - 배열 미리보기 */}
+          {parsedArray && (
+            <div className="space-y-3">
+              <div className="bg-green-50 border border-green-200 rounded-xl p-4">
+                <p className="font-semibold text-green-900 mb-2">📦 {parsedArray.length}개 학원 일괄 등록 준비됨</p>
+                <div className="space-y-1">
+                  {parsedArray.map((s, i) => (
+                    <div key={i} className="flex justify-between text-xs text-green-700 bg-white/70 rounded px-2 py-1.5">
+                      <span className="font-medium">{s.name}</span>
+                      <span className="text-green-500">{s.region} · 패키지 {s.packages.length}개 · 코스 {s.courses.length}개</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              {errors.length > 0 && (
+                <div className="space-y-1.5">
+                  {errors.map((err, i) => (
+                    <div key={i} className="flex items-start gap-2 text-sm rounded-lg px-3 py-2 bg-yellow-50 text-yellow-700 border border-yellow-200">
+                      <AlertTriangle size={14} className="flex-shrink-0 mt-0.5" />
+                      <span>{err.message}</span>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* 파싱 성공 - 단일 미리보기 */}
           {parsed && (
             <div className="space-y-3">
               {/* 요약 카드 */}
@@ -203,7 +258,7 @@ export default function JsonImportModal({ onClose, onImported }: Props) {
                   <div className="text-right text-sm text-blue-700 space-y-0.5">
                     <div>코스 {parsed.courses.length}개</div>
                     <div>기숙사 {parsed.dormitories.length}개</div>
-                    <div>서차지 {parsed.surcharges.length}개</div>
+                    <div>패키지 {parsed.packages.length}개</div>
                     <div>프로모션 {parsed.promotions.length}개</div>
                   </div>
                 </div>
@@ -263,16 +318,18 @@ export default function JsonImportModal({ onClose, onImported }: Props) {
           <button onClick={onClose} className="btn-secondary flex-1">취소</button>
           <button
             onClick={handleSave}
-            disabled={!parsed || hasBlockingErrors || saving || saved}
+            disabled={!isReady || saving || saved}
             className="btn-primary flex-1 flex items-center justify-center gap-2"
           >
             {saved
               ? <><Check size={14} /> 저장됨</>
               : saving
-                ? '저장 중...'
-                : errors.length > 0 && !hasBlockingErrors
-                  ? <><Upload size={14} /> 경고 무시하고 저장</>
-                  : <><Upload size={14} /> 학원 등록하기</>
+                ? `저장 중...`
+                : parsedArray
+                  ? <><Upload size={14} /> {parsedArray.length}개 학원 일괄 등록</>
+                  : errors.length > 0 && !hasBlockingErrors
+                    ? <><Upload size={14} /> 경고 무시하고 저장</>
+                    : <><Upload size={14} /> 학원 등록하기</>
             }
           </button>
         </div>

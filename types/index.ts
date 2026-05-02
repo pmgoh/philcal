@@ -82,28 +82,68 @@ export interface RegistrationFee {
 }
 
 // ─── 현지납부비 ───────────────────────────────────────────────────────────────
-export type LocalFeeCondition = 'one_time' | 'per_week' | 'min_weeks' | 'optional'
+// trigger: 언제 발생하는가
+export type LocalFeeTrigger =
+  | 'always'      // 입국 시 1회 (항상)
+  | 'per_week'    // 주당
+  | 'per_4weeks'  // 4주당
+  | 'over_weeks'  // N주 초과 시 1회 (비자연장 등)
+  | 'optional'    // 선택 (총액 미포함)
+
+// chargeUnit: 어떤 단위로 청구되는가
+export type LocalFeeChargeUnit =
+  | 'flat'        // 고정 (팀/방 단위)
+  | 'per_person'  // 인당
+  | 'per_trip'    // 편도당 (픽업/샌딩)
+  | 'per_night'   // 박당
 
 export interface LocalFee {
   id: string
   name: string
-  amount: number
-  condition: LocalFeeCondition
-  minWeeks?: number
+  amount: number          // 금액
+  amountMax?: number      // 범위 있을 때 최대값 (1,000~2,000)
+  currency: Currency      // PHP | KRW
+  trigger: LocalFeeTrigger
+  chargeUnit: LocalFeeChargeUnit
+  triggerWeeks?: number   // over_weeks일 때 기준 주수 (예: 4주 초과 = 4)
   note?: string
 }
 
 // ─── 패키지 ───────────────────────────────────────────────────────────────────
+export interface PackagePriceCell {
+  label: string       // "2인가족", "성인1인", "1인실" 등 열 헤더
+  amount: number
+}
+
+export interface PackagePriceRow {
+  weeks: number
+  prices: PackagePriceCell[]
+}
+
+export interface PackageAdditionalRule {
+  id: string
+  condition: string   // "성인 2인 시", "비성수기 추가" 등
+  addAmount: number
+  currency: Currency
+}
+
 export interface Package {
   id: string
-  label: string
-  condition: string
-  weeks?: number
-  minWeeks?: number
-  maxWeeks?: number
-  totalPrice: number
+  label: string                       // 패키지명
+  season: string                      // "비수기" | "성수기" | "연중" | 자유 입력
   currency: Currency
+
+  // 가격 행렬: 행=주수, 열=인원/구성
+  columns: string[]                   // ["2인가족", "3인가족", "4인가족"]
+  priceMatrix: PackagePriceRow[]
+
+  // 추가 규정 (성인 2인 +150만원 등)
+  additionalRules: PackageAdditionalRule[]
+
+  // 포함/불포함 항목 (줄바꿈 구분)
   includes: string
+  excludes: string
+
   startDate?: string
   endDate?: string
   note?: string

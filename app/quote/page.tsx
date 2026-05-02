@@ -117,59 +117,74 @@ function LocalFeePanel({ fees, php, krwEstimate, weeks, phpToKrw }: {
   const [open, setOpen] = useState(false)
   if (!fees.length) return null
 
-  const condLabel = (f: LocalFee) => {
-    const cond = f.condition ?? 'one_time'
-    if (cond === 'one_time') return '1회성'
-    if (cond === 'per_week') return weeks ? `주당 × ${weeks}주` : '주당'
-    if (cond === 'min_weeks') return `${f.minWeeks ?? 1}주 이상`
-    if (cond === 'optional') return '옵션'
+  const triggerLabel = (f: LocalFee) => {
+    const t = f.trigger ?? 'always'
+    if (t === 'always')     return '1회'
+    if (t === 'per_week')   return weeks ? `주당×${weeks}` : '주당'
+    if (t === 'per_4weeks') return weeks ? `4주당×${Math.ceil(weeks/4)}` : '4주당'
+    if (t === 'over_weeks') return `${f.triggerWeeks??4}주 초과시`
+    if (t === 'optional')   return '선택'
     return ''
   }
-
-  const calcAmount = (f: LocalFee) => {
-    const cond = f.condition ?? 'one_time'
-    if (cond === 'per_week' && weeks) return f.amount * weeks
+  const unitLabel = (f: LocalFee) => {
+    const u = f.chargeUnit ?? 'flat'
+    if (u === 'per_person') return '/인'
+    if (u === 'per_trip')   return '/편도'
+    if (u === 'per_night')  return '/박'
+    return ''
+  }
+  const calcAmount = (f: LocalFee): number => {
+    const t = f.trigger ?? 'always'
+    if (t === 'optional')   return f.amount
+    if (!weeks)             return f.amount
+    if (t === 'per_week')   return f.amount * weeks
+    if (t === 'per_4weeks') return f.amount * Math.ceil(weeks / 4)
+    if (t === 'over_weeks') return weeks > (f.triggerWeeks ?? 4) ? f.amount : 0
     return f.amount
   }
 
   return (
     <div className="mt-3 border border-amber-200 rounded-xl overflow-hidden">
-      <button
-        onClick={() => setOpen(!open)}
-        className="w-full flex items-center justify-between px-3 py-2.5 bg-amber-50 hover:bg-amber-100 transition-colors text-sm"
-      >
+      <button onClick={() => setOpen(!open)}
+        className="w-full flex items-center justify-between px-3 py-2.5 bg-amber-50 hover:bg-amber-100 transition-colors text-sm">
         <div className="flex items-center gap-2 text-amber-800 font-medium">
           <DollarSign size={14} />
-          현지납부비 확인 {weeks ? `(${weeks}주 기준)` : ''}
-          <span className="text-xs text-amber-600 font-normal">₱{php.toLocaleString()} · 약 {formatKrw(krwEstimate)} 상당</span>
+          현지납부비 {weeks ? `(${weeks}주 기준)` : ''}
+          <span className="text-xs text-amber-600 font-normal">
+            {php > 0 ? `₱${php.toLocaleString()} · ` : ''}약 {formatKrw(krwEstimate)}
+          </span>
         </div>
         {open ? <ChevronUp size={14} className="text-amber-600" /> : <ChevronDown size={14} className="text-amber-600" />}
       </button>
       {open && (
         <div className="bg-white px-3 py-2 space-y-1.5">
-          <p className="text-xs text-gray-400 mb-2">※ 현지 도착 후 직접 납부하는 비용으로 견적 총액에 미포함입니다.</p>
+          <p className="text-xs text-gray-400 mb-2">※ 현지 도착 후 직접 납부. 견적 총액 미포함.</p>
           {fees.map((f, i) => {
             const amt = calcAmount(f)
-            const isOptional = (f.condition ?? 'one_time') === 'optional'
+            const isOptional = (f.trigger ?? 'always') === 'optional'
+            if (amt === 0 && !isOptional) return null
+            const isKrw = f.currency === 'KRW'
             return (
               <div key={i} className="flex justify-between items-center text-sm">
-                <div className="flex items-center gap-1.5">
-                  <span className={`text-gray-600 ${isOptional ? 'opacity-60' : ''}`}>{f.name}</span>
-                  <span className={`text-xs px-1.5 py-0.5 rounded ${isOptional ? 'bg-gray-100 text-gray-400' : 'bg-amber-50 text-amber-600'}`}>
-                    {condLabel(f)}
+                <div className="flex items-center gap-1.5 min-w-0 flex-1">
+                  <span className={`truncate text-sm ${isOptional ? 'text-gray-400' : 'text-gray-700'}`}>{f.name}</span>
+                  <span className={`text-xs px-1.5 py-0.5 rounded flex-shrink-0 ${isOptional ? 'bg-gray-100 text-gray-400' : 'bg-amber-50 text-amber-600'}`}>
+                    {triggerLabel(f)}{unitLabel(f)}
                   </span>
                 </div>
-                <span className={`font-medium ${isOptional ? 'text-gray-400' : 'text-gray-800'}`}>
-                  ₱{amt.toLocaleString()}
-                  <span className="text-xs text-gray-400 ml-1">(약 {formatKrw(Math.round(amt * phpToKrw))})</span>
+                <span className={`font-medium flex-shrink-0 ml-2 ${isOptional ? 'text-gray-400' : 'text-gray-800'}`}>
+                  {isKrw
+                    ? formatKrw(amt)
+                    : `₱${amt.toLocaleString()}${f.amountMax ? `~${f.amountMax.toLocaleString()}` : ''}`}
+                  {!isKrw && <span className="text-xs text-gray-400 ml-1">(약 {formatKrw(Math.round(amt * phpToKrw))})</span>}
                   {isOptional && <span className="text-xs text-gray-400 ml-1">[선택]</span>}
                 </span>
               </div>
             )
           })}
           <div className="border-t border-gray-100 pt-1.5 flex justify-between text-sm font-semibold">
-            <span className="text-gray-700">합계 (옵션 제외)</span>
-            <span className="text-amber-700">₱{php.toLocaleString()} <span className="text-xs font-normal text-gray-400">(약 {formatKrw(krwEstimate)})</span></span>
+            <span className="text-gray-700">합계 (선택 제외)</span>
+            <span className="text-amber-700">약 {formatKrw(krwEstimate)}</span>
           </div>
         </div>
       )}

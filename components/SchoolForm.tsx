@@ -6,13 +6,15 @@ import AdminLayout from '@/components/AdminLayout'
 import { getSchool, saveSchool, deleteSchool } from '@/lib/db'
 import type {
   School, Course, Dormitory, ShortTermRates,
-  Surcharge, Promotion, PromotionBasis, LocalFee, Package, RegistrationFee, PriceIncrease,
-  Region, SchoolType, ProgramTag, Currency, LocalFeeCondition
+  Surcharge, Promotion, PromotionBasis, LocalFee,
+  Package, PackagePriceRow, PackageAdditionalRule,
+  RegistrationFee, PriceIncrease,
+  Region, SchoolType, ProgramTag, Currency
 } from '@/types'
 import { calcShortTermPrice } from '@/types'
 import {
   Plus, Trash2, ChevronDown, ChevronUp, Save,
-  ArrowLeft, AlertCircle, Check, Settings2
+  ArrowLeft, AlertCircle, Check, Settings2, X
 } from 'lucide-react'
 
 const REGIONS: Region[] = ['세부', '바기오', '클락', '일로일로', '바콜로드', '마닐라', '기타']
@@ -401,7 +403,7 @@ export default function SchoolForm({ schoolId }: Props) {
                     onDelete={() => update('localFees', school.localFees.filter((_, j) => j !== i))}
                   />
                 ))}
-                <button onClick={() => update('localFees', [...school.localFees, { id: uuid(), name: '', amount: 0, condition: 'one_time' as const }])}
+                <button onClick={() => update('localFees', [...school.localFees, { id: uuid(), name: '', amount: 0, currency: 'PHP' as Currency, trigger: 'always' as const, chargeUnit: 'flat' as const }])}
                   className="btn-secondary flex items-center gap-2 text-sm w-full justify-center py-2.5 border-dashed">
                   <Plus size={14} /> 항목 추가
                 </button>
@@ -413,8 +415,10 @@ export default function SchoolForm({ schoolId }: Props) {
           <div className="card overflow-hidden">
             {section('packages', '패키지 (가족연수 등)', school.packages.length)}
             {openSection === 'packages' && (
-              <div className="px-5 pb-5 border-t border-gray-100 pt-4 space-y-3">
-                <p className="text-xs text-gray-500">총액 제시 방식의 패키지</p>
+              <div className="px-5 pb-5 border-t border-gray-100 pt-4 space-y-4">
+                <p className="text-xs text-gray-500">
+                  가족연수, 올인클루시브 등 별도 패키지 상품. 주수×인원 행렬로 가격 입력 가능합니다.
+                </p>
                 {school.packages.map((pkg, i) => (
                   <PackageRow key={pkg.id} pkg={pkg}
                     onChange={v => update('packages', school.packages.map((x, j) => j === i ? v : x))}
@@ -422,7 +426,15 @@ export default function SchoolForm({ schoolId }: Props) {
                   />
                 ))}
                 <button onClick={() => update('packages', [...school.packages, {
-                  id: uuid(), label: '', condition: '', totalPrice: 0, currency: 'KRW', includes: ''
+                  id: uuid(),
+                  label: '',
+                  season: '연중',
+                  currency: 'KRW' as Currency,
+                  columns: ['1인'],
+                  priceMatrix: [{ weeks: 4, prices: [{ label: '1인', amount: 0 }] }],
+                  additionalRules: [],
+                  includes: '',
+                  excludes: '',
                 }])} className="btn-secondary flex items-center gap-2 text-sm w-full justify-center py-2.5 border-dashed">
                   <Plus size={14} /> 패키지 추가
                 </button>
@@ -817,65 +829,98 @@ function PromotionRow({ promotion, onChange, onDelete }: {
 }
 
 // ── LocalFeeRow ────────────────────────────────────────────────────────────────
-const LOCAL_FEE_CONDITIONS = [
-  { value: 'one_time',   label: '1회성',          desc: '무조건 1번 납부' },
-  { value: 'per_week',   label: '주당',            desc: '금액 × 연수주수' },
-  { value: 'min_weeks',  label: '특정 주수 이상',  desc: '지정 주수 이상일 때만' },
-  { value: 'optional',   label: '옵션',            desc: '선택 납부 (총액 미포함)' },
+const TRIGGER_OPTIONS = [
+  { value: 'always',     label: '입국 시 1회',     desc: '도착 후 무조건 1회 납부' },
+  { value: 'per_week',   label: '주당',            desc: '연수 주수 × 금액' },
+  { value: 'per_4weeks', label: '4주당',           desc: '4주마다 1회 (올림 계산)' },
+  { value: 'over_weeks', label: 'N주 초과 시 1회', desc: '기준 주수 초과 시 발생 (비자연장 등)' },
+  { value: 'optional',   label: '선택 (미포함)',   desc: '참고용, 총액 미포함' },
+] as const
+
+const CHARGE_UNIT_OPTIONS = [
+  { value: 'flat',       label: '고정 (팀/방)' },
+  { value: 'per_person', label: '인당' },
+  { value: 'per_trip',   label: '편도당' },
+  { value: 'per_night',  label: '박당' },
 ] as const
 
 function LocalFeeRow({ fee, onChange, onDelete }: {
   fee: LocalFee; onChange: (f: LocalFee) => void; onDelete: () => void
 }) {
-  const cond = fee.condition ?? 'one_time'
+  const trigger    = fee.trigger ?? 'always'
+  const chargeUnit = fee.chargeUnit ?? 'flat'
+  const isOptional = trigger === 'optional'
+
+  const triggerDesc = TRIGGER_OPTIONS.find(t => t.value === trigger)?.desc ?? ''
+
   return (
-    <div className="bg-gray-50 p-3 rounded-lg space-y-2">
+    <div className={`rounded-lg border p-3 space-y-2 ${isOptional ? 'border-gray-200 bg-gray-50' : 'border-indigo-100 bg-indigo-50/30'}`}>
+      {/* 행 1: 항목명 + 금액 + 범위최대 + 통화 + 삭제 */}
       <div className="grid grid-cols-12 gap-2 items-end">
         <div className="col-span-4">
           <label className="block text-xs text-gray-500 mb-1">항목명</label>
           <input value={fee.name} onChange={e => onChange({ ...fee, name: e.target.value })}
-            className="input-field text-sm" placeholder="SSP, 비자연장비, 교재비..." />
+            className="input-field text-sm" placeholder="SSP, 비자연장비, 셔틀비..." />
         </div>
-        <div className="col-span-3">
-          <label className="block text-xs text-gray-500 mb-1">금액 (PHP)</label>
-          <input type="number" value={fee.amount} onChange={e => onChange({ ...fee, amount: Number(e.target.value) })}
-            className="input-field text-sm" />
+        <div className="col-span-2">
+          <label className="block text-xs text-gray-500 mb-1">금액</label>
+          <input type="number" value={fee.amount} min={0}
+            onChange={e => onChange({ ...fee, amount: Number(e.target.value) })}
+            className="input-field text-sm text-right" />
         </div>
-        <div className="col-span-3">
-          <label className="block text-xs text-gray-500 mb-1">조건</label>
-          <select value={cond}
-            onChange={e => onChange({ ...fee, condition: e.target.value as LocalFee['condition'], minWeeks: undefined })}
+        <div className="col-span-2">
+          <label className="block text-xs text-gray-500 mb-1">최대 (범위)</label>
+          <input type="number" value={fee.amountMax ?? ''} min={0}
+            onChange={e => onChange({ ...fee, amountMax: e.target.value ? Number(e.target.value) : undefined })}
+            className="input-field text-sm text-right" placeholder="없으면 비움" />
+        </div>
+        <div className="col-span-2">
+          <label className="block text-xs text-gray-500 mb-1">통화</label>
+          <select value={fee.currency ?? 'PHP'}
+            onChange={e => onChange({ ...fee, currency: e.target.value as Currency })}
             className="input-field text-sm">
-            {LOCAL_FEE_CONDITIONS.map(c => (
-              <option key={c.value} value={c.value}>{c.label}</option>
-            ))}
+            {CURRENCIES.map(c => <option key={c}>{c}</option>)}
           </select>
         </div>
-        {cond === 'min_weeks' ? (
-          <div className="col-span-1">
-            <label className="block text-xs text-gray-500 mb-1">최소주수</label>
-            <input type="number" min={1} value={fee.minWeeks ?? ''}
-              onChange={e => onChange({ ...fee, minWeeks: e.target.value ? Number(e.target.value) : undefined })}
-              className="input-field text-sm" placeholder="4" />
-          </div>
-        ) : (
-          <div className="col-span-1" />
-        )}
-        <div className="col-span-1 flex justify-end items-end">
+        <div className="col-span-2 flex justify-end items-end">
           <button onClick={onDelete} className="p-2 text-red-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors">
             <Trash2 size={14} />
           </button>
         </div>
       </div>
-      {/* 조건 설명 + 메모 */}
-      <div className="flex items-center gap-3">
-        <span className="text-xs text-indigo-600 bg-indigo-50 rounded px-2 py-0.5">
-          {LOCAL_FEE_CONDITIONS.find(c => c.value === cond)?.desc}
-          {cond === 'per_week' && ' (견적 주수에 따라 계산)'}
-          {cond === 'min_weeks' && fee.minWeeks && ` — ${fee.minWeeks}주 이상`}
-        </span>
+
+      {/* 행 2: 발생 조건 + 청구 단위 + N주 기준 */}
+      <div className="flex items-center gap-2 flex-wrap">
+        <div className="flex items-center gap-1">
+          <label className="text-xs text-gray-500">발생:</label>
+          <select value={trigger}
+            onChange={e => onChange({ ...fee, trigger: e.target.value as LocalFee['trigger'], triggerWeeks: undefined })}
+            className="text-xs border border-gray-200 rounded px-2 py-1.5 bg-white">
+            {TRIGGER_OPTIONS.map(t => <option key={t.value} value={t.value}>{t.label}</option>)}
+          </select>
+        </div>
+        {trigger === 'over_weeks' && (
+          <div className="flex items-center gap-1">
+            <label className="text-xs text-gray-500">기준:</label>
+            <input type="number" value={fee.triggerWeeks ?? ''} min={1}
+              onChange={e => onChange({ ...fee, triggerWeeks: e.target.value ? Number(e.target.value) : undefined })}
+              className="w-14 text-xs border border-gray-200 rounded px-2 py-1.5 bg-white text-center"
+              placeholder="4" />
+            <span className="text-xs text-gray-400">주 초과 시</span>
+          </div>
+        )}
+        <div className="flex items-center gap-1">
+          <label className="text-xs text-gray-500">단위:</label>
+          <select value={chargeUnit}
+            onChange={e => onChange({ ...fee, chargeUnit: e.target.value as LocalFee['chargeUnit'] })}
+            className="text-xs border border-gray-200 rounded px-2 py-1.5 bg-white">
+            {CHARGE_UNIT_OPTIONS.map(u => <option key={u.value} value={u.value}>{u.label}</option>)}
+          </select>
+        </div>
+        <span className="text-xs text-indigo-500 bg-indigo-50 rounded px-2 py-0.5">{triggerDesc}</span>
         <input value={fee.note ?? ''} onChange={e => onChange({ ...fee, note: e.target.value })}
-          className="input-field text-sm flex-1" placeholder="메모 (선택)" />
+          className="flex-1 min-w-24 text-xs border border-gray-200 rounded px-2 py-1.5 bg-white"
+          placeholder="메모" />
       </div>
     </div>
   )
@@ -928,57 +973,233 @@ function RegistrationFeeEditor({ fee, onChange }: {
 function PackageRow({ pkg, onChange, onDelete }: {
   pkg: Package; onChange: (p: Package) => void; onDelete: () => void
 }) {
+  const [showIncludes, setShowIncludes] = useState(false)
+
+  const columns = pkg.columns ?? ['1인']
+  const matrix  = pkg.priceMatrix ?? []
+  const rules   = pkg.additionalRules ?? []
+
+  // 열 추가
+  const addColumn = () => {
+    const label = `${columns.length + 1}인`
+    onChange({
+      ...pkg,
+      columns: [...columns, label],
+      priceMatrix: matrix.map(row => ({
+        ...row,
+        prices: [...row.prices, { label, amount: 0 }],
+      })),
+    })
+  }
+
+  // 열 삭제
+  const removeColumn = (ci: number) => {
+    if (columns.length <= 1) return
+    onChange({
+      ...pkg,
+      columns: columns.filter((_, i) => i !== ci),
+      priceMatrix: matrix.map(row => ({
+        ...row,
+        prices: row.prices.filter((_, i) => i !== ci),
+      })),
+    })
+  }
+
+  // 열 헤더 변경
+  const renameColumn = (ci: number, label: string) => {
+    const newCols = columns.map((c, i) => i === ci ? label : c)
+    onChange({
+      ...pkg,
+      columns: newCols,
+      priceMatrix: matrix.map(row => ({
+        ...row,
+        prices: row.prices.map((p, i) => i === ci ? { ...p, label } : p),
+      })),
+    })
+  }
+
+  // 행(주수) 추가
+  const addRow = () => {
+    const lastWeeks = matrix.length > 0 ? matrix[matrix.length - 1].weeks : 0
+    const nextWeeks = lastWeeks === 0 ? 4 : lastWeeks + 4
+    onChange({
+      ...pkg,
+      priceMatrix: [...matrix, {
+        weeks: nextWeeks,
+        prices: columns.map(label => ({ label, amount: 0 })),
+      }],
+    })
+  }
+
+  // 행 삭제
+  const removeRow = (ri: number) =>
+    onChange({ ...pkg, priceMatrix: matrix.filter((_, i) => i !== ri) })
+
+  // 주수 변경
+  const setRowWeeks = (ri: number, weeks: number) =>
+    onChange({ ...pkg, priceMatrix: matrix.map((r, i) => i === ri ? { ...r, weeks } : r) })
+
+  // 금액 변경
+  const setPrice = (ri: number, ci: number, amount: number) =>
+    onChange({
+      ...pkg,
+      priceMatrix: matrix.map((row, i) => i !== ri ? row : {
+        ...row,
+        prices: row.prices.map((p, j) => j !== ci ? p : { ...p, amount }),
+      }),
+    })
+
+  // 추가 규정
+  const addRule = () =>
+    onChange({ ...pkg, additionalRules: [...rules, { id: uuid(), condition: '', addAmount: 0, currency: pkg.currency }] })
+  const updateRule = (ri: number, patch: Partial<PackageAdditionalRule>) =>
+    onChange({ ...pkg, additionalRules: rules.map((r, i) => i === ri ? { ...r, ...patch } : r) })
+  const removeRule = (ri: number) =>
+    onChange({ ...pkg, additionalRules: rules.filter((_, i) => i !== ri) })
+
   return (
-    <div className="bg-gray-50 p-3 rounded-lg space-y-2">
-      <div className="grid grid-cols-12 gap-2 items-end">
-        <div className="col-span-3">
-          <label className="block text-xs text-gray-500 mb-1">패키지명</label>
-          <input value={pkg.label} onChange={e => onChange({ ...pkg, label: e.target.value })}
-            className="input-field text-sm" placeholder="가족연수 여름 패키지" />
+    <div className="border border-gray-200 rounded-xl overflow-hidden bg-white">
+      {/* 헤더 */}
+      <div className="flex items-center gap-3 px-4 py-3 bg-gray-50 border-b border-gray-200">
+        <input value={pkg.label} onChange={e => onChange({ ...pkg, label: e.target.value })}
+          className="flex-1 text-sm font-semibold bg-transparent border-0 outline-none placeholder-gray-400 text-gray-900"
+          placeholder="패키지명 (예: 세부 비수기 가족연수 올인클루시브)" />
+        <input value={pkg.season ?? ''} onChange={e => onChange({ ...pkg, season: e.target.value })}
+          className="w-20 text-xs border border-gray-200 rounded px-2 py-1 bg-white" placeholder="비수기" />
+        <select value={pkg.currency} onChange={e => onChange({ ...pkg, currency: e.target.value as Currency })}
+          className="text-xs border border-gray-200 rounded px-2 py-1 bg-white">
+          {CURRENCIES.map(c => <option key={c}>{c}</option>)}
+        </select>
+        <div className="flex gap-1">
+          <input type="date" value={pkg.startDate ?? ''} onChange={e => onChange({ ...pkg, startDate: e.target.value })}
+            className="text-xs border border-gray-200 rounded px-2 py-1 bg-white w-32" placeholder="시작일" />
+          <span className="text-xs text-gray-400 self-center">~</span>
+          <input type="date" value={pkg.endDate ?? ''} onChange={e => onChange({ ...pkg, endDate: e.target.value })}
+            className="text-xs border border-gray-200 rounded px-2 py-1 bg-white w-32" placeholder="종료일" />
         </div>
-        <div className="col-span-3">
-          <label className="block text-xs text-gray-500 mb-1">조건</label>
-          <input value={pkg.condition} onChange={e => onChange({ ...pkg, condition: e.target.value })}
-            className="input-field text-sm" placeholder="부모 1인 + 자녀 1인" />
-        </div>
-        <div className="col-span-1">
-          <label className="block text-xs text-gray-500 mb-1">주수</label>
-          <input type="number" min={1} value={pkg.weeks ?? ''}
-            onChange={e => onChange({ ...pkg, weeks: e.target.value ? Number(e.target.value) : undefined })}
-            className="input-field text-sm" placeholder="4" />
-        </div>
-        <div className="col-span-1">
-          <label className="block text-xs text-gray-500 mb-1">최소</label>
-          <input type="number" min={1} value={pkg.minWeeks ?? ''}
-            onChange={e => onChange({ ...pkg, minWeeks: e.target.value ? Number(e.target.value) : undefined })}
-            className="input-field text-sm" placeholder="-" />
-        </div>
-        <div className="col-span-1">
-          <label className="block text-xs text-gray-500 mb-1">최대</label>
-          <input type="number" min={1} value={pkg.maxWeeks ?? ''}
-            onChange={e => onChange({ ...pkg, maxWeeks: e.target.value ? Number(e.target.value) : undefined })}
-            className="input-field text-sm" placeholder="-" />
-        </div>
-        <div className="col-span-1">
-          <label className="block text-xs text-gray-500 mb-1">금액</label>
-          <input type="number" value={pkg.totalPrice} onChange={e => onChange({ ...pkg, totalPrice: Number(e.target.value) })}
-            className="input-field text-sm" />
-        </div>
-        <div className="col-span-1">
-          <label className="block text-xs text-gray-500 mb-1">통화</label>
-          <select value={pkg.currency} onChange={e => onChange({ ...pkg, currency: e.target.value as Currency })}
-            className="input-field text-sm">
-            {CURRENCIES.map(c => <option key={c}>{c}</option>)}
-          </select>
-        </div>
-        <div className="col-span-1 flex justify-end items-end">
-          <button onClick={onDelete} className="p-2 text-red-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors">
-            <Trash2 size={14} />
+        <button onClick={onDelete} className="p-1.5 text-red-400 hover:text-red-600 hover:bg-red-50 rounded transition-colors flex-shrink-0">
+          <Trash2 size={14} />
+        </button>
+      </div>
+
+      {/* 가격 행렬 */}
+      <div className="px-4 py-3 overflow-x-auto">
+        <div className="text-xs font-medium text-gray-500 mb-2">가격표</div>
+        <table className="border-collapse text-sm" style={{ minWidth: `${columns.length * 120 + 80}px` }}>
+          <thead>
+            <tr>
+              <th className="text-xs text-gray-400 font-normal py-1.5 pr-3 text-left w-16">주수</th>
+              {columns.map((col, ci) => (
+                <th key={ci} className="py-1.5 px-1 min-w-28">
+                  <div className="flex items-center gap-1">
+                    <input value={col} onChange={e => renameColumn(ci, e.target.value)}
+                      className="flex-1 text-xs text-center border border-gray-200 rounded px-1.5 py-1 bg-white font-medium" />
+                    {columns.length > 1 && (
+                      <button onClick={() => removeColumn(ci)} className="text-red-300 hover:text-red-500 flex-shrink-0">
+                        <X size={11} />
+                      </button>
+                    )}
+                  </div>
+                </th>
+              ))}
+              <th className="py-1.5 px-1 w-8">
+                <button onClick={addColumn} title="열 추가"
+                  className="text-blue-400 hover:text-blue-600 hover:bg-blue-50 rounded p-0.5">
+                  <Plus size={14} />
+                </button>
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            {matrix.map((row, ri) => (
+              <tr key={ri} className="border-t border-gray-100">
+                <td className="py-1.5 pr-3">
+                  <div className="flex items-center gap-1">
+                    <input type="number" value={row.weeks} min={1}
+                      onChange={e => setRowWeeks(ri, Number(e.target.value))}
+                      className="w-12 text-xs text-center border border-gray-200 rounded px-1.5 py-1 bg-white font-medium" />
+                    <span className="text-xs text-gray-400">주</span>
+                  </div>
+                </td>
+                {(row.prices ?? []).map((cell, ci) => (
+                  <td key={ci} className="py-1.5 px-1">
+                    <input type="number" value={cell.amount} min={0} step={10000}
+                      onChange={e => setPrice(ri, ci, Number(e.target.value))}
+                      className="w-full text-xs text-right border border-gray-200 rounded px-2 py-1 bg-white focus:border-blue-300 focus:ring-1 focus:ring-blue-200 outline-none"
+                      placeholder="0" />
+                  </td>
+                ))}
+                <td className="py-1.5 px-1">
+                  <button onClick={() => removeRow(ri)} className="text-red-300 hover:text-red-500">
+                    <Trash2 size={12} />
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+
+        <button onClick={addRow}
+          className="mt-2 text-xs text-blue-500 hover:text-blue-700 flex items-center gap-1">
+          <Plus size={12} /> 주수 행 추가
+        </button>
+      </div>
+
+      {/* 추가 규정 */}
+      <div className="px-4 pb-3 border-t border-gray-100 pt-3">
+        <div className="flex items-center justify-between mb-2">
+          <span className="text-xs font-medium text-gray-500">추가 규정 (성인 2인 +150만원 등)</span>
+          <button onClick={addRule} className="text-xs text-blue-500 hover:text-blue-700 flex items-center gap-1">
+            <Plus size={11} /> 추가
           </button>
         </div>
+        {rules.map((rule, ri) => (
+          <div key={rule.id} className="flex items-center gap-2 mb-1.5">
+            <input value={rule.condition} onChange={e => updateRule(ri, { condition: e.target.value })}
+              className="flex-1 text-xs border border-gray-200 rounded px-2 py-1.5" placeholder="조건 (예: 성인 2인 시)" />
+            <span className="text-xs text-gray-400">+</span>
+            <input type="number" value={rule.addAmount} step={10000}
+              onChange={e => updateRule(ri, { addAmount: Number(e.target.value) })}
+              className="w-28 text-xs text-right border border-gray-200 rounded px-2 py-1.5" />
+            <select value={rule.currency} onChange={e => updateRule(ri, { currency: e.target.value as Currency })}
+              className="text-xs border border-gray-200 rounded px-1.5 py-1.5">
+              {CURRENCIES.map(c => <option key={c}>{c}</option>)}
+            </select>
+            <button onClick={() => removeRule(ri)} className="text-red-300 hover:text-red-500"><Trash2 size={12} /></button>
+          </div>
+        ))}
       </div>
-      <textarea value={pkg.includes} onChange={e => onChange({ ...pkg, includes: e.target.value })}
-        className="input-field text-sm h-14 resize-none" placeholder="학비, 기숙사, 식사, 액티비티 포함..." />
+
+      {/* 포함/불포함 토글 */}
+      <div className="px-4 pb-3 border-t border-gray-100 pt-2">
+        <button onClick={() => setShowIncludes(!showIncludes)}
+          className="text-xs text-gray-500 hover:text-gray-700 flex items-center gap-1">
+          {showIncludes ? <ChevronUp size={12} /> : <ChevronDown size={12} />}
+          포함/불포함 항목 {showIncludes ? '접기' : '펼치기'}
+        </button>
+        {showIncludes && (
+          <div className="grid grid-cols-2 gap-3 mt-2">
+            <div>
+              <label className="block text-xs text-gray-500 mb-1">✅ 포함 항목 (줄바꿈으로 구분)</label>
+              <textarea value={pkg.includes ?? ''} onChange={e => onChange({ ...pkg, includes: e.target.value })}
+                className="input-field text-xs h-28 resize-none"
+                placeholder={'레지던스 숙박\n식사 (중식&석식)\n공항 픽업\n...'} />
+            </div>
+            <div>
+              <label className="block text-xs text-gray-500 mb-1">❌ 불포함 항목 (줄바꿈으로 구분)</label>
+              <textarea value={pkg.excludes ?? ''} onChange={e => onChange({ ...pkg, excludes: e.target.value })}
+                className="input-field text-xs h-28 resize-none"
+                placeholder={'왕복 항공권\n여행자보험\n개인비용\n...'} />
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* 메모 */}
+      <div className="px-4 pb-3">
+        <input value={pkg.note ?? ''} onChange={e => onChange({ ...pkg, note: e.target.value })}
+          className="input-field text-xs" placeholder="메모 (예: *성인 2인인 경우 150만원 추가)" />
+      </div>
     </div>
   )
 }

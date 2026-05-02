@@ -80,7 +80,7 @@ export default function QuoteFormModal({ school, calcResult, startDate, phpToKrw
     setItems(prev => [...prev, { id: uid(), label: '항목', amount: 0, isDiscount: false, editable: true }])
 
   // 현지납부비 (옵션 제외)
-  const localItems = (calcResult.localFees ?? []).filter(f => f.condition !== 'optional')
+  const localItems = (calcResult.localFees ?? []).filter(f => (f.trigger ?? 'always') !== 'optional')
 
   const captureAndCopy = useCallback(async () => {
     if (!printRef.current) return
@@ -197,7 +197,7 @@ export default function QuoteFormModal({ school, calcResult, startDate, phpToKrw
                 <table style={{ width: '100%', borderCollapse: 'collapse' }}>
                   <tbody>
                     {localItems.map((lf, i) => {
-                      const phpAmt = lf.condition === 'per_week' ? lf.amount * weeks : lf.amount
+                      const phpAmt = (lf.trigger ?? 'always') === 'per_week' ? lf.amount * weeks : lf.amount
                       return (
                         <tr key={i} style={{ borderBottom: '1px solid #e8eaf0' }}>
                           <td style={{ padding: '4px 2px', fontSize: '12px', color: '#555' }}>{lf.name}</td>
