@@ -19,17 +19,50 @@ export async function getSchool(id: string): Promise<School | null> {
   return { id: snap.id, ...snap.data() } as School
 }
 
+// undefined 제거 (Firestore는 undefined 필드 저장 불가)
+function cleanForFirestore(obj: unknown): unknown {
+  if (Array.isArray(obj)) return obj.map(cleanForFirestore)
+  if (obj !== null && typeof obj === 'object') {
+    return Object.fromEntries(
+      Object.entries(obj as Record<string, unknown>)
+        .filter(([k, v]) => v !== undefined && !k.startsWith('_'))  // _nameMatched 등 임시 필드 제거
+        .map(([k, v]) => [k, cleanForFirestore(v)])
+    )
+  }
+  return obj
+}
+
 export async function saveSchool(school: Partial<School> & { id?: string }): Promise<string> {
   const now = new Date().toISOString()
+  const cleaned = cleanForFirestore(school) as Record<string, unknown>
+
   if (school.id) {
-    // setDoc: 없으면 생성, 있으면 덮어쓰기 (updateDoc은 없으면 404 에러)
-    await setDoc(doc(db, 'schools', school.id), { ...school, updatedAt: now }, { merge: false })
+    await setDoc(doc(db, 'schools', school.id), { ...cleaned, updatedAt: now })
     return school.id
   } else {
     const ref = doc(collection(db, 'schools'))
-    await setDoc(ref, { ...school, id: ref.id, createdAt: now, updatedAt: now })
+    await setDoc(ref, { ...cleaned, id: ref.id, createdAt: now, updatedAt: now })
     return ref.id
   }
+}
+
+// 여러 학원을 writeBatch로 원자적 저장 (순차 setDoc은 리스너 충돌 위험)
+export async function saveBatchSchools(schools: Array<Partial<School> & { id?: string }>): Promise<void> {
+  const { writeBatch } = await import('firebase/firestore')
+  const now = new Date().toISOString()
+
+  // Firestore writeBatch는 500개 제한 — 학원 수는 충분히 적으므로 단일 배치로 처리
+  const batch = writeBatch(db)
+  for (const school of schools) {
+    const cleaned = cleanForFirestore(school) as Record<string, unknown>
+    if (school.id) {
+      batch.set(doc(db, 'schools', school.id), { ...cleaned, updatedAt: now })
+    } else {
+      const ref = doc(collection(db, 'schools'))
+      batch.set(ref, { ...cleaned, id: ref.id, createdAt: now, updatedAt: now })
+    }
+  }
+  await batch.commit()
 }
 
 export async function deleteSchool(id: string): Promise<void> {

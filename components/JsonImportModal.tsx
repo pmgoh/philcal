@@ -1,7 +1,7 @@
 'use client'
 import { useState, useRef, useEffect } from 'react'
 import { v4 as uuid } from 'uuid'
-import { saveSchool, getSchools } from '@/lib/db'
+import { saveSchool, getSchools, saveBatchSchools } from '@/lib/db'
 import type { School, Course, Dormitory } from '@/types'
 import { Upload, X, Check, AlertTriangle, ChevronDown, ChevronUp, FileJson, ArrowRight, Eye, EyeOff } from 'lucide-react'
 
@@ -208,7 +208,8 @@ export default function JsonImportModal({ onClose, onImported }: Props) {
     setSaving(true)
     try {
       if (parsedArray) {
-        for (const school of parsedArray) { await saveSchool(JSON.parse(JSON.stringify(school))) }
+        // 배열은 writeBatch로 원자적 저장 (순차 setDoc은 내부 리스너 충돌 위험)
+        await saveBatchSchools(parsedArray)
       } else if (parsed) {
         await saveSchool(JSON.parse(JSON.stringify(parsed)))
       }
