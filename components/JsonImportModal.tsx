@@ -1,74 +1,133 @@
 'use client'
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { v4 as uuid } from 'uuid'
-import { saveSchool } from '@/lib/db'
+import { saveSchool, getSchools } from '@/lib/db'
 import type { School, Course, Dormitory } from '@/types'
-import { Upload, X, Check, AlertTriangle, ChevronDown, ChevronUp, FileJson } from 'lucide-react'
+import { Upload, X, Check, AlertTriangle, ChevronDown, ChevronUp, FileJson, ArrowRight, Eye, EyeOff } from 'lucide-react'
 
 interface Props {
   onClose: () => void
   onImported: () => void
 }
 
-interface ValidationError {
+interface ValidationError { field: string; message: string }
+
+// ── 변경 diff 항목 ────────────────────────────────────────────────────────────
+interface DiffItem {
   field: string
-  message: string
+  label: string
+  before: string
+  after: string
+  severity: 'danger' | 'warn' | 'info'
 }
 
-// JSON에서 학원 데이터를 정규화 (id 부여, 배열 기본값 등)
-function normalizeSchool(raw: Record<string, unknown>): Omit<School, 'id' | 'createdAt' | 'updatedAt'> {
-  const courses: Course[] = ((raw.courses as Course[]) ?? []).map(c => ({
-    ...c, id: c.id || uuid()
-  }))
-  const dormitories: Dormitory[] = ((raw.dormitories as Dormitory[]) ?? []).map(d => ({
-    ...d, id: d.id || uuid(),
-    operationPeriod: d.operationPeriod ?? undefined,
-  }))
+function diffSchools(before: School, after: ReturnType<typeof normalizeSchool>): DiffItem[] {
+  const diffs: DiffItem[] = []
 
+  const check = (field: string, label: string, b: unknown, a: unknown, severity: DiffItem['severity'] = 'warn') => {
+    const bs = typeof b === 'object' ? JSON.stringify(b) : String(b ?? '')
+    const as_ = typeof a === 'object' ? JSON.stringify(a) : String(a ?? '')
+    if (bs !== as_) diffs.push({ field, label, before: bs, after: as_, severity })
+  }
+
+  check('name', '학원명', before.name, after.name, 'danger')
+  check('region', '지역', before.region, after.region, 'danger')
+  check('minWeeks', '최소 주수', before.minWeeks, after.minWeeks, 'warn')
+  check('allowShortTerm', '단기가 여부', before.allowShortTerm, after.allowShortTerm, 'warn')
+
+  // 코스 변경
+  if (before.courses.length !== after.courses.length) {
+    diffs.push({ field: 'courses', label: '코스 수', before: `${before.courses.length}개`, after: `${after.courses.length}개`, severity: 'warn' })
+  } else {
+    before.courses.forEach((c, i) => {
+      const a = after.courses[i]
+      if (!a) return
+      if (c.price4Weeks !== a.price4Weeks) diffs.push({ field: `courses[${i}]`, label: `코스 "${c.name}" 가격`, before: `${c.price4Weeks.toLocaleString()}원`, after: `${a.price4Weeks.toLocaleString()}원`, severity: 'danger' })
+      if (c.name !== a.name) diffs.push({ field: `courses[${i}].name`, label: `코스명 ${i+1}번`, before: c.name, after: a.name, severity: 'warn' })
+    })
+  }
+
+  // 기숙사 변경
+  if (before.dormitories.length !== after.dormitories.length) {
+    diffs.push({ field: 'dormitories', label: '기숙사 수', before: `${before.dormitories.length}개`, after: `${after.dormitories.length}개`, severity: 'warn' })
+  } else {
+    before.dormitories.forEach((d, i) => {
+      const a = after.dormitories[i]
+      if (!a) return
+      if (d.price4Weeks !== a.price4Weeks) diffs.push({ field: `dormitories[${i}]`, label: `기숙사 "${d.name}" 가격`, before: `${d.price4Weeks.toLocaleString()}원`, after: `${a.price4Weeks.toLocaleString()}원`, severity: 'danger' })
+    })
+  }
+
+  // 패키지 변경
+  if (before.packages.length !== after.packages.length) {
+    diffs.push({ field: 'packages', label: '패키지 수', before: `${before.packages.length}개`, after: `${after.packages.length}개`, severity: 'warn' })
+  } else {
+    before.packages.forEach((p, i) => {
+      const a = after.packages[i]
+      if (!a) return
+      if (p.label !== a.label) diffs.push({ field: `packages[${i}]`, label: `패키지명 ${i+1}번`, before: p.label, after: a.label, severity: 'warn' })
+      const bMatrix = JSON.stringify(p.priceMatrix)
+      const aMatrix = JSON.stringify(a.priceMatrix)
+      if (bMatrix !== aMatrix) diffs.push({ field: `packages[${i}].price`, label: `패키지 "${p.label}" 가격표`, before: '(기존 가격표)', after: '(새 가격표)', severity: 'danger' })
+    })
+  }
+
+  // 프로모션 날짜
+  if (before.promotions.length > 0 && after.promotions.length > 0) {
+    const bDate = before.promotions[0]?.startDate ?? ''
+    const aDate = after.promotions[0]?.startDate ?? ''
+    if (bDate !== aDate) diffs.push({ field: 'promotions.startDate', label: '프로모션 기준 연도', before: bDate, after: aDate, severity: 'danger' })
+  }
+
+  // 일반 메모
+  if (before.generalNotes !== after.generalNotes) {
+    diffs.push({ field: 'generalNotes', label: '일반 유의사항', before: before.generalNotes.slice(0, 60) + '...', after: (after.generalNotes ?? '').slice(0, 60) + '...', severity: 'info' })
+  }
+
+  return diffs
+}
+
+// ── 정규화 ────────────────────────────────────────────────────────────────────
+function normalizeSchool(raw: Record<string, unknown>): Omit<School, 'createdAt' | 'updatedAt'> {
+  const courses: Course[] = ((raw.courses as Course[]) ?? []).map(c => ({ ...c, id: c.id || uuid() }))
+  const dormitories: Dormitory[] = ((raw.dormitories as Dormitory[]) ?? []).map(d => ({ ...d, id: d.id || uuid(), operationPeriod: d.operationPeriod ?? undefined }))
   return {
-    name:             (raw.name as string)             ?? '',
-    region:           (raw.region as School['region']) ?? '기타',
-    schoolType:       (raw.schoolType as School['schoolType']) ?? 'general',
-    programTags:      (raw.programTags as School['programTags']) ?? [],
-    minWeeks:         (raw.minWeeks as number)         ?? 4,
-    allowShortTerm:   (raw.allowShortTerm as boolean)  ?? false,
-    registrationFee:  (raw.registrationFee as School['registrationFee']) ?? undefined,
+    id: (raw.id as string) || uuid(),
+    name: (raw.name as string) ?? '',
+    region: (raw.region as School['region']) ?? '기타',
+    schoolType: (raw.schoolType as School['schoolType']) ?? 'general',
+    programTags: (raw.programTags as School['programTags']) ?? [],
+    minWeeks: (raw.minWeeks as number) ?? 4,
+    allowShortTerm: (raw.allowShortTerm as boolean) ?? false,
+    registrationFee: (raw.registrationFee as School['registrationFee']) ?? undefined,
     courseShortTermRates: (raw.courseShortTermRates as School['courseShortTermRates']) ?? undefined,
-    dormShortTermRates:   (raw.dormShortTermRates   as School['dormShortTermRates'])   ?? undefined,
-    priceIncrease:    (raw.priceIncrease as School['priceIncrease']) ?? undefined,
-    courses,
-    dormitories,
-    surcharges:       ((raw.surcharges  as School['surcharges'])  ?? []).map(s => ({ ...s, id: s.id || uuid() })),
-    promotions:       ((raw.promotions  as School['promotions'])  ?? []).map(p => ({ ...p, id: p.id || uuid() })),
-    localFees:        ((raw.localFees   as School['localFees'])   ?? []).map(f => ({ ...f, id: f.id || uuid() })),
-    packages:         ((raw.packages    as School['packages'])    ?? []).map(p => ({ ...p, id: p.id || uuid() })),
-    refundPolicy:     (raw.refundPolicy   as string) ?? '',
-    dormitoryRules:   (raw.dormitoryRules as string) ?? '',
-    generalNotes:     (raw.generalNotes   as string) ?? '',
-    isActive:         (raw.isActive as boolean) ?? true,
+    dormShortTermRates: (raw.dormShortTermRates as School['dormShortTermRates']) ?? undefined,
+    priceIncrease: (raw.priceIncrease as School['priceIncrease']) ?? undefined,
+    courses, dormitories,
+    surcharges: ((raw.surcharges as School['surcharges']) ?? []).map(s => ({ ...s, id: s.id || uuid() })),
+    promotions: ((raw.promotions as School['promotions']) ?? []).map(p => ({ ...p, id: p.id || uuid() })),
+    localFees: ((raw.localFees as School['localFees']) ?? []).map(f => ({ ...f, id: f.id || uuid() })),
+    packages: ((raw.packages as School['packages']) ?? []).map(p => ({ ...p, id: p.id || uuid() })),
+    refundPolicy: (raw.refundPolicy as string) ?? '',
+    dormitoryRules: (raw.dormitoryRules as string) ?? '',
+    generalNotes: (raw.generalNotes as string) ?? '',
+    isActive: (raw.isActive as boolean) ?? true,
   }
 }
 
-// 기본 유효성 검사 (패키지 전용 학원은 courses/dormitories 없어도 허용)
 function validate(data: ReturnType<typeof normalizeSchool>): ValidationError[] {
   const errors: ValidationError[] = []
   if (!data.name?.trim()) errors.push({ field: 'name', message: '학원명이 없습니다.' })
   if (!data.region) errors.push({ field: 'region', message: '지역이 없습니다.' })
-
-  // 코스도 없고 패키지도 없을 때만 에러
-  if (data.courses.length === 0 && data.packages.length === 0) {
-    errors.push({ field: 'courses', message: '코스 또는 패키지가 하나도 없습니다.' })
-  }
+  if (data.courses.length === 0 && data.packages.length === 0) errors.push({ field: 'courses', message: '코스 또는 패키지가 하나도 없습니다.' })
   data.courses.forEach((c, i) => {
-    if (!c.name) errors.push({ field: `courses[${i}]`, message: `코스 ${i + 1}번 이름이 없습니다.` })
+    if (!c.name) errors.push({ field: `courses[${i}]`, message: `코스 ${i+1}번 이름이 없습니다.` })
     if (!c.price4Weeks) errors.push({ field: `courses[${i}].price`, message: `코스 "${c.name}" 가격이 0입니다.` })
-  })
-  data.dormitories.forEach((d, i) => {
-    if (!d.name) errors.push({ field: `dormitories[${i}]`, message: `기숙사 ${i + 1}번 이름이 없습니다.` })
   })
   return errors
 }
 
+// ── 메인 컴포넌트 ─────────────────────────────────────────────────────────────
 export default function JsonImportModal({ onClose, onImported }: Props) {
   const fileRef = useRef<HTMLInputElement>(null)
   const [jsonText, setJsonText] = useState('')
@@ -78,260 +137,219 @@ export default function JsonImportModal({ onClose, onImported }: Props) {
   const [parseError, setParseError] = useState('')
   const [saving, setSaving] = useState(false)
   const [saved, setSaved] = useState(false)
-  const [showPreview, setShowPreview] = useState(false)
   const [tab, setTab] = useState<'upload' | 'paste'>('upload')
 
-  const handleFile = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]
-    if (!file) return
-    const reader = new FileReader()
-    reader.onload = ev => {
-      const text = ev.target?.result as string
-      setJsonText(text)
-      processJson(text)
-    }
-    reader.readAsText(file)
-  }
+  // diff 관련
+  const [existingSchools, setExistingSchools] = useState<School[]>([])
+  const [diffs, setDiffs] = useState<Record<string, DiffItem[]>>({})
+  const [showDiff, setShowDiff] = useState<Record<string, boolean>>({})
+
+  useEffect(() => {
+    getSchools().then(setExistingSchools)
+  }, [])
 
   const processJson = (text: string) => {
-    setParseError('')
-    setErrors([])
-    setParsed(null)
-    setParsedArray(null)
+    setParseError(''); setErrors([]); setParsed(null); setParsedArray(null); setDiffs({})
     try {
       const raw = JSON.parse(text)
       if (Array.isArray(raw)) {
-        // 배열 모드: 여러 학원 일괄 import
         const normalized = raw.map(r => normalizeSchool(r as Record<string, unknown>))
         const allErrors = normalized.flatMap((n, i) =>
           validate(n).map(e => ({ ...e, field: `[${i}] ${n.name}: ${e.field}` }))
         )
-        setParsedArray(normalized)
-        setErrors(allErrors)
+        // 기존 학원과 diff 계산
+        const diffMap: Record<string, DiffItem[]> = {}
+        normalized.forEach(n => {
+          if (n.id) {
+            const existing = existingSchools.find(s => s.id === n.id)
+            if (existing) {
+              const d = diffSchools(existing, n)
+              if (d.length > 0) diffMap[n.id] = d
+            }
+          }
+        })
+        setParsedArray(normalized); setErrors(allErrors); setDiffs(diffMap)
       } else {
-        // 단일 객체 모드
         const normalized = normalizeSchool(raw)
         const errs = validate(normalized)
-        setParsed(normalized)
-        setErrors(errs)
+        // 단일 diff
+        if (normalized.id) {
+          const existing = existingSchools.find(s => s.id === normalized.id)
+          if (existing) {
+            const d = diffSchools(existing, normalized)
+            if (d.length > 0) setDiffs({ [normalized.id]: d })
+          }
+        }
+        setParsed(normalized); setErrors(errs)
       }
-    } catch {
-      setParseError('JSON 형식이 올바르지 않습니다. 형식을 확인해주세요.')
-    }
+    } catch { setParseError('JSON 형식이 올바르지 않습니다.') }
   }
 
-  const handlePaste = () => processJson(jsonText)
+  const handleFile = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]; if (!file) return
+    const reader = new FileReader()
+    reader.onload = ev => { const t = ev.target?.result as string; setJsonText(t); processJson(t) }
+    reader.readAsText(file)
+  }
 
   const handleSave = async () => {
     if (!parsed && !parsedArray) return
     setSaving(true)
     try {
       if (parsedArray) {
-        // 배열 일괄 저장
-        for (const school of parsedArray) {
-          const clean = JSON.parse(JSON.stringify(school))
-          await saveSchool(clean)
-        }
+        for (const school of parsedArray) { await saveSchool(JSON.parse(JSON.stringify(school))) }
       } else if (parsed) {
-        const clean = JSON.parse(JSON.stringify(parsed))
-        await saveSchool(clean)
+        await saveSchool(JSON.parse(JSON.stringify(parsed)))
       }
       setSaved(true)
       setTimeout(() => { onImported(); onClose() }, 1200)
-    } catch (e) {
-      console.error(e)
-      setParseError('저장 중 오류가 발생했습니다. 콘솔을 확인해주세요.')
-    } finally {
-      setSaving(false)
-    }
+    } catch (e) { console.error(e); setParseError('저장 중 오류가 발생했습니다.') }
+    finally { setSaving(false) }
   }
 
-  const hasBlockingErrors = errors.some(e =>
-    e.field === 'name' || e.field === 'region' || e.field.includes('학원명')
-  )
+  const hasBlockingErrors = errors.some(e => e.field === 'name' || e.field === 'region' || e.field.includes('학원명'))
   const isReady = (parsed !== null || parsedArray !== null) && !hasBlockingErrors
+  const hasDiffs = Object.keys(diffs).length > 0
+
+  const list = parsedArray ?? (parsed ? [parsed] : [])
 
   return (
-    <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-2xl shadow-xl w-full max-w-2xl max-h-[90vh] flex flex-col">
+    <div className="fixed inset-0 bg-black/40 flex items-end md:items-center justify-center z-50 p-0 md:p-4">
+      <div className="bg-white rounded-t-2xl md:rounded-2xl shadow-xl w-full md:max-w-2xl max-h-[92dvh] md:max-h-[90vh] flex flex-col">
         {/* 헤더 */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+        <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100 flex-shrink-0">
           <div className="flex items-center gap-3">
             <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
               <FileJson size={16} className="text-blue-600" />
             </div>
             <div>
-              <h2 className="font-semibold text-gray-900">JSON으로 학원 가져오기</h2>
-              <p className="text-xs text-gray-400">PDF 추출 결과를 바로 등록합니다</p>
+              <h2 className="font-semibold text-gray-900">학원 데이터 가져오기</h2>
+              <p className="text-xs text-gray-400">id가 있으면 기존 데이터 덮어쓰기</p>
             </div>
           </div>
-          <button onClick={onClose} className="p-2 hover:bg-gray-100 rounded-lg transition-colors">
-            <X size={16} className="text-gray-500" />
-          </button>
+          <button onClick={onClose} className="p-2 hover:bg-gray-100 rounded-lg"><X size={16} className="text-gray-500" /></button>
         </div>
 
-        <div className="flex-1 overflow-y-auto p-6 space-y-4">
+        <div className="flex-1 overflow-y-auto p-5 space-y-4">
           {/* 탭 */}
           <div className="flex gap-1 bg-gray-100 rounded-lg p-1">
             {(['upload', 'paste'] as const).map(t => (
               <button key={t} onClick={() => setTab(t)}
-                className={`flex-1 py-1.5 text-sm font-medium rounded-md transition-colors ${tab === t ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}>
+                className={`flex-1 py-1.5 text-sm font-medium rounded-md transition-colors ${tab === t ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500'}`}>
                 {t === 'upload' ? '📁 파일 업로드' : '📋 텍스트 붙여넣기'}
               </button>
             ))}
           </div>
 
-          {/* 파일 업로드 */}
-          {tab === 'upload' && (
-            <div
-              onClick={() => fileRef.current?.click()}
-              className="border-2 border-dashed border-gray-200 rounded-xl p-8 text-center cursor-pointer hover:border-blue-300 hover:bg-blue-50 transition-colors"
-            >
-              <Upload size={32} className="mx-auto text-gray-300 mb-3" />
-              <p className="text-sm font-medium text-gray-600">JSON 파일을 클릭해서 선택하세요</p>
-              <p className="text-xs text-gray-400 mt-1">.json 파일만 지원</p>
-              <input ref={fileRef} type="file" accept=".json" onChange={handleFile} className="hidden" />
+          {tab === 'upload' ? (
+            <div className="border-2 border-dashed border-gray-200 rounded-xl p-8 text-center cursor-pointer hover:border-blue-300 hover:bg-blue-50/30 transition-colors"
+              onClick={() => fileRef.current?.click()}>
+              <FileJson size={32} className="mx-auto text-gray-300 mb-2" />
+              <p className="text-sm text-gray-500">JSON 파일을 클릭하여 선택</p>
+              <p className="text-xs text-gray-400 mt-1">배열 [{`{...}`}] 형식으로 여러 학원 동시 등록 가능</p>
+              <input ref={fileRef} type="file" accept=".json" className="hidden" onChange={handleFile} />
+              {jsonText && <p className="text-xs text-green-600 mt-2">✅ 파일 로드됨</p>}
             </div>
-          )}
-
-          {/* 텍스트 붙여넣기 */}
-          {tab === 'paste' && (
+          ) : (
             <div className="space-y-2">
-              <textarea
-                value={jsonText}
-                onChange={e => setJsonText(e.target.value)}
-                className="input-field h-40 resize-none font-mono text-xs"
-                placeholder={'{\n  "name": "학원명",\n  "region": "세부",\n  ...\n}'}
-              />
-              <button onClick={handlePaste} disabled={!jsonText.trim()}
-                className="btn-primary w-full">
-                JSON 분석하기
-              </button>
+              <textarea value={jsonText} onChange={e => setJsonText(e.target.value)}
+                className="w-full h-40 input-field text-xs font-mono resize-none" placeholder='{"name": "학원명", ...}' />
+              <button onClick={() => processJson(jsonText)} className="btn-secondary w-full text-sm">JSON 파싱하기</button>
             </div>
           )}
 
-          {/* 파싱 에러 */}
           {parseError && (
-            <div className="bg-red-50 border border-red-200 rounded-lg px-4 py-3 flex items-start gap-2">
-              <AlertTriangle size={16} className="text-red-500 flex-shrink-0 mt-0.5" />
-              <p className="text-sm text-red-700">{parseError}</p>
-            </div>
+            <div className="bg-red-50 border border-red-200 text-red-600 text-sm rounded-xl px-4 py-3">{parseError}</div>
           )}
 
-          {/* 배열 미리보기 */}
-          {parsedArray && (
+          {/* ── 파싱 결과 ── */}
+          {list.length > 0 && (
             <div className="space-y-3">
-              <div className="bg-green-50 border border-green-200 rounded-xl p-4">
-                <p className="font-semibold text-green-900 mb-1">📦 {parsedArray.length}개 학원 등록/업데이트 준비됨</p>
-                <p className="text-xs text-green-700 mb-2">JSON에 <code>id</code> 필드가 있으면 기존 학원을 덮어씁니다. 없으면 새로 추가됩니다.</p>
-                <div className="space-y-1">
-                  {parsedArray.map((s, i) => (
-                    <div key={i} className="flex justify-between text-xs text-green-700 bg-white/70 rounded px-2 py-1.5">
-                      <span className="font-medium">{s.name}</span>
-                      <span className="text-green-500">{s.region} · 패키지 {s.packages.length}개 · 코스 {s.courses.length}개</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-              {errors.length > 0 && (
-                <div className="space-y-1.5">
-                  {errors.map((err, i) => (
-                    <div key={i} className="flex items-start gap-2 text-sm rounded-lg px-3 py-2 bg-yellow-50 text-yellow-700 border border-yellow-200">
-                      <AlertTriangle size={14} className="flex-shrink-0 mt-0.5" />
-                      <span>{err.message}</span>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-          )}
-
-          {/* 파싱 성공 - 단일 미리보기 */}
-          {parsed && (
-            <div className="space-y-3">
-              {/* 요약 카드 */}
-              <div className="bg-blue-50 border border-blue-200 rounded-xl p-4">
-                <div className="flex items-center justify-between mb-3">
-                  <div>
-                    <p className="font-semibold text-blue-900 text-lg">{parsed.name || '(학원명 없음)'}</p>
-                    <p className="text-sm text-blue-600">{parsed.region} · {parsed.schoolType === 'sparta' ? '스파르타' : parsed.schoolType === 'general' ? '일반' : '스파르타/일반'}</p>
-                  </div>
-                  <div className="text-right text-sm text-blue-700 space-y-0.5">
-                    <div>코스 {parsed.courses.length}개</div>
-                    <div>기숙사 {parsed.dormitories.length}개</div>
-                    <div>패키지 {parsed.packages.length}개</div>
-                    <div>프로모션 {parsed.promotions.length}개</div>
-                  </div>
-                </div>
-
-                {/* 코스 목록 미리보기 */}
-                {parsed.courses.length > 0 && (
-                  <div className="space-y-1">
-                    {parsed.courses.slice(0, 3).map((c, i) => (
-                      <div key={i} className="flex justify-between text-xs text-blue-700 bg-white/60 rounded px-2 py-1">
-                        <span>{c.name} <span className="text-blue-400">({c.target})</span></span>
-                        <span className="font-medium">{c.price4Weeks.toLocaleString()}{c.currency === 'KRW' ? '원' : c.currency}/주</span>
+              {/* 학원 목록 */}
+              <div className={`rounded-xl border p-4 space-y-2 ${hasDiffs ? 'border-orange-200 bg-orange-50/40' : 'border-green-200 bg-green-50/40'}`}>
+                <p className="font-semibold text-gray-900 text-sm">
+                  {list.length}개 학원 {hasDiffs ? '⚠️ 변경사항 확인 필요' : '✅ 준비됨'}
+                </p>
+                {list.map((s, i) => {
+                  const schoolId = s.id ?? ''
+                  const existing = existingSchools.find(e => e.id === schoolId)
+                  const schoolDiffs = diffs[schoolId] ?? []
+                  const isUpdate = !!existing
+                  const isOpen = showDiff[schoolId]
+                  return (
+                    <div key={i} className="bg-white rounded-lg border border-gray-200 overflow-hidden">
+                      <div className="flex items-center gap-2 px-3 py-2.5">
+                        <span className={`text-xs px-2 py-0.5 rounded-full font-medium flex-shrink-0 ${isUpdate ? 'bg-orange-100 text-orange-700' : 'bg-green-100 text-green-700'}`}>
+                          {isUpdate ? '덮어쓰기' : '신규 추가'}
+                        </span>
+                        <span className="text-sm font-medium text-gray-800 flex-1 truncate">{s.name}</span>
+                        <span className="text-xs text-gray-400">{s.region} · 패키지 {s.packages.length}개 · 코스 {s.courses.length}개</span>
+                        {schoolDiffs.length > 0 && (
+                          <button onClick={() => setShowDiff(prev => ({ ...prev, [schoolId]: !isOpen }))}
+                            className="text-xs text-orange-600 hover:text-orange-800 flex items-center gap-1 flex-shrink-0">
+                            {isOpen ? <EyeOff size={12} /> : <Eye size={12} />}
+                            변경 {schoolDiffs.length}건
+                          </button>
+                        )}
                       </div>
-                    ))}
-                    {parsed.courses.length > 3 && (
-                      <p className="text-xs text-blue-500 text-center">+{parsed.courses.length - 3}개 더</p>
-                    )}
-                  </div>
-                )}
+
+                      {/* diff 상세 */}
+                      {isOpen && schoolDiffs.length > 0 && (
+                        <div className="border-t border-gray-100 divide-y divide-gray-50">
+                          {schoolDiffs.map((d, di) => (
+                            <div key={di} className={`px-3 py-2 flex items-start gap-2 ${d.severity === 'danger' ? 'bg-red-50' : d.severity === 'warn' ? 'bg-yellow-50' : 'bg-gray-50'}`}>
+                              <span className={`text-xs mt-0.5 flex-shrink-0 ${d.severity === 'danger' ? 'text-red-500' : d.severity === 'warn' ? 'text-yellow-600' : 'text-gray-400'}`}>
+                                {d.severity === 'danger' ? '🔴' : d.severity === 'warn' ? '🟡' : 'ℹ️'}
+                              </span>
+                              <div className="flex-1 min-w-0">
+                                <p className="text-xs font-medium text-gray-700">{d.label}</p>
+                                <div className="flex items-center gap-1.5 mt-0.5 flex-wrap">
+                                  <span className="text-xs text-red-600 line-through truncate max-w-32">{d.before}</span>
+                                  <ArrowRight size={10} className="text-gray-400 flex-shrink-0" />
+                                  <span className="text-xs text-green-700 font-medium truncate max-w-32">{d.after}</span>
+                                </div>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  )
+                })}
               </div>
 
               {/* 유효성 경고 */}
               {errors.length > 0 && (
                 <div className="space-y-1.5">
                   {errors.map((err, i) => (
-                    <div key={i} className={`flex items-start gap-2 text-sm rounded-lg px-3 py-2 ${
-                      err.field === 'name' || err.field === 'region'
-                        ? 'bg-red-50 text-red-700 border border-red-200'
-                        : 'bg-yellow-50 text-yellow-700 border border-yellow-200'
-                    }`}>
+                    <div key={i} className={`flex items-start gap-2 text-sm rounded-lg px-3 py-2 ${err.field.includes('name') || err.field.includes('region') ? 'bg-red-50 text-red-700 border border-red-200' : 'bg-yellow-50 text-yellow-700 border border-yellow-200'}`}>
                       <AlertTriangle size={14} className="flex-shrink-0 mt-0.5" />
                       <span>{err.message}</span>
                     </div>
                   ))}
-                  {errors.some(e => e.field !== 'name' && e.field !== 'region') && (
-                    <p className="text-xs text-gray-400 px-1">⚠️ 경고 항목은 저장 후 수동으로 수정 가능합니다.</p>
-                  )}
                 </div>
               )}
 
-              {/* 전체 JSON 미리보기 토글 */}
-              <button onClick={() => setShowPreview(!showPreview)}
-                className="w-full flex items-center justify-between text-sm text-gray-500 hover:text-gray-700 py-1">
-                <span>전체 데이터 보기</span>
-                {showPreview ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
-              </button>
-              {showPreview && (
-                <pre className="bg-gray-50 border border-gray-200 rounded-lg p-3 text-xs overflow-auto max-h-48 text-gray-600">
-                  {JSON.stringify(parsed, null, 2)}
-                </pre>
+              {/* 요약 안내 */}
+              {hasDiffs && (
+                <div className="bg-amber-50 border border-amber-200 rounded-xl px-4 py-3 text-xs text-amber-800">
+                  ⚠️ <strong>덮어쓰기 주의:</strong> 🔴 빨간 항목은 가격·날짜 등 견적에 직접 영향을 주는 변경입니다. 변경 내역을 확인 후 저장해 주세요.
+                </div>
               )}
             </div>
           )}
         </div>
 
         {/* 푸터 */}
-        <div className="px-6 py-4 border-t border-gray-100 flex gap-3">
+        <div className="px-5 py-4 border-t border-gray-100 flex gap-3 flex-shrink-0">
           <button onClick={onClose} className="btn-secondary flex-1">취소</button>
-          <button
-            onClick={handleSave}
-            disabled={!isReady || saving || saved}
-            className="btn-primary flex-1 flex items-center justify-center gap-2"
-          >
-            {saved
-              ? <><Check size={14} /> 저장됨</>
-              : saving
-                ? `저장 중...`
-                : parsedArray
-                  ? <><Upload size={14} /> {parsedArray.length}개 학원 일괄 등록</>
-                  : errors.length > 0 && !hasBlockingErrors
-                    ? <><Upload size={14} /> 경고 무시하고 저장</>
-                    : <><Upload size={14} /> 학원 등록하기</>
-            }
+          <button onClick={handleSave} disabled={!isReady || saving || saved}
+            className="btn-primary flex-1 flex items-center justify-center gap-2">
+            {saved ? <><Check size={14} /> 저장됨</>
+              : saving ? `저장 중...`
+              : hasDiffs ? <><Upload size={14} /> 변경사항 확인 후 저장</>
+              : list.length > 1 ? <><Upload size={14} /> {list.length}개 학원 저장</>
+              : <><Upload size={14} /> 학원 저장하기</>}
           </button>
         </div>
       </div>
