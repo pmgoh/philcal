@@ -252,12 +252,12 @@ export async function POST(req: NextRequest) {
       packages: (s.packages ?? []).map(p => ({
         id: p.id,
         label: p.label,
-        season: p.season,
+        season: p.season ?? '',
         currency: p.currency,
-        columns: p.columns,
-        availableWeeks: p.priceMatrix.map(r => r.weeks),
-        samplePrices: p.priceMatrix.slice(0, 2).map(r =>
-          `${r.weeks}주: ${r.prices.map(c => `${c.label} ${(c.amount/10000).toFixed(0)}만원`).join(', ')}`
+        columns: p.columns ?? [],
+        availableWeeks: (p.priceMatrix ?? []).map(r => r.weeks),
+        samplePrices: (p.priceMatrix ?? []).slice(0, 2).map(r =>
+          `${r.weeks}주: ${(r.prices ?? []).map(c => `${c.label} ${(c.amount/10000).toFixed(0)}만원`).join(', ')}`
         ).join(' / '),
         additionalRules: (p.additionalRules ?? []).map(r => ({
           id: r.id, condition: r.condition, addAmount: r.addAmount, currency: r.currency,
