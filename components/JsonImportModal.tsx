@@ -157,30 +157,41 @@ export default function JsonImportModal({ onClose, onImported }: Props) {
         const allErrors = normalized.flatMap((n, i) =>
           validate(n).map(e => ({ ...e, field: `[${i}] ${n.name}: ${e.field}` }))
         )
-        // 기존 학원과 diff 계산
+        // 이름 기반 중복 감지: id가 없거나 다른 id인데 같은 이름이 있으면 기존 id 사용
+        const resolved = normalized.map(n => {
+          const existingById   = existingSchools.find(s => s.id === n.id)
+          const existingByName = existingSchools.find(s => s.name === n.name)
+          if (!existingById && existingByName) {
+            // id 불일치 → 기존 id로 교체 (중복 방지)
+            return { ...n, id: existingByName.id, _nameMatched: true }
+          }
+          return n
+        })
         const diffMap: Record<string, DiffItem[]> = {}
-        normalized.forEach(n => {
-          if (n.id) {
-            const existing = existingSchools.find(s => s.id === n.id)
-            if (existing) {
-              const d = diffSchools(existing, n)
-              if (d.length > 0) diffMap[n.id] = d
-            }
+        resolved.forEach(n => {
+          const existing = existingSchools.find(s => s.id === n.id)
+          if (existing) {
+            const d = diffSchools(existing, n)
+            if (d.length > 0) diffMap[n.id] = d
           }
         })
-        setParsedArray(normalized); setErrors(allErrors); setDiffs(diffMap)
+        setParsedArray(resolved); setErrors(allErrors); setDiffs(diffMap)
       } else {
-        const normalized = normalizeSchool(raw)
-        const errs = validate(normalized)
-        // 단일 diff
-        if (normalized.id) {
-          const existing = existingSchools.find(s => s.id === normalized.id)
+        const normalized = normalizeSchool(raw as Record<string, unknown>)
+        const existingById   = existingSchools.find(s => s.id === normalized.id)
+        const existingByName = existingSchools.find(s => s.name === normalized.name)
+        const resolved = (!existingById && existingByName)
+          ? { ...normalized, id: existingByName.id, _nameMatched: true }
+          : normalized
+        const errs = validate(resolved)
+        if (resolved.id) {
+          const existing = existingSchools.find(s => s.id === resolved.id)
           if (existing) {
-            const d = diffSchools(existing, normalized)
-            if (d.length > 0) setDiffs({ [normalized.id]: d })
+            const d = diffSchools(existing, resolved)
+            if (d.length > 0) setDiffs({ [resolved.id]: d })
           }
         }
-        setParsed(normalized); setErrors(errs)
+        setParsed(resolved); setErrors(errs)
       }
     } catch { setParseError('JSON 형식이 올바르지 않습니다.') }
   }
@@ -282,6 +293,9 @@ export default function JsonImportModal({ onClose, onImported }: Props) {
                         <span className={`text-xs px-2 py-0.5 rounded-full font-medium flex-shrink-0 ${isUpdate ? 'bg-orange-100 text-orange-700' : 'bg-green-100 text-green-700'}`}>
                           {isUpdate ? '덮어쓰기' : '신규 추가'}
                         </span>
+                        {!!(s as Record<string, unknown>)._nameMatched && (
+                          <span className="text-xs px-2 py-0.5 rounded-full bg-blue-100 text-blue-700 flex-shrink-0">이름 매칭</span>
+                        )}
                         <span className="text-sm font-medium text-gray-800 flex-1 truncate">{s.name}</span>
                         <span className="text-xs text-gray-400">{s.region} · 패키지 {s.packages.length}개 · 코스 {s.courses.length}개</span>
                         {schoolDiffs.length > 0 && (
