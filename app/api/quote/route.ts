@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { calculateQuote, CalcResult, CourseItem, DormItem } from '@/lib/calcEngine'
+import { calculateQuote, CalcResult, CourseItem, DormItem, PackageInput } from '@/lib/calcEngine'
 import { formatKrw, formatCurrency } from '@/lib/utils'
 import type { School, LocalFee, ExchangeRate } from '@/types'
 
@@ -10,37 +10,46 @@ const EXTRACT_PROMPT = `당신은 필리핀 어학연수 견적 AI입니다. 엠
 - 첫 글자 반드시 {, 마지막 글자 반드시 }
 - 생각 과정, 설명, 코드블록 전부 금지
 
-[핵심 원칙 — 반드시 지킬 것]
-- 코스와 기숙사 모두 확정되어야 견적 계산 가능
-- 코스 미지정 → 반드시 되물음 (자동 선택 절대 금지)
-- 기숙사 미지정 → 반드시 되물음 (자동 선택 절대 금지)
-- 시작일(startDate) 반드시 확인 — 아래 규칙 적용:
-  · "8월 초" → 8-04(월), "8월 중순" → 8-11(월), "8월 말" → 8-25(월) 로 추정 가능
-  · "7월" 처럼 월만 있으면 → 정확한 날짜 되물음
-  · 날짜가 전혀 없으면 → 반드시 되물음 (오늘+30일 자동 사용 금지)
+[핵심 원칙]
+- 시작일(startDate) 반드시 확인 → 없으면 반드시 되물음
+- 날짜가 모호하면: "8월 초"→8-04, "8월 중순"→8-11, "8월 말"→8-25 (월요일 기준)
+- 월만 있으면 → 정확한 날짜 되물음
 
-[코스/기숙사 독립 구조]
-- 코스와 기숙사는 완전히 독립 계산
-- 주수가 달라도 됨 (코스 총 9주, 기숙사 총 8주 가능)
-- 등록비는 한 번만
-- 단기가 판단: max(코스주수합, 기숙사주수합) 기준
+[학원 유형 구분]
+- 코스/기숙사형 학원: courses[], dormitories[] 로 견적
+- 패키지형 학원(가족연수, 올인클루시브 등): packages[] 로 견적
+- 패키지형 학원에서 코스/기숙사 없으면 자동 선택 금지 → 패키지 선택 되물음
 
-[단기가 원칙]
-- 단기가는 총 연수기간(totalWeeks)이 4주 미만일 때만
-- 개별 항목 주수가 아닌 전체 합산 기준
+[패키지 견적 원칙]
+- 패키지 = packageId + weeks + columnLabel (인원 구성) 3가지 필요
+- packageId 미지정 → 되물음 (어떤 패키지인지 목록 제시)
+- columnLabel 미지정 → 되물음 (2인가족/3인가족/4인가족 등)
+- weeks 미지정 → 되물음
+- 비수기/성수기 구분: 입국일 기준으로 자동 판단 (7~8월, 1~2월 = 성수기)
 
 [응답 형식]
 
-단일 or 복수 코스/기숙사 견적:
+코스/기숙사 견적:
 {"action":"calculate","schoolId":"ID","startDate":"YYYY-MM-DD","enrollmentDate":"YYYY-MM-DD",
- "courses":[{"courseId":"ID","weeks":4},{"courseId":"ID","weeks":8}],
- "dormitories":[{"dormitoryId":"ID","weeks":6},{"dormitoryId":"ID","weeks":6}],
+ "courses":[{"courseId":"ID","weeks":4}],"dormitories":[{"dormitoryId":"ID","weeks":4}],
+ "packages":[],"message":"요약"}
+
+패키지 견적:
+{"action":"calculate","schoolId":"ID","startDate":"YYYY-MM-DD","enrollmentDate":"YYYY-MM-DD",
+ "courses":[],"dormitories":[],
+ "packages":[{"packageId":"패키지ID","weeks":4,"columnLabel":"2인가족"}],
  "message":"요약"}
 
-비교 견적 (1인실 vs 2인실 등 옵션 비교):
+패키지 + 추가규정(성인 2인 등):
+{"action":"calculate","schoolId":"ID","startDate":"YYYY-MM-DD","enrollmentDate":"YYYY-MM-DD",
+ "courses":[],"dormitories":[],
+ "packages":[{"packageId":"패키지ID","weeks":4,"columnLabel":"2인가족","additionalRuleIds":["규칙ID"]}],
+ "message":"요약"}
+
+비교 견적:
 {"action":"multi_calculate","items":[
-  {"label":"1인실","schoolId":"ID","startDate":"YYYY-MM-DD","enrollmentDate":"YYYY-MM-DD","courses":[{"courseId":"ID","weeks":8}],"dormitories":[{"dormitoryId":"ID","weeks":8}]},
-  {"label":"2인실","schoolId":"ID","startDate":"YYYY-MM-DD","enrollmentDate":"YYYY-MM-DD","courses":[{"courseId":"ID","weeks":8}],"dormitories":[{"dormitoryId":"ID","weeks":8}]}
+  {"label":"비수기 올인클루시브 2인가족","schoolId":"ID","startDate":"YYYY-MM-DD","enrollmentDate":"YYYY-MM-DD","courses":[],"dormitories":[],"packages":[{"packageId":"ID","weeks":4,"columnLabel":"2인가족"}]},
+  {"label":"비수기 실속형 2인가족","schoolId":"ID","startDate":"YYYY-MM-DD","enrollmentDate":"YYYY-MM-DD","courses":[],"dormitories":[],"packages":[{"packageId":"ID","weeks":4,"columnLabel":"2인가족"}]}
 ]}
 
 정보 부족:
@@ -51,8 +60,8 @@ const EXTRACT_PROMPT = `당신은 필리핀 어학연수 견적 AI입니다. 엠
 
 [매칭 규칙]
 - 학원명: 부분 일치
-- 날짜 없으면 오늘+30일
-- weeks는 반드시 정수`
+- packageId: 패키지의 id 필드 값 사용 (label이 아닌 id)
+- weeks: 정수`
 
 function extractJson(text: string): Record<string, unknown> | null {
   const stripped = text.replace(/```(?:json)?\n?/g, '').replace(/```/g, '').trim()
@@ -99,20 +108,41 @@ ${school.refundPolicy   ? `환불규정:\n${school.refundPolicy}\n`   : ''}${sch
 function buildQuoteMessage(school: School, calcResult: CalcResult): string {
   const lines: string[] = []
   lines.push(`## ${school.name}`)
-  const weeksDesc = calcResult.courseTotalWeeks === calcResult.dormTotalWeeks
-    ? `총 ${calcResult.totalWeeks}주`
-    : `코스 ${calcResult.courseTotalWeeks}주 / 기숙사 ${calcResult.dormTotalWeeks}주`
-  lines.push(`**${weeksDesc}**`)
+  lines.push(`**총 ${calcResult.totalWeeks}주**`)
   lines.push('')
 
+  // 패키지 항목
+  if (calcResult.packageItems.length > 0) {
+    lines.push('**패키지 구성**')
+    for (const pi of calcResult.packageItems) {
+      lines.push(`- ${pi.pkg.label} / ${pi.columnLabel} / ${pi.weeks}주: **${formatKrw(pi.baseAmount)}**`)
+      for (const r of pi.appliedRules) lines.push(`  *(추가: ${r})*`)
+      if (pi.additionalAmount > 0) lines.push(`  추가규정 합계: **+${formatKrw(pi.additionalAmount)}**`)
+    }
+    // 포함/불포함 요약
+    const firstPkg = calcResult.packageItems[0]?.pkg
+    if (firstPkg?.includes) {
+      lines.push('\n✅ **포함**')
+      firstPkg.includes.split('\n').slice(0, 5).forEach(s => { if (s.trim()) lines.push(`  - ${s.trim()}`) })
+      if (firstPkg.includes.split('\n').length > 5) lines.push(`  - *(외 ${firstPkg.includes.split('\n').length - 5}개)*`)
+    }
+    if (firstPkg?.excludes) {
+      lines.push('\n❌ **불포함**')
+      firstPkg.excludes.split('\n').slice(0, 3).forEach(s => { if (s.trim()) lines.push(`  - ${s.trim()}`) })
+    }
+    if (firstPkg?.note) lines.push(`\n> ${firstPkg.note}`)
+  }
+
+  // 코스
   if (calcResult.courseItems.length > 0) {
-    lines.push('**학비**')
+    lines.push('\n**학비**')
     for (const item of calcResult.courseItems) {
       lines.push(`- ${item.label}: **${formatKrw(item.krwAmount)}**`)
       if (item.currency !== 'KRW') lines.push(`  *(${formatCurrency(item.unitPrice * item.weeks, item.currency)} 기준)*`)
     }
   }
 
+  // 기숙사
   if (calcResult.dormItems.length > 0) {
     lines.push('\n**기숙사**')
     for (const item of calcResult.dormItems) {
@@ -121,19 +151,22 @@ function buildQuoteMessage(school: School, calcResult: CalcResult): string {
     }
   }
 
+  // 서차지
   if (calcResult.surchargeItems.length > 0) {
     lines.push('\n**성수기 서차지**')
     for (const sc of calcResult.surchargeItems)
       lines.push(`- ${sc.label}: **+${formatKrw(sc.krwAmount)}**`)
   }
 
+  // 할인
   const totalDiscount = calcResult.promotionDiscount + calcResult.surchargeDiscount
   if (calcResult.promotionLabel && totalDiscount > 0) {
     lines.push(`\n**유학원 할인: ${calcResult.promotionLabel}**`)
-    if (calcResult.promotionDiscount > 0) lines.push(`- 학비+기숙사: **-${formatKrw(calcResult.promotionDiscount)}**`)
+    if (calcResult.promotionDiscount > 0) lines.push(`- 전체: **-${formatKrw(calcResult.promotionDiscount)}**`)
     if (calcResult.surchargeDiscount > 0) lines.push(`- 서차지: **-${formatKrw(calcResult.surchargeDiscount)}**`)
   }
 
+  // 등록비
   if (calcResult.registrationFee && calcResult.registrationFeeKrw > 0) {
     const rf = calcResult.registrationFee
     lines.push(`\n**등록비 (1회)**: ${rf.currency === 'KRW' ? formatKrw(rf.amount) : formatCurrency(rf.amount, rf.currency)}${rf.note ? ` *(${rf.note})*` : ''}`)
@@ -151,18 +184,17 @@ function buildQuoteMessage(school: School, calcResult: CalcResult): string {
 
 function buildEvidenceMessage(school: School, calcResult: CalcResult, rate: ExchangeRate): string {
   const lines: string[] = ['**📎 계산 근거**']
-  for (const item of calcResult.courseItems) {
-    lines.push(`- ${item.label} = ${formatKrw(item.krwAmount)}`)
+  for (const pi of calcResult.packageItems) {
+    lines.push(`- 패키지: ${pi.pkg.label} / ${pi.columnLabel} / ${pi.weeks}주 = ${formatKrw(pi.baseAmount)}`)
+    if (pi.additionalAmount > 0) lines.push(`  추가규정: +${formatKrw(pi.additionalAmount)}`)
   }
-  for (const item of calcResult.dormItems) {
-    lines.push(`- ${item.label} = ${formatKrw(item.krwAmount)}`)
-  }
-  lines.push(`- 총 ${calcResult.totalWeeks}주 기준 (단기가 ${calcResult.totalWeeks < 4 && school.allowShortTerm ? '적용' : '미적용'})`)
+  for (const item of calcResult.courseItems) lines.push(`- ${item.label} = ${formatKrw(item.krwAmount)}`)
+  for (const item of calcResult.dormItems)   lines.push(`- ${item.label} = ${formatKrw(item.krwAmount)}`)
+  lines.push(`- 총 ${calcResult.totalWeeks}주 기준`)
   for (const sc of calcResult.surchargeItems) lines.push(`- ${sc.label}`)
   if (calcResult.promotionLabel) {
     lines.push(`- 프로모션: ${calcResult.promotionLabel}`)
-    if (calcResult.promotionDiscount > 0) lines.push(`  학비+기숙사: -${formatKrw(calcResult.promotionDiscount)}`)
-    if (calcResult.surchargeDiscount > 0) lines.push(`  서차지: -${formatKrw(calcResult.surchargeDiscount)}`)
+    if (calcResult.promotionDiscount > 0) lines.push(`  할인: -${formatKrw(calcResult.promotionDiscount)}`)
   }
   if (calcResult.registrationFee) lines.push(`- 등록비: ${(calcResult.registrationFee.amount??0).toLocaleString()}${calcResult.registrationFee.currency} (1회)`)
   lines.push(`- 환율: ₱1=${rate.phpToKrw}원 / $1=${rate.usdToKrw}원`)
@@ -176,6 +208,7 @@ type CalcInputItem = {
   enrollmentDate?: string
   courses: CourseItem[]
   dormitories: DormItem[]
+  packages?: PackageInput[]
 }
 
 function runCalc(school: School, item: CalcInputItem, rate: ExchangeRate): CalcResult {
@@ -185,6 +218,10 @@ function runCalc(school: School, item: CalcInputItem, rate: ExchangeRate): CalcR
     enrollmentDate: item.enrollmentDate || item.startDate,
     courses: (item.courses ?? []).map(c => ({ courseId: c.courseId, weeks: Number(c.weeks) })),
     dormitories: (item.dormitories ?? []).map(d => ({ dormitoryId: d.dormitoryId, weeks: Number(d.weeks) })),
+    packages: (item.packages ?? []).map(p => ({
+      packageId: p.packageId, weeks: Number(p.weeks),
+      columnLabel: p.columnLabel, additionalRuleIds: p.additionalRuleIds,
+    })),
   }, rate)
 }
 
@@ -201,17 +238,32 @@ export async function POST(req: NextRequest) {
       minWeeks: s.minWeeks, allowShortTerm: s.allowShortTerm,
       effectiveMinWeeks: s.allowShortTerm ? 1 : s.minWeeks,
       programTags: s.programTags ?? [],
+      hasPackages: (s.packages ?? []).length > 0,
       courses: (s.courses ?? []).map(c => ({
         id: c.id, name: c.name, target: c.target,
-        price4Weeks: (c as unknown as Record<string,number>).price4Weeks ?? (c as unknown as Record<string,number>).pricePerWeek ?? 0,
+        price4Weeks: (c as unknown as Record<string,number>).price4Weeks ?? 0,
         currency: c.currency,
       })),
       dormitories: (s.dormitories ?? []).map(d => ({
         id: d.id, name: d.name, target: d.target,
-        price4Weeks: (d as unknown as Record<string,number>).price4Weeks ?? (d as unknown as Record<string,number>).pricePerWeek ?? 0,
+        price4Weeks: (d as unknown as Record<string,number>).price4Weeks ?? 0,
         currency: d.currency,
       })),
-      surcharges: (s.surcharges ?? []).map(sc => ({ label: sc.label, start: sc.startDate, end: sc.endDate, pricePerWeek: sc.pricePerWeek, currency: sc.currency, discountAllowed: sc.discountAllowed })),
+      packages: (s.packages ?? []).map(p => ({
+        id: p.id,
+        label: p.label,
+        season: p.season,
+        currency: p.currency,
+        columns: p.columns,
+        availableWeeks: p.priceMatrix.map(r => r.weeks),
+        samplePrices: p.priceMatrix.slice(0, 2).map(r =>
+          `${r.weeks}주: ${r.prices.map(c => `${c.label} ${(c.amount/10000).toFixed(0)}만원`).join(', ')}`
+        ).join(' / '),
+        additionalRules: (p.additionalRules ?? []).map(r => ({
+          id: r.id, condition: r.condition, addAmount: r.addAmount, currency: r.currency,
+        })),
+      })),
+      surcharges: (s.surcharges ?? []).map(sc => ({ label: sc.label, start: sc.startDate, end: sc.endDate, pricePerWeek: sc.pricePerWeek, currency: sc.currency })),
       promotions: (s.promotions ?? []).map(p => ({ label: p.label, basisType: p.basisType, start: p.startDate, end: p.endDate, discount: `${p.discountValue}${p.discountType==='percent'?'%':p.currency??'KRW'}`, condition: p.condition })),
     }))
 

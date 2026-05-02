@@ -1,21 +1,39 @@
-import type { School, Course, Dormitory, QuoteItem, ExchangeRate, LocalFee, RegistrationFee } from '@/types'
+import type { School, Course, Dormitory, QuoteItem, ExchangeRate, LocalFee, RegistrationFee, Package } from '@/types'
 import { calcShortTermPrice } from '@/types'
 import { toKrw } from './utils'
 
-export interface CourseItem { courseId: string; weeks: number }
-export interface DormItem   { dormitoryId: string; weeks: number }
+export interface CourseItem   { courseId: string; weeks: number }
+export interface DormItem     { dormitoryId: string; weeks: number }
+export interface PackageInput {
+  packageId: string
+  weeks: number
+  columnLabel: string          // "2인가족", "3인가족" 등
+  additionalRuleIds?: string[] // 적용할 추가규정 id
+}
 
 export interface QuoteInput {
   school: School
   startDate: string
   enrollmentDate: string
-  courses: CourseItem[]       // 코스 목록 (독립)
-  dormitories: DormItem[]     // 기숙사 목록 (독립)
+  courses: CourseItem[]
+  dormitories: DormItem[]
+  packages?: PackageInput[]    // 패키지 목록 (코스/기숙사와 독립)
+}
+
+export interface PackageResultItem {
+  pkg: Package
+  weeks: number
+  columnLabel: string
+  baseAmount: number           // 행렬 조회 금액 (원화)
+  additionalAmount: number     // 추가규정 합계
+  totalKrw: number
+  appliedRules: string[]
 }
 
 export interface CalcResult {
-  courseItems: QuoteItem[]    // 코스별 계산 결과
-  dormItems:   QuoteItem[]    // 기숙사별 계산 결과
+  courseItems: QuoteItem[]
+  dormItems:   QuoteItem[]
+  packageItems: PackageResultItem[]  // 패키지 결과
   surchargeItems: QuoteItem[]
   promotionLabel?: string
   promotionDiscount: number
@@ -26,7 +44,7 @@ export interface CalcResult {
   registrationFee?: RegistrationFee
   registrationFeeKrw: number
   totalKrw: number
-  totalWeeks: number          // max(코스주수합, 기숙사주수합)
+  totalWeeks: number
   courseTotalWeeks: number
   dormTotalWeeks: number
   localFees: LocalFee[]
@@ -77,15 +95,69 @@ export function calculateQuote(input: QuoteInput, rate: ExchangeRate): CalcResul
   const notes: string[] = []
   const courseItems: QuoteItem[] = []
   const dormItems:   QuoteItem[] = []
+  const packageItems: PackageResultItem[] = []
   const surchargeItems: QuoteItem[] = []
 
   const courses = school.courses ?? []
   const dorms   = school.dormitories ?? []
+  const pkgs    = school.packages ?? []
 
-  // 총 주수 계산
+  // ── 패키지 계산 ───────────────────────────────────────────────────────────
+  for (const pi of (input.packages ?? [])) {
+    const pkg = pkgs.find(p => p.id === pi.packageId)
+      ?? pkgs.find(p => p.label === pi.packageId)
+      ?? pkgs.find(p => p.label.includes(pi.packageId))
+    if (!pkg) { warnings.push(`패키지 "${pi.packageId}"를 찾을 수 없습니다.`); continue }
+
+    const w = Math.max(1, Math.round(Number(pi.weeks) || 1))
+    const row = pkg.priceMatrix.find(r => r.weeks === w)
+    if (!row) {
+      // 가장 가까운 주수 찾기
+      const sorted = [...pkg.priceMatrix].sort((a, b) => Math.abs(a.weeks - w) - Math.abs(b.weeks - w))
+      warnings.push(`⚠️ "${pkg.label}"에 ${w}주 가격이 없습니다. 가장 가까운 ${sorted[0]?.weeks}주를 참고하세요.`)
+      continue
+    }
+
+    // 열 매칭 (정확 → 부분)
+    const col = row.prices.find(p => p.label === pi.columnLabel)
+      ?? row.prices.find(p => p.label.includes(pi.columnLabel) || pi.columnLabel.includes(p.label))
+    if (!col) {
+      warnings.push(`⚠️ "${pkg.label}"에서 "${pi.columnLabel}" 열을 찾을 수 없습니다. 가능한 열: ${row.prices.map(p => p.label).join(', ')}`)
+      continue
+    }
+
+    const baseAmount = toKrw(col.amount, pkg.currency, rate)
+
+    // 추가규정 적용
+    let additionalAmount = 0
+    const appliedRules: string[] = []
+    for (const rule of (pkg.additionalRules ?? [])) {
+      if (!pi.additionalRuleIds || pi.additionalRuleIds.includes(rule.id)) continue
+      // 명시적으로 요청된 추가규정만 적용
+    }
+    if (pi.additionalRuleIds) {
+      for (const ruleId of pi.additionalRuleIds) {
+        const rule = (pkg.additionalRules ?? []).find(r => r.id === ruleId || r.condition.includes(ruleId))
+        if (rule) {
+          additionalAmount += toKrw(rule.addAmount, rule.currency, rate)
+          appliedRules.push(`${rule.condition}: +${rule.addAmount.toLocaleString()}${rule.currency}`)
+        }
+      }
+    }
+
+    packageItems.push({
+      pkg, weeks: w, columnLabel: col.label,
+      baseAmount, additionalAmount,
+      totalKrw: baseAmount + additionalAmount,
+      appliedRules,
+    })
+  }
+
+  // 총 주수 계산 (패키지 포함)
   const courseTotalWeeks = input.courses.reduce((s, c) => s + Math.max(1, Math.round(Number(c.weeks)||1)), 0)
   const dormTotalWeeks   = input.dormitories.reduce((s, d) => s + Math.max(1, Math.round(Number(d.weeks)||1)), 0)
-  const totalWeeks = Math.max(courseTotalWeeks, dormTotalWeeks)
+  const pkgTotalWeeks    = packageItems.length > 0 ? Math.max(...packageItems.map(p => p.weeks)) : 0
+  const totalWeeks = Math.max(courseTotalWeeks, dormTotalWeeks, pkgTotalWeeks)
 
   // 최소 주수 체크 (총 주수 기준)
   const effectiveMin = school.allowShortTerm ? 1 : school.minWeeks
@@ -151,7 +223,8 @@ export function calculateQuote(input: QuoteInput, rate: ExchangeRate): CalcResul
     dormItems.push({ label, weeks: w, unitPrice: Math.round(price/w), currency: dorm.currency, krwAmount: toKrw(price, dorm.currency, rate) + addKrw * w })
   }
 
-  const baseKrw = [...courseItems, ...dormItems].reduce((s,i) => s + i.krwAmount, 0)
+  const pkgBaseKrw = packageItems.reduce((s, p) => s + p.totalKrw, 0)
+  const baseKrw = [...courseItems, ...dormItems].reduce((s,i) => s + i.krwAmount, 0) + pkgBaseKrw
 
   // ── 서차지 ────────────────────────────────────────────────────────────────
   let surchargeKrw = 0
@@ -260,7 +333,7 @@ export function calculateQuote(input: QuoteInput, rate: ExchangeRate): CalcResul
   const localFeeKrwEstimate = toKrw(localFeePhp, 'PHP', rate) + localFeeKrw
 
   return {
-    courseItems, dormItems, surchargeItems,
+    courseItems, dormItems, packageItems, surchargeItems,
     promotionLabel, promotionDiscount, surchargeDiscount,
     baseKrw, surchargeKrw, subtotal,
     registrationFee: regFee, registrationFeeKrw,
