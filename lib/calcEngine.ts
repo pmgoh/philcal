@@ -182,7 +182,21 @@ export function calculateQuote(input: QuoteInput, rate: ExchangeRate): CalcResul
       const checkDate = promo.basisType === 'start_date' ? startDate : enrollmentDate
       if (!isInRange(checkDate, promo.startDate, promo.endDate)) continue
     }
-    if (promo.condition) notes.push(`ℹ️ 프로모션 조건: ${promo.condition}`)
+    // condition에 "N주" 키워드가 있으면 총 주수 체크 (장기 할인 등)
+    if (promo.condition) {
+      const weekMatch = promo.condition.match(/(\d+)주/)
+      if (weekMatch) {
+        const required = Number(weekMatch[1])
+        if (totalWeeks < required) continue   // 주수 미달 시 스킵
+        // 더 긴 주수 조건의 프로모션이 있으면 이 프로모션은 건너뜀 (가장 큰 할인만 적용)
+        const betterExists = (school.promotions ?? []).some(other => {
+          const m2 = other.condition?.match(/(\d+)주/)
+          return m2 && Number(m2[1]) > required && Number(m2[1]) <= totalWeeks
+        })
+        if (betterExists) continue
+      }
+      notes.push(`ℹ️ 프로모션 조건: ${promo.condition}`)
+    }
 
     // 적용 대상 (기본값: 전체 적용)
     const toCourses   = promo.applyToCourses   !== false
