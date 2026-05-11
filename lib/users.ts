@@ -70,6 +70,10 @@ export async function updateUserStatus(uid: string, status: UserStatus, approved
   })
 }
 
-export async function updateUserRole(uid: string, role: UserRole): Promise<void> {
+export async function deactivateUser(uid: string): Promise<void> {
+  await setDoc(doc(db, 'users', uid), { status: 'rejected' }, { merge: true })
+}
+
+export async function updateUserRole(uid: string, role: string): Promise<void> {
   await updateDoc(doc(db, 'users', uid), { role })
 }

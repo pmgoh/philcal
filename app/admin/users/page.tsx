@@ -4,9 +4,9 @@ import { useRouter } from 'next/navigation'
 import { onAuthStateChanged } from 'firebase/auth'
 import { auth } from '@/lib/firebase'
 import AdminLayout from '@/components/AdminLayout'
-import { getAllUsers, updateUserStatus, updateUserRole, getCurrentUser } from '@/lib/users'
+import { getAllUsers, updateUserStatus, updateUserRole, getCurrentUser, deactivateUser } from '@/lib/users'
 import type { AppUser, UserRole, UserStatus } from '@/types'
-import { Check, X, Shield, Users } from 'lucide-react'
+import { Check, X, Shield, Users, UserX } from 'lucide-react'
 
 const STATUS_LABEL: Record<UserStatus, { label: string; color: string }> = {
   pending:  { label: '대기 중', color: 'bg-amber-100 text-amber-700' },
@@ -111,6 +111,11 @@ export default function UsersPage() {
                   onApprove={() => approve(u.uid)}
                   onReject={() => reject(u.uid)}
                   onRoleChange={role => changeRole(u.uid, role)}
+                  onDeactivate={async () => {
+                    if (!confirm(`${u.displayName}을 거절하시겠습니까?`)) return
+                    await deactivateUser(u.uid)
+                    const all = await getAllUsers(); setUsers(all)
+                  }}
                   currentUserUid={currentUser!.uid}
                 />
               ))}
@@ -132,6 +137,11 @@ export default function UsersPage() {
                 onApprove={() => approve(u.uid)}
                 onReject={() => reject(u.uid)}
                 onRoleChange={role => changeRole(u.uid, role)}
+                onDeactivate={async () => {
+                  if (!confirm(`${u.displayName}을 탈락 처리하시겠습니까?`)) return
+                  await deactivateUser(u.uid)
+                  const all = await getAllUsers(); setUsers(all)
+                }}
                 currentUserUid={currentUser!.uid}
               />
             ))}
@@ -142,11 +152,12 @@ export default function UsersPage() {
   )
 }
 
-function UserRow({ user, onApprove, onReject, onRoleChange, currentUserUid }: {
+function UserRow({ user, onApprove, onReject, onRoleChange, onDeactivate, currentUserUid }: {
   user: AppUser
   onApprove: () => void
   onReject: () => void
   onRoleChange: (role: UserRole) => void
+  onDeactivate: () => void
   currentUserUid: string
 }) {
   const isSelf = user.uid === currentUserUid
@@ -177,6 +188,13 @@ function UserRow({ user, onApprove, onReject, onRoleChange, currentUserUid }: {
             <option key={v} value={v}>{l}</option>
           ))}
         </select>
+      )}
+      {!isSelf && user.status === 'approved' && (
+        <button onClick={onDeactivate}
+          title="탈락 처리"
+          className="flex items-center gap-1 px-2.5 py-1.5 bg-gray-50 hover:bg-red-50 text-gray-400 hover:text-red-600 rounded-lg text-xs border border-gray-200 hover:border-red-200 transition-colors flex-shrink-0">
+          <UserX size={12} />
+        </button>
       )}
       {isSelf && (
         <span className="text-xs text-gray-400 flex items-center gap-1 flex-shrink-0">

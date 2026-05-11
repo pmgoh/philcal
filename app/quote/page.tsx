@@ -193,20 +193,103 @@ function LocalFeePanel({ fees, php, krwEstimate, weeks, phpToKrw }: {
 }
 
 // ── 근거 데이터 카드 ──────────────────────────────────────────────────────────
-function EvidenceCard({ text }: { text: string }) {
+function EvidenceCard({ text, school }: { text: string; school?: School }) {
   const [open, setOpen] = useState(false)
+  const [showSchoolData, setShowSchoolData] = useState(false)
   return (
     <div className="mt-2 border border-gray-200 rounded-xl overflow-hidden">
-      <button
-        onClick={() => setOpen(!open)}
-        className="w-full flex items-center justify-between px-3 py-2.5 bg-gray-50 hover:bg-gray-100 transition-colors text-sm"
-      >
-        <span className="text-gray-600 font-medium text-xs">📎 견적 근거 데이터</span>
-        {open ? <ChevronUp size={12} className="text-gray-400" /> : <ChevronDown size={12} className="text-gray-400" />}
-      </button>
+      <div className="flex items-center bg-gray-50 px-3 py-2 gap-2">
+        <button onClick={() => setOpen(!open)}
+          className="flex-1 flex items-center justify-between text-sm hover:opacity-80">
+          <span className="text-gray-600 font-medium text-xs">📎 견적 근거 데이터</span>
+          {open ? <ChevronUp size={12} className="text-gray-400" /> : <ChevronDown size={12} className="text-gray-400" />}
+        </button>
+        {school && (
+          <button onClick={() => setShowSchoolData(!showSchoolData)}
+            className="text-xs text-blue-600 hover:text-blue-800 border border-blue-200 rounded px-2 py-1 bg-white flex-shrink-0">
+            학원 비용표
+          </button>
+        )}
+      </div>
       {open && (
         <div className="bg-white px-3 py-2">
           <MarkdownText text={text} />
+        </div>
+      )}
+      {showSchoolData && school && (
+        <div className="bg-white border-t border-gray-100 px-3 py-3 overflow-x-auto">
+          <p className="text-xs font-semibold text-gray-700 mb-2">{school.name} 비용표 (읽기 전용)</p>
+          {/* 코스 */}
+          {(school.courses ?? []).length > 0 && (
+            <div className="mb-3">
+              <p className="text-xs text-gray-500 mb-1 font-medium">코스</p>
+              <table className="text-xs w-full border-collapse">
+                <thead><tr className="bg-gray-50">
+                  <th className="text-left px-2 py-1 border border-gray-100">코스명</th>
+                  <th className="text-left px-2 py-1 border border-gray-100">대상</th>
+                  <th className="text-right px-2 py-1 border border-gray-100">4주 기준</th>
+                </tr></thead>
+                <tbody>{school.courses.map(c => (
+                  <tr key={c.id} className="hover:bg-gray-50">
+                    <td className="px-2 py-1 border border-gray-100">{c.name}</td>
+                    <td className="px-2 py-1 border border-gray-100 text-gray-500">{c.target}</td>
+                    <td className="px-2 py-1 border border-gray-100 text-right font-medium">
+                      {((c as unknown as Record<string,number>).price4Weeks ?? 0).toLocaleString()}{c.currency}
+                    </td>
+                  </tr>
+                ))}</tbody>
+              </table>
+            </div>
+          )}
+          {/* 기숙사 */}
+          {(school.dormitories ?? []).length > 0 && (
+            <div className="mb-3">
+              <p className="text-xs text-gray-500 mb-1 font-medium">기숙사</p>
+              <table className="text-xs w-full border-collapse">
+                <thead><tr className="bg-gray-50">
+                  <th className="text-left px-2 py-1 border border-gray-100">기숙사명</th>
+                  <th className="text-left px-2 py-1 border border-gray-100">대상</th>
+                  <th className="text-right px-2 py-1 border border-gray-100">4주 기준</th>
+                </tr></thead>
+                <tbody>{school.dormitories.map(d => (
+                  <tr key={d.id} className="hover:bg-gray-50">
+                    <td className="px-2 py-1 border border-gray-100">{d.name}</td>
+                    <td className="px-2 py-1 border border-gray-100 text-gray-500">{d.target}</td>
+                    <td className="px-2 py-1 border border-gray-100 text-right font-medium">
+                      {((d as unknown as Record<string,number>).price4Weeks ?? 0).toLocaleString()}{d.currency}
+                    </td>
+                  </tr>
+                ))}</tbody>
+              </table>
+            </div>
+          )}
+          {/* 패키지 */}
+          {(school.packages ?? []).length > 0 && (
+            <div>
+              <p className="text-xs text-gray-500 mb-1 font-medium">패키지</p>
+              {school.packages.map(p => (
+                <div key={p.id} className="mb-2">
+                  <p className="text-xs font-medium text-gray-700">{p.label} <span className="text-gray-400">({p.season})</span></p>
+                  <table className="text-xs w-full border-collapse mt-1">
+                    <thead><tr className="bg-gray-50">
+                      <th className="text-left px-2 py-1 border border-gray-100">주수</th>
+                      {p.columns.map(col => <th key={col} className="text-right px-2 py-1 border border-gray-100">{col}</th>)}
+                    </tr></thead>
+                    <tbody>{(p.priceMatrix ?? []).map(row => (
+                      <tr key={row.weeks} className="hover:bg-gray-50">
+                        <td className="px-2 py-1 border border-gray-100 font-medium">{row.weeks}주</td>
+                        {(row.prices ?? []).map(cell => (
+                          <td key={cell.label} className="px-2 py-1 border border-gray-100 text-right">
+                            {(cell.amount/10000).toFixed(0)}만
+                          </td>
+                        ))}
+                      </tr>
+                    ))}</tbody>
+                  </table>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       )}
     </div>
@@ -445,7 +528,7 @@ export default function QuotePage() {
                             phpToKrw={rate.phpToKrw}
                           />
                         )}
-                        {m.evidenceMessage && <EvidenceCard text={m.evidenceMessage} />}
+                        {m.evidenceMessage && <EvidenceCard text={m.evidenceMessage} school={m.school} />}
                       </div>
                     )
                   })()}
