@@ -103,14 +103,14 @@ ${school.refundPolicy   ? `환불규정:\n${school.refundPolicy}\n`   : ''}${sch
   } catch { return '' }
 }
 
-function buildQuoteMessage(school: School, calcResult: CalcResult, totalWeeks: number, embassyDiscount = 0, specialNote = ''): string {
+function buildQuoteMessage(school: School, calcResult: CalcResult, _totalWeeks: number, _embassyDiscount = 0, specialNote = ''): string {
   const lines: string[] = []
   lines.push(`## ${school.name}`)
   lines.push(`**총 ${calcResult.totalWeeks}주**`)
   if (specialNote) lines.push(`\n> ℹ️ ${specialNote}`)
   lines.push('')
 
-  // ── 패키지 ────────────────────────────────────────────────────────────────
+  // ── 패키지 ──
   if ((calcResult.packageItems ?? []).length > 0) {
     const pkgTotal = calcResult.packageItems.reduce((s, p) => s + p.totalKrw, 0)
     lines.push('**📦 패키지 구성**')
@@ -125,7 +125,8 @@ function buildQuoteMessage(school: School, calcResult: CalcResult, totalWeeks: n
     if (firstPkg?.includes) {
       lines.push('\n✅ **포함**')
       firstPkg.includes.split('\n').slice(0, 5).forEach(s => { if (s.trim()) lines.push(`  - ${s.trim()}`) })
-      if (firstPkg.includes.split('\n').filter(s=>s.trim()).length > 5) lines.push(`  - *(외 ${firstPkg.includes.split('\n').filter(s=>s.trim()).length - 5}개)*`)
+      if (firstPkg.includes.split('\n').filter(s=>s.trim()).length > 5)
+        lines.push(`  - *(외 ${firstPkg.includes.split('\n').filter(s=>s.trim()).length - 5}개)*`)
     }
     if (firstPkg?.excludes) {
       lines.push('\n❌ **불포함**')
@@ -134,7 +135,7 @@ function buildQuoteMessage(school: School, calcResult: CalcResult, totalWeeks: n
     if (firstPkg?.note) lines.push(`\n> ${firstPkg.note}`)
   }
 
-  // ── 코스(학비) ────────────────────────────────────────────────────────────
+  // ── 코스 ──
   const courseTotalKrw = (calcResult.courseItems ?? []).reduce((s, i) => s + i.krwAmount, 0)
   if ((calcResult.courseItems ?? []).length > 0) {
     lines.push('\n**📚 학비 상세**')
@@ -145,7 +146,7 @@ function buildQuoteMessage(school: School, calcResult: CalcResult, totalWeeks: n
     lines.push(`**학비 소계: ${formatKrw(courseTotalKrw)}**`)
   }
 
-  // ── 기숙사 ───────────────────────────────────────────────────────────────
+  // ── 기숙사 ──
   const dormTotalKrw = (calcResult.dormItems ?? []).reduce((s, i) => s + i.krwAmount, 0)
   if ((calcResult.dormItems ?? []).length > 0) {
     lines.push('\n**🏠 기숙사비 상세**')
@@ -156,57 +157,56 @@ function buildQuoteMessage(school: School, calcResult: CalcResult, totalWeeks: n
     lines.push(`**기숙사 소계: ${formatKrw(dormTotalKrw)}**`)
   }
 
-  // ── 서차지 ────────────────────────────────────────────────────────────────
+  // ── 서차지 ──
   if ((calcResult.surchargeItems ?? []).length > 0) {
     lines.push('\n**🔥 성수기 서차지**')
     for (const sc of calcResult.surchargeItems)
       lines.push(`- ${sc.label}: +${formatKrw(sc.krwAmount)}`)
   }
 
-  // ── 할인 ─────────────────────────────────────────────────────────────────
+  // ── 할인 블록 (학원 프로모션 + 엠버시 자체) ──
   const totalPromoDiscount = calcResult.promotionDiscount + calcResult.surchargeDiscount
-  if (calcResult.promotionLabel && totalPromoDiscount > 0) {
-    lines.push(`\n**🎁 학원 프로모션: ${calcResult.promotionLabel}**`)
-    if (calcResult.promotionDiscount > 0) lines.push(`- 할인: -${formatKrw(calcResult.promotionDiscount)}`)
-    if (calcResult.surchargeDiscount > 0) lines.push(`- 서차지 할인: -${formatKrw(calcResult.surchargeDiscount)}`)
+  const agencyDiscount = calcResult.agencyDiscountKrw ?? 0
+  const totalAllDiscount = totalPromoDiscount + agencyDiscount
+
+  if (totalAllDiscount > 0) {
+    lines.push('\n**🎁 할인 내역**')
+    if (calcResult.promotionLabel && totalPromoDiscount > 0) {
+      lines.push(`- 학원 프로모션 (${calcResult.promotionLabel}): -${formatKrw(totalPromoDiscount)}`)
+    }
+    if (agencyDiscount > 0) {
+      // 엠버시 할인은 강조 마커로 구분 (UI에서 빨간색으로 렌더링)
+      lines.push(`- !!AGENCY_DISCOUNT!!엠버시유학 자체 할인${calcResult.agencyDiscountNote ? ` (${calcResult.agencyDiscountNote})` : ''}: -${formatKrw(agencyDiscount)}`)
+    }
+    lines.push(`- **총 할인: -${formatKrw(totalAllDiscount)}**`)
   }
 
-  // 유학원 자체 할인
-  if (embassyDiscount > 0) {
-    lines.push(`\n**✂️ 엠버시유학 자체 할인: -${formatKrw(embassyDiscount)}**`)
-  }
-
-  // ── 등록비 ───────────────────────────────────────────────────────────────
+  // ── 등록비 ──
   if (calcResult.registrationFee && calcResult.registrationFeeKrw > 0) {
     const rf = calcResult.registrationFee
     lines.push(`\n**📋 등록비 (1회)**: ${rf.currency === 'KRW' ? formatKrw(rf.amount) : formatCurrency(rf.amount, rf.currency)}${rf.note ? ` *(${rf.note})*` : ''}`)
   }
 
-  // ── 총합 ─────────────────────────────────────────────────────────────────
-  const finalTotal = calcResult.totalKrw - embassyDiscount
+  // ── 비용 요약 + 총합 ──
   lines.push('\n---')
-  if (embassyDiscount > 0 || calcResult.registrationFeeKrw > 0 ||
-      (calcResult.courseItems?.length && calcResult.dormItems?.length)) {
-    lines.push('**💰 비용 요약**')
-    if (calcResult.registrationFeeKrw > 0) lines.push(`  등록비: ${formatKrw(calcResult.registrationFeeKrw)}`)
-    if (courseTotalKrw > 0) lines.push(`  학비 합계: ${formatKrw(courseTotalKrw)}`)
-    if (dormTotalKrw > 0)   lines.push(`  기숙사 합계: ${formatKrw(dormTotalKrw)}`)
-    if ((calcResult.packageItems?.length ?? 0) > 0) {
-      const pt = calcResult.packageItems.reduce((s,p) => s+p.totalKrw, 0)
-      lines.push(`  패키지 합계: ${formatKrw(pt)}`)
-    }
-    if ((calcResult.surchargeItems?.length ?? 0) > 0) {
-      lines.push(`  서차지: +${formatKrw(calcResult.surchargeKrw)}`)
-    }
-    if (totalPromoDiscount > 0) lines.push(`  프로모션 할인: -${formatKrw(totalPromoDiscount)}`)
-    if (embassyDiscount > 0) lines.push(`  엠버시 할인: -${formatKrw(embassyDiscount)}`)
-    lines.push('')
-  }
-  lines.push(`### 🏆 **연수비용 총합: ${formatKrw(finalTotal)}**`)
+  lines.push('**💰 비용 요약**')
+  if (calcResult.registrationFeeKrw > 0) lines.push(`  등록비: ${formatKrw(calcResult.registrationFeeKrw)}`)
+  if (courseTotalKrw > 0)  lines.push(`  학비 합계: ${formatKrw(courseTotalKrw)}`)
+  if (dormTotalKrw > 0)    lines.push(`  기숙사 합계: ${formatKrw(dormTotalKrw)}`)
+  if ((calcResult.packageItems?.length ?? 0) > 0)
+    lines.push(`  패키지 합계: ${formatKrw(calcResult.packageItems.reduce((s,p)=>s+p.totalKrw,0))}`)
+  if ((calcResult.surchargeItems?.length ?? 0) > 0)
+    lines.push(`  서차지: +${formatKrw(calcResult.surchargeKrw)}`)
+  if (totalPromoDiscount > 0) lines.push(`  학원 프로모션: -${formatKrw(totalPromoDiscount)}`)
+  if (agencyDiscount > 0)     lines.push(`  !!AGENCY_DISCOUNT!!엠버시 할인: -${formatKrw(agencyDiscount)}`)
+  lines.push('')
+  lines.push(`### 🏆 **연수비용 총합: ${formatKrw(calcResult.totalKrw)}**`)
+  if (agencyDiscount > 0)
+    lines.push(`> 💡 엠버시유학 할인 **${formatKrw(agencyDiscount)}** 적용된 가격입니다`)
   lines.push('*(현지납부비 별도 — 아래에서 확인)*')
 
   if (calcResult.warnings.length > 0) lines.push('\n' + calcResult.warnings.join('\n'))
-  if (calcResult.notes.length > 0)   lines.push('\n' + calcResult.notes.join('\n'))
+  if (calcResult.notes.length > 0)    lines.push('\n' + calcResult.notes.join('\n'))
 
   return lines.join('\n')
 }

@@ -58,27 +58,57 @@ function MarkdownText({ text, isUser = false }: { text: string; isUser?: boolean
   const subColor  = isUser ? 'text-blue-100' : 'text-gray-500'
   const boldClass = isUser ? 'text-white' : 'text-gray-900'
 
+  const renderInline = (raw: string) =>
+    raw.replace(/\*\*(.*?)\*\*/g, `<strong class="font-semibold ${boldClass}">$1</strong>`)
+       .replace(/\*(.*?)\*/g, `<em class="${subColor}">$1</em>`)
+
   return (
     <div className="space-y-0.5 leading-relaxed">
       {lines.map((line, i) => {
-        if (line.startsWith('## ')) return <h2 key={i} className={`font-bold text-base mt-2 mb-1 ${isUser ? 'text-white' : 'text-gray-900'}`}>{line.slice(3)}</h2>
-        if (line.startsWith('### ')) return <h3 key={i} className={`font-semibold text-sm mt-2 mb-0.5 ${isUser ? 'text-blue-100' : 'text-gray-700'}`}>{line.slice(4)}</h3>
-        if (line.startsWith('**') && line.endsWith('**') && !line.slice(2, -2).includes('**')) {
-          return <p key={i} className={`font-semibold text-sm ${boldClass}`}>{line.slice(2, -2)}</p>
+        // ### 총합 라인 — 특별 강조
+        if (line.startsWith('### ')) {
+          const inner = line.slice(4).replace(/\*\*(.*?)\*\*/g, '$1')
+          return <h3 key={i} className={`font-bold text-base mt-2 mb-0.5 ${isUser ? 'text-blue-100' : 'text-blue-700'}`}>{inner}</h3>
         }
+        if (line.startsWith('## ')) return <h2 key={i} className={`font-bold text-base mt-2 mb-1 ${isUser ? 'text-white' : 'text-gray-900'}`}>{line.slice(3)}</h2>
+        if (line.startsWith('**') && line.endsWith('**') && !line.slice(2, -2).includes('**'))
+          return <p key={i} className={`font-semibold text-sm ${boldClass}`}>{line.slice(2, -2)}</p>
         if (line === '---') return <hr key={i} className={`my-2 ${isUser ? 'border-blue-400' : 'border-gray-200'}`} />
         if (line === '') return <div key={i} className="h-1" />
+
+        // 엔버시 할인 마커 — 빨간색 강조
+        if (line.includes('!!AGENCY_DISCOUNT!!')) {
+          const cleaned = line.replace('!!AGENCY_DISCOUNT!!', '').replace(/^-\s*/, '')
+          const html = renderInline(cleaned)
+          return (
+            <div key={i} className="flex gap-2 items-start bg-red-50 border border-red-200 rounded-lg px-2.5 py-1.5 my-1">
+              <span className="text-red-500 font-bold text-sm flex-shrink-0">✂️</span>
+              <span className="text-red-700 font-semibold text-sm" dangerouslySetInnerHTML={{ __html: html }} />
+            </div>
+          )
+        }
+
+        // > 인용구 (총합 아래 엠버시 할인 안내)
+        if (line.startsWith('> 💡')) {
+          return (
+            <div key={i} className="bg-red-50 border-l-4 border-red-400 px-3 py-1.5 rounded-r-lg my-1">
+              <p className="text-sm text-red-700 font-semibold">{line.slice(2)}</p>
+            </div>
+          )
+        }
+        if (line.startsWith('> ')) return <p key={i} className={`text-xs italic pl-3 border-l-2 ${isUser ? 'border-blue-300 text-blue-100' : 'border-gray-300 text-gray-500'}`}>{line.slice(2)}</p>
+
         if (line.startsWith('- ')) {
-          const html = line.slice(2).replace(/\*\*(.*?)\*\*/g, `<strong class="font-semibold ${boldClass}">$1</strong>`).replace(/\*(.*?)\*/g, '<em>$1</em>')
+          const html = renderInline(line.slice(2))
           return <div key={i} className={`flex gap-2 text-sm ${textColor}`}>
             <span className="mt-0.5 flex-shrink-0 opacity-60">•</span>
             <span dangerouslySetInnerHTML={{ __html: html }} />
           </div>
         }
-        if (line.startsWith('*') && line.endsWith('*')) {
+        if (line.startsWith('*') && line.endsWith('*'))
           return <p key={i} className={`text-xs italic ${subColor}`}>{line.slice(1, -1)}</p>
-        }
-        const html = line.replace(/\*\*(.*?)\*\*/g, `<strong class="font-semibold ${boldClass}">$1</strong>`).replace(/\*(.*?)\*/g, `<em class="${subColor}">$1</em>`)
+
+        const html = renderInline(line)
         return <p key={i} className={`text-sm ${textColor}`} dangerouslySetInnerHTML={{ __html: html }} />
       })}
     </div>

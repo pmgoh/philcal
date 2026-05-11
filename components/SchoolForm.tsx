@@ -276,6 +276,92 @@ export default function SchoolForm({ schoolId }: Props) {
             )}
           </div>
 
+          {/* ── 엠버시 자체 할인 ── */}
+          <div className="card overflow-hidden">
+            {section('agencyDiscount', '✂️ 엠버시 자체 할인 규칙')}
+            {openSection === 'agencyDiscount' && (
+              <div className="px-5 pb-5 border-t border-gray-100 pt-4 space-y-4">
+                <p className="text-xs text-gray-500 bg-red-50 border border-red-100 rounded-lg p-3">
+                  견적 시 자동 적용되어 <span className="text-red-600 font-semibold">빨간색으로 강조</span> 표시됩니다.
+                  학원 수수료 범위 내에서 우리가 줄 수 있는 최대 할인을 설정하세요.
+                </p>
+                {school.agencyDiscount ? (
+                  <div className="space-y-3">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      <div>
+                        <label className="block text-xs text-gray-500 mb-1">할인 유형</label>
+                        <select value={school.agencyDiscount.type}
+                          onChange={e => update('agencyDiscount', { ...school.agencyDiscount!, type: e.target.value as 'percent' | 'amount_per_week' | 'amount_flat' })}
+                          className="input-field text-sm">
+                          <option value="percent">퍼센트 (%)</option>
+                          <option value="amount_per_week">주당 금액 (원/주)</option>
+                          <option value="amount_flat">고정 금액 (원)</option>
+                        </select>
+                      </div>
+                      <div>
+                        <label className="block text-xs text-gray-500 mb-1">
+                          {school.agencyDiscount.type === 'percent' ? '할인율 (%)' :
+                           school.agencyDiscount.type === 'amount_per_week' ? '주당 금액 (원)' : '고정 금액 (원)'}
+                        </label>
+                        <input type="number" value={school.agencyDiscount.value}
+                          onChange={e => update('agencyDiscount', { ...school.agencyDiscount!, value: Number(e.target.value) })}
+                          className="input-field text-sm"
+                          placeholder={school.agencyDiscount.type === 'percent' ? '예: 5 (5%)'  : '예: 100000'} />
+                      </div>
+                      {school.agencyDiscount.type !== 'amount_flat' && (
+                        <div>
+                          <label className="block text-xs text-gray-500 mb-1">최대 한도 (원, 선택)</label>
+                          <input type="number" value={school.agencyDiscount.maxAmount ?? ''}
+                            onChange={e => update('agencyDiscount', { ...school.agencyDiscount!, maxAmount: e.target.value ? Number(e.target.value) : undefined })}
+                            className="input-field text-sm" placeholder="예: 200000" />
+                        </div>
+                      )}
+                      <div>
+                        <label className="block text-xs text-gray-500 mb-1">적용 범위</label>
+                        <select value={school.agencyDiscount.applyTo}
+                          onChange={e => update('agencyDiscount', { ...school.agencyDiscount!, applyTo: e.target.value as 'all' | 'course_only' | 'dorm_only' | 'package_only' })}
+                          className="input-field text-sm">
+                          <option value="all">전체 (학비+기숙사+패키지)</option>
+                          <option value="course_only">학비만</option>
+                          <option value="dorm_only">기숙사만</option>
+                          <option value="package_only">패키지만</option>
+                        </select>
+                      </div>
+                      <div className="sm:col-span-2">
+                        <label className="block text-xs text-gray-500 mb-1">설명 메모 (견적서에 표시)</label>
+                        <input value={school.agencyDiscount.note}
+                          onChange={e => update('agencyDiscount', { ...school.agencyDiscount!, note: e.target.value })}
+                          className="input-field text-sm" placeholder="예: 수수료 25% 내 최대 할인" />
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-3 pt-2">
+                      <div className="flex-1 bg-red-50 border border-red-200 rounded-lg px-3 py-2">
+                        <p className="text-xs text-red-600 font-medium">✂️ 설정된 할인 규칙</p>
+                        <p className="text-xs text-red-700 mt-0.5">
+                          {school.agencyDiscount.type === 'percent' ? `${school.agencyDiscount.value}%` :
+                           school.agencyDiscount.type === 'amount_per_week' ? `주당 ${school.agencyDiscount.value.toLocaleString()}원` :
+                           `${school.agencyDiscount.value.toLocaleString()}원 고정`}
+                          {school.agencyDiscount.maxAmount ? ` (최대 ${school.agencyDiscount.maxAmount.toLocaleString()}원)` : ''}
+                          {' · '}{school.agencyDiscount.applyTo === 'all' ? '전체' :
+                           school.agencyDiscount.applyTo === 'course_only' ? '학비만' :
+                           school.agencyDiscount.applyTo === 'dorm_only' ? '기숙사만' : '패키지만'}
+                        </p>
+                        {school.agencyDiscount.note && <p className="text-xs text-red-500 mt-0.5">{school.agencyDiscount.note}</p>}
+                      </div>
+                      <button onClick={() => update('agencyDiscount', undefined)}
+                        className="btn-danger text-xs px-3 py-2">삭제</button>
+                    </div>
+                  </div>
+                ) : (
+                  <button onClick={() => update('agencyDiscount', { type: 'percent', value: 0, applyTo: 'all', note: '' })}
+                    className="btn-secondary text-sm flex items-center gap-2">
+                    + 자체 할인 규칙 추가
+                  </button>
+                )}
+              </div>
+            )}
+          </div>
+
           {/* ── 비용 인상 ── */}
           <div className="card overflow-hidden">
             {section('priceIncrease', '비용 인상 예정')}

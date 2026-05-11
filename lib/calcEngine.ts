@@ -33,7 +33,7 @@ export interface PackageResultItem {
 export interface CalcResult {
   courseItems: QuoteItem[]
   dormItems:   QuoteItem[]
-  packageItems: PackageResultItem[]  // 패키지 결과
+  packageItems: PackageResultItem[]
   surchargeItems: QuoteItem[]
   promotionLabel?: string
   promotionDiscount: number
@@ -43,7 +43,9 @@ export interface CalcResult {
   subtotal: number
   registrationFee?: RegistrationFee
   registrationFeeKrw: number
-  totalKrw: number
+  agencyDiscountKrw: number        // 엠버시 자체 할인 (자동 계산)
+  agencyDiscountNote: string
+  totalKrw: number                 // 등록비+학비+기숙사+서차지-프로모션할인-엠버시할인
   totalWeeks: number
   courseTotalWeeks: number
   dormTotalWeeks: number
@@ -223,8 +225,36 @@ export function calculateQuote(input: QuoteInput, rate: ExchangeRate): CalcResul
     dormItems.push({ label, weeks: w, unitPrice: Math.round(price/w), currency: dorm.currency, krwAmount: toKrw(price, dorm.currency, rate) + addKrw * w })
   }
 
+  // 등록비 (1회) - agencyDiscount 계산 전에 선언
+  const regFee = school.registrationFee
+  const registrationFeeKrw = regFee ? toKrw(regFee.amount, regFee.currency, rate) : 0
+
   const pkgBaseKrw = packageItems.reduce((s, p) => s + p.totalKrw, 0)
   const baseKrw = [...courseItems, ...dormItems].reduce((s,i) => s + i.krwAmount, 0) + pkgBaseKrw
+
+  // ── 엠버시 자체 할인 자동 계산 ───────────────────────────────────────────────
+  let agencyDiscountKrw = 0
+  let agencyDiscountNote = ''
+  const ad = school.agencyDiscount
+  if (ad) {
+    const applyTo = ad.applyTo ?? 'all'
+    let base = 0
+    if (applyTo === 'all')          base = baseKrw
+    if (applyTo === 'course_only')  base = courseItems.reduce((s,i) => s + i.krwAmount, 0)
+    if (applyTo === 'dorm_only')    base = dormItems.reduce((s,i) => s + i.krwAmount, 0)
+    if (applyTo === 'package_only') base = pkgBaseKrw
+
+    if (ad.type === 'percent') {
+      agencyDiscountKrw = Math.round(base * ad.value / 100)
+      if (ad.maxAmount) agencyDiscountKrw = Math.min(agencyDiscountKrw, ad.maxAmount)
+    } else if (ad.type === 'amount_per_week') {
+      agencyDiscountKrw = ad.value * totalWeeks
+      if (ad.maxAmount) agencyDiscountKrw = Math.min(agencyDiscountKrw, ad.maxAmount)
+    } else if (ad.type === 'amount_flat') {
+      agencyDiscountKrw = ad.value
+    }
+    agencyDiscountNote = ad.note ?? ''
+  }
 
   // ── 서차지 ────────────────────────────────────────────────────────────────
   let surchargeKrw = 0
@@ -299,12 +329,9 @@ export function calculateQuote(input: QuoteInput, rate: ExchangeRate): CalcResul
   }
 
   const subtotal = baseKrw + surchargeKrw - promotionDiscount - surchargeDiscount
+  const totalKrw = subtotal + registrationFeeKrw - agencyDiscountKrw
 
-  // 등록비 (1회)
-  const regFee = school.registrationFee
-  const registrationFeeKrw = regFee ? toKrw(regFee.amount, regFee.currency, rate) : 0
-
-  // 현지납부비 (총 주수 기준, 새 trigger 구조 + 구 condition 하위호환)
+  // 현지납부비 (총 주수 기준)
   const localFees = school.localFees ?? []
   let localFeePhp = 0
   let localFeeKrw = 0
@@ -337,7 +364,8 @@ export function calculateQuote(input: QuoteInput, rate: ExchangeRate): CalcResul
     promotionLabel, promotionDiscount, surchargeDiscount,
     baseKrw, surchargeKrw, subtotal,
     registrationFee: regFee, registrationFeeKrw,
-    totalKrw: subtotal + registrationFeeKrw,
+    agencyDiscountKrw, agencyDiscountNote,
+    totalKrw,
     totalWeeks, courseTotalWeeks, dormTotalWeeks,
     localFees, localFeePhp,
     localFeeKrwEstimate,

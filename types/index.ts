@@ -165,6 +165,15 @@ export interface PriceIncrease {
 }
 
 // ─── 학원 ────────────────────────────────────────────────────────────────────
+// ─── 유학원 자체 할인 ─────────────────────────────────────────────────────────
+export interface AgencyDiscount {
+  type: 'percent' | 'amount_per_week' | 'amount_flat'
+  value: number                 // 퍼센트면 15 = 15%, 금액이면 원화
+  maxAmount?: number            // percent일 때 최대 한도 (원)
+  applyTo: 'all' | 'course_only' | 'dorm_only' | 'package_only'
+  note: string                  // 예: "수수료 25% 내 최대 할인"
+}
+
 export interface School {
   id: string
   name: string
@@ -176,7 +185,8 @@ export interface School {
   courseShortTermRates?: ShortTermRates
   dormShortTermRates?: ShortTermRates
   registrationFee?: RegistrationFee
-  priceIncrease?: PriceIncrease         // 예정 비용 인상
+  priceIncrease?: PriceIncrease
+  agencyDiscount?: AgencyDiscount   // 엠버시 자체 할인 규칙
   courses: Course[]
   dormitories: Dormitory[]
   surcharges: Surcharge[]
