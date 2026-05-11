@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react'
 import AdminLayout from '@/components/AdminLayout'
 import { getSchools, saveSchool } from '@/lib/db'
 import type { School, AgencyDiscount } from '@/types'
+import { getDefaultDiscount } from './defaults'
 import { Check, Save, ChevronDown, Info } from 'lucide-react'
 
 type DiscountRow = {
@@ -66,6 +67,19 @@ export default function DiscountsPage() {
 
   const dirtyCount = rows.filter(r => r.dirty).length
   const setCount   = rows.filter(r => r.draft).length
+
+  // 기본값 일괄 적용: 미설정 학원에만 자동 세팅
+  const applyDefaults = () => {
+    let count = 0
+    setRows(prev => prev.map(r => {
+      if (r.draft) return r  // 이미 설정된 학원은 건드리지 않음
+      const def = getDefaultDiscount(r.school.name)
+      if (def === undefined) return r  // 매칭 안됨
+      count++
+      return { ...r, draft: def ?? undefined, dirty: true, saved: false }
+    }))
+    if (count === 0) alert('새로 적용할 학원이 없습니다 (이미 설정되거나 데이터 없음)')
+  }
 
   function DiscountEditor({ row, idx }: { row: DiscountRow; idx: number }) {
     const d = row.draft
@@ -164,11 +178,17 @@ export default function DiscountsPage() {
               {dirtyCount > 0 && <span className="ml-2 text-orange-600 font-semibold">· 미저장 {dirtyCount}개</span>}
             </p>
           </div>
-          {dirtyCount > 0 && (
-            <button onClick={saveAll} className="btn-primary flex items-center gap-1.5 text-sm">
-              <Save size={14} /> {dirtyCount}개 전체 저장
+          <div className="flex gap-2 flex-wrap">
+            <button onClick={applyDefaults}
+              className="btn-secondary flex items-center gap-1.5 text-sm">
+              ✨ 기본값 일괄 적용
             </button>
-          )}
+            {dirtyCount > 0 && (
+              <button onClick={saveAll} className="btn-primary flex items-center gap-1.5 text-sm">
+                <Save size={14} /> {dirtyCount}개 전체 저장
+              </button>
+            )}
+          </div>
         </div>
 
         {/* 안내 */}
