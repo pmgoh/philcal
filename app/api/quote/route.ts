@@ -22,38 +22,36 @@ const EXTRACT_PROMPT = `당신은 필리핀 어학연수 견적 AI입니다. 엠
 - 성수기/비수기 판단: 입국일 기준 (7~8월, 1~2월 = 성수기)
 - 보호자 수업 포함 여부 → 가격이 다르면 반드시 확인
 
-[유학원 자체 할인]
-- 엠버시유학은 학원이 허용하는 한도 내에서 항상 최대 할인 제공
-- schoolData의 embassyDiscountKrw 필드에 우리 할인액이 있으면 반드시 적용
-- 할인이 적용된 경우 "엠버시유학 자체 할인"으로 표시
+[비교 질문 처리 — 절대 규칙]
+- "어디가 저렴해요?", "비교해줘", "최저가", "몇 군데 비교" 등 → 반드시 multi_calculate 사용
+- answer로 직접 답변 절대 금지. 반드시 실제 calcEngine 계산 결과를 사용
+- 비교 시 각 학원의 최저가 코스+기숙사 조합을 자동 선택해도 됨 (단, 선택 이유를 message에 명시)
+- 비교 대상 학원이 여러 개면 items 배열에 모두 포함
 
 [응답 형식]
 
 코스/기숙사 견적:
 {"action":"calculate","schoolId":"ID","startDate":"YYYY-MM-DD","enrollmentDate":"YYYY-MM-DD",
  "courses":[{"courseId":"ID","weeks":4}],"dormitories":[{"dormitoryId":"ID","weeks":4}],
- "packages":[],"embassyDiscountKrw":0,"specialNote":"","message":"요약"}
+ "packages":[],"specialNote":"","message":"요약"}
 
 패키지 견적:
 {"action":"calculate","schoolId":"ID","startDate":"YYYY-MM-DD","enrollmentDate":"YYYY-MM-DD",
  "courses":[],"dormitories":[],
  "packages":[{"packageId":"패키지ID","weeks":4,"columnLabel":"2인가족"}],
- "embassyDiscountKrw":0,"specialNote":"","message":"요약"}
+ "specialNote":"","message":"요약"}
 
-비교 견적:
-{"action":"multi_calculate","items":[...]}
+비교 견적 (반드시 실제 계산):
+{"action":"multi_calculate","items":[
+  {"schoolId":"ID1","startDate":"YYYY-MM-DD","enrollmentDate":"YYYY-MM-DD","courses":[...],"dormitories":[...],"packages":[],"specialNote":"","message":"최저가 코스+기숙사 조합"},
+  {"schoolId":"ID2","startDate":"YYYY-MM-DD","enrollmentDate":"YYYY-MM-DD","courses":[...],"dormitories":[...],"packages":[],"specialNote":"","message":""}
+]}
 
 정보 부족:
 {"action":"need_info","question":"질문","type":"select","suggestions":["선택지1","선택지2"],"allowFreeText":false}
 
-일반 질문:
+일반 질문 (견적/비교 아닌 경우에만):
 {"action":"answer","message":"답변"}
-
-[특이사항 표시]
-- specialNote 필드에 특별한 계산 이유 명시
-  예: "General Business & BEC 16주: 정가 계산(4주×4=4,400,000)이 아닌 장기할인가 4,000,000 적용"
-- 비수기/성수기 전환이 있는 경우 명시
-- 서차지가 포함된 경우 기간 명시
 
 [매칭 규칙]
 - 학원명: 부분 일치
@@ -103,7 +101,7 @@ ${school.refundPolicy   ? `환불규정:\n${school.refundPolicy}\n`   : ''}${sch
   } catch { return '' }
 }
 
-function buildQuoteMessage(school: School, calcResult: CalcResult, _totalWeeks: number, _embassyDiscount = 0, specialNote = ''): string {
+function buildQuoteMessage(school: School, calcResult: CalcResult, _totalWeeks: number, specialNote = ''): string {
   const lines: string[] = []
   lines.push(`## ${school.name}`)
   lines.push(`**총 ${calcResult.totalWeeks}주**`)
@@ -347,7 +345,6 @@ export async function POST(req: NextRequest) {
       const school = schools.find(s => s.id === parsed.schoolId)
       if (!school) return NextResponse.json({ action: 'need_info', question: '학원을 찾을 수 없습니다.', type: 'select', suggestions: schools.map(s => s.name), allowFreeText: false })
 
-      const embassyDiscount = Number(parsed.embassyDiscountKrw ?? 0)
       const specialNote = (parsed.specialNote as string) ?? ''
 
       const calcResult = runCalc(school, {
@@ -380,7 +377,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({
         action: 'result',
         message: (parsed.message ? `*${parsed.message}*\n\n` : '') +
-          buildQuoteMessage(school, calcResult, calcResult.totalWeeks, embassyDiscount, specialNote),
+          buildQuoteMessage(school, calcResult, calcResult.totalWeeks, specialNote),
         regulationWarning: regWarning,
         evidenceMessage: buildEvidenceMessage(school, calcResult, rate),
         localFees: filteredLocalFees,
@@ -393,7 +390,6 @@ export async function POST(req: NextRequest) {
         calcResult,
         schoolData: school,
         schoolId: school.id,
-        embassyDiscount,
         specialNote,
       })
     }
