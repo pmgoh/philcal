@@ -305,6 +305,43 @@ export async function POST(req: NextRequest) {
     const parsed = extractJson(rawText)
     if (!parsed) return NextResponse.json({ action: 'answer', message: rawText })
 
+    // need_info 후처리: 코스/기숙사/패키지 질문은 무조건 버튼으로 강제
+    if (parsed.action === 'need_info') {
+      const q = (parsed.question as string ?? '').toLowerCase()
+      const isCourseQ = q.includes('코스') || q.includes('수업') || q.includes('과정')
+      const isDormQ   = q.includes('기숙사') || q.includes('숙소') || q.includes('룸') || q.includes('room')
+      const isPkgQ    = q.includes('패키지') || q.includes('인원') || q.includes('가족') || q.includes('시즌') || q.includes('성수기') || q.includes('비수기')
+
+      // 학원이 특정된 경우 실제 목록 주입
+      const schoolId  = parsed.schoolId as string | undefined
+      const targetSchool = schoolId ? schools.find(s => s.id === schoolId) : undefined
+
+      if (isCourseQ && targetSchool && (targetSchool.courses ?? []).length > 0) {
+        parsed.suggestions = targetSchool.courses.map(c =>
+          `${c.name} (${((c as unknown as Record<string,number>).price4Weeks ?? 0).toLocaleString()}원/4주)`
+        )
+        parsed.allowFreeText = false
+        parsed.type = 'select'
+      } else if (isDormQ && targetSchool && (targetSchool.dormitories ?? []).length > 0) {
+        parsed.suggestions = targetSchool.dormitories.map(d =>
+          `${d.name} (${((d as unknown as Record<string,number>).price4Weeks ?? 0).toLocaleString()}원/4주)`
+        )
+        parsed.allowFreeText = false
+        parsed.type = 'select'
+      } else if (isPkgQ && targetSchool && (targetSchool.packages ?? []).length > 0) {
+        // 패키지는 label만
+        const sugg = parsed.suggestions as string[] | undefined
+        if (!sugg || sugg.length === 0) {
+          parsed.suggestions = targetSchool.packages.map(p => p.label)
+        }
+        parsed.allowFreeText = false
+        parsed.type = 'select'
+      } else if ((isCourseQ || isDormQ || isPkgQ) && (parsed.suggestions as string[] | undefined)?.length) {
+        // 목록은 있지만 학원 특정 안된 경우도 버튼 강제
+        parsed.allowFreeText = false
+      }
+    }
+
     // ── 단일 견적 ──────────────────────────────────────────────────────────
     if (parsed.action === 'calculate') {
       const school = schools.find(s => s.id === parsed.schoolId)

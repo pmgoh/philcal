@@ -303,34 +303,51 @@ function NeedInfoBubble({
   msg: AssistantNeedInfoMessage
   onSelect: (v: string) => void
 }) {
+  const [selected, setSelected] = useState<string | null>(null)
   const [custom, setCustom] = useState('')
+
+  const handleSelect = (v: string) => {
+    setSelected(v)
+    onSelect(v)
+  }
+
+  if (selected) {
+    return (
+      <div className="space-y-2">
+        <p className="text-sm text-gray-800">{msg.question}</p>
+        <div className="inline-flex items-center gap-2 px-3 py-2 bg-blue-50 rounded-xl text-sm text-blue-700 font-medium border border-blue-200">
+          <span>✓</span> {selected}
+        </div>
+      </div>
+    )
+  }
+
   return (
-    <div className="space-y-2">
-      <p className="text-sm text-gray-800">{msg.question}</p>
+    <div className="space-y-3">
+      <p className="text-sm text-gray-800 font-medium">{msg.question}</p>
       {msg.suggestions && msg.suggestions.length > 0 && (
-        <div className="flex flex-wrap gap-2 mt-2">
+        <div className="flex flex-col gap-1.5">
           {msg.suggestions.map((s, i) => (
-            <button key={i} onClick={() => onSelect(s)}
-              className="px-3 py-1.5 bg-blue-50 text-blue-700 border border-blue-200 rounded-full text-sm hover:bg-blue-100 transition-colors font-medium">
-              {s}
+            <button key={i} onClick={() => handleSelect(s)}
+              className="w-full text-left px-3 py-2.5 bg-white hover:bg-blue-50 border border-gray-200 hover:border-blue-300 rounded-xl text-sm text-gray-800 hover:text-blue-700 transition-all font-medium flex items-center justify-between group">
+              <span>{s}</span>
+              <span className="text-gray-300 group-hover:text-blue-400 text-xs">선택 →</span>
             </button>
           ))}
         </div>
       )}
       {msg.allowFreeText !== false && (
-        <div className="flex gap-2 mt-2">
+        <div className="flex gap-2 pt-1 border-t border-gray-100">
           <input
             value={custom}
             onChange={e => setCustom(e.target.value)}
-            onKeyDown={e => { if (e.key === 'Enter' && custom.trim()) { onSelect(custom.trim()); setCustom('') } }}
+            onKeyDown={e => { if (e.key === 'Enter' && custom.trim()) handleSelect(custom.trim()) }}
             className="input-field text-sm flex-1"
             placeholder="직접 입력..."
           />
-          <button
-            onClick={() => { if (custom.trim()) { onSelect(custom.trim()); setCustom('') } }}
+          <button onClick={() => { if (custom.trim()) handleSelect(custom.trim()) }}
             disabled={!custom.trim()}
-            className="btn-primary px-3 text-sm"
-          >전송</button>
+            className="btn-primary px-3 text-sm">전송</button>
         </div>
       )}
     </div>
