@@ -84,3 +84,46 @@ export async function saveExchangeRate(rate: Omit<ExchangeRate, 'updatedAt'>): P
     updatedAt: new Date().toISOString()
   })
 }
+
+// ─── 프로모션 컬렉션 ──────────────────────────────────────────────────────────
+export interface PromoEntry {
+  id: string
+  schoolName: string
+  promoName: string
+  region: string
+  basisType: string
+  startDate: string
+  endDate: string
+  discountType: string
+  details: string
+  isUrgent: boolean
+  urgentDays?: number | null
+  note: string
+  active: boolean
+  createdAt: string
+  updatedAt?: string
+}
+
+export async function getPromotions(): Promise<PromoEntry[]> {
+  const snap = await getDocs(collection(db, 'promotions'))
+  return snap.docs.map(d => d.data() as PromoEntry)
+}
+
+export async function savePromotion(promo: PromoEntry): Promise<void> {
+  const now = new Date().toISOString()
+  await setDoc(doc(db, 'promotions', promo.id), { ...promo, updatedAt: now })
+}
+
+export async function deletePromotion(id: string): Promise<void> {
+  await deleteDoc(doc(db, 'promotions', id))
+}
+
+export async function saveBatchPromotions(promos: PromoEntry[]): Promise<void> {
+  const { writeBatch } = await import('firebase/firestore')
+  const now = new Date().toISOString()
+  const batch = writeBatch(db)
+  for (const p of promos) {
+    batch.set(doc(db, 'promotions', p.id), { ...p, updatedAt: now })
+  }
+  await batch.commit()
+}
