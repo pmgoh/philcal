@@ -215,6 +215,63 @@ export default function PromotionsPage() {
                         <input value={editData.note ?? ''} onChange={e => setEditData(d => ({...d, note: e.target.value}))}
                           className="input-field text-sm" placeholder="메모" />
                       </div>
+
+                      {/* 유학원 할인 섹션 */}
+                      <div className="border border-red-200 rounded-xl p-3 bg-red-50/30 space-y-2">
+                        <p className="text-xs font-semibold text-red-700">✂️ 이 프로모션 활성 시 유학원 할인</p>
+                        <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                          <div>
+                            <label className="block text-xs text-gray-500 mb-1">할인 유형</label>
+                            <select value={editData.agencyDiscountType ?? ''}
+                              onChange={e => setEditData(d => ({...d, agencyDiscountType: e.target.value as PromoEntry['agencyDiscountType']}))}
+                              className="input-field text-xs py-1.5">
+                              <option value="">학원 기본값 사용</option>
+                              <option value="none">유학원 할인 없음</option>
+                              <option value="percent">% 할인</option>
+                              <option value="amount_per_week">주당 금액</option>
+                              <option value="amount_flat">고정 금액</option>
+                              <option value="reg_fee_only">등록비만 할인</option>
+                            </select>
+                          </div>
+                          {editData.agencyDiscountType && editData.agencyDiscountType !== 'none' && editData.agencyDiscountType !== 'reg_fee_only' && (
+                            <div>
+                              <label className="block text-xs text-gray-500 mb-1">
+                                {editData.agencyDiscountType === 'percent' ? '할인율 (%)' : '금액 (원)'}
+                              </label>
+                              <input type="number" value={editData.agencyDiscountValue ?? ''}
+                                onChange={e => setEditData(d => ({...d, agencyDiscountValue: Number(e.target.value)}))}
+                                className="input-field text-xs py-1.5" placeholder="예: 10 또는 100000" />
+                            </div>
+                          )}
+                          {editData.agencyDiscountType && editData.agencyDiscountType !== 'none' && (
+                            <div>
+                              <label className="block text-xs text-gray-500 mb-1">등록비 할인 (원)</label>
+                              <input type="number" value={editData.agencyDiscountRegFee ?? ''}
+                                onChange={e => setEditData(d => ({...d, agencyDiscountRegFee: e.target.value ? Number(e.target.value) : undefined}))}
+                                className="input-field text-xs py-1.5" placeholder="예: 100000" />
+                            </div>
+                          )}
+                          {editData.agencyDiscountType && editData.agencyDiscountType !== 'none' && editData.agencyDiscountType !== 'reg_fee_only' && (
+                            <div>
+                              <label className="block text-xs text-gray-500 mb-1">적용 범위</label>
+                              <select value={editData.agencyDiscountApplyTo ?? 'all'}
+                                onChange={e => setEditData(d => ({...d, agencyDiscountApplyTo: e.target.value as PromoEntry['agencyDiscountApplyTo']}))}
+                                className="input-field text-xs py-1.5">
+                                <option value="all">전체</option>
+                                <option value="course_only">학비만</option>
+                                <option value="dorm_only">기숙사만</option>
+                              </select>
+                            </div>
+                          )}
+                          <div className="sm:col-span-2">
+                            <label className="block text-xs text-gray-500 mb-1">표시 메모</label>
+                            <input value={editData.agencyDiscountNote ?? ''}
+                              onChange={e => setEditData(d => ({...d, agencyDiscountNote: e.target.value}))}
+                              className="input-field text-xs py-1.5" placeholder="예: CALA 10%, 등록비 10만원" />
+                          </div>
+                        </div>
+                      </div>
+
                       <div className="flex gap-2 justify-end">
                         <button onClick={() => { setEditId(null); setEditData({}); load() }}
                           className="btn-secondary text-sm px-4">취소</button>
@@ -237,6 +294,19 @@ export default function PromotionsPage() {
                           <span className="font-semibold text-gray-900 text-sm">{p.schoolName}</span>
                           <span className="text-xs text-blue-600 bg-blue-50 px-1.5 py-0.5 rounded">{p.promoName}</span>
                           {p.note && <span className="text-xs text-orange-600">{p.note}</span>}
+                          {/* 유학원 할인 배지 */}
+                          {p.agencyDiscountType === 'none'
+                            ? <span className="text-xs px-1.5 py-0.5 bg-gray-100 text-gray-400 rounded">유학원할인X</span>
+                            : p.agencyDiscountType
+                              ? <span className="text-xs px-1.5 py-0.5 bg-red-50 text-red-600 border border-red-200 rounded">
+                                  ✂️ {p.agencyDiscountType === 'reg_fee_only' ? `등록비 ${p.agencyDiscountRegFee?.toLocaleString()}원` :
+                                       p.agencyDiscountType === 'percent' ? `${p.agencyDiscountValue}%` :
+                                       p.agencyDiscountType === 'amount_per_week' ? `${p.agencyDiscountValue?.toLocaleString()}원/주` :
+                                       `${p.agencyDiscountValue?.toLocaleString()}원`}
+                                  {p.agencyDiscountRegFee && p.agencyDiscountType !== 'reg_fee_only' ? ` + 등록비 ${p.agencyDiscountRegFee.toLocaleString()}원` : ''}
+                                </span>
+                              : <span className="text-xs text-gray-300">할인미설정</span>
+                          }
                         </div>
                         <p className="text-xs text-gray-600 leading-relaxed line-clamp-2">{p.details}</p>
                         <p className="text-xs text-gray-400 mt-1">

@@ -57,11 +57,21 @@ export interface Surcharge {
 // ─── 프로모션 ─────────────────────────────────────────────────────────────────
 export type PromotionBasis = 'enrollment_date' | 'start_date' | 'contract_date' | 'departure_date'
 
+// ─── 유학원 자체 할인 ─────────────────────────────────────────────────────────
+export interface AgencyDiscount {
+  type: 'percent' | 'amount_per_week' | 'amount_flat' | 'reg_fee_only'
+  value: number
+  maxAmount?: number
+  applyTo: 'all' | 'course_only' | 'dorm_only' | 'package_only'
+  regFeeDiscount?: number    // 등록비 할인 금액 (원)
+  note: string
+}
+
 export interface Promotion {
   id: string
   label: string
   basisType: PromotionBasis
-  alwaysApply: boolean          // true이면 날짜 무관하게 항상 적용
+  alwaysApply: boolean
   startDate: string
   endDate: string
   discountType: 'percent' | 'amount'
@@ -72,6 +82,10 @@ export interface Promotion {
   applyToSurcharge: boolean
   condition?: string
   note?: string
+  // 이 프로모션이 활성일 때 엠버시가 줄 수 있는 추가 할인
+  // undefined = 학원 기본 agencyDiscount 사용
+  // null = 이 프로모션 활성 시 유학원 할인 없음
+  agencyDiscount?: AgencyDiscount | null
 }
 
 // ─── 등록비 ───────────────────────────────────────────────────────────────────
@@ -165,15 +179,6 @@ export interface PriceIncrease {
 }
 
 // ─── 학원 ────────────────────────────────────────────────────────────────────
-// ─── 유학원 자체 할인 ─────────────────────────────────────────────────────────
-export interface AgencyDiscount {
-  type: 'percent' | 'amount_per_week' | 'amount_flat'
-  value: number                 // 퍼센트면 15 = 15%, 금액이면 원화
-  maxAmount?: number            // percent일 때 최대 한도 (원)
-  applyTo: 'all' | 'course_only' | 'dorm_only' | 'package_only'
-  note: string                  // 예: "수수료 25% 내 최대 할인"
-}
-
 export interface School {
   id: string
   name: string

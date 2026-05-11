@@ -325,6 +325,43 @@ export function calculateQuote(input: QuoteInput, rate: ExchangeRate): CalcResul
     promotionLabel = promo.label
     if (!toCourses && toDorms) notes.push(`ℹ️ ${promo.label}: 기숙사비에만 적용`)
     if (toCourses && !toDorms) notes.push(`ℹ️ ${promo.label}: 코스 학비에만 적용`)
+
+    // 프로모션에 agencyDiscount가 정의된 경우 → 학원 기본값 override
+    // null = 이 프로모션 활성 시 유학원 할인 없음
+    // undefined = 학원 기본 agencyDiscount 그대로 사용
+    if ('agencyDiscount' in promo) {
+      if (promo.agencyDiscount === null) {
+        // 유학원 할인 없음 (명시적으로 null)
+        agencyDiscountKrw = 0
+        agencyDiscountNote = ''
+      } else if (promo.agencyDiscount) {
+        // 이 프로모션 전용 할인 규칙으로 재계산
+        const pad = promo.agencyDiscount
+        const applyTo = pad.applyTo ?? 'all'
+        let base = 0
+        if (applyTo === 'all')          base = baseKrw
+        if (applyTo === 'course_only')  base = courseItems.reduce((s,i) => s + i.krwAmount, 0)
+        if (applyTo === 'dorm_only')    base = dormItems.reduce((s,i) => s + i.krwAmount, 0)
+        if (applyTo === 'package_only') base = pkgBaseKrw
+
+        if (pad.type === 'percent') {
+          agencyDiscountKrw = Math.round(base * pad.value / 100)
+          if (pad.maxAmount) agencyDiscountKrw = Math.min(agencyDiscountKrw, pad.maxAmount)
+        } else if (pad.type === 'amount_per_week') {
+          agencyDiscountKrw = pad.value * totalWeeks
+          if (pad.maxAmount) agencyDiscountKrw = Math.min(agencyDiscountKrw, pad.maxAmount)
+        } else if (pad.type === 'amount_flat') {
+          agencyDiscountKrw = pad.value
+        } else if (pad.type === 'reg_fee_only') {
+          agencyDiscountKrw = 0  // 등록비 할인은 별도 처리
+        }
+        // 등록비 할인이 있으면 registrationFeeKrw에서 차감
+        if (pad.regFeeDiscount) {
+          agencyDiscountKrw += pad.regFeeDiscount
+        }
+        agencyDiscountNote = pad.note ?? ''
+      }
+    }
     break
   }
 

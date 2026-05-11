@@ -102,6 +102,13 @@ export interface PromoEntry {
   active: boolean
   createdAt: string
   updatedAt?: string
+  // 유학원 할인 (이 프로모션 활성 시 적용되는 엠버시 할인)
+  agencyDiscountType?: 'percent' | 'amount_per_week' | 'amount_flat' | 'reg_fee_only' | 'none'
+  agencyDiscountValue?: number
+  agencyDiscountMaxAmount?: number
+  agencyDiscountApplyTo?: 'all' | 'course_only' | 'dorm_only' | 'package_only'
+  agencyDiscountRegFee?: number    // 등록비 할인 금액
+  agencyDiscountNote?: string
 }
 
 export async function getPromotions(): Promise<PromoEntry[]> {
