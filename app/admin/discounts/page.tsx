@@ -28,13 +28,31 @@ export default function DiscountsPage() {
   const [search, setSearch] = useState('')
 
   useEffect(() => {
-    getSchools().then(schools => {
-      setRows(schools.map(s => ({
-        school: s,
-        draft: s.agencyDiscount,
-        dirty: false, saving: false, saved: false,
-      })))
+    getSchools().then(async schools => {
+      // 미설정 학원에 기본값 즉시 저장
+      const toUpdate: School[] = []
+      const initialRows: DiscountRow[] = schools.map(s => {
+        let discount = s.agencyDiscount
+        if (!discount) {
+          const def = getDefaultDiscount(s.name)
+          if (def !== undefined) {
+            discount = def ?? undefined
+            if (discount !== undefined) {
+              toUpdate.push({ ...s, agencyDiscount: discount })
+            }
+          }
+        }
+        return { school: { ...s, agencyDiscount: discount }, draft: discount, dirty: false, saving: false, saved: false }
+      })
+      setRows(initialRows)
       setLoading(false)
+
+      // 백그라운드 저장
+      if (toUpdate.length > 0) {
+        await Promise.all(toUpdate.map(s => saveSchool(s)))
+        // 저장 완료 후 rows 갱신
+        setRows(prev => prev.map(r => ({ ...r, dirty: false })))
+      }
     })
   }, [])
 
@@ -67,19 +85,6 @@ export default function DiscountsPage() {
 
   const dirtyCount = rows.filter(r => r.dirty).length
   const setCount   = rows.filter(r => r.draft).length
-
-  // 기본값 일괄 적용: 미설정 학원에만 자동 세팅
-  const applyDefaults = () => {
-    let count = 0
-    setRows(prev => prev.map(r => {
-      if (r.draft) return r  // 이미 설정된 학원은 건드리지 않음
-      const def = getDefaultDiscount(r.school.name)
-      if (def === undefined) return r  // 매칭 안됨
-      count++
-      return { ...r, draft: def ?? undefined, dirty: true, saved: false }
-    }))
-    if (count === 0) alert('새로 적용할 학원이 없습니다 (이미 설정되거나 데이터 없음)')
-  }
 
   function DiscountEditor({ row, idx }: { row: DiscountRow; idx: number }) {
     const d = row.draft
@@ -179,10 +184,6 @@ export default function DiscountsPage() {
             </p>
           </div>
           <div className="flex gap-2 flex-wrap">
-            <button onClick={applyDefaults}
-              className="btn-secondary flex items-center gap-1.5 text-sm">
-              ✨ 기본값 일괄 적용
-            </button>
             {dirtyCount > 0 && (
               <button onClick={saveAll} className="btn-primary flex items-center gap-1.5 text-sm">
                 <Save size={14} /> {dirtyCount}개 전체 저장
