@@ -191,7 +191,6 @@ export interface School {
   dormShortTermRates?: ShortTermRates
   registrationFee?: RegistrationFee
   priceIncrease?: PriceIncrease
-  agencyDiscount?: AgencyDiscount   // 엠버시 자체 할인 규칙
   courses: Course[]
   dormitories: Dormitory[]
   surcharges: Surcharge[]

@@ -225,36 +225,16 @@ export function calculateQuote(input: QuoteInput, rate: ExchangeRate): CalcResul
     dormItems.push({ label, weeks: w, unitPrice: Math.round(price/w), currency: dorm.currency, krwAmount: toKrw(price, dorm.currency, rate) + addKrw * w })
   }
 
-  // 등록비 (1회) - agencyDiscount 계산 전에 선언
+  // 등록비 (1회)
   const regFee = school.registrationFee
   const registrationFeeKrw = regFee ? toKrw(regFee.amount, regFee.currency, rate) : 0
 
   const pkgBaseKrw = packageItems.reduce((s, p) => s + p.totalKrw, 0)
   const baseKrw = [...courseItems, ...dormItems].reduce((s,i) => s + i.krwAmount, 0) + pkgBaseKrw
 
-  // ── 엠버시 자체 할인 자동 계산 ───────────────────────────────────────────────
+  // agencyDiscount는 프로모션에서만 계산 (초기값 0)
   let agencyDiscountKrw = 0
   let agencyDiscountNote = ''
-  const ad = school.agencyDiscount
-  if (ad) {
-    const applyTo = ad.applyTo ?? 'all'
-    let base = 0
-    if (applyTo === 'all')          base = baseKrw
-    if (applyTo === 'course_only')  base = courseItems.reduce((s,i) => s + i.krwAmount, 0)
-    if (applyTo === 'dorm_only')    base = dormItems.reduce((s,i) => s + i.krwAmount, 0)
-    if (applyTo === 'package_only') base = pkgBaseKrw
-
-    if (ad.type === 'percent') {
-      agencyDiscountKrw = Math.round(base * ad.value / 100)
-      if (ad.maxAmount) agencyDiscountKrw = Math.min(agencyDiscountKrw, ad.maxAmount)
-    } else if (ad.type === 'amount_per_week') {
-      agencyDiscountKrw = ad.value * totalWeeks
-      if (ad.maxAmount) agencyDiscountKrw = Math.min(agencyDiscountKrw, ad.maxAmount)
-    } else if (ad.type === 'amount_flat') {
-      agencyDiscountKrw = ad.value
-    }
-    agencyDiscountNote = ad.note ?? ''
-  }
 
   // ── 서차지 ────────────────────────────────────────────────────────────────
   let surchargeKrw = 0
@@ -272,27 +252,35 @@ export function calculateQuote(input: QuoteInput, rate: ExchangeRate): CalcResul
     }
   }
 
-  // ── 프로모션 ──────────────────────────────────────────────────────────────
+  // ── 프로모션 (좁은 기간 우선, alwaysApply 최하위) ─────────────────────────
   let promotionLabel: string | undefined
   let promotionDiscount = 0
   let surchargeDiscount = 0
 
-  for (const promo of (school.promotions ?? [])) {
+  // 날짜 범위 너비 계산 (좁을수록 우선순위 높음)
+  const promoWidth = (p: typeof school.promotions[0]) => {
+    if (p.alwaysApply) return Infinity
+    if (!p.startDate || !p.endDate) return Infinity
+    return new Date(p.endDate).getTime() - new Date(p.startDate).getTime()
+  }
+
+  // 좁은 기간 순 정렬
+  const sortedPromos = [...(school.promotions ?? [])].sort((a, b) => promoWidth(a) - promoWidth(b))
+
+  for (const promo of sortedPromos) {
     if (!promo.startDate && !promo.alwaysApply) continue
-    // 항상 적용이 아닌 경우 날짜 체크
     if (!promo.alwaysApply) {
       if (!promo.endDate) continue
       const checkDate = promo.basisType === 'start_date' ? startDate : enrollmentDate
       if (!isInRange(checkDate, promo.startDate, promo.endDate)) continue
     }
-    // condition에 "N주" 키워드가 있으면 총 주수 체크 (장기 할인 등)
+    // condition 주수 체크
     if (promo.condition) {
       const weekMatch = promo.condition.match(/(\d+)주/)
       if (weekMatch) {
         const required = Number(weekMatch[1])
-        if (totalWeeks < required) continue   // 주수 미달 시 스킵
-        // 더 긴 주수 조건의 프로모션이 있으면 이 프로모션은 건너뜀 (가장 큰 할인만 적용)
-        const betterExists = (school.promotions ?? []).some(other => {
+        if (totalWeeks < required) continue
+        const betterExists = sortedPromos.some(other => {
           const m2 = other.condition?.match(/(\d+)주/)
           return m2 && Number(m2[1]) > required && Number(m2[1]) <= totalWeeks
         })

@@ -118,6 +118,17 @@ export default function PromotionsPage() {
             </p>
           </div>
           <div className="flex gap-2 flex-wrap">
+            <button onClick={() => {
+              const blob = new Blob([JSON.stringify(promos, null, 2)], { type: 'application/json' })
+              const url = URL.createObjectURL(blob)
+              const a = document.createElement('a')
+              a.href = url
+              a.download = `promotions_${new Date().toISOString().split('T')[0]}.json`
+              a.click()
+              URL.revokeObjectURL(url)
+            }} className="btn-secondary flex items-center gap-1.5 text-sm">
+              <Upload size={14} className="rotate-180" /> JSON 내보내기
+            </button>
             <button onClick={() => fileRef.current?.click()} disabled={importing}
               className="btn-secondary flex items-center gap-1.5 text-sm">
               <Upload size={14} /> JSON 가져오기

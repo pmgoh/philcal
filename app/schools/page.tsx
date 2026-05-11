@@ -59,7 +59,22 @@ export default function SchoolsPage() {
             <h1 className="text-xl md:text-2xl font-bold text-gray-900">학원 관리</h1>
             <p className="text-sm text-gray-500 mt-0.5">총 {schools.length}개 캠퍼스 등록됨</p>
           </div>
-          <div className="flex gap-2">
+          <div className="flex gap-2 flex-wrap">
+            <button
+              onClick={() => {
+                const blob = new Blob([JSON.stringify(schools, null, 2)], { type: 'application/json' })
+                const url = URL.createObjectURL(blob)
+                const a = document.createElement('a')
+                a.href = url
+                a.download = `schools_${new Date().toISOString().split('T')[0]}.json`
+                a.click()
+                URL.revokeObjectURL(url)
+              }}
+              className="btn-secondary flex items-center gap-2"
+            >
+              <FileJson size={16} />
+              <span>JSON 내보내기</span>
+            </button>
             <button
               onClick={() => setShowImport(true)}
               className="btn-secondary flex items-center gap-2"
