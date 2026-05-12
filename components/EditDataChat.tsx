@@ -12,6 +12,7 @@ interface ChatMsg {
   content: string
   summary?: string
   changes?: ChangeItem[]
+  ops?: PatchOp[]        // confirm에 포함된 실제 ops
   approved?: boolean | null
 }
 
@@ -69,7 +70,13 @@ export default function EditDataChat({ schoolId }: { schoolId: string }) {
       const data = await res.json()
 
       if (data.action === 'confirm') {
-        setMessages(prev => [...prev, { role: 'ai', type: 'confirm', content: data.summary ?? '', changes: data.changes ?? [], approved: null }])
+        setMessages(prev => [...prev, {
+          role: 'ai', type: 'confirm',
+          content: data.summary ?? '',
+          changes: data.changes ?? [],
+          ops: data.ops ?? [],   // ops를 confirm에 보관
+          approved: null,
+        }])
         apiHistory.current = [...apiHistory.current, {
           role: 'assistant',
           content: `변경사항:\n${(data.changes ?? []).map((c: ChangeItem) => `- ${c.label}: ${c.before} → ${c.after}`).join('\n')}\n\n저장할까요?`,
@@ -93,26 +100,33 @@ export default function EditDataChat({ schoolId }: { schoolId: string }) {
 
   const handleApprove = async (msgIdx: number) => {
     if (!school) return
+    const confirmMsg = messages[msgIdx]
+    const ops = confirmMsg.ops ?? []
+
+    if (ops.length === 0) {
+      setMessages(prev => [...prev, { role: 'ai', type: 'text', content: '적용할 ops가 없습니다. 다시 시도해주세요.' }])
+      return
+    }
+
     setSaving(true)
-    apiHistory.current = [...apiHistory.current, { role: 'user', content: '네, 저장해주세요.' }]
     try {
-      const res = await fetch('/api/edit-data', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ messages: apiHistory.current, school }),
-      })
-      const data = await res.json()
-      if (data.action === 'patch' && data.ops) {
-        const updated = applyPatch(school, data.ops as PatchOp[])
-        await saveSchool(updated)
-        setSchool(updated)
-        setMessages(prev => prev.map((m, i) => i === msgIdx ? { ...m, approved: true } : m))
-        setMessages(prev => [...prev, { role: 'ai', type: 'patch_result', content: `✅ 저장 완료`, approved: true }])
-        apiHistory.current = [...apiHistory.current, { role: 'assistant', content: '저장 완료.' }]
-      }
+      const updated = applyPatch(school, ops)
+      await saveSchool(updated)
+      setSchool(updated)
+      setMessages(prev => prev.map((m, i) => i === msgIdx ? { ...m, approved: true } : m))
+      setMessages(prev => [...prev, {
+        role: 'ai', type: 'patch_result',
+        content: `✅ 저장 완료 (${ops.length}개 항목)`, approved: true,
+      }])
+      apiHistory.current = [...apiHistory.current,
+        { role: 'user', content: '네, 저장해주세요.' },
+        { role: 'assistant', content: '저장 완료했습니다.' },
+      ]
     } catch (e) {
-      setMessages(prev => [...prev, { role: 'ai', type: 'text', content: `오류: ${e}` }])
-    } finally { setSaving(false) }
+      setMessages(prev => [...prev, { role: 'ai', type: 'text', content: `저장 오류: ${e}` }])
+    } finally {
+      setSaving(false)
+    }
   }
 
   const handleReject = (msgIdx: number) => {
