@@ -34,8 +34,15 @@ const EXTRACT_PROMPT = `당신은 필리핀 어학연수 견적 AI입니다. 엠
 
 코스/기숙사 견적:
 {"action":"calculate","schoolId":"ID","startDate":"YYYY-MM-DD","enrollmentDate":"YYYY-MM-DD",
- "courses":[{"courseId":"ID","weeks":4}],"dormitories":[{"dormitoryId":"ID","weeks":4}],
- "packages":[],"specialNote":"","message":"요약"}
+ "courses":[{"courseId":"ID","weeks":4}],
+ "dormitories":[
+   {"dormitoryId":"ID1","weeks":2},
+   {"dormitoryId":"ID2","weeks":1},
+   {"dormitoryId":"ID3","weeks":1}
+ ],
+ "packages":[],"specialNote":"2주 IB2 2인실 + 1주 IB1 2인실 + 1주 IB1 1인실","message":"요약"}
+
+※ 기숙사는 여러 개 지정 가능 (각각 주수 다르게). 복합 기숙사 조합도 그냥 계산할 것. 절대 거절하거나 단일 기숙사로 대체하지 말 것.
 
 패키지 견적:
 {"action":"calculate","schoolId":"ID","startDate":"YYYY-MM-DD","enrollmentDate":"YYYY-MM-DD",
