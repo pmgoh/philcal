@@ -14,6 +14,8 @@ const EXTRACT_PROMPT = `당신은 필리핀 어학연수 견적 AI입니다. 엠
 ① 시작일(startDate): 없으면 되물음. "8월 초"→8-04, "8월 중순"→8-11, "8월 말"→8-25 (월요일). 월만 있으면 되물음.
 ② 코스: 미지정 → 코스 목록만 제시 (기숙사 절대 같이 묻지 말 것)
 ③ 기숙사: 코스 확인 후 미지정 → 기숙사 목록만 제시 (코스와 조합 금지)
+   - "1인실·2인실 비교" 요청 시: 1인실 중 어느 것인지, 2인실 중 어느 것인지 각각 물어볼 것
+   - 특정 기숙사명이 명시된 경우에만 자동 선택 허용
 ④ 주수: 미지정 → 되물음.
 ※ 자동 선택 절대 금지. 추측 절대 금지.
 ※ 코스+기숙사 조합 선택지(예: "Regular ESL + Twin") 절대 금지 — 각각 따로 물어볼 것
@@ -462,15 +464,13 @@ export async function POST(req: NextRequest) {
         packages: (parsed.packages as PackageInput[]) ?? [],
       }, rate)
 
-      // 현지납부비 필터링: 총 주수 기준으로 실제 발생하는 항목만
+      // 현지납부비 필터링: 주수 조건 적용 + optional 제외
       const filteredLocalFees = (calcResult.localFees ?? []).filter(lf => {
         const t = lf.trigger ?? 'always'
-        if (t === 'optional') return true // 선택 항목은 항상 표시
+        if (t === 'optional') return false   // 선택항목 제외
         if (t === 'always') return true
         if (t === 'per_week' || t === 'per_4weeks') return true
-        if (t === 'over_weeks') {
-          return calcResult.totalWeeks > (lf.triggerWeeks ?? 4)
-        }
+        if (t === 'over_weeks') return calcResult.totalWeeks > (lf.triggerWeeks ?? 4)
         return true
       })
 
