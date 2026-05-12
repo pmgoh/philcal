@@ -1,7 +1,7 @@
 'use client'
 import { useState, useEffect, useRef } from 'react'
 import AdminLayout from '@/components/AdminLayout'
-import { getSchools, getExchangeRate } from '@/lib/db'
+import { getSchools, getExchangeRate, getPromotions } from '@/lib/db'
 import type { School, ExchangeRate, LocalFee } from '@/types'
 import { Send, RotateCcw, Copy, Check, ChevronDown, ChevronUp, DollarSign, FileText } from 'lucide-react'
 import { formatKrw } from '@/lib/utils'
@@ -430,6 +430,7 @@ function NeedInfoBubble({
 // ── 메인 페이지 ───────────────────────────────────────────────────────────────
 export default function QuotePage() {
   const [schools, setSchools] = useState<School[]>([])
+  const [promotions, setPromotions] = useState<import('@/lib/db').PromoEntry[]>([])
   const [rate, setRate] = useState<ExchangeRate>({ phpToKrw: 25, usdToKrw: 1380, updatedAt: '' })
   const [messages, setMessages] = useState<ChatMessage[]>([INITIAL_MSG])
   const [input, setInput] = useState('')
@@ -439,8 +440,8 @@ export default function QuotePage() {
   const bottomRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
-    Promise.all([getSchools(), getExchangeRate()]).then(([s, r]) => {
-      setSchools(s); setRate(r)
+    Promise.all([getSchools(), getExchangeRate(), getPromotions()]).then(([s, r, p]) => {
+      setSchools(s); setRate(r); setPromotions(p)
     })
   }, [])
 
@@ -470,6 +471,7 @@ export default function QuotePage() {
         body: JSON.stringify({
           messages: buildApiMessages(messages, text.trim()),
           schoolsData: schools,
+          promotionsData: promotions,
           rateData: rate,
         }),
       })

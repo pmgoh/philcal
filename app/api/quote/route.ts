@@ -297,8 +297,64 @@ function runCalc(school: School, item: CalcInputItem, rate: ExchangeRate): CalcR
 
 export async function POST(req: NextRequest) {
   try {
-    const { messages, schoolsData, rateData } = await req.json()
+    const { messages, schoolsData, rateData, promotionsData } = await req.json()
     const schools = (schoolsData as School[]) ?? []
+    const promoEntries = (promotionsData as Array<Record<string, unknown>>) ?? []
+
+    // ── PromoEntry → Promotion 변환 후 각 학원에 병합 ─────────────────────
+    type PromoLike = Record<string, unknown>
+    function entryToPromotion(p: PromoLike) {
+      const agType = p.agencyDiscountType as string | undefined
+      let agencyDiscount = undefined as unknown
+      if (agType === 'none') {
+        agencyDiscount = null
+      } else if (agType) {
+        agencyDiscount = {
+          type: agType,
+          value: p.agencyDiscountValue ?? 0,
+          maxAmount: p.agencyDiscountMaxAmount,
+          applyTo: p.agencyDiscountApplyTo ?? 'all',
+          regFeeDiscount: p.agencyDiscountRegFee,
+          note: p.agencyDiscountNote ?? '',
+        }
+      }
+      return {
+        id: p.id,
+        label: p.promoName,
+        basisType: p.basisType ?? 'enrollment_date',
+        alwaysApply: p.alwaysApply ?? false,
+        startDate: p.startDate,
+        endDate: p.endDate,
+        discountType: p.discountType ?? 'amount',
+        discountValue: p.discountValue ?? 0,
+        currency: 'KRW',
+        applyToCourses: p.applyToCourses ?? true,
+        applyToDorms: p.applyToDorms ?? true,
+        applyToSurcharge: p.applyToSurcharge ?? false,
+        condition: p.condition,
+        note: p.note,
+        applicableItems: p.applicableItems,
+        agencyDiscount,
+      }
+    }
+
+    // schoolName 기준으로 그룹화
+    const promosBySchool: Record<string, ReturnType<typeof entryToPromotion>[]> = {}
+    for (const p of promoEntries) {
+      if (!p.active) continue  // 비활성 프로모션 제외
+      const name = p.schoolName as string
+      if (!name) continue
+      if (!promosBySchool[name]) promosBySchool[name] = []
+      promosBySchool[name].push(entryToPromotion(p))
+    }
+
+    // school.promotions를 프로모션탭 데이터로 교체 (없으면 기존 유지)
+    const schoolsWithPromos = schools.map(s => ({
+      ...s,
+      promotions: promosBySchool[s.name]?.length
+        ? promosBySchool[s.name] as unknown as School['promotions']
+        : s.promotions ?? [],
+    }))
     const rate = rateData as ExchangeRate
 
     if (!process.env.ANTHROPIC_API_KEY) return NextResponse.json({ action: 'answer', message: 'API 키 미설정' }, { status: 500 })
@@ -320,7 +376,7 @@ export async function POST(req: NextRequest) {
     const noRegion  = !isCebu && !isBaguio && !isOther
 
     // 3단계: 필터 적용
-    let filtered = schools.filter(s => {
+    let filtered = schoolsWithPromos.filter(s => {
       const tags = (s.programTags ?? []).join(' ').toLowerCase()
       const name = s.name.toLowerCase()
 
@@ -346,7 +402,7 @@ export async function POST(req: NextRequest) {
     })
 
     // 필터 후 0개면 전체 사용
-    if (filtered.length === 0) filtered = schools
+    if (filtered.length === 0) filtered = schoolsWithPromos
 
     // 디버그 로그
     console.log(`[filter] 전체:${schools.length} → 필터후:${filtered.length} | camp:${isCamp} family:${isFamily} adult:${isAdult} | cebu:${isCebu} baguio:${isBaguio} noRegion:${noRegion}`)
@@ -416,7 +472,7 @@ export async function POST(req: NextRequest) {
 
       // 학원이 특정된 경우 실제 목록 주입
       const schoolId  = parsed.schoolId as string | undefined
-      const targetSchool = schoolId ? schools.find(s => s.id === schoolId) : undefined
+      const targetSchool = schoolId ? schoolsWithPromos.find(s => s.id === schoolId) : undefined
 
       // 코스+기숙사 조합 선택지 감지 → 코스만 먼저 물어보도록 강제
       const sugg = parsed.suggestions as string[] | undefined
@@ -455,8 +511,8 @@ export async function POST(req: NextRequest) {
 
     // ── 단일 견적 ──────────────────────────────────────────────────────────
     if (parsed.action === 'calculate') {
-      const school = schools.find(s => s.id === parsed.schoolId)
-      if (!school) return NextResponse.json({ action: 'need_info', question: '학원을 찾을 수 없습니다.', type: 'select', suggestions: schools.map(s => s.name), allowFreeText: false })
+      const school = schoolsWithPromos.find(s => s.id === parsed.schoolId)
+      if (!school) return NextResponse.json({ action: 'need_info', question: '학원을 찾을 수 없습니다.', type: 'select', suggestions: schoolsWithPromos.map(s => s.name), allowFreeText: false })
 
       const specialNote = (parsed.specialNote as string) ?? ''
 
@@ -512,7 +568,7 @@ export async function POST(req: NextRequest) {
       const results: object[] = []
 
       for (const item of items) {
-        const school = schools.find(s => s.id === item.schoolId)
+        const school = schoolsWithPromos.find(s => s.id === item.schoolId)
         if (!school) {
           results.push({ schoolName: item.schoolName ?? item.schoolId, error: '학원을 찾을 수 없습니다.' })
           continue

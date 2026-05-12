@@ -114,8 +114,19 @@ export default function PromotionsPage() {
       for (const next of incoming) {
         const existing = promos.find(p => p.id === next.id)
         if (!existing) { added.push(next); continue }
-        const COMPARE_FIELDS: (keyof PromoEntry)[] = ['promoName','schoolName','startDate','endDate','discountType','details','active','note','isUrgent','urgentDays']
-        const changedFields = COMPARE_FIELDS.filter(f => JSON.stringify(existing[f]) !== JSON.stringify(next[f]))
+        const COMPARE_FIELDS: (keyof PromoEntry)[] = [
+          'promoName','schoolName','startDate','endDate','discountType','discountValue',
+          'alwaysApply','applyToCourses','applyToDorms','applyToSurcharge','condition',
+          'details','active','note','agencyDiscountNote','agencyDiscountType',
+          'agencyDiscountValue','agencyDiscountApplyTo','isUrgent','urgentDays'
+        ]
+        const normalize = (v: unknown) => {
+          if (v === null || v === undefined || v === '') return ''
+          return JSON.stringify(v)
+        }
+        const changedFields = COMPARE_FIELDS.filter(f =>
+          normalize(existing[f]) !== normalize(next[f])
+        )
         if (changedFields.length > 0) updated.push({ before: existing, after: next, changedFields })
         else unchanged.push(next)
       }
@@ -257,6 +268,53 @@ export default function PromotionsPage() {
                           <label className="block text-xs text-gray-500 mb-1">종료일 (마감일)</label>
                           <input type="date" value={editData.endDate ?? ''} onChange={e => setEditData(d => ({...d, endDate: e.target.value}))}
                             className="input-field text-sm" />
+                        </div>
+                      </div>
+
+                      {/* ── 견적 계산 연동 섹션 ── */}
+                      <div className="border border-blue-200 rounded-xl p-3 bg-blue-50/30 space-y-3">
+                        <p className="text-xs font-semibold text-blue-700">🧮 견적 계산 설정</p>
+                        <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                          <div>
+                            <label className="block text-xs text-gray-500 mb-1">할인 유형</label>
+                            <select value={editData.discountType ?? 'amount'} onChange={e => setEditData(d => ({...d, discountType: e.target.value}))}
+                              className="input-field text-xs py-1.5">
+                              <option value="amount">금액 (원)</option>
+                              <option value="percent">% 할인</option>
+                            </select>
+                          </div>
+                          <div>
+                            <label className="block text-xs text-gray-500 mb-1">
+                              {editData.discountType === 'percent' ? '할인율 (%)' : '할인금액 (원)'}
+                            </label>
+                            <input type="number" value={editData.discountValue ?? ''} onChange={e => setEditData(d => ({...d, discountValue: Number(e.target.value)}))}
+                              className="input-field text-xs py-1.5" placeholder="예: 50000" />
+                          </div>
+                          <div className="flex items-end pb-1">
+                            <label className="flex items-center gap-1.5 cursor-pointer">
+                              <input type="checkbox" checked={editData.alwaysApply ?? false} onChange={e => setEditData(d => ({...d, alwaysApply: e.target.checked}))} className="rounded" />
+                              <span className="text-xs text-gray-600">기간 무관 항상 적용</span>
+                            </label>
+                          </div>
+                        </div>
+                        <div className="grid grid-cols-3 gap-2">
+                          <label className="flex items-center gap-1.5 cursor-pointer">
+                            <input type="checkbox" checked={editData.applyToCourses ?? true} onChange={e => setEditData(d => ({...d, applyToCourses: e.target.checked}))} className="rounded" />
+                            <span className="text-xs text-gray-600">학비 적용</span>
+                          </label>
+                          <label className="flex items-center gap-1.5 cursor-pointer">
+                            <input type="checkbox" checked={editData.applyToDorms ?? true} onChange={e => setEditData(d => ({...d, applyToDorms: e.target.checked}))} className="rounded" />
+                            <span className="text-xs text-gray-600">기숙사 적용</span>
+                          </label>
+                          <label className="flex items-center gap-1.5 cursor-pointer">
+                            <input type="checkbox" checked={editData.applyToSurcharge ?? false} onChange={e => setEditData(d => ({...d, applyToSurcharge: e.target.checked}))} className="rounded" />
+                            <span className="text-xs text-gray-600">서차지 적용</span>
+                          </label>
+                        </div>
+                        <div>
+                          <label className="block text-xs text-gray-500 mb-1">조건 (주수 등)</label>
+                          <input value={editData.condition ?? ''} onChange={e => setEditData(d => ({...d, condition: e.target.value}))}
+                            className="input-field text-xs py-1.5" placeholder="예: 8주 등록 시 적용 (코스 학비만)" />
                         </div>
                       </div>
                       <div>

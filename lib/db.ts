@@ -91,25 +91,33 @@ export interface PromoEntry {
   schoolName: string
   promoName: string
   region: string
-  basisType: string
+  // ── calcEngine 연동 필드 ──────────────────────────────────────────────────
+  basisType: string                    // 'enrollment_date' | 'start_date'
+  alwaysApply?: boolean                // true = 항상 적용 (기간 무관)
   startDate: string
   endDate: string
-  discountType: string
-  details: string
+  discountType: string                 // 'percent' | 'amount'
+  discountValue?: number               // 할인값 (% 또는 원)
+  applyToCourses?: boolean
+  applyToDorms?: boolean
+  applyToSurcharge?: boolean
+  condition?: string                   // 주수 조건 등 텍스트
+  applicableItems?: string[]           // 특정 기숙사/코스 제한
+  // ── 표시용 필드 ───────────────────────────────────────────────────────────
+  details: string                      // 상담원용 프로모션 상세 설명
   isUrgent?: boolean
   urgentDays?: number | null
-  note: string
+  note: string                         // 메모
   active: boolean
   createdAt: string
   updatedAt?: string
-  // 유학원 할인 (이 프로모션 활성 시 적용되는 엠버시 할인)
+  // ── 유학원 자체 할인 ──────────────────────────────────────────────────────
   agencyDiscountType?: 'percent' | 'amount_per_week' | 'amount_flat' | 'reg_fee_only' | 'none'
   agencyDiscountValue?: number
   agencyDiscountMaxAmount?: number
   agencyDiscountApplyTo?: 'all' | 'course_only' | 'dorm_only' | 'package_only'
-  agencyDiscountRegFee?: number    // 등록비 할인 금액
+  agencyDiscountRegFee?: number
   agencyDiscountNote?: string
-  applicableItems?: string[]
 }
 
 export async function getPromotions(): Promise<PromoEntry[]> {
