@@ -260,39 +260,53 @@ export async function POST(req: NextRequest) {
 
     if (!process.env.ANTHROPIC_API_KEY) return NextResponse.json({ action: 'answer', message: 'API 키 미설정' }, { status: 500 })
 
-    const schoolsSummary = schools.map(s => ({
-      id: s.id, name: s.name, region: s.region,
-      minWeeks: s.minWeeks, allowShortTerm: s.allowShortTerm,
-      effectiveMinWeeks: s.allowShortTerm ? 1 : s.minWeeks,
-      programTags: s.programTags ?? [],
-      hasPackages: (s.packages ?? []).length > 0,
-      courses: (s.courses ?? []).map(c => ({
-        id: c.id, name: c.name, target: c.target,
-        price4Weeks: (c as unknown as Record<string,number>).price4Weeks ?? 0,
-        currency: c.currency,
-      })),
-      dormitories: (s.dormitories ?? []).map(d => ({
-        id: d.id, name: d.name, target: d.target,
-        price4Weeks: (d as unknown as Record<string,number>).price4Weeks ?? 0,
-        currency: d.currency,
-      })),
-      packages: (s.packages ?? []).map(p => ({
-        id: p.id,
+    const schoolsSummary = schools.map(s => {
+      // 코스: 최저가 3개만
+      const courses = (s.courses ?? [])
+        .filter(c => (c as unknown as Record<string,number>).price4Weeks > 0)
+        .sort((a,b) => ((a as unknown as Record<string,number>).price4Weeks||0) - ((b as unknown as Record<string,number>).price4Weeks||0))
+        .slice(0, 5)
+        .map(c => ({ id: c.id, name: c.name, target: c.target,
+          p: (c as unknown as Record<string,number>).price4Weeks, cur: c.currency }))
+
+      // 기숙사: 최저가 3개만
+      const dorms = (s.dormitories ?? [])
+        .filter(d => (d as unknown as Record<string,number>).price4Weeks > 0)
+        .sort((a,b) => ((a as unknown as Record<string,number>).price4Weeks||0) - ((b as unknown as Record<string,number>).price4Weeks||0))
+        .slice(0, 5)
+        .map(d => ({ id: d.id, name: d.name,
+          p: (d as unknown as Record<string,number>).price4Weeks, cur: d.currency }))
+
+      // 패키지: label + availableWeeks + 첫 번째 주수 가격만
+      const packages = (s.packages ?? []).map(p => ({
+        id: p.id, label: p.label, season: p.season ?? '',
+        cols: p.columns ?? [],
+        weeks: (p.priceMatrix ?? []).map(r => r.weeks),
+        prices: (p.priceMatrix ?? []).slice(0, 3).map(r =>
+          `${r.weeks}주:${(r.prices ?? []).map(c => `${c.label} ${Math.round(c.amount/10000)}만`).join('/')}`
+        ),
+      }))
+
+      // 프로모션: 라벨+할인요약만
+      const promos = (s.promotions ?? []).map(p => ({
         label: p.label,
-        season: p.season ?? '',
-        currency: p.currency,
-        columns: p.columns ?? [],
-        availableWeeks: (p.priceMatrix ?? []).map(r => r.weeks),
-        samplePrices: (p.priceMatrix ?? []).slice(0, 2).map(r =>
-          `${r.weeks}주: ${(r.prices ?? []).map(c => `${c.label} ${(c.amount/10000).toFixed(0)}만원`).join(', ')}`
-        ).join(' / '),
-        additionalRules: (p.additionalRules ?? []).map(r => ({
-          id: r.id, condition: r.condition, addAmount: r.addAmount, currency: r.currency,
-        })),
-      })),
-      surcharges: (s.surcharges ?? []).map(sc => ({ label: sc.label, start: sc.startDate, end: sc.endDate, pricePerWeek: sc.pricePerWeek, currency: sc.currency })),
-      promotions: (s.promotions ?? []).map(p => ({ label: p.label, basisType: p.basisType, start: p.startDate, end: p.endDate, discount: `${p.discountValue}${p.discountType==='percent'?'%':p.currency??'KRW'}`, condition: p.condition })),
-    }))
+        always: p.alwaysApply,
+        start: p.startDate,
+        end: p.endDate,
+        disc: `${p.discountValue}${p.discountType==='percent'?'%':'원'}`,
+        ad: p.agencyDiscount ? `유학원:${p.agencyDiscount.type}${p.agencyDiscount.type==='percent'?p.agencyDiscount.value+'%':p.agencyDiscount.type==='reg_fee_only'?'등록비'+((p.agencyDiscount as unknown as Record<string,number>).regFeeDiscount??0)/10000+'만':''}` : (p.agencyDiscount===null?'유학원X':''),
+      }))
+
+      return {
+        id: s.id, name: s.name, region: s.region,
+        tags: s.programTags ?? [],
+        minW: s.minWeeks,
+        short: s.allowShortTerm,
+        courses, dorms, packages,
+        surcharges: (s.surcharges ?? []).map(sc => ({ label: sc.label, start: sc.startDate, end: sc.endDate, pw: sc.pricePerWeek })),
+        promos,
+      }
+    })
 
     const rawText = await callClaude(
       EXTRACT_PROMPT + `\n\n[학원 데이터]\n${JSON.stringify(schoolsSummary)}\n\n[오늘]\n${new Date().toISOString().split('T')[0]}`,
