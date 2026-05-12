@@ -121,17 +121,48 @@ async function callClaude(systemPrompt: string, content: unknown[], apiKey: stri
 }
 
 function extractJson(text: string, stopReason: string): unknown[] {
-  let raw = (text.match(/\[[\s\S]*/) ?? [null])[0]
-  if (!raw) throw new Error('JSON 배열을 찾을 수 없습니다')
-  if (stopReason === 'max_tokens') {
+  // 첫 번째 [ 찾기
+  const start = text.indexOf('[')
+  if (start === -1) throw new Error('JSON 배열을 찾을 수 없습니다')
+
+  // 괄호 균형 맞춰서 끝 위치 찾기
+  let depth = 0
+  let end = -1
+  let inString = false
+  let escape = false
+
+  for (let i = start; i < text.length; i++) {
+    const ch = text[i]
+    if (escape) { escape = false; continue }
+    if (ch === '\\' && inString) { escape = true; continue }
+    if (ch === '"') { inString = !inString; continue }
+    if (inString) continue
+    if (ch === '[' || ch === '{') depth++
+    else if (ch === ']' || ch === '}') {
+      depth--
+      if (depth === 0) { end = i; break }
+    }
+  }
+
+  let raw: string
+  if (end === -1) {
+    // 잘린 경우 — 마지막 완전한 객체까지 복구
+    raw = text.slice(start)
     const lastBrace = raw.lastIndexOf('}')
     if (lastBrace > 0) {
       raw = raw.slice(0, lastBrace + 1)
-      const opens = (raw.match(/\[/g) ?? []).length
+      const opens  = (raw.match(/\[/g) ?? []).length
       const closes = (raw.match(/\]/g) ?? []).length
       raw += ']'.repeat(Math.max(0, opens - closes))
     }
+  } else {
+    raw = text.slice(start, end + 1)
   }
+
+  if (stopReason === 'max_tokens' && end === -1) {
+    // 이미 위에서 처리됨
+  }
+
   return JSON.parse(raw)
 }
 
