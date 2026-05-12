@@ -1091,6 +1091,12 @@ function PackageRow({ pkg, onChange, onDelete }: {
           <input type="date" value={pkg.endDate ?? ''} onChange={e => onChange({ ...pkg, endDate: e.target.value })}
             className="text-xs border border-gray-200 rounded px-2 py-1 bg-white w-32" placeholder="종료일" />
         </div>
+        <label className="flex items-center gap-1.5 cursor-pointer flex-shrink-0">
+          <input type="checkbox" checked={pkg.includesLocalFees ?? false}
+            onChange={e => onChange({ ...pkg, includesLocalFees: e.target.checked })}
+            className="rounded" />
+          <span className="text-xs text-gray-600">현지납부비 포함</span>
+        </label>
         <button onClick={onDelete} className="p-1.5 text-red-400 hover:text-red-600 hover:bg-red-50 rounded transition-colors flex-shrink-0">
           <Trash2 size={14} />
         </button>

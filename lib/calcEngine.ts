@@ -111,6 +111,18 @@ export function calculateQuote(input: QuoteInput, rate: ExchangeRate): CalcResul
       ?? pkgs.find(p => p.label.includes(pi.packageId))
     if (!pkg) { warnings.push(`패키지 "${pi.packageId}"를 찾을 수 없습니다.`); continue }
 
+    // ── 패키지 유효기간 체크 ────────────────────────────────────────────────
+    const pkgStart = pkg.startDate
+    const pkgEnd   = pkg.endDate
+    if (pkgStart && pkgEnd) {
+      if (startDate < pkgStart || startDate > pkgEnd) {
+        warnings.push(
+          `⚠️ [혼합기간 주의] "${pkg.label}" 유효기간 ${pkgStart}~${pkgEnd} / 입국일 ${startDate} 는 범위 밖입니다. ` +
+          `패키지 기간과 일반 기간이 혼합된 케이스일 수 있으니 학원 담당자 확인 필수. 아래 금액은 추산값입니다.`
+        )
+      }
+    }
+
     const w = Math.max(1, Math.round(Number(pi.weeks) || 1))
     const row = pkg.priceMatrix.find(r => r.weeks === w)
     if (!row) {
@@ -370,28 +382,35 @@ export function calculateQuote(input: QuoteInput, rate: ExchangeRate): CalcResul
   const totalKrw = subtotal + registrationFeeKrw - agencyDiscountKrw
 
   // 현지납부비 (총 주수 기준)
+  // 패키지에 현지납부비 포함된 경우 스킵
+  const pkgIncludesLocal = packageItems.length > 0 &&
+    packageItems.every(p => p.pkg.includesLocalFees === true)
+
   const localFees = school.localFees ?? []
   let localFeePhp = 0
   let localFeeKrw = 0
 
-  for (const lf of localFees) {
-    const raw = lf as unknown as Record<string, unknown>
-    const trigger = lf.trigger ?? (raw.condition === 'one_time' ? 'always'
-      : raw.condition === 'min_weeks' ? 'over_weeks'
-      : raw.condition as string ?? 'always')
-    if (trigger === 'optional') continue
+  if (pkgIncludesLocal) {
+    notes.push('ℹ️ 패키지 가격에 현지납부비 포함')
+  } else {
+    for (const lf of localFees) {
+      const raw = lf as unknown as Record<string, unknown>
+      const trigger = lf.trigger ?? (raw.condition === 'one_time' ? 'always'
+        : raw.condition === 'min_weeks' ? 'over_weeks'
+        : raw.condition as string ?? 'always')
+      if (trigger === 'optional') continue
 
-    const isKrw = lf.currency === 'KRW'
-    const amt = lf.amount ?? 0
+      const isKrw = lf.currency === 'KRW'
+      const amt = lf.amount ?? 0
+      const add = (v: number) => isKrw ? (localFeeKrw += v) : (localFeePhp += v)
 
-    const add = (v: number) => isKrw ? (localFeeKrw += v) : (localFeePhp += v)
-
-    if (trigger === 'always')     { add(amt) }
-    else if (trigger === 'per_week')   { add(amt * totalWeeks) }
-    else if (trigger === 'per_4weeks') { add(amt * Math.ceil(totalWeeks / 4)) }
-    else if (trigger === 'over_weeks') {
-      const threshold = lf.triggerWeeks ?? (raw.minWeeks as number) ?? 4
-      if (totalWeeks > threshold) add(amt)
+      if (trigger === 'always')          { add(amt) }
+      else if (trigger === 'per_week')   { add(amt * totalWeeks) }
+      else if (trigger === 'per_4weeks') { add(amt * Math.ceil(totalWeeks / 4)) }
+      else if (trigger === 'over_weeks') {
+        const threshold = lf.triggerWeeks ?? (raw.minWeeks as number) ?? 4
+        if (totalWeeks > threshold) add(amt)
+      }
     }
   }
 

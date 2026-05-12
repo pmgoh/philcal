@@ -160,6 +160,7 @@ export interface Package {
 
   startDate?: string
   endDate?: string
+  includesLocalFees?: boolean   // true = 패키지에 현지납부비 포함 → 별도 청구 안 함
   note?: string
 }
 
