@@ -4,7 +4,7 @@ import { useRouter } from 'next/navigation'
 import { onAuthStateChanged } from 'firebase/auth'
 import { auth } from '@/lib/firebase'
 import AdminLayout from '@/components/AdminLayout'
-import { getAllUsers, updateUserStatus, updateUserRole, getCurrentUser, deactivateUser } from '@/lib/users'
+import { getAllUsers, updateUserStatus, updateUserRole, getCurrentUser, deactivateUser, deleteUser } from '@/lib/users'
 import type { AppUser, UserRole, UserStatus } from '@/types'
 import { Check, X, Shield, Users, UserX } from 'lucide-react'
 
@@ -60,6 +60,12 @@ export default function UsersPage() {
     setUsers(prev => prev.map(u => u.uid === uid ? { ...u, status: 'rejected' as UserStatus } : u))
   }
 
+  const remove = async (uid: string, name: string) => {
+    if (!confirm(`"${name}"을 완전히 삭제하시겠습니까?\n복구할 수 없습니다.`)) return
+    await deleteUser(uid)
+    setUsers(prev => prev.filter(u => u.uid !== uid))
+  }
+
   const changeRole = async (uid: string, role: UserRole) => {
     await updateUserRole(uid, role)
     setUsers(prev => prev.map(u => u.uid === uid ? { ...u, role } : u))
@@ -111,6 +117,7 @@ export default function UsersPage() {
                   onApprove={() => approve(u.uid)}
                   onReject={() => reject(u.uid)}
                   onRoleChange={role => changeRole(u.uid, role)}
+                  onRemove={() => remove(u.uid, u.displayName ?? u.email ?? u.uid)}
                   onDeactivate={async () => {
                     if (!confirm(`${u.displayName}을 거절하시겠습니까?`)) return
                     await deactivateUser(u.uid)
@@ -137,6 +144,7 @@ export default function UsersPage() {
                 onApprove={() => approve(u.uid)}
                 onReject={() => reject(u.uid)}
                 onRoleChange={role => changeRole(u.uid, role)}
+                onRemove={() => remove(u.uid, u.displayName ?? u.email ?? u.uid)}
                 onDeactivate={async () => {
                   if (!confirm(`${u.displayName}을 탈락 처리하시겠습니까?`)) return
                   await deactivateUser(u.uid)
@@ -152,12 +160,13 @@ export default function UsersPage() {
   )
 }
 
-function UserRow({ user, onApprove, onReject, onRoleChange, onDeactivate, currentUserUid }: {
+function UserRow({ user, onApprove, onReject, onRoleChange, onDeactivate, onRemove, currentUserUid }: {
   user: AppUser
   onApprove: () => void
   onReject: () => void
   onRoleChange: (role: UserRole) => void
   onDeactivate: () => void
+  onRemove: () => void
   currentUserUid: string
 }) {
   const isSelf = user.uid === currentUserUid
@@ -213,6 +222,12 @@ function UserRow({ user, onApprove, onReject, onRoleChange, onDeactivate, curren
             <X size={12} /> 거절
           </button>
         </div>
+      )}
+      {(['rejected', 'inactive'] as string[]).includes(user.status) && !isSelf && (
+        <button onClick={onRemove}
+          className="flex items-center gap-1 px-2.5 py-1.5 bg-red-50 hover:bg-red-100 text-red-600 rounded-lg text-xs font-medium border border-red-200 flex-shrink-0">
+          <X size={12} /> 삭제
+        </button>
       )}
     </div>
   )

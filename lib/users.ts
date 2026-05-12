@@ -1,4 +1,4 @@
-import { doc, getDoc, setDoc, collection, getDocs, updateDoc } from 'firebase/firestore'
+import { doc, getDoc, setDoc, collection, getDocs, updateDoc, deleteDoc } from 'firebase/firestore'
 import { db } from './firebase'
 import type { AppUser, UserRole, UserStatus } from '@/types'
 
@@ -76,4 +76,8 @@ export async function deactivateUser(uid: string): Promise<void> {
 
 export async function updateUserRole(uid: string, role: string): Promise<void> {
   await updateDoc(doc(db, 'users', uid), { role })
+}
+
+export async function deleteUser(uid: string): Promise<void> {
+  await deleteDoc(doc(db, 'users', uid))
 }
