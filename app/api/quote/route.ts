@@ -10,12 +10,13 @@ const EXTRACT_PROMPT = `당신은 필리핀 어학연수 견적 AI입니다. 엠
 - 첫 글자 반드시 {, 마지막 글자 반드시 }
 - 생각 과정, 설명, 코드블록 전부 금지
 
-[필수 확인 항목 — 하나라도 없으면 반드시 되물음]
+[필수 확인 항목 — 하나씩 순서대로 물어볼 것]
 ① 시작일(startDate): 없으면 되물음. "8월 초"→8-04, "8월 중순"→8-11, "8월 말"→8-25 (월요일). 월만 있으면 되물음.
-② 코스: 코스/기숙사형 학원에서 코스 미지정 → 반드시 되물음. 학원의 코스 목록 제시.
-③ 기숙사: 코스/기숙사형 학원에서 기숙사 미지정 → 반드시 되물음. 기숙사 목록 제시.
+② 코스: 미지정 → 코스 목록만 제시 (기숙사 절대 같이 묻지 말 것)
+③ 기숙사: 코스 확인 후 미지정 → 기숙사 목록만 제시 (코스와 조합 금지)
 ④ 주수: 미지정 → 되물음.
 ※ 자동 선택 절대 금지. 추측 절대 금지.
+※ 코스+기숙사 조합 선택지(예: "Regular ESL + Twin") 절대 금지 — 각각 따로 물어볼 것
 
 [패키지형 학원 필수 확인]
 - 패키지명(packageId), 주수(weeks), 인원구성(columnLabel) 모두 필요
@@ -26,7 +27,6 @@ const EXTRACT_PROMPT = `당신은 필리핀 어학연수 견적 AI입니다. 엠
 - "어디가 저렴해요?", "비교해줘", "최저가", "몇 군데 비교" 등 → multi_calculate 사용
 - 단, 비교도 코스/기숙사/주수/시작일 확인 필수. 미지정 시 반드시 need_info로 먼저 물어볼 것
 - answer로 직접 답변 절대 금지. 반드시 실제 calcEngine 계산 결과 사용
-- items 배열 각 항목에 label 필드 없음. schoolId + schoolName만 사용
 
 [응답 형식]
 
@@ -41,14 +41,14 @@ const EXTRACT_PROMPT = `당신은 필리핀 어학연수 견적 AI입니다. 엠
  "packages":[{"packageId":"패키지ID","weeks":4,"columnLabel":"2인가족"}],
  "specialNote":"","message":"요약"}
 
-비교 견적 (반드시 실제 계산):
+비교 견적:
 {"action":"multi_calculate","items":[
-  {"schoolId":"ID1","startDate":"YYYY-MM-DD","enrollmentDate":"YYYY-MM-DD","courses":[...],"dormitories":[...],"packages":[],"specialNote":"","message":"최저가 코스+기숙사 조합"},
+  {"schoolId":"ID1","startDate":"YYYY-MM-DD","enrollmentDate":"YYYY-MM-DD","courses":[...],"dormitories":[...],"packages":[],"specialNote":"","message":""},
   {"schoolId":"ID2","startDate":"YYYY-MM-DD","enrollmentDate":"YYYY-MM-DD","courses":[...],"dormitories":[...],"packages":[],"specialNote":"","message":""}
 ]}
 
-정보 부족:
-{"action":"need_info","question":"질문","type":"select","suggestions":["선택지1","선택지2"],"allowFreeText":false}
+정보 부족 (한 번에 하나만):
+{"action":"need_info","question":"코스를 선택해 주세요.","type":"select","suggestions":["Regular ESL (90만원/4주)","Power ESL (110만원/4주)"],"allowFreeText":false}
 
 일반 질문 (견적/비교 아닌 경우에만):
 {"action":"answer","message":"답변"}
@@ -411,7 +411,19 @@ export async function POST(req: NextRequest) {
       const schoolId  = parsed.schoolId as string | undefined
       const targetSchool = schoolId ? schools.find(s => s.id === schoolId) : undefined
 
-      if (isCourseQ && targetSchool && (targetSchool.courses ?? []).length > 0) {
+      // 코스+기숙사 조합 선택지 감지 → 코스만 먼저 물어보도록 강제
+      const sugg = parsed.suggestions as string[] | undefined
+      const hasCombined = sugg?.some(s => s.includes('+')) ?? false
+
+      if (hasCombined && targetSchool) {
+        // 조합 선택지가 있으면 코스 목록만으로 교체
+        parsed.question = '코스를 먼저 선택해 주세요.'
+        parsed.suggestions = targetSchool.courses.map(c =>
+          `${c.name} (${((c as unknown as Record<string,number>).price4Weeks ?? 0).toLocaleString()}원/4주)`
+        )
+        parsed.allowFreeText = false
+        parsed.type = 'select'
+      } else if (isCourseQ && targetSchool && (targetSchool.courses ?? []).length > 0) {
         parsed.suggestions = targetSchool.courses.map(c =>
           `${c.name} (${((c as unknown as Record<string,number>).price4Weeks ?? 0).toLocaleString()}원/4주)`
         )
@@ -424,15 +436,12 @@ export async function POST(req: NextRequest) {
         parsed.allowFreeText = false
         parsed.type = 'select'
       } else if (isPkgQ && targetSchool && (targetSchool.packages ?? []).length > 0) {
-        // 패키지는 label만
-        const sugg = parsed.suggestions as string[] | undefined
         if (!sugg || sugg.length === 0) {
           parsed.suggestions = targetSchool.packages.map(p => p.label)
         }
         parsed.allowFreeText = false
         parsed.type = 'select'
-      } else if ((isCourseQ || isDormQ || isPkgQ) && (parsed.suggestions as string[] | undefined)?.length) {
-        // 목록은 있지만 학원 특정 안된 경우도 버튼 강제
+      } else if ((isCourseQ || isDormQ || isPkgQ) && sugg?.length) {
         parsed.allowFreeText = false
       }
     }
