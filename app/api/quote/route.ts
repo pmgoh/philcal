@@ -260,20 +260,67 @@ export async function POST(req: NextRequest) {
 
     if (!process.env.ANTHROPIC_API_KEY) return NextResponse.json({ action: 'answer', message: 'API 키 미설정' }, { status: 500 })
 
-    const schoolsSummary = schools.map(s => {
-      // 코스: 최저가 3개만
+    // ── 대화 컨텍스트로 학원 필터링 ─────────────────────────────────────────
+    const allText = (messages as {role:string; content:string}[])
+      .map(m => m.content).join(' ').toLowerCase()
+
+    // 1단계: 프로그램 유형 감지
+    const isCamp    = /캠프|주니어캠프|여름캠프|겨울캠프|camp/.test(allText)
+    const isFamily  = /가족연수|가족|주니어|아이|어머니|부모|아들|딸|자녀|family/.test(allText) && !isCamp
+    const isAdult   = /성인|일반연수|어학연수|혼자|성인연수|adult|solo/.test(allText) ||
+                      (!isCamp && !isFamily)
+
+    // 2단계: 지역 감지
+    const isCebu    = /세부|cebu/.test(allText)
+    const isBaguio  = /바기오|baguio/.test(allText)
+    const isOther   = /마닐라|클락|보라카이|일로일로|기타|manila|clark|boracay|iloilo/.test(allText)
+    const noRegion  = !isCebu && !isBaguio && !isOther
+
+    // 3단계: 필터 적용
+    let filtered = schools.filter(s => {
+      const tags = (s.programTags ?? []).join(' ').toLowerCase()
+      const name = s.name.toLowerCase()
+
+      // 프로그램 유형 필터
+      if (isCamp && !isFamily && !isAdult) {
+        if (!/캠프|camp|주니어|junior/.test(tags + name)) return false
+      } else if (isFamily && !isCamp) {
+        if (!/가족|family|주니어|junior/.test(tags + name)) return false
+      } else if (isAdult && !isFamily && !isCamp) {
+        // 성인 전용 → 가족/캠프 전용 학원 제외 (단, 성인+가족 둘 다 있는 학원은 포함)
+        const isOnlyFamilyCamp = /가족연수|주니어캠프/.test(tags) && !/성인일반|어학연수/.test(tags)
+        if (isOnlyFamilyCamp) return false
+      }
+
+      // 지역 필터
+      if (!noRegion) {
+        if (isCebu   && s.region !== '세부')   return false
+        if (isBaguio && s.region !== '바기오') return false
+        if (isOther  && (s.region === '세부' || s.region === '바기오')) return false
+      }
+
+      return true
+    })
+
+    // 필터 후 0개면 전체 사용
+    if (filtered.length === 0) filtered = schools
+
+    // 디버그 로그
+    console.log(`[filter] 전체:${schools.length} → 필터후:${filtered.length} | camp:${isCamp} family:${isFamily} adult:${isAdult} | cebu:${isCebu} baguio:${isBaguio} noRegion:${noRegion}`)
+
+    // ── 학원 데이터 요약 (필터된 학원만 풀데이터) ──────────────────────────
+    const schoolsSummary = filtered.map(s => {
+      // 코스: 전체 (가격순 정렬)
       const courses = (s.courses ?? [])
         .filter(c => (c as unknown as Record<string,number>).price4Weeks > 0)
         .sort((a,b) => ((a as unknown as Record<string,number>).price4Weeks||0) - ((b as unknown as Record<string,number>).price4Weeks||0))
-        .slice(0, 5)
         .map(c => ({ id: c.id, name: c.name, target: c.target,
           p: (c as unknown as Record<string,number>).price4Weeks, cur: c.currency }))
 
-      // 기숙사: 최저가 3개만
+      // 기숙사: 전체 (가격순 정렬)
       const dorms = (s.dormitories ?? [])
         .filter(d => (d as unknown as Record<string,number>).price4Weeks > 0)
         .sort((a,b) => ((a as unknown as Record<string,number>).price4Weeks||0) - ((b as unknown as Record<string,number>).price4Weeks||0))
-        .slice(0, 5)
         .map(d => ({ id: d.id, name: d.name,
           p: (d as unknown as Record<string,number>).price4Weeks, cur: d.currency }))
 
