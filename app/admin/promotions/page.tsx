@@ -119,6 +119,7 @@ export default function PromotionsPage() {
           'alwaysApply','applyToCourses','applyToDorms','applyToSurcharge','condition',
           'details','active','note','agencyDiscountNote','agencyDiscountType',
           'agencyDiscountValue','agencyDiscountApplyTo','isUrgent','urgentDays'
+          // updatedAt/createdAt 제외 — 타임스탬프 차이는 변경사항 아님
         ]
         const normalize = (v: unknown) => {
           if (v === null || v === undefined || v === '') return ''
