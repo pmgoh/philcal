@@ -3,53 +3,48 @@ import type { School } from '@/types'
 
 const EDIT_PROMPT = `당신은 필리핀 어학연수 학원 데이터 수정 AI입니다. 엠버시유학 내부 전용 시스템입니다.
 
-[역할]
-관리자가 자연어로 학원 데이터(비용, 규정, 프로모션 등)를 수정하도록 돕습니다.
-
 [절대 규칙]
 - 응답은 JSON 객체 하나만
 - 첫 글자 반드시 {, 마지막 글자 반드시 }
+- confirm에 반드시 ops 포함 (저장은 ops로만 이루어짐)
 
 [응답 형식]
 
-① 수정 내용 파악 후 확인 요청 (ops를 반드시 함께 포함):
-{"action":"confirm","summary":"변경사항 요약",
+① 수정 내용 파악 후 확인 요청:
+{"action":"confirm","summary":"변경 요약",
  "changes":[
-   {"field":"courses[0].price4Weeks","label":"Power ESL 4주 가격","before":"1,050,000원","after":"1,100,000원"}
+   {"field":"courses[0].price4Weeks","label":"Intensive Speaking 4주 가격","before":"850,000원","after":"900,000원"}
  ],
  "ops":[
-   {"path":"courses","index":0,"field":"price4Weeks","value":1100000}
+   {"target":"school","path":"courses","index":0,"field":"price4Weeks","value":900000},
+   {"target":"promo","promoId":"UUID","promoField":"discountValue","promoValue":100000}
  ]
 }
 
-② 정보 부족 / 추가 질문:
-{"action":"ask","message":"질문 내용"}
+② 정보 부족:
+{"action":"ask","message":"질문"}
 
 ③ 일반 답변:
 {"action":"answer","message":"답변"}
 
-[패치 경로 규칙]
-- path: "courses" | "dormitories" | "surcharges" | "promotions" | "localFees" | "packages" | "generalNotes" | "refundPolicy" | "dormitoryRules" | "registrationFee" | "isActive"
-- index: 배열인 경우 인덱스 (0부터)
-- field: 바꿀 필드명
-- value: 새 값
+[학원 ops 규칙]
+target: "school"
+path: "courses"|"dormitories"|"surcharges"|"promotions"|"localFees"|"packages"|"generalNotes"|"refundPolicy"|"dormitoryRules"|"registrationFee"|"isActive"
+index: 배열이면 0부터 시작하는 인덱스 (필수)
+field: 변경할 필드명
+value: 새 값 (숫자/문자열/불리언)
 
-[수정 가능 항목 예시]
-- 코스 가격: courses[N].price4Weeks
-- 기숙사 가격: dormitories[N].price4Weeks
-- 프로모션 날짜: promotions[N].startDate / endDate
-- 프로모션 할인: promotions[N].discountValue
-- 서차지 가격: surcharges[N].pricePerWeek
-- 등록비: registrationFee.amount
-- 일반 메모: generalNotes (전체 텍스트)
-- 환불 규정: refundPolicy
-- 학원 활성: isActive
+[프로모션 ops 규칙 — promos 컬렉션]
+target: "promo"
+promoId: 프로모션의 id 값 (UUID)
+promoField: "discountValue"|"startDate"|"endDate"|"label"|"condition"|"note"|"active"|"agencyDiscountValue" 등
+promoValue: 새 값
 
-[주의]
-- confirm 응답에는 반드시 ops 포함 (저장 시 추가 API 호출 없이 ops로 바로 적용)
-- 여러 항목 동시 수정 가능
-- 배열 내 특정 항목은 name/label로 찾아서 index 결정
-- 가격은 항상 숫자(원 또는 PHP), 날짜는 YYYY-MM-DD`
+[중요]
+- 가격은 반드시 숫자 (원화: 1100000 / PHP: 8000)
+- 날짜는 YYYY-MM-DD
+- 배열 항목은 반드시 index 포함
+- registrationFee 수정 시 path="registrationFee", field="amount" (index 없음)`
 
 function extractJson(text: string): Record<string, unknown> | null {
   const stripped = text.replace(/```(?:json)?\n?/g, '').replace(/```/g, '').trim()
@@ -69,9 +64,10 @@ function extractJson(text: string): Record<string, unknown> | null {
 
 export async function POST(req: NextRequest) {
   try {
-    const { messages, school } = await req.json() as {
+    const { messages, school, promos } = await req.json() as {
       messages: { role: string; content: string }[]
       school: School
+      promos?: Array<{ id: string; promoName: string; startDate: string; endDate: string; discountValue: number; discountType: string; active: boolean; details: string }>
     }
 
     if (!process.env.ANTHROPIC_API_KEY)
@@ -100,6 +96,9 @@ ${(school.promotions ?? []).map((p, i) => `  [${i}] ${p.label} / ${p.discountVal
 ${(school.packages ?? []).map((p, i) => `  [${i}] ${p.label} / ${p.season} / 열: ${p.columns?.join(', ')}`).join('\n')}
 
 등록비: ${school.registrationFee ? `${school.registrationFee.amount}${school.registrationFee.currency}` : '없음'}
+
+프로모션 (promos 컬렉션, ${(promos ?? []).length}개):
+${(promos ?? []).map((p, i) => `  [${i}] id=${p.id} | ${p.promoName} | 할인: ${p.discountValue}${p.discountType === 'percent' ? '%' : '원'} | ${p.startDate}~${p.endDate} | active:${p.active}`).join('\n')}
 `
 
     const res = await fetch('https://api.anthropic.com/v1/messages', {
