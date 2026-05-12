@@ -82,9 +82,9 @@ export interface Promotion {
   applyToSurcharge: boolean
   condition?: string
   note?: string
-  // 이 프로모션이 활성일 때 엠버시가 줄 수 있는 추가 할인
-  // undefined = 학원 기본 agencyDiscount 사용
-  // null = 이 프로모션 활성 시 유학원 할인 없음
+  // 특정 기숙사/코스에만 적용 (빈 배열 또는 미설정 = 전체 적용)
+  // 선택된 기숙사/코스 이름에 이 문자열 중 하나라도 포함되면 적용
+  applicableItems?: string[]
   agencyDiscount?: AgencyDiscount | null
 }
 

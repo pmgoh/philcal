@@ -109,6 +109,7 @@ export interface PromoEntry {
   agencyDiscountApplyTo?: 'all' | 'course_only' | 'dorm_only' | 'package_only'
   agencyDiscountRegFee?: number    // 등록비 할인 금액
   agencyDiscountNote?: string
+  applicableItems?: string[]
 }
 
 export async function getPromotions(): Promise<PromoEntry[]> {

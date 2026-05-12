@@ -289,6 +289,19 @@ export function calculateQuote(input: QuoteInput, rate: ExchangeRate): CalcResul
       notes.push(`ℹ️ 프로모션 조건: ${promo.condition}`)
     }
 
+    // applicableItems 체크: 선택된 기숙사/코스 이름에 매칭되는 항목이 없으면 스킵
+    if (promo.applicableItems && promo.applicableItems.length > 0) {
+      const selectedNames = [
+        ...courseItems.map(i => i.label),
+        ...dormItems.map(i => i.label),
+        ...packageItems.map(i => i.pkg.label),
+      ].join(' ')
+      const hasMatch = promo.applicableItems.some(item =>
+        selectedNames.includes(item)
+      )
+      if (!hasMatch) continue
+    }
+
     // 적용 대상 (기본값: 전체 적용)
     const toCourses   = promo.applyToCourses   !== false
     const toDorms     = promo.applyToDorms     !== false

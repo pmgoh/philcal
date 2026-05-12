@@ -283,6 +283,20 @@ export default function PromotionsPage() {
                         </div>
                       </div>
 
+                      <div className="border border-orange-200 rounded-xl p-3 bg-orange-50/30 space-y-2">
+                        <p className="text-xs font-semibold text-orange-700">🎯 적용 기숙사/코스 제한 (비워두면 전체 적용)</p>
+                        <p className="text-xs text-gray-500">쉼표로 구분. 선택된 기숙사/코스 이름에 이 중 하나라도 포함되면 적용.</p>
+                        <p className="text-xs text-gray-400">예: <code>IB1 2인실, IB2 2인실</code> 또는 <code>3인실</code></p>
+                        <input
+                          value={(editData.applicableItems ?? []).join(', ')}
+                          onChange={e => setEditData(d => ({
+                            ...d,
+                            applicableItems: e.target.value ? e.target.value.split(',').map(s => s.trim()).filter(Boolean) : []
+                          }))}
+                          className="input-field text-xs py-1.5 w-full"
+                          placeholder="비워두면 전체 적용" />
+                      </div>
+
                       <div className="flex gap-2 justify-end">
                         <button onClick={() => { setEditId(null); setEditData({}); load() }}
                           className="btn-secondary text-sm px-4">취소</button>
