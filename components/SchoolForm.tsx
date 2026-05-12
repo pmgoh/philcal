@@ -116,9 +116,11 @@ export default function SchoolForm({ schoolId }: Props) {
   }
 
   if (loading) return (
-    <div className="flex items-center justify-center h-64">
-      <div className="animate-spin w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full" />
-    </div>
+    <AdminLayout>
+      <div className="flex items-center justify-center h-64">
+        <div className="animate-spin w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full" />
+      </div>
+    </AdminLayout>
   )
 
   const section = (id: string, title: string, badge?: number) => (
@@ -139,7 +141,8 @@ export default function SchoolForm({ schoolId }: Props) {
   )
 
   return (
-    <div className="p-4 md:p-8 max-w-4xl mx-auto">
+    <AdminLayout>
+      <div className="p-4 md:p-8 max-w-4xl mx-auto">
         {/* 헤더 */}
         <div className="flex items-center gap-4 mb-6">
           <button onClick={() => router.back()} className="btn-secondary p-2">
@@ -485,6 +488,7 @@ export default function SchoolForm({ schoolId }: Props) {
           </button>
         </div>
       </div>
+    </AdminLayout>
   )
 }
 
