@@ -3,7 +3,7 @@ import { useState, useEffect, useRef } from 'react'
 import AdminLayout from '@/components/AdminLayout'
 import { getPromotions, savePromotion, deletePromotion, saveBatchPromotions, PromoEntry } from '@/lib/db'
 import { v4 as uuid } from 'uuid'
-import { Plus, Trash2, Upload, Bell, BellOff, Search, Filter, RefreshCw } from 'lucide-react'
+import { Plus, Trash2, Upload, Bell, BellOff, Search, Filter, RefreshCw, X } from 'lucide-react'
 
 const REGIONS = ['전체', '세부', '바기오', '마닐라', '기타']
 
@@ -78,18 +78,61 @@ export default function PromotionsPage() {
     await savePromotion({ ...p, active: !p.active }); load()
   }
 
+  const [importDiff, setImportDiff] = useState<{
+    added: PromoEntry[]
+    updated: Array<{ before: PromoEntry; after: PromoEntry; changedFields: string[] }>
+    unchanged: PromoEntry[]
+    blocked: string | null
+    incoming: PromoEntry[]
+  } | null>(null)
+
   const handleImport = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]; if (!file) return
-    setImporting(true)
+    if (fileRef.current) fileRef.current.value = ''
     try {
       const text = await file.text()
       const data = JSON.parse(text)
-      const arr = (Array.isArray(data) ? data : [data]) as PromoEntry[]
-      await saveBatchPromotions(arr)
-      load()
-      alert(`${arr.length}개 프로모션을 가져왔습니다.`)
+      const arr = (Array.isArray(data) ? data : [data]) as Record<string, unknown>[]
+
+      // 타입 검증: 학원 JSON 차단
+      const sample = arr[0]
+      if (!sample) return
+      if ('courses' in sample || 'dormitories' in sample) {
+        setImportDiff({ added: [], updated: [], unchanged: [], incoming: [], blocked: '❌ 학원 JSON이 감지됐습니다. 학원 관리 탭에서 가져오기 하세요.' })
+        return
+      }
+      if (!('promoName' in sample) && !('schoolName' in sample)) {
+        setImportDiff({ added: [], updated: [], unchanged: [], incoming: [], blocked: '❌ 프로모션 JSON 형식이 아닙니다. promoName, schoolName 필드를 확인하세요.' })
+        return
+      }
+
+      const incoming = arr as unknown as PromoEntry[]
+      const added: PromoEntry[] = []
+      const updated: Array<{ before: PromoEntry; after: PromoEntry; changedFields: string[] }> = []
+      const unchanged: PromoEntry[] = []
+
+      for (const next of incoming) {
+        const existing = promos.find(p => p.id === next.id)
+        if (!existing) { added.push(next); continue }
+        const COMPARE_FIELDS: (keyof PromoEntry)[] = ['promoName','schoolName','startDate','endDate','discountType','details','active','note']
+        const changedFields = COMPARE_FIELDS.filter(f => JSON.stringify(existing[f]) !== JSON.stringify(next[f]))
+        if (changedFields.length > 0) updated.push({ before: existing, after: next, changedFields })
+        else unchanged.push(next)
+      }
+
+      setImportDiff({ added, updated, unchanged, incoming, blocked: null })
     } catch { alert('JSON 파일 형식 오류') }
-    finally { setImporting(false); if (fileRef.current) fileRef.current.value = '' }
+  }
+
+  const handleConfirmImport = async () => {
+    if (!importDiff) return
+    setImporting(true)
+    try {
+      await saveBatchPromotions(importDiff.incoming)
+      setImportDiff(null)
+      load()
+    } catch { alert('저장 중 오류') }
+    finally { setImporting(false) }
   }
 
   const addNew = () => {
@@ -97,7 +140,7 @@ export default function PromotionsPage() {
     const newPromo: PromoEntry = {
       id, schoolName: '', promoName: '', region: '세부',
       basisType: 'enrollment_date', startDate: '2026-01-01', endDate: '2026-12-31',
-      discountType: 'amount', details: '', isUrgent: false, urgentDays: null, note: '',
+      discountType: 'amount', details: '', note: '',
       active: true, createdAt: new Date().toISOString(),
     }
     setPromos(prev => [newPromo, ...prev])
@@ -363,6 +406,87 @@ export default function PromotionsPage() {
           </div>
         )}
       </div>
+      {/* ── 프로모션 Import Diff 모달 ── */}
+      {importDiff && (
+        <div className="fixed inset-0 bg-black/50 z-50 flex items-end md:items-center justify-center p-0 md:p-4">
+          <div className="bg-white rounded-t-2xl md:rounded-2xl w-full md:max-w-2xl max-h-[90dvh] flex flex-col shadow-xl">
+            <div className="px-5 py-4 border-b border-gray-100 flex items-center justify-between">
+              <h2 className="font-bold text-gray-900">가져오기 검토</h2>
+              <button onClick={() => setImportDiff(null)} className="p-1.5 hover:bg-gray-100 rounded-lg"><X size={16} /></button>
+            </div>
+
+            <div className="flex-1 overflow-y-auto p-4 space-y-4">
+              {importDiff.blocked ? (
+                <div className="p-4 bg-red-50 border border-red-200 rounded-xl text-sm text-red-700">{importDiff.blocked}</div>
+              ) : (
+                <>
+                  {/* 요약 */}
+                  <div className="flex gap-3 flex-wrap">
+                    {importDiff.added.length > 0 && <span className="px-3 py-1.5 bg-green-50 border border-green-200 text-green-700 text-sm rounded-full font-medium">✚ 신규 {importDiff.added.length}개</span>}
+                    {importDiff.updated.length > 0 && <span className="px-3 py-1.5 bg-amber-50 border border-amber-200 text-amber-700 text-sm rounded-full font-medium">✎ 변경 {importDiff.updated.length}개</span>}
+                    {importDiff.unchanged.length > 0 && <span className="px-3 py-1.5 bg-gray-50 border border-gray-200 text-gray-500 text-sm rounded-full">변경없음 {importDiff.unchanged.length}개</span>}
+                  </div>
+
+                  {/* 신규 */}
+                  {importDiff.added.length > 0 && (
+                    <div>
+                      <p className="text-xs font-semibold text-green-700 mb-2">✚ 새로 추가됨</p>
+                      <div className="space-y-1.5">
+                        {importDiff.added.map(p => (
+                          <div key={p.id} className="px-3 py-2 bg-green-50 border border-green-200 rounded-xl text-sm">
+                            <span className="font-medium">{p.schoolName}</span> · {p.promoName}
+                            <span className="ml-2 text-xs text-green-600">{p.startDate}~{p.endDate}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* 변경 */}
+                  {importDiff.updated.length > 0 && (
+                    <div>
+                      <p className="text-xs font-semibold text-amber-700 mb-2">✎ 변경됨</p>
+                      <div className="space-y-2">
+                        {importDiff.updated.map(({ before, after, changedFields }) => (
+                          <div key={after.id} className="border border-amber-200 rounded-xl overflow-hidden">
+                            <div className="px-3 py-2 bg-amber-50 text-sm font-medium text-amber-900">
+                              {after.schoolName} · {after.promoName}
+                            </div>
+                            <div className="divide-y divide-gray-100">
+                              {changedFields.map(f => (
+                                <div key={f} className="px-3 py-2 flex gap-2 text-xs flex-wrap">
+                                  <span className="text-gray-500 w-20 flex-shrink-0">{f}</span>
+                                  <span className="text-red-500 line-through">{String((before as unknown as Record<string,unknown>)[f] ?? '')}</span>
+                                  <span className="text-gray-400">→</span>
+                                  <span className="text-green-700 font-medium">{String((after as unknown as Record<string,unknown>)[f] ?? '')}</span>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {importDiff.added.length === 0 && importDiff.updated.length === 0 && (
+                    <div className="p-4 bg-gray-50 rounded-xl text-sm text-gray-500 text-center">변경사항이 없습니다.</div>
+                  )}
+                </>
+              )}
+            </div>
+
+            <div className="px-5 py-4 border-t border-gray-100 flex gap-2">
+              <button onClick={() => setImportDiff(null)} className="flex-1 btn-secondary text-sm">취소</button>
+              {!importDiff.blocked && (importDiff.added.length > 0 || importDiff.updated.length > 0) && (
+                <button onClick={handleConfirmImport} disabled={importing}
+                  className="flex-1 btn-primary text-sm disabled:opacity-40">
+                  {importing ? '저장 중...' : `저장 (신규 ${importDiff.added.length} + 변경 ${importDiff.updated.length}개)`}
+                </button>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
     </AdminLayout>
   )
 }

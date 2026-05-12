@@ -96,7 +96,7 @@ export interface PromoEntry {
   endDate: string
   discountType: string
   details: string
-  isUrgent: boolean
+  isUrgent?: boolean
   urgentDays?: number | null
   note: string
   active: boolean

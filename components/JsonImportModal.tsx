@@ -152,6 +152,26 @@ export default function JsonImportModal({ onClose, onImported }: Props) {
     setParseError(''); setErrors([]); setParsed(null); setParsedArray(null); setDiffs({})
     try {
       const raw = JSON.parse(text)
+      const sample = Array.isArray(raw) ? raw[0] : raw
+
+      // ── 타입 검증: 프로모션/기타 JSON 차단 ──────────────────────────────
+      if (sample && typeof sample === 'object') {
+        // 프로모션 JSON 특징: promoName, schoolName, discountType 필드
+        if ('promoName' in sample || ('schoolName' in sample && 'discountType' in sample)) {
+          setParseError('❌ 프로모션 JSON이 감지됐습니다. 학원 관리가 아닌 프로모션 탭에서 가져오기 하세요.')
+          return
+        }
+        // 사용자 JSON 특징: uid, email, role + displayName
+        if ('uid' in sample && 'email' in sample && 'role' in sample) {
+          setParseError('❌ 사용자 데이터 JSON은 가져올 수 없습니다.')
+          return
+        }
+        // 학원 JSON 최소 조건: name + (courses 또는 packages) 중 하나
+        if (!('name' in sample) || (!('courses' in sample) && !('packages' in sample))) {
+          setParseError('❌ 학원 JSON 형식이 아닙니다. name, courses/packages 필드를 확인하세요.')
+          return
+        }
+      }
       if (Array.isArray(raw)) {
         const normalized = raw.map(r => normalizeSchool(r as Record<string, unknown>))
         const allErrors = normalized.flatMap((n, i) =>
