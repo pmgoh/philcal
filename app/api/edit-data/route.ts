@@ -6,70 +6,83 @@ const EDIT_PROMPT = `당신은 필리핀 어학연수 학원 데이터 수정 AI
 
 [절대 규칙]
 - JSON 객체 하나만 반환
-- 배열 전체를 반환하는 schoolPatch 금지 — 반드시 ops 방식 사용
+- 배열 전체를 반환하는 방식 금지 — 반드시 ops 방식 사용
+- 새 항목 추가 시 아래 타입 정의의 필수 필드 전부 포함
 
 [응답 형식]
 
-① 수정 확인:
+① 수정/추가/삭제 확인:
 {"action":"confirm","summary":"요약",
  "changes":[{"label":"항목명","before":"기존값","after":"새값"}],
  "ops":[
-   {"path":"courses","index":0,"field":"price4Weeks","value":900000},
-   {"path":"registrationFee","field":"amount","value":100000}
+   {"op":"set",  "path":"courses",     "index":0, "field":"price4Weeks","value":900000},
+   {"op":"add",  "path":"dormitories", "value":{"id":"__new__","name":"2인실","target":"전체","price4Weeks":1800000,"currency":"KRW","note":""}},
+   {"op":"delete","path":"surcharges", "index":1}
  ],
  "promoOps":[
-   {"id":"UUID","field":"discountValue","value":50000},
-   {"id":"UUID","field":"endDate","value":"2026-12-31"}
+   {"id":"UUID","field":"discountValue","value":50000}
  ]
 }
 
-② 정보 부족:
-{"action":"ask","message":"질문"}
+[ops 종류]
+op:"set"    → 기존 항목 특정 필드 수정. path+index(배열이면)+field+value 필요
+op:"add"    → 새 항목 추가. path+value(완전한 객체) 필요. id는 "__new__"로 설정
+op:"delete" → 항목 삭제. path+index 필요
 
-③ 일반 답변:
-{"action":"answer","message":"답변"}
+[타입 정의 — 새 항목 추가 시 필수 필드]
 
-[ops 규칙 — 배열/중첩 필드]
-path: "courses"|"dormitories"|"surcharges"|"promotions"|"localFees"|"packages"|"generalNotes"|"refundPolicy"|"dormitoryRules"|"registrationFee"|"isActive"
-index: 배열이면 0부터 시작 (필수)
-field: 변경할 정확한 필드명
-value: 새 값 (숫자/문자열/불리언)
+Course: {id:"__new__",name:"코스명",target:"성인|주니어|보호자",price4Weeks:숫자,currency:"KRW"|"PHP"|"USD",note:""}
 
-예시:
-- 코스 가격: {"path":"courses","index":0,"field":"price4Weeks","value":900000}
-- 기숙사 가격: {"path":"dormitories","index":2,"field":"price4Weeks","value":800000}
-- 서차지 금액: {"path":"surcharges","index":0,"field":"pricePerWeek","value":50000}
-- 등록비: {"path":"registrationFee","field":"amount","value":100000}  ← index 없음
-- 메모: {"path":"generalNotes","value":"새 내용"}  ← field/index 없음
+Dormitory: {id:"__new__",name:"기숙사명",target:"전체|성인|주니어",price4Weeks:숫자,currency:"KRW",note:""}
 
-[promoOps 규칙]
-id: 프로모션 UUID (반드시 정확히)
-field: "startDate"|"endDate"|"discountValue"|"label"|"condition"|"note"|"active" 등
-value: 새 값`
+Surcharge: {id:"__new__",label:"서차지명",startDate:"YYYY-MM-DD",endDate:"YYYY-MM-DD",pricePerWeek:숫자,currency:"KRW"|"PHP",discountAllowed:false,note:""}
 
-function applyOps(school: School, ops: Array<{path:string; index?:number; field?:string; value:unknown}>): School {
+LocalFee: {id:"__new__",name:"항목명",amount:숫자,currency:"PHP"|"KRW",trigger:"always"|"per_week"|"over_weeks"|"optional",chargeUnit:"per_person"|"flat",triggerWeeks:숫자(over_weeks만),note:""}
+
+[set ops — 기존 항목 필드 수정 예시]
+- 코스 가격: {"op":"set","path":"courses","index":0,"field":"price4Weeks","value":900000}
+- 기숙사 가격: {"op":"set","path":"dormitories","index":2,"field":"price4Weeks","value":800000}
+- 서차지 금액: {"op":"set","path":"surcharges","index":0,"field":"pricePerWeek","value":50000}
+- 등록비: {"op":"set","path":"registrationFee","field":"amount","value":100000}  ← index 없음
+- 최상위 텍스트: {"op":"set","path":"generalNotes","value":"새 내용"}  ← field/index 없음`
+
+function applyOps(school: School, ops: Array<Record<string, unknown>>): School {
   const s = JSON.parse(JSON.stringify(school)) as Record<string, unknown>
   for (const op of ops) {
-    const { path, index, field, value } = op
+    const opType = (op.op as string) ?? 'set'
+    const path = op.path as string
+    const index = op.index as number | undefined
+    const field = op.field as string | undefined
+    const value = op.value
     if (!path) continue
 
-    if (index !== undefined) {
-      // 배열 항목
-      const arr = s[path] as Record<string, unknown>[]
-      if (!Array.isArray(arr)) { console.error(`[applyOps] ${path} is not array`); continue }
-      if (!arr[index]) { console.error(`[applyOps] ${path}[${index}] not found`); continue }
-      if (field) {
-        arr[index][field] = value
-      } else {
-        s[path] = [...arr.slice(0, index), value, ...arr.slice(index + 1)]
+    if (opType === 'add') {
+      if (!Array.isArray(s[path])) s[path] = []
+      const newItem = JSON.parse(JSON.stringify(value ?? {})) as Record<string, unknown>
+      if (!newItem.id || newItem.id === '__new__') {
+        newItem.id = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`
       }
-    } else if (field) {
-      // 중첩 객체 필드
-      if (!s[path] || typeof s[path] !== 'object') s[path] = {}
-      ;(s[path] as Record<string, unknown>)[field] = value
+      ;(s[path] as unknown[]).push(newItem)
+
+    } else if (opType === 'delete') {
+      if (Array.isArray(s[path]) && index !== undefined) {
+        ;(s[path] as unknown[]).splice(index, 1)
+      }
+
     } else {
-      // 최상위 필드
-      s[path] = value
+      // set
+      if (index !== undefined) {
+        const arr = s[path] as Record<string, unknown>[]
+        if (!Array.isArray(arr)) { console.error(`[applyOps] ${path} is not array`); continue }
+        if (!arr[index]) { console.error(`[applyOps] ${path}[${index}] not found`); continue }
+        if (field !== undefined) arr[index][field] = value
+        else s[path] = [...arr.slice(0, index), value, ...arr.slice(index + 1)]
+      } else if (field !== undefined) {
+        if (!s[path] || typeof s[path] !== 'object') s[path] = {}
+        ;(s[path] as Record<string, unknown>)[field] = value
+      } else {
+        s[path] = value
+      }
     }
   }
   return s as unknown as School
@@ -154,7 +167,7 @@ ${(promos ?? []).map((p, i) => {
     if (!parsed) return NextResponse.json({ action: 'answer', message: rawText })
 
     if (parsed.action === 'confirm') {
-      const ops = (parsed.ops ?? []) as Array<{path:string; index?:number; field?:string; value:unknown}>
+      const ops = (parsed.ops ?? []) as Array<Record<string, unknown>>
       const promoOps = (parsed.promoOps ?? []) as Array<{id:string; field:string; value:unknown}>
 
       // 서버에서 ops 적용
