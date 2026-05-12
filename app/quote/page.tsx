@@ -17,6 +17,7 @@ interface AssistantResultMessage extends BaseMessage {
   role: 'assistant'
   type: 'result'
   evidenceMessage?: string
+  discountEvidence?: string
   regulationWarning?: string
   localFees?: LocalFee[]
   localFeePhp?: number
@@ -479,6 +480,7 @@ export default function QuotePage() {
           role: 'assistant', type: 'result',
           content: data.message,
           evidenceMessage: data.evidenceMessage,
+          discountEvidence: data.discountEvidence,
           regulationWarning: data.regulationWarning,
           localFees: data.localFees ?? [],
           localFeePhp: data.localFeePhp ?? 0,
@@ -491,6 +493,27 @@ export default function QuotePage() {
             ?? (data.calcResult ? schools.find(s => s.id === data.schoolId) : undefined),
         }
         setMessages(prev => [...prev, resultMsg])
+
+      } else if (data.action === 'multi_result') {
+        // 각 학원 결과를 별도 메시지로 추가
+        const newMsgs: AssistantResultMessage[] = (data.results ?? []).map((r: {
+          schoolName: string; schoolId: string; message: string
+          evidenceMessage?: string; discountEvidence?: string
+          localFees?: LocalFee[]; localFeePhp?: number; localFeeKrwEstimate?: number
+          totalWeeks?: number; calcResult?: CalcResult; schoolData?: School; error?: string
+        }) => ({
+          role: 'assistant' as const, type: 'result' as const,
+          content: r.error ? `**${r.schoolName}**: ${r.error}` : r.message,
+          evidenceMessage: r.evidenceMessage,
+          discountEvidence: r.discountEvidence,
+          localFees: r.localFees ?? [],
+          localFeePhp: r.localFeePhp ?? 0,
+          localFeeKrwEstimate: r.localFeeKrwEstimate ?? 0,
+          totalWeeks: r.totalWeeks,
+          calcResult: r.calcResult,
+          school: r.schoolData ?? schools.find(s => s.id === r.schoolId),
+        }))
+        setMessages(prev => [...prev, ...newMsgs])
       } else if (data.action === 'need_info') {
         const needMsg: AssistantNeedInfoMessage = {
           role: 'assistant', type: 'need_info',
@@ -618,6 +641,16 @@ export default function QuotePage() {
                           />
                         )}
                         {m.evidenceMessage && <EvidenceCard text={m.evidenceMessage} school={m.school} />}
+                        {m.discountEvidence && (
+                          <details className="mt-2">
+                            <summary className="cursor-pointer text-xs text-red-600 font-medium px-3 py-2 bg-red-50 border border-red-200 rounded-xl hover:bg-red-100 transition-colors">
+                              ✂️ 할인 근거 보기
+                            </summary>
+                            <div className="mt-1.5 bg-red-50 border border-red-200 rounded-xl px-4 py-3">
+                              <MarkdownText text={m.discountEvidence} />
+                            </div>
+                          </details>
+                        )}
                       </div>
                     )
                   })()}

@@ -23,10 +23,10 @@ const EXTRACT_PROMPT = `당신은 필리핀 어학연수 견적 AI입니다. 엠
 - 보호자 수업 포함 여부 → 가격이 다르면 반드시 확인
 
 [비교 질문 처리 — 절대 규칙]
-- "어디가 저렴해요?", "비교해줘", "최저가", "몇 군데 비교" 등 → 반드시 multi_calculate 사용
-- answer로 직접 답변 절대 금지. 반드시 실제 calcEngine 계산 결과를 사용
-- 비교 시 각 학원의 최저가 코스+기숙사 조합을 자동 선택해도 됨 (단, 선택 이유를 message에 명시)
-- 비교 대상 학원이 여러 개면 items 배열에 모두 포함
+- "어디가 저렴해요?", "비교해줘", "최저가", "몇 군데 비교" 등 → multi_calculate 사용
+- 단, 비교도 코스/기숙사/주수/시작일 확인 필수. 미지정 시 반드시 need_info로 먼저 물어볼 것
+- answer로 직접 답변 절대 금지. 반드시 실제 calcEngine 계산 결과 사용
+- items 배열 각 항목에 label 필드 없음. schoolId + schoolName만 사용
 
 [응답 형식]
 
@@ -209,6 +209,40 @@ function buildQuoteMessage(school: School, calcResult: CalcResult, _totalWeeks: 
   return lines.join('\n')
 }
 
+function buildDiscountEvidence(school: School, calc: CalcResult): string {
+  const lines: string[] = ['**📎 할인 근거**']
+
+  const promoDiscount = calc.promotionDiscount + calc.surchargeDiscount
+  const agencyDiscount = calc.agencyDiscountKrw ?? 0
+
+  if (!promoDiscount && !agencyDiscount) {
+    lines.push('- 적용된 할인 없음')
+    return lines.join('\n')
+  }
+
+  if (calc.promotionLabel && promoDiscount > 0) {
+    const matchedPromo = (school.promotions ?? []).find(p => p.label === calc.promotionLabel)
+    lines.push(`**학원 프로모션: ${calc.promotionLabel}**`)
+    if (matchedPromo) {
+      lines.push(`- 기준: ${matchedPromo.basisType === 'enrollment_date' ? '등록일' : '연수 시작일'}`)
+      if (!matchedPromo.alwaysApply) lines.push(`- 기간: ${matchedPromo.startDate} ~ ${matchedPromo.endDate}`)
+      lines.push(`- 방식: ${matchedPromo.discountType === 'percent' ? `${matchedPromo.discountValue}%` : formatKrw(matchedPromo.discountValue)}`)
+      if (matchedPromo.condition) lines.push(`- 조건: ${matchedPromo.condition}`)
+      if (matchedPromo.note) lines.push(`- 비고: ${matchedPromo.note}`)
+    }
+    lines.push(`- 프로모션 할인: **-${formatKrw(promoDiscount)}**`)
+  }
+
+  if (agencyDiscount > 0) {
+    lines.push(`**엠버시유학 자체 할인**`)
+    if (calc.agencyDiscountNote) lines.push(`- 근거: ${calc.agencyDiscountNote}`)
+    lines.push(`- 엠버시 할인: **-${formatKrw(agencyDiscount)}**`)
+  }
+
+  lines.push(`총 할인: **-${formatKrw(promoDiscount + agencyDiscount)}**`)
+  return lines.join('\n')
+}
+
 function buildEvidenceMessage(school: School, calcResult: CalcResult, rate: ExchangeRate): string {
   const lines: string[] = ['**📎 계산 근거**']
   for (const pi of (calcResult.packageItems ?? [])) {
@@ -229,13 +263,15 @@ function buildEvidenceMessage(school: School, calcResult: CalcResult, rate: Exch
 }
 
 type CalcInputItem = {
-  label?: string
   schoolId: string
+  schoolName?: string
   startDate: string
   enrollmentDate?: string
   courses: CourseItem[]
   dormitories: DormItem[]
   packages?: PackageInput[]
+  specialNote?: string
+  message?: string
 }
 
 function runCalc(school: School, item: CalcInputItem, rate: ExchangeRate): CalcResult {
@@ -441,6 +477,7 @@ export async function POST(req: NextRequest) {
           buildQuoteMessage(school, calcResult, calcResult.totalWeeks, specialNote),
         regulationWarning: regWarning,
         evidenceMessage: buildEvidenceMessage(school, calcResult, rate),
+        discountEvidence: buildDiscountEvidence(school, calcResult),
         localFees: filteredLocalFees,
         localFeePhp: calcResult.localFeePhp,
         localFeeKrwEstimate: calcResult.localFeeKrwEstimate,
@@ -458,30 +495,40 @@ export async function POST(req: NextRequest) {
     // ── 비교 견적 ──────────────────────────────────────────────────────────
     if (parsed.action === 'multi_calculate') {
       const items = (parsed.items as CalcInputItem[]) ?? []
-      const resultParts: string[] = []
-      const evidenceParts: string[] = []
-      let combinedLocalFees: LocalFee[] = []
-      let maxPhp = 0, maxKrw = 0
+      const results: object[] = []
 
-      await Promise.all(items.map(async (item) => {
+      for (const item of items) {
         const school = schools.find(s => s.id === item.schoolId)
-        if (!school) { resultParts.push(`**${item.label}**: 학원을 찾을 수 없습니다.`); return }
+        if (!school) {
+          results.push({ schoolName: item.schoolName ?? item.schoolId, error: '학원을 찾을 수 없습니다.' })
+          continue
+        }
         const calcResult = runCalc(school, item, rate)
-        resultParts.push(`### ${item.label}\n` + buildQuoteMessage(school, calcResult, calcResult.totalWeeks))
-        evidenceParts.push(buildEvidenceMessage(school, calcResult, rate))
-        if (!combinedLocalFees.length) combinedLocalFees = calcResult.localFees
-        maxPhp = Math.max(maxPhp, calcResult.localFeePhp)
-        maxKrw = Math.max(maxKrw, calcResult.localFeeKrwEstimate)
-      }))
+        const filteredLocalFees = (calcResult.localFees ?? []).filter(lf => {
+          const t = lf.trigger ?? 'always'
+          if (t === 'optional' || t === 'always' || t === 'per_week' || t === 'per_4weeks') return true
+          if (t === 'over_weeks') return calcResult.totalWeeks > (lf.triggerWeeks ?? 4)
+          return true
+        })
 
-      return NextResponse.json({
-        action: 'result',
-        message: resultParts.join('\n\n---\n\n'),
-        evidenceMessage: evidenceParts.join('\n\n'),
-        localFees: combinedLocalFees,
-        localFeePhp: maxPhp,
-        localFeeKrwEstimate: maxKrw,
-      })
+        results.push({
+          schoolName: school.name,
+          schoolId: school.id,
+          message: (item.message ? `*${item.message}*\n\n` : '') +
+            buildQuoteMessage(school, calcResult, calcResult.totalWeeks, item.specialNote ?? ''),
+          evidenceMessage: buildEvidenceMessage(school, calcResult, rate),
+          discountEvidence: buildDiscountEvidence(school, calcResult),
+          localFees: filteredLocalFees,
+          localFeePhp: calcResult.localFeePhp,
+          localFeeKrwEstimate: calcResult.localFeeKrwEstimate,
+          totalWeeks: calcResult.totalWeeks,
+          totalKrw: calcResult.totalKrw,
+          calcResult,
+          schoolData: school,
+        })
+      }
+
+      return NextResponse.json({ action: 'multi_result', results })
     }
 
     return NextResponse.json(parsed)
