@@ -435,7 +435,7 @@ export default function QuotePage() {
   const [input, setInput] = useState('')
   const [loading, setLoading] = useState(false)
   const [copied, setCopied] = useState(false)
-  const [quoteModal, setQuoteModal] = useState<{ calcResult: CalcResult; school: School; startDate: string } | null>(null)
+  const [quoteModal, setQuoteModal] = useState<{ calcResult: CalcResult; school: School; startDate: string; localFees: LocalFee[] } | null>(null)
   const bottomRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
@@ -619,7 +619,7 @@ export default function QuotePage() {
                           if (!school || !calcResult) return null
                           return (
                             <button
-                              onClick={() => setQuoteModal({ calcResult, school, startDate: m.startDate ?? '' })}
+                              onClick={() => setQuoteModal({ calcResult, school, startDate: m.startDate ?? '', localFees: m.localFees ?? [] })}
                               className="mt-3 w-full flex items-center justify-center gap-2 px-3 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-sm font-semibold transition-colors">
                               <FileText size={15} /> 견적서 뽑기
                             </button>
@@ -730,6 +730,7 @@ export default function QuotePage() {
           school={quoteModal.school}
           calcResult={quoteModal.calcResult}
           startDate={quoteModal.startDate}
+          localFees={quoteModal.localFees}
           phpToKrw={rate.phpToKrw}
           onClose={() => setQuoteModal(null)}
         />

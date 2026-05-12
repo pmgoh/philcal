@@ -3,7 +3,7 @@ import { useState, useRef, useCallback } from 'react'
 import { X, Plus, Trash2, Download, Copy, Check, Pencil } from 'lucide-react'
 import { formatKrw } from '@/lib/utils'
 import type { CalcResult } from '@/lib/calcEngine'
-import type { School } from '@/types'
+import type { School, LocalFee } from '@/types'
 
 // ── 견적서 항목 ───────────────────────────────────────────────────────────────
 interface QuoteLineItem {
@@ -18,6 +18,7 @@ interface Props {
   school: School
   calcResult: CalcResult
   startDate: string
+  localFees?: LocalFee[]   // API에서 필터링된 현지납부비
   phpToKrw: number
   onClose: () => void
 }
@@ -71,7 +72,7 @@ function buildInitialItems(school: School, calc: CalcResult): QuoteLineItem[] {
   return items
 }
 
-export default function QuoteFormModal({ school, calcResult, startDate, phpToKrw, onClose }: Props) {
+export default function QuoteFormModal({ school, calcResult, startDate, localFees: localFeesProp, phpToKrw, onClose }: Props) {
   const [items, setItems] = useState<QuoteLineItem[]>(() => buildInitialItems(school, calcResult))
   const [weeks, setWeeks] = useState(calcResult.totalWeeks)
   const [editingId, setEditingId] = useState<string | null>(null)
@@ -90,11 +91,11 @@ export default function QuoteFormModal({ school, calcResult, startDate, phpToKrw
   const addItem = () =>
     setItems(prev => [...prev, { id: uid(), label: '항목', amount: 0, isDiscount: false, editable: true }])
 
-  // 현지납부비 — 주수 조건 적용 (API와 동일한 로직)
+  // 현지납부비: API 필터링 결과 우선, 없으면 자체 필터링
   const totalWeeks = calcResult.totalWeeks
-  const localItems = (calcResult.localFees ?? []).filter(f => {
+  const localItems = localFeesProp ?? (calcResult.localFees ?? []).filter(f => {
     const t = f.trigger ?? 'always'
-    if (t === 'optional') return false          // 선택항목 제외
+    if (t === 'optional') return false
     if (t === 'always') return true
     if (t === 'per_week' || t === 'per_4weeks') return true
     if (t === 'over_weeks') return totalWeeks > (f.triggerWeeks ?? 4)
