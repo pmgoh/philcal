@@ -114,7 +114,7 @@ export default function PromotionsPage() {
       for (const next of incoming) {
         const existing = promos.find(p => p.id === next.id)
         if (!existing) { added.push(next); continue }
-        const COMPARE_FIELDS: (keyof PromoEntry)[] = ['promoName','schoolName','startDate','endDate','discountType','details','active','note']
+        const COMPARE_FIELDS: (keyof PromoEntry)[] = ['promoName','schoolName','startDate','endDate','discountType','details','active','note','isUrgent','urgentDays']
         const changedFields = COMPARE_FIELDS.filter(f => JSON.stringify(existing[f]) !== JSON.stringify(next[f]))
         if (changedFields.length > 0) updated.push({ before: existing, after: next, changedFields })
         else unchanged.push(next)
