@@ -56,10 +56,16 @@ function buildInitialItems(school: School, calc: CalcResult): QuoteLineItem[] {
   // 수속비 (기본값 0, 편집 가능)
   items.push({ id: uid(), label: '수속비', amount: 0, isDiscount: false, editable: true })
 
-  // 프로모션 할인
-  const totalDiscount = calc.promotionDiscount + calc.surchargeDiscount
-  if (totalDiscount > 0 && calc.promotionLabel) {
-    items.push({ id: uid(), label: `어학원 프로모션 할인 (${calc.promotionLabel})`, amount: totalDiscount, isDiscount: true, editable: true })
+  // 어학원 프로모션 할인
+  const totalPromoDiscount = calc.promotionDiscount + calc.surchargeDiscount
+  if (totalPromoDiscount > 0 && calc.promotionLabel) {
+    items.push({ id: uid(), label: `어학원 프로모션 할인 (${calc.promotionLabel})`, amount: totalPromoDiscount, isDiscount: true, editable: true })
+  }
+
+  // 엠버시유학 자체 할인
+  if ((calc.agencyDiscountKrw ?? 0) > 0) {
+    const note = calc.agencyDiscountNote ? ` (${calc.agencyDiscountNote})` : ''
+    items.push({ id: uid(), label: `엠버시유학 할인${note}`, amount: calc.agencyDiscountKrw, isDiscount: true, editable: true })
   }
 
   return items
@@ -84,8 +90,16 @@ export default function QuoteFormModal({ school, calcResult, startDate, phpToKrw
   const addItem = () =>
     setItems(prev => [...prev, { id: uid(), label: '항목', amount: 0, isDiscount: false, editable: true }])
 
-  // 현지납부비 (옵션 제외)
-  const localItems = (calcResult.localFees ?? []).filter(f => (f.trigger ?? 'always') !== 'optional')
+  // 현지납부비 — 주수 조건 적용 (API와 동일한 로직)
+  const totalWeeks = calcResult.totalWeeks
+  const localItems = (calcResult.localFees ?? []).filter(f => {
+    const t = f.trigger ?? 'always'
+    if (t === 'optional') return false          // 선택항목 제외
+    if (t === 'always') return true
+    if (t === 'per_week' || t === 'per_4weeks') return true
+    if (t === 'over_weeks') return totalWeeks > (f.triggerWeeks ?? 4)
+    return true
+  })
 
   const captureAndCopy = useCallback(async () => {
     if (!printRef.current) return
