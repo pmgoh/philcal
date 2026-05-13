@@ -83,8 +83,9 @@ export interface Promotion {
   condition?: string
   note?: string
   // 특정 기숙사/코스에만 적용 (빈 배열 또는 미설정 = 전체 적용)
-  // 선택된 기숙사/코스 이름에 이 문자열 중 하나라도 포함되면 적용
   applicableItems?: string[]
+  // true = 다른 프로모션과 중복 적용 가능 / false(기본) = 단독 적용
+  stackable?: boolean
   agencyDiscount?: AgencyDiscount | null
 }
 

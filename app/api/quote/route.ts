@@ -323,6 +323,7 @@ export async function POST(req: NextRequest) {
         label: p.promoName,
         basisType: p.basisType ?? 'enrollment_date',
         alwaysApply: p.alwaysApply ?? false,
+        stackable: p.stackable ?? false,
         startDate: p.startDate,
         endDate: p.endDate,
         discountType: p.discountType ?? 'amount',

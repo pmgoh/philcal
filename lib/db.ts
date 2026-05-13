@@ -93,7 +93,8 @@ export interface PromoEntry {
   region: string
   // ── calcEngine 연동 필드 ──────────────────────────────────────────────────
   basisType: string                    // 'enrollment_date' | 'start_date'
-  alwaysApply?: boolean                // true = 항상 적용 (기간 무관)
+  alwaysApply?: boolean
+  stackable?: boolean               // true = 타 프로모션 중복 적용 가능                // true = 항상 적용 (기간 무관)
   startDate: string
   endDate: string
   discountType: string                 // 'percent' | 'amount'

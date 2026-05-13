@@ -116,7 +116,7 @@ export default function PromotionsPage() {
         if (!existing) { added.push(next); continue }
         const COMPARE_FIELDS: (keyof PromoEntry)[] = [
           'promoName','schoolName','startDate','endDate','discountType','discountValue',
-          'alwaysApply','applyToCourses','applyToDorms','applyToSurcharge','condition',
+          'alwaysApply','stackable','applyToCourses','applyToDorms','applyToSurcharge','condition',
           'details','active','note','agencyDiscountNote','agencyDiscountType',
           'agencyDiscountValue','agencyDiscountApplyTo','isUrgent','urgentDays'
           // updatedAt/createdAt 제외 — 타임스탬프 차이는 변경사항 아님
@@ -295,6 +295,13 @@ export default function PromotionsPage() {
                             <label className="flex items-center gap-1.5 cursor-pointer">
                               <input type="checkbox" checked={editData.alwaysApply ?? false} onChange={e => setEditData(d => ({...d, alwaysApply: e.target.checked}))} className="rounded" />
                               <span className="text-xs text-gray-600">기간 무관 항상 적용</span>
+                            </label>
+                          </div>
+                          <div className="flex items-end pb-1">
+                            <label className="flex items-center gap-1.5 cursor-pointer">
+                              <input type="checkbox" checked={(editData as Record<string,unknown>).stackable as boolean ?? false}
+                                onChange={e => setEditData(d => ({...d, stackable: e.target.checked}))} className="rounded" />
+                              <span className="text-xs text-blue-700 font-medium">타 프로모션 중복 적용 가능</span>
                             </label>
                           </div>
                         </div>

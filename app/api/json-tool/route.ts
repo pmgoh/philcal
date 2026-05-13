@@ -10,6 +10,21 @@ const SCHOOL_BASE_PROMPT = `당신은 필리핀 어학연수 학원 데이터 �
 - 금액: 원화 숫자(1100000), PHP 숫자(7800)
 - 날짜: YYYY-MM-DD
 
+[중요: 가격표 유형 구분]
+
+① 합산 가격표 (등록금+학비+기숙사비+장기할인 포함) 형태:
+   → 코스 가격과 기숙사 가격을 반드시 분리해서 각각 저장
+   → packages는 빈 배열로
+   → 검증: 등록금 + 코스4주 + 기숙사4주 = 표의 4주 셀 값
+   예) 4인실+Sparta 4주 = 180만 → 등록금10만 + Sparta학비95만 + 4인실75만 = 180만
+
+② 진짜 패키지 (가족연수, 캠프 등 묶음 판매):
+   → packages에 저장 (columns = 인원구성)
+   예) "보호자1+자녀1 4주 678만원"
+
+③ 코스만 있는 표:
+   → courses에만 저장, dormitories는 별도 표 참조
+
 [추출 대상: 기본 정보 + 코스 + 기숙사 + 현지납부비 + 서차지]
 패키지는 이 단계에서 빈 배열로 두세요: "packages": []
 
@@ -20,19 +35,20 @@ const SCHOOL_BASE_PROMPT = `당신은 필리핀 어학연수 학원 데이터 �
   "schoolType": "general|sparta",
   "programTags": ["성인일반","IELTS","TOEIC","가족연수","주니어","워킹홀리데이","비즈니스"],
   "minWeeks": 4, "allowShortTerm": false,
-  "registrationFee": {"amount": 100000, "currency": "KRW", "note": ""},
+  "registrationFee": {"amount": 100000, "currency": "KRW", "note": "코스별 상이하면 note에 기재"},
   "courses": [{"id":"__new__","name":"코스명","target":"성인|주니어|보호자","price4Weeks":1100000,"currency":"KRW","note":""}],
   "dormitories": [{"id":"__new__","name":"기숙사명(인실 포함)","target":"전체|성인|주니어","price4Weeks":1200000,"currency":"KRW","note":""}],
   "packages": [],
   "surcharges": [{"id":"__new__","label":"서차지명","startDate":"YYYY-MM-DD","endDate":"YYYY-MM-DD","pricePerWeek":50000,"currency":"KRW","discountAllowed":false,"note":""}],
   "localFees": [{"id":"__new__","name":"항목명","amount":7800,"currency":"PHP","trigger":"always|per_week|per_4weeks|over_weeks|optional","triggerWeeks":null,"chargeUnit":"per_person|per_trip|flat","note":""}],
   "promotions": [],
-  "generalNotes": "", "refundPolicy": "", "dormitoryRules": "", "isActive": true
+  "generalNotes": "장기할인 등 특이사항 기재", "refundPolicy": "", "dormitoryRules": "", "isActive": true
 }]
 
 [trigger 기준]
 - always: SSP, 보증금
-- per_week: 전기세, 수도세, 관리비
+- per_week: 전기세, 수도세, 관리비 (주당 청구)
+- per_4weeks: 관리비, 전기세 (4주당 청구)
 - over_weeks: 비자연장(1차:triggerWeeks=4, 2차:8, 3차:12, 4차:16, 5차:20), I-Card:8
 - optional: 픽업, 교재비, 사진비`
 
