@@ -74,7 +74,7 @@ export interface Promotion {
   alwaysApply: boolean
   startDate: string
   endDate: string
-  discountType: 'percent' | 'amount'
+  discountType: 'percent' | 'amount' | 'amount_per_week' | 'amount_per_4weeks'
   discountValue: number
   currency?: Currency
   applyToCourses: boolean

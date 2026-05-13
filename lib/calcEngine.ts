@@ -339,6 +339,10 @@ export function calculateQuote(input: QuoteInput, rate: ExchangeRate): CalcResul
           notes.push(`ℹ️ ${sd.label}: 서차지엔 할인 미적용`)
         }
       }
+    } else if (promo.discountType === 'amount_per_4weeks') {
+      thisDiscount = toKrw(promo.discountValue, promo.currency ?? 'KRW', rate) * Math.floor(totalWeeks / 4)
+    } else if (promo.discountType === 'amount_per_week') {
+      thisDiscount = toKrw(promo.discountValue, promo.currency ?? 'KRW', rate) * totalWeeks
     } else {
       thisDiscount = toKrw(promo.discountValue, promo.currency ?? 'KRW', rate)
     }
