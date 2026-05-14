@@ -270,14 +270,10 @@ export function calculateQuote(input: QuoteInput, rate: ExchangeRate): CalcResul
   let surchargeDiscount = 0
   const appliedPromoLabels: string[] = []
 
-  const promoWidth = (p: { alwaysApply: boolean; startDate?: string; endDate?: string }) => {
+  const promoWidth = (p: typeof school.promotions[0]) => {
     if (p.alwaysApply) return Infinity
     if (!p.startDate || !p.endDate) return Infinity
     return new Date(p.endDate).getTime() - new Date(p.startDate).getTime()
-  }
-  // promotions === null (미확인)이면 빈 배열로 안전 처리. 별도 안내 노트 추가.
-  if (school.promotions === null) {
-    notes.push(`⚠️ 프로모션 정보 미확인 — 학원에 직접 확인 필요. 견적에 할인이 빠져 있을 수 있음.`)
   }
   const sortedPromos = [...(school.promotions ?? [])].sort((a, b) => promoWidth(a) - promoWidth(b))
 
@@ -356,38 +352,86 @@ export function calculateQuote(input: QuoteInput, rate: ExchangeRate): CalcResul
     if (!toCourses && toDorms) notes.push(`ℹ️ ${promo.label}: 기숙사비에만 적용`)
     if (toCourses && !toDorms) notes.push(`ℹ️ ${promo.label}: 코스 학비에만 적용`)
 
-    // agencyDiscount 처리
+    // agencyDiscount 처리 (v3 status 모델)
     if ('agencyDiscount' in promo) {
       if (promo.agencyDiscount === null) {
         agencyDiscountKrw = 0
         agencyDiscountNote = ''
       } else if (promo.agencyDiscount) {
         const pad = promo.agencyDiscount
-        const applyTo = pad.applyTo ?? 'all'
-        let base = 0
-        if (applyTo === 'all')          base = baseKrw
-        if (applyTo === 'course_only')  base = courseItems.reduce((s,i) => s + i.krwAmount, 0)
-        if (applyTo === 'dorm_only')    base = dormItems.reduce((s,i) => s + i.krwAmount, 0)
-        if (applyTo === 'package_only') base = pkgBaseKrw
+        const status = pad.status ?? 'enabled'   // 기본 enabled (구버전 호환)
 
-        if (pad.type === 'percent') {
-          agencyDiscountKrw = Math.round(base * pad.value / 100)
-          if (pad.maxAmount) agencyDiscountKrw = Math.min(agencyDiscountKrw, pad.maxAmount)
-        } else if (pad.type === 'amount_per_week') {
-          agencyDiscountKrw = pad.value * totalWeeks
-          if (pad.maxAmount) agencyDiscountKrw = Math.min(agencyDiscountKrw, pad.maxAmount)
-        } else if (pad.type === 'amount_flat') {
-          agencyDiscountKrw = pad.value
-        } else if (pad.type === 'reg_fee_only') {
-          agencyDiscountKrw = 0  // 학비/기숙사 할인 없음
+        if (status === 'disabled') {
+          // 자료에 명시적으로 "X"/"없음" → 유학원 자체 할인 불가능
+          agencyDiscountKrw = 0
+          agencyDiscountNote = pad.note || '유학원 자체 할인 불가'
+          notes.push(`ℹ️ ${promo.label}: 유학원 자체 할인 불가 (학원 측 명시)`)
+        } else if (status === 'unconfirmed') {
+          // 자료 빈 칸 → 본사 확인 필요
+          agencyDiscountKrw = 0
+          agencyDiscountNote = pad.note || '본사 확인 필요'
+          warnings.push(`⚠️ ${promo.label}: 유학원 할인 정보 미확정 — 본사 확인 필요`)
+        } else {
+          // status === 'enabled' → 정상 계산
+          // minWeeks 게이트
+          if (pad.minWeeks && totalWeeks < pad.minWeeks) {
+            agencyDiscountKrw = 0
+            agencyDiscountNote = `${pad.minWeeks}주 미만은 유학원 할인 적용 불가`
+            notes.push(`ℹ️ ${promo.label}: ${pad.minWeeks}주 미만은 유학원 할인 불가 (요청 ${totalWeeks}주)`)
+          } else {
+            const applyTo = pad.applyTo ?? 'all'
+            let base = 0
+            if (applyTo === 'all')             base = baseKrw
+            else if (applyTo === 'course_only') base = courseItems.reduce((s,i) => s + i.krwAmount, 0)
+            else if (applyTo === 'dorm_only')   base = dormItems.reduce((s,i) => s + i.krwAmount, 0)
+            else if (applyTo === 'package_only') base = pkgBaseKrw
+            else if (applyTo === 'course_and_dorm') {
+              base = courseItems.reduce((s,i) => s + i.krwAmount, 0)
+                   + dormItems.reduce((s,i) => s + i.krwAmount, 0)
+            }
+
+            if (pad.type === 'percent') {
+              agencyDiscountKrw = Math.round(base * pad.value / 100)
+              if (pad.maxAmount) agencyDiscountKrw = Math.min(agencyDiscountKrw, pad.maxAmount)
+            } else if (pad.type === 'amount_per_week') {
+              agencyDiscountKrw = pad.value * totalWeeks
+              if (pad.maxAmount) agencyDiscountKrw = Math.min(agencyDiscountKrw, pad.maxAmount)
+            } else if (pad.type === 'amount_per_4weeks') {
+              // 4주 단위로 적용 (3주는 0, 4-7주는 1배, 8-11주는 2배...)
+              const blocks = Math.floor(totalWeeks / 4)
+              agencyDiscountKrw = pad.value * blocks
+              if (pad.maxAmount) agencyDiscountKrw = Math.min(agencyDiscountKrw, pad.maxAmount)
+            } else if (pad.type === 'amount_flat') {
+              agencyDiscountKrw = pad.value
+            } else if (pad.type === 'reg_fee_only') {
+              agencyDiscountKrw = 0  // 학비/기숙사 할인 없음 (등록비는 아래에서 별도 처리)
+            } else if (pad.type === 'week_tiers') {
+              // 주수 구간별 차등 정액
+              const tier = (pad.weekTiers ?? []).find(t => {
+                if (totalWeeks < t.minWeeks) return false
+                if (t.maxWeeks !== undefined && totalWeeks > t.maxWeeks) return false
+                return true
+              })
+              if (tier) {
+                agencyDiscountKrw = tier.amount
+                if (tier.scope === 'per_person') {
+                  notes.push(`ℹ️ ${promo.label}: 인당 ${tier.amount.toLocaleString()}원 (인원수만큼 곱하기는 운영자 입력)`)
+                }
+              } else {
+                agencyDiscountKrw = 0
+                notes.push(`ℹ️ ${promo.label}: 주수 구간 매칭 없음 (총 ${totalWeeks}주)`)
+              }
+            }
+
+            // 등록비 할인: registrationFeeKrw에서 직접 차감
+            if (pad.regFeeDiscount && pad.regFeeDiscount > 0) {
+              const regDiscount = Math.min(pad.regFeeDiscount, registrationFeeKrw)
+              registrationFeeKrw = Math.max(0, registrationFeeKrw - regDiscount)
+              agencyDiscountKrw += regDiscount
+            }
+            agencyDiscountNote = pad.note ?? ''
+          }
         }
-        // 등록비 할인: registrationFeeKrw에서 직접 차감
-        if (pad.regFeeDiscount && pad.regFeeDiscount > 0) {
-          const regDiscount = Math.min(pad.regFeeDiscount, registrationFeeKrw)
-          registrationFeeKrw = Math.max(0, registrationFeeKrw - regDiscount)
-          agencyDiscountKrw += regDiscount
-        }
-        agencyDiscountNote = pad.note ?? ''
       }
     }
 

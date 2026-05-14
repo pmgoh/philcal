@@ -58,12 +58,38 @@ export interface Surcharge {
 export type PromotionBasis = 'enrollment_date' | 'start_date' | 'contract_date' | 'departure_date'
 
 // ─── 유학원 자체 할인 ─────────────────────────────────────────────────────────
+// v3 status 모델:
+// - 'enabled': 정상 계산
+// - 'disabled': 자료에 "X"/"없음" 명시 → 0원 + "유학원 자체 할인 불가능 견적" 안내
+// - 'unconfirmed': 자료 빈 칸 → 0원 + "본사 확인 필요" 안내
+export type AgencyDiscountStatus = 'enabled' | 'disabled' | 'unconfirmed'
+
+export type AgencyDiscountKind =
+  | 'percent'
+  | 'amount_per_week'
+  | 'amount_per_4weeks'
+  | 'amount_flat'
+  | 'reg_fee_only'
+  | 'week_tiers'
+
+export interface AgencyWeekTier {
+  minWeeks: number
+  maxWeeks?: number
+  amount: number
+  scope?: 'per_person' | 'per_family'
+}
+
 export interface AgencyDiscount {
-  type: 'percent' | 'amount_per_week' | 'amount_flat' | 'reg_fee_only'
+  status?: AgencyDiscountStatus       // 기본 'enabled' (구버전 호환)
+  type: AgencyDiscountKind
   value: number
   maxAmount?: number
-  applyTo: 'all' | 'course_only' | 'dorm_only' | 'package_only'
-  regFeeDiscount?: number    // 등록비 할인 금액 (원)
+  applyTo: 'all' | 'course_only' | 'dorm_only' | 'package_only' | 'course_and_dorm'
+  scope?: 'per_person' | 'per_family'
+  minWeeks?: number                   // 유학원 할인 적용 최소 주수
+  regFeeDiscount?: number              // 등록비 할인 금액 (원)
+  weekTiers?: AgencyWeekTier[]         // type='week_tiers'일 때
+  rawText?: string                     // 자료 원문 보존
   note: string
 }
 
@@ -181,13 +207,6 @@ export interface PriceIncrease {
 }
 
 // ─── 학원 ────────────────────────────────────────────────────────────────────
-//
-// 상태 모델 — null과 빈배열의 의미를 구분한다:
-//   promotions === null  → 아직 확인 안 됨 (PDF 파서로 채워야 할 미입력 상태)
-//   promotions === []    → 명시적으로 프로모션 없음 (확인했고 진짜 없음)
-//   promotions === [...] → 프로모션 있음
-//
-// 같은 모델을 다른 필드에도 점진 적용할 수 있다. 일단 promotions부터.
 export interface School {
   id: string
   name: string
@@ -203,7 +222,7 @@ export interface School {
   courses: Course[]
   dormitories: Dormitory[]
   surcharges: Surcharge[]
-  promotions: Promotion[] | null      // null = 미확인
+  promotions: Promotion[]
   localFees: LocalFee[]
   packages: Package[]
   refundPolicy: string
@@ -212,8 +231,6 @@ export interface School {
   isActive: boolean
   createdAt: string
   updatedAt: string
-  // 호환성을 위한 별칭 (검색 매칭용, 선택)
-  aliases?: string[]
 }
 
 // ─── 환율 ─────────────────────────────────────────────────────────────────────

@@ -86,42 +86,89 @@ export async function saveExchangeRate(rate: Omit<ExchangeRate, 'updatedAt'>): P
 }
 
 // ─── 프로모션 컬렉션 ──────────────────────────────────────────────────────────
+// 어학원 측 할인 status (v3 구조)
+// - 'enabled': 자료에 구체값 명시 → 정상 계산
+// - 'disabled': 자료에 "X"/"없음" 명시 → 0원 + "유학원 자체 할인 불가능" 견적
+// - 'unconfirmed': 자료에 빈 칸 → 0원 + "본사 확인 필요" 안내
+export type AgencyDiscountStatus = 'enabled' | 'disabled' | 'unconfirmed'
+
+// AgencyDiscount 세부 타입 (v3)
+export type AgencyDiscountKind =
+  | 'percent'             // (학비+기숙사비)의 N%
+  | 'amount_per_4weeks'   // 4주당 N원
+  | 'amount_per_week'     // 1주당 N원 (legacy 호환)
+  | 'amount_flat'         // 1회성 정액
+  | 'reg_fee_only'        // 등록비만 할인
+  | 'week_tiers'          // 주수 구간별 차등 정액
+
+export interface AgencyWeekTier {
+  minWeeks: number
+  maxWeeks?: number       // 미설정 = 상한 없음
+  amount: number
+  scope?: 'per_person' | 'per_family'
+}
+
 export interface PromoEntry {
   id: string
-  // schoolId: 학원과의 구조적 연결. 자동 매칭으로 채워지거나 사용자가 명시적으로 연결.
-  // 없으면 미연결 상태 = "고아 프로모션" — /admin/data-health 탭에 노출됨.
-  schoolId?: string
-  schoolName: string
+  schoolName: string       // 표시용 (구버전 호환)
+  schoolCode?: string      // 신구조: 학원 매칭 키 (영문 대문자_숫자_언더스코어)
   promoName: string
   region: string
-  // ── calcEngine 연동 필드 ──────────────────────────────────────────────────
+  target?: 'adult' | 'family' | 'junior' | 'camp' | 'all'   // 누구 대상
+  season?: 'low' | 'high' | 'all'                            // 비수기/성수기/전체
+
+  // ── 자료 원문 보존 (v3 신구조) ────────────────────────────────────────────
+  registrationDeadline?: string | null   // 자료 [등록] 원문
+  attendancePeriod?: string | null       // 자료 [적용기간]/[연수기간]/[출국일 기준] 원문
+  applyPeriodNote?: string               // 자료 '적용기간' 컬럼 원문 전체
+  promoContent?: string                  // 자료 '프로모션 내용' 컬럼 원문 그대로
+  noteRaw?: string                       // 자료 '비고' 컬럼 원문 그대로
+
+  // ── calcEngine 연동 필드 (legacy 호환) ────────────────────────────────────
   basisType: string                    // 'enrollment_date' | 'start_date'
   alwaysApply?: boolean
-  stackable?: boolean               // true = 타 프로모션 중복 적용 가능                // true = 항상 적용 (기간 무관)
+  stackable?: boolean                  // true = 타 프로모션 중복 적용 가능
   startDate: string
   endDate: string
-  discountType: string                 // 'percent' | 'amount'
+  discountType: string                 // 'percent' | 'amount' | 'amount_per_4weeks' | 'amount_per_week'
   discountValue?: number               // 할인값 (% 또는 원)
   applyToCourses?: boolean
   applyToDorms?: boolean
   applyToSurcharge?: boolean
   condition?: string                   // 주수 조건 등 텍스트
   applicableItems?: string[]           // 특정 기숙사/코스 제한
+  schoolDiscountDisabled?: boolean     // 어학원 자체 할인 없는 시즌 안내용
+
   // ── 표시용 필드 ───────────────────────────────────────────────────────────
   details: string                      // 상담원용 프로모션 상세 설명
   isUrgent?: boolean
   urgentDays?: number | null
-  note: string                         // 메모
+  note: string                         // 메모 (운영자 입력)
   active: boolean
   createdAt: string
   updatedAt?: string
-  // ── 유학원 자체 할인 ──────────────────────────────────────────────────────
-  agencyDiscountType?: 'percent' | 'amount_per_week' | 'amount_flat' | 'reg_fee_only' | 'none'
+  noticeDate?: string                  // 자료 공지날짜 (YY-MM-DD)
+
+  // ── 유학원 자체 할인 (v3 신구조) ──────────────────────────────────────────
+  agencyDiscountStatus?: AgencyDiscountStatus    // 신구조 status (기본: enabled)
+  agencyDiscountType?: AgencyDiscountKind | 'none'
   agencyDiscountValue?: number
   agencyDiscountMaxAmount?: number
-  agencyDiscountApplyTo?: 'all' | 'course_only' | 'dorm_only' | 'package_only'
+  agencyDiscountApplyTo?: 'all' | 'course_only' | 'dorm_only' | 'package_only' | 'course_and_dorm'
+  agencyDiscountScope?: 'per_person' | 'per_family'
+  agencyDiscountMinWeeks?: number                // 유학원 할인 적용 최소 주수
   agencyDiscountRegFee?: number
+  agencyDiscountWeekTiers?: AgencyWeekTier[]     // week_tiers 타입일 때
+  agencyDiscountRawText?: string                 // 자료 '유학원프로모션' 컬럼 원문 그대로
   agencyDiscountNote?: string
+
+  // ── 분기 조건 (성인/가족 외 추가 조건) ────────────────────────────────────
+  conditions?: {
+    dormType?: string                  // "독채" | "내부숙소"
+    courseType?: string
+    dormSubType?: string               // "독채형" | "대형사이즈" 등
+    [key: string]: unknown
+  }
 }
 
 export async function getPromotions(): Promise<PromoEntry[]> {
