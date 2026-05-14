@@ -88,6 +88,9 @@ export async function saveExchangeRate(rate: Omit<ExchangeRate, 'updatedAt'>): P
 // ─── 프로모션 컬렉션 ──────────────────────────────────────────────────────────
 export interface PromoEntry {
   id: string
+  // schoolId: 학원과의 구조적 연결. 자동 매칭으로 채워지거나 사용자가 명시적으로 연결.
+  // 없으면 미연결 상태 = "고아 프로모션" — /admin/data-health 탭에 노출됨.
+  schoolId?: string
   schoolName: string
   promoName: string
   region: string

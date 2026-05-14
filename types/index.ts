@@ -181,6 +181,13 @@ export interface PriceIncrease {
 }
 
 // ─── 학원 ────────────────────────────────────────────────────────────────────
+//
+// 상태 모델 — null과 빈배열의 의미를 구분한다:
+//   promotions === null  → 아직 확인 안 됨 (PDF 파서로 채워야 할 미입력 상태)
+//   promotions === []    → 명시적으로 프로모션 없음 (확인했고 진짜 없음)
+//   promotions === [...] → 프로모션 있음
+//
+// 같은 모델을 다른 필드에도 점진 적용할 수 있다. 일단 promotions부터.
 export interface School {
   id: string
   name: string
@@ -196,7 +203,7 @@ export interface School {
   courses: Course[]
   dormitories: Dormitory[]
   surcharges: Surcharge[]
-  promotions: Promotion[]
+  promotions: Promotion[] | null      // null = 미확인
   localFees: LocalFee[]
   packages: Package[]
   refundPolicy: string
@@ -205,6 +212,8 @@ export interface School {
   isActive: boolean
   createdAt: string
   updatedAt: string
+  // 호환성을 위한 별칭 (검색 매칭용, 선택)
+  aliases?: string[]
 }
 
 // ─── 환율 ─────────────────────────────────────────────────────────────────────

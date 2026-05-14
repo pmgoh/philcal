@@ -1,9 +1,12 @@
 'use client'
 import { useState, useEffect, useRef } from 'react'
 import AdminLayout from '@/components/AdminLayout'
-import { getPromotions, savePromotion, deletePromotion, saveBatchPromotions, PromoEntry } from '@/lib/db'
+import { getPromotions, savePromotion, deletePromotion, saveBatchPromotions, getSchools, PromoEntry } from '@/lib/db'
 import { v4 as uuid } from 'uuid'
-import { Plus, Trash2, Upload, Bell, BellOff, Search, Filter, RefreshCw, X } from 'lucide-react'
+import { Plus, Trash2, Upload, Bell, BellOff, Search, Filter, RefreshCw, X, Link2 } from 'lucide-react'
+import { findSchoolForPromo, buildAliasIndex, type AliasMap } from '@/lib/schoolMatching'
+import schoolAliases from '@/data/school-aliases.json'
+import type { School } from '@/types'
 
 const REGIONS = ['전체', '세부', '바기오', '마닐라', '기타']
 
@@ -33,6 +36,7 @@ function urgencyLevel(endDate: string, active: boolean): number {
 
 export default function PromotionsPage() {
   const [promos, setPromos] = useState<PromoEntry[]>([])
+  const [schools, setSchools] = useState<School[]>([])
   const [loading, setLoading] = useState(true)
   const [search, setSearch] = useState('')
   const [regionFilter, setRegionFilter] = useState('전체')
@@ -42,10 +46,14 @@ export default function PromotionsPage() {
   const [importing, setImporting] = useState(false)
   const fileRef = useRef<HTMLInputElement>(null)
 
+  // 별칭 사전 인덱스 — 한 번만 빌드
+  const aliasIdx = buildAliasIndex(schoolAliases as unknown as AliasMap)
+
   const load = async () => {
     setLoading(true)
-    const data = await getPromotions()
+    const [data, schs] = await Promise.all([getPromotions(), getSchools()])
     setPromos(data.sort((a, b) => urgencyLevel(a.endDate, a.active) - urgencyLevel(b.endDate, b.active)))
+    setSchools(schs)
     setLoading(false)
   }
 
@@ -64,7 +72,15 @@ export default function PromotionsPage() {
   const soonCount = promos.filter(p => p.active && getDdays(p.endDate) > 7 && getDdays(p.endDate) <= 30).length
 
   const handleSave = async (p: PromoEntry) => {
-    await savePromotion(p)
+    // schoolId 자동 매칭: 사용자가 명시적으로 schoolId를 안 줬으면 schoolName으로 찾아본다
+    let toSave = p
+    if (!p.schoolId && p.schoolName) {
+      const matched = findSchoolForPromo({ schoolName: p.schoolName }, schools, aliasIdx)
+      if (matched) {
+        toSave = { ...p, schoolId: matched.id }
+      }
+    }
+    await savePromotion(toSave)
     setEditId(null); setEditData({})
     load()
   }
@@ -140,7 +156,13 @@ export default function PromotionsPage() {
     if (!importDiff) return
     setImporting(true)
     try {
-      await saveBatchPromotions(importDiff.incoming)
+      // 임포트되는 promo에 schoolId가 없으면 자동 매칭 시도
+      const enriched = importDiff.incoming.map(p => {
+        if (p.schoolId) return p
+        const matched = findSchoolForPromo({ schoolName: p.schoolName }, schools, aliasIdx)
+        return matched ? { ...p, schoolId: matched.id } : p
+      })
+      await saveBatchPromotions(enriched)
       setImportDiff(null)
       load()
     } catch { alert('저장 중 오류') }
@@ -426,6 +448,20 @@ export default function PromotionsPage() {
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2 flex-wrap mb-1">
                           <span className="font-semibold text-gray-900 text-sm">{p.schoolName}</span>
+                          {/* 미연결 배지 - schoolId가 없거나 schools에 매칭 학원이 없으면 표시 */}
+                          {(() => {
+                            const matched = findSchoolForPromo(
+                              { schoolId: p.schoolId, schoolName: p.schoolName },
+                              schools,
+                              aliasIdx
+                            )
+                            if (matched) return null
+                            return (
+                              <span className="text-xs px-1.5 py-0.5 bg-amber-100 text-amber-700 border border-amber-200 rounded flex items-center gap-1" title="이 프로모션은 schools 컬렉션의 어떤 학원과도 연결되어 있지 않습니다. 견적 봇에 노출되지 않습니다.">
+                                <Link2 size={10} /> 미연결
+                              </span>
+                            )
+                          })()}
                           <span className="text-xs text-blue-600 bg-blue-50 px-1.5 py-0.5 rounded">{p.promoName}</span>
                           {p.note && <span className="text-xs text-orange-600">{p.note}</span>}
                           {/* 유학원 할인 배지 */}

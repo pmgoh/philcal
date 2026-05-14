@@ -16,6 +16,7 @@ import {
   Plus, Trash2, ChevronDown, ChevronUp, Save,
   ArrowLeft, AlertCircle, Check, Settings2, X
 } from 'lucide-react'
+import PromoMatcher from '@/components/PromoMatcher'
 
 const REGIONS: Region[] = ['세부', '바기오', '클락', '일로일로', '바콜로드', '마닐라', '기타']
 const PROGRAM_TAGS: ProgramTag[] = [
@@ -32,7 +33,9 @@ const EMPTY_SCHOOL: Omit<School, 'id' | 'createdAt' | 'updatedAt'> = {
   registrationFee: undefined,
   priceIncrease: undefined,
   courses: [], dormitories: [],
-  surcharges: [], promotions: [], localFees: [], packages: [],
+  // promotions: null = 신규 학원은 "프로모션 미확인" 상태로 시작.
+  // 사용자가 명시적으로 "프로모션 없음" 또는 항목 추가를 해야 진짜 빈 배열/목록이 됨.
+  surcharges: [], promotions: null, localFees: [], packages: [],
   refundPolicy: '', dormitoryRules: '', generalNotes: '', isActive: true,
 }
 
@@ -81,7 +84,8 @@ export default function SchoolForm({ schoolId }: Props) {
               ?? 0,
           })),
           surcharges:     s.surcharges     ?? [],
-          promotions:     s.promotions     ?? [],
+          // null = 미확인, [] = 명시적 없음, [...] = 있음 — 이 구분을 보존
+          promotions:     s.promotions === undefined ? null : s.promotions,
           localFees:      s.localFees      ?? [],
           packages:       s.packages       ?? [],
         })
@@ -187,6 +191,8 @@ export default function SchoolForm({ schoolId }: Props) {
                     <label className="block text-sm font-medium text-gray-700 mb-1">학원명 *</label>
                     <input value={school.name} onChange={e => update('name', e.target.value)}
                       className="input-field" placeholder="예: BAGUIO JIC 챌린저캠퍼스" />
+                    {/* 미연결 프로모션 매칭 후보 자동 제시 */}
+                    <PromoMatcher schoolName={school.name} schoolId={schoolId} />
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">지역 *</label>
@@ -383,24 +389,78 @@ export default function SchoolForm({ schoolId }: Props) {
 
           {/* ── 프로모션 ── */}
           <div className="card overflow-hidden">
-            {section('promotions', '프로모션 / 할인', school.promotions.length)}
+            {section(
+              'promotions',
+              '프로모션 / 할인',
+              school.promotions === null ? undefined : school.promotions.length
+            )}
             {openSection === 'promotions' && (
               <div className="px-5 pb-5 border-t border-gray-100 pt-4 space-y-3">
-                {school.promotions.map((p, i) => (
-                  <PromotionRow key={p.id} promotion={p}
-                    onChange={v => update('promotions', school.promotions.map((x, j) => j === i ? v : x))}
-                    onDelete={() => update('promotions', school.promotions.filter((_, j) => j !== i))}
-                  />
-                ))}
-                <button onClick={() => update('promotions', [...school.promotions, {
-                  id: uuid(), label: '', basisType: 'start_date' as const,
-                  alwaysApply: false,
-                  startDate: '', endDate: '', discountType: 'percent' as const,
-                  discountValue: 10,
-                  applyToCourses: true, applyToDorms: true, applyToSurcharge: false,
-                }])} className="btn-secondary flex items-center gap-2 text-sm w-full justify-center py-2.5 border-dashed">
-                  <Plus size={14} /> 프로모션 추가
-                </button>
+                {school.promotions === null ? (
+                  // 미확인 상태: 명시적으로 액션 유도
+                  <div className="rounded-lg border-2 border-dashed border-amber-300 bg-amber-50 p-4">
+                    <div className="flex items-start gap-2 mb-3">
+                      <AlertCircle size={18} className="text-amber-600 mt-0.5" />
+                      <div className="text-sm text-amber-900">
+                        <div className="font-semibold mb-0.5">프로모션 미확인</div>
+                        <div className="text-amber-700">
+                          이 학원의 프로모션 정보가 아직 입력되지 않았습니다.
+                          확인 후 아래 중 하나를 선택해주세요.
+                        </div>
+                      </div>
+                    </div>
+                    <div className="flex gap-2 flex-wrap">
+                      <button
+                        onClick={() => update('promotions', [])}
+                        className="btn-secondary text-sm flex items-center gap-1.5"
+                      >
+                        <Check size={14} /> 확인했음 — 프로모션 없음
+                      </button>
+                      <button
+                        onClick={() => update('promotions', [{
+                          id: uuid(), label: '', basisType: 'start_date' as const,
+                          alwaysApply: false,
+                          startDate: '', endDate: '', discountType: 'percent' as const,
+                          discountValue: 10,
+                          applyToCourses: true, applyToDorms: true, applyToSurcharge: false,
+                        }])}
+                        className="btn-primary text-sm flex items-center gap-1.5"
+                      >
+                        <Plus size={14} /> 프로모션 입력 시작
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  <>
+                    {school.promotions.length === 0 && (
+                      <div className="text-xs text-gray-500 bg-gray-50 px-3 py-2 rounded-lg flex items-center gap-2">
+                        <Check size={12} className="text-green-600" />
+                        프로모션 없음으로 확인됨
+                        <button
+                          onClick={() => update('promotions', null)}
+                          className="ml-auto text-gray-400 hover:text-gray-600 text-xs underline"
+                        >
+                          미확인으로 되돌리기
+                        </button>
+                      </div>
+                    )}
+                    {(school.promotions ?? []).map((p, i) => (
+                      <PromotionRow key={p.id} promotion={p}
+                        onChange={v => update('promotions', (school.promotions ?? []).map((x, j) => j === i ? v : x))}
+                        onDelete={() => update('promotions', (school.promotions ?? []).filter((_, j) => j !== i))}
+                      />
+                    ))}
+                    <button onClick={() => update('promotions', [...(school.promotions ?? []), {
+                      id: uuid(), label: '', basisType: 'start_date' as const,
+                      alwaysApply: false,
+                      startDate: '', endDate: '', discountType: 'percent' as const,
+                      discountValue: 10,
+                      applyToCourses: true, applyToDorms: true, applyToSurcharge: false,
+                    }])} className="btn-secondary flex items-center gap-2 text-sm w-full justify-center py-2.5 border-dashed">
+                      <Plus size={14} /> 프로모션 추가
+                    </button>
+                  </>
+                )}
               </div>
             )}
           </div>

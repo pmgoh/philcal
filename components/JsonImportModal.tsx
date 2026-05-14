@@ -72,10 +72,12 @@ function diffSchools(before: School, after: ReturnType<typeof normalizeSchool>):
     })
   }
 
-  // 프로모션 날짜
-  if (before.promotions.length > 0 && after.promotions.length > 0) {
-    const bDate = before.promotions[0]?.startDate ?? ''
-    const aDate = after.promotions[0]?.startDate ?? ''
+  // 프로모션 날짜 — null(미확인)은 비교에서 제외
+  const beforePromos = before.promotions ?? []
+  const afterPromos = after.promotions ?? []
+  if (beforePromos.length > 0 && afterPromos.length > 0) {
+    const bDate = beforePromos[0]?.startDate ?? ''
+    const aDate = afterPromos[0]?.startDate ?? ''
     if (bDate !== aDate) diffs.push({ field: 'promotions.startDate', label: '프로모션 기준 연도', before: bDate, after: aDate, severity: 'danger' })
   }
 
@@ -105,7 +107,12 @@ function normalizeSchool(raw: Record<string, unknown>): Omit<School, 'createdAt'
     priceIncrease: (raw.priceIncrease as School['priceIncrease']) ?? undefined,
     courses, dormitories,
     surcharges: ((raw.surcharges as School['surcharges']) ?? []).map(s => ({ ...s, id: s.id || uuid() })),
-    promotions: ((raw.promotions as School['promotions']) ?? []).map(p => ({ ...p, id: p.id || uuid() })),
+    // promotions: null이면 null 유지(미확인), 배열이면 정규화
+    promotions: raw.promotions === null
+      ? null
+      : raw.promotions === undefined
+        ? null  // 키 자체가 없으면 미확인으로 간주
+        : ((raw.promotions as NonNullable<School['promotions']>) ?? []).map(p => ({ ...p, id: p.id || uuid() })),
     localFees: ((raw.localFees as School['localFees']) ?? []).map(f => ({ ...f, id: f.id || uuid() })),
     packages: ((raw.packages as School['packages']) ?? []).map(p => ({ ...p, id: p.id || uuid() })),
     refundPolicy: (raw.refundPolicy as string) ?? '',

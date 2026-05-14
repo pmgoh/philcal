@@ -1,0 +1,12 @@
+{
+  "_comment": "학원 이름 별칭 사전. canonical name (schools 컬렉션의 정식 name) → 별칭 배열. 프로모션의 schoolName이 어느 학원을 가리키는지 판별할 때 사용한다. 신규 학원 입력 시 매칭 UI도 이 사전을 본다.",
+  "_format": "{ canonical_name: [alias1, alias2, ...] }",
+
+  "CELLA PREMIUM (프리미엄 캠퍼스)": ["CELLA PREMIUM"],
+  "CELLA UNI (유니 스파르타 캠퍼스)": ["CELLA UNI"],
+  "I.BREEZE": ["I.BREEZE", "I BREEZE", "IBREEZE", "아이브리즈"],
+  "B'CEBU 비세부어학원": ["Bcebu", "BCEBU", "비세부", "B CEBU"],
+  "Cebu International Academy (CIA)": ["CIA"],
+  "세부 블루오션 어학원 (CEBU BLUE OCEAN ACADEMY)": ["BLUE OCEAN", "CEBU BLUE OCEAN", "블루오션"],
+  "정글": ["Jungle", "JUNGLE"]
+}

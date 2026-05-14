@@ -1,7 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { calculateQuote, CalcResult, CourseItem, DormItem, PackageInput } from '@/lib/calcEngine'
 import { formatKrw, formatCurrency } from '@/lib/utils'
-import type { School, LocalFee, ExchangeRate } from '@/types'
+import { buildAliasIndex, findSchoolForPromo, type AliasMap } from '@/lib/schoolMatching'
+import schoolAliases from '@/data/school-aliases.json'
+import type { School, LocalFee, ExchangeRate, Promotion } from '@/types'
 
 const EXTRACT_PROMPT = `엠버시유학 내부 견적 계산 시스템입니다. 사용자는 상담원입니다.
 
@@ -113,6 +115,11 @@ function buildQuoteMessage(school: School, calcResult: CalcResult, _totalWeeks: 
   lines.push(`## ${school.name}`)
   lines.push(`**총 ${calcResult.totalWeeks}주**`)
   if (specialNote) lines.push(`\n> ℹ️ ${specialNote}`)
+
+  // 프로모션 미확인 경고 (null = 아직 데이터 입력 안 됨)
+  if (school.promotions === null) {
+    lines.push(`\n> ⚠️ **프로모션 정보 미확인** — 이 학원은 프로모션 데이터가 아직 입력되지 않았습니다. 견적에 할인이 누락되었을 수 있으니 학원에 직접 확인하세요.`)
+  }
   lines.push('')
 
   // ── 패키지 ──
@@ -339,23 +346,46 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    // schoolName 기준으로 그룹화
-    const promosBySchool: Record<string, ReturnType<typeof entryToPromotion>[]> = {}
+    // ── 학원 매칭 — schoolId 우선, 이름 별칭 fallback ───────────────────────
+    // 별칭 사전(data/school-aliases.json)을 정규화 역인덱스로 변환해서
+    // "CELLA PREMIUM" ↔ "CELLA PREMIUM (프리미엄 캠퍼스)" 같은 케이스를 잡는다.
+    const aliasIdx = buildAliasIndex(schoolAliases as unknown as AliasMap)
+
+    // 각 학원에 promo를 attach. 매칭 실패한 promo는 orphan으로 따로 모은다(로그용).
+    const promosBySchoolId: Record<string, Promotion[]> = {}
+    const orphanPromos: Array<{ schoolName?: string; promoName?: string }> = []
     for (const p of promoEntries) {
-      if (!p.active) continue  // 비활성 프로모션 제외
-      const name = p.schoolName as string
-      if (!name) continue
-      if (!promosBySchool[name]) promosBySchool[name] = []
-      promosBySchool[name].push(entryToPromotion(p))
+      if (!p.active) continue
+      const matched = findSchoolForPromo(
+        { schoolId: p.schoolId as string | undefined, schoolName: p.schoolName as string | undefined },
+        schools,
+        aliasIdx
+      )
+      if (!matched) {
+        orphanPromos.push({ schoolName: p.schoolName as string, promoName: p.promoName as string })
+        continue
+      }
+      if (!promosBySchoolId[matched.id]) promosBySchoolId[matched.id] = []
+      promosBySchoolId[matched.id].push(entryToPromotion(p) as unknown as Promotion)
+    }
+    if (orphanPromos.length > 0) {
+      console.log(`[quote] orphan promos: ${orphanPromos.length} (미연결 — 학원 추가 필요)`)
     }
 
-    // school.promotions를 프로모션탭 데이터로 교체 (없으면 기존 유지)
-    const schoolsWithPromos = schools.map(s => ({
-      ...s,
-      promotions: promosBySchool[s.name]?.length
-        ? promosBySchool[s.name] as unknown as School['promotions']
-        : s.promotions ?? [],
-    }))
+    // promotions 머지 규칙:
+    //   - school.promotions === null  → 미확인 상태. 외부 promo가 있으면 그걸 사용,
+    //                                    없으면 null 유지 (calcEngine에서 안내)
+    //   - school.promotions === []    → 명시적으로 없음. 외부 promo가 있어도 사용 (탭이 진실의 원천)
+    //                                    이전엔 임베디드 데이터에 의존했는데, 이제 promotions 컬렉션이 우선
+    //   - school.promotions === [...] → 외부 promo가 있으면 외부 우선 (탭 데이터가 최신)
+    const schoolsWithPromos = schools.map(s => {
+      const external = promosBySchoolId[s.id]
+      if (external && external.length > 0) {
+        return { ...s, promotions: external as unknown as School['promotions'] }
+      }
+      // 외부 promo 없음 — 기존 상태 그대로
+      return s
+    })
     const rate = rateData as ExchangeRate
 
     if (!process.env.ANTHROPIC_API_KEY) return NextResponse.json({ action: 'answer', message: 'API 키 미설정' }, { status: 500 })
@@ -434,7 +464,11 @@ export async function POST(req: NextRequest) {
         ),
       }))
 
-      // 프로모션: 라벨+할인요약만
+      // 프로모션: 라벨+할인요약만. 단, null이면 "미확인" 표시
+      const promoStatus: 'unknown' | 'none' | 'has' =
+        s.promotions === null ? 'unknown'
+        : (s.promotions ?? []).length === 0 ? 'none'
+        : 'has'
       const promos = (s.promotions ?? []).map(p => ({
         label: p.label,
         always: p.alwaysApply,
@@ -452,6 +486,7 @@ export async function POST(req: NextRequest) {
         courses, dorms, packages,
         surcharges: (s.surcharges ?? []).map(sc => ({ label: sc.label, start: sc.startDate, end: sc.endDate, pw: sc.pricePerWeek })),
         promos,
+        promoStatus,  // 'unknown' = 데이터 미입력, 'none' = 명시적 없음, 'has' = 있음
       }
     })
 

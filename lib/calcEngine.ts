@@ -270,10 +270,14 @@ export function calculateQuote(input: QuoteInput, rate: ExchangeRate): CalcResul
   let surchargeDiscount = 0
   const appliedPromoLabels: string[] = []
 
-  const promoWidth = (p: typeof school.promotions[0]) => {
+  const promoWidth = (p: { alwaysApply: boolean; startDate?: string; endDate?: string }) => {
     if (p.alwaysApply) return Infinity
     if (!p.startDate || !p.endDate) return Infinity
     return new Date(p.endDate).getTime() - new Date(p.startDate).getTime()
+  }
+  // promotions === null (미확인)이면 빈 배열로 안전 처리. 별도 안내 노트 추가.
+  if (school.promotions === null) {
+    notes.push(`⚠️ 프로모션 정보 미확인 — 학원에 직접 확인 필요. 견적에 할인이 빠져 있을 수 있음.`)
   }
   const sortedPromos = [...(school.promotions ?? [])].sort((a, b) => promoWidth(a) - promoWidth(b))
 

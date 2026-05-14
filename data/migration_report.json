@@ -1,0 +1,1000 @@
+{
+  "schools": {
+    "total": 24,
+    "set_null": 8,
+    "has_promos": 16,
+    "already_null": 0
+  },
+  "promos": {
+    "total": 153,
+    "matched": 31,
+    "orphan": 122,
+    "already_had_id": 0
+  },
+  "orphans_by_school": {
+    "BAGUIO JIC": {
+      "count": 11,
+      "active": 11,
+      "promos": [
+        {
+          "id": "491450d0-f79a-480d-887c-2c957f68cb83",
+          "schoolName": "BAGUIO JIC",
+          "promoName": "2인실 1인 사용 특별 프로모션",
+          "active": true
+        },
+        {
+          "id": "a3dbf9fa-745c-4126-8895-a30c04182580",
+          "schoolName": "BAGUIO JIC",
+          "promoName": "장기등록 12주",
+          "active": true
+        },
+        {
+          "id": "645c7a27-8e66-45dc-84d9-a9c49b5cad42",
+          "schoolName": "BAGUIO JIC",
+          "promoName": "장기등록 16주",
+          "active": true
+        },
+        {
+          "id": "039c6b5c-82e5-458e-b9ba-656643c1ba28",
+          "schoolName": "BAGUIO JIC",
+          "promoName": "장기등록 20주",
+          "active": true
+        },
+        {
+          "id": "200aa990-7c91-450d-a906-8e7a5c7e6149",
+          "schoolName": "BAGUIO JIC",
+          "promoName": "장기등록 24주",
+          "active": true
+        },
+        {
+          "id": "5cbd4bea-4768-4fa6-848a-4cffc03ba8e9",
+          "schoolName": "BAGUIO JIC",
+          "promoName": "여름 주니어캠프 얼리버드",
+          "active": true
+        },
+        {
+          "id": "79317d17-0ac2-453d-be1f-917e4408ca79",
+          "schoolName": "BAGUIO JIC",
+          "promoName": "아이엘츠 보장반",
+          "active": true
+        },
+        {
+          "id": "3232b75a-682d-469e-b293-b95f9130ee84",
+          "schoolName": "BAGUIO JIC",
+          "promoName": "비수기 (1·2인실)",
+          "active": true
+        },
+        {
+          "id": "489e6135-0010-40d7-8b72-7af3b68599f2",
+          "schoolName": "BAGUIO JIC",
+          "promoName": "비수기 (4인실)",
+          "active": true
+        },
+        {
+          "id": "ba2988af-1b41-4591-8726-044d085485d5",
+          "schoolName": "BAGUIO JIC",
+          "promoName": "BESA 하반기 얼리버드",
+          "active": true
+        },
+        {
+          "id": "fe80ba8d-bba4-4b1b-96fb-87b5ef851911",
+          "schoolName": "BAGUIO JIC",
+          "promoName": "홀리데이 프로모션",
+          "active": true
+        }
+      ]
+    },
+    "BAGUIO JIC GVP": {
+      "count": 10,
+      "active": 10,
+      "promos": [
+        {
+          "id": "b0c652cb-98cb-4bb5-af59-b24e4fe5af68",
+          "schoolName": "BAGUIO JIC GVP",
+          "promoName": "장기등록 12주",
+          "active": true
+        },
+        {
+          "id": "0fab58a6-d69d-42de-982e-3c39d86eec65",
+          "schoolName": "BAGUIO JIC GVP",
+          "promoName": "장기등록 16주",
+          "active": true
+        },
+        {
+          "id": "a2055fa4-62e7-4da7-ba09-177d3d4043c9",
+          "schoolName": "BAGUIO JIC GVP",
+          "promoName": "장기등록 20주",
+          "active": true
+        },
+        {
+          "id": "b0484b07-d326-4e54-ab36-9391b174c176",
+          "schoolName": "BAGUIO JIC GVP",
+          "promoName": "장기등록 24주",
+          "active": true
+        },
+        {
+          "id": "20f81a03-3ba8-4410-9b33-146bdc1e4fcf",
+          "schoolName": "BAGUIO JIC GVP",
+          "promoName": "인터내셔널 커피 프로그램",
+          "active": true
+        },
+        {
+          "id": "5c2fd2a4-bcaa-412b-9f76-be84bc787af9",
+          "schoolName": "BAGUIO JIC GVP",
+          "promoName": "비수기 (1·2인실)",
+          "active": true
+        },
+        {
+          "id": "db146d76-e033-43fd-8f17-6f688a3cf209",
+          "schoolName": "BAGUIO JIC GVP",
+          "promoName": "비수기 (4인실)",
+          "active": true
+        },
+        {
+          "id": "5e3896ea-f728-4bf5-9a7d-caa59841c2a0",
+          "schoolName": "BAGUIO JIC GVP",
+          "promoName": "스토리 리포터 (4인실 발코니)",
+          "active": true
+        },
+        {
+          "id": "124afa7f-93f8-4096-b3f6-df7a45770742",
+          "schoolName": "BAGUIO JIC GVP",
+          "promoName": "BESA 하반기 얼리버드",
+          "active": true
+        },
+        {
+          "id": "80d51369-4ebc-40c0-9413-629e30bfc2c1",
+          "schoolName": "BAGUIO JIC GVP",
+          "promoName": "홀리데이 프로모션",
+          "active": true
+        }
+      ]
+    },
+    "MONOL": {
+      "count": 7,
+      "active": 7,
+      "promos": [
+        {
+          "id": "1196c6d7-2ca2-4d1c-8f84-49f0de1ebf78",
+          "schoolName": "MONOL",
+          "promoName": "상반기 코스·기숙사별 할인",
+          "active": true
+        },
+        {
+          "id": "d8d01d76-17ff-4294-81d7-9eeafea43c73",
+          "schoolName": "MONOL",
+          "promoName": "성수기 가족연수",
+          "active": true
+        },
+        {
+          "id": "80ffd0cc-1666-41c6-bc91-b157158b578e",
+          "schoolName": "MONOL",
+          "promoName": "여름캠프 얼리버드",
+          "active": true
+        },
+        {
+          "id": "b2b0dba8-0fd3-484b-ab7b-a0cff9282487",
+          "schoolName": "MONOL",
+          "promoName": "주니어캠프 형제·자매 할인",
+          "active": true
+        },
+        {
+          "id": "f5ad75df-5894-42d7-8da9-041328089777",
+          "schoolName": "MONOL",
+          "promoName": "BESA 하반기 얼리버드",
+          "active": true
+        },
+        {
+          "id": "b3552ae2-ad42-4292-a57c-5afa6ba7ba88",
+          "schoolName": "MONOL",
+          "promoName": "성수기 프로모션",
+          "active": true
+        },
+        {
+          "id": "c784c392-3631-40d3-83e0-e5e993d3d63e",
+          "schoolName": "MONOL",
+          "promoName": "하반기 비수기 프로모션",
+          "active": true
+        }
+      ]
+    },
+    "PINES MAIN": {
+      "count": 6,
+      "active": 6,
+      "promos": [
+        {
+          "id": "121495f7-7ff3-471d-9981-4a2214bc80b4",
+          "schoolName": "PINES MAIN",
+          "promoName": "2026 상반기 프로모션 (4주당 20만원)",
+          "active": true
+        },
+        {
+          "id": "98758ff5-590d-4ddc-ab8c-62c3b967740e",
+          "schoolName": "PINES MAIN",
+          "promoName": "2026 하반기 프로모션 (4주당 10만원)",
+          "active": true
+        },
+        {
+          "id": "b9bb7e11-3591-4558-ba67-49f6ba92238c",
+          "schoolName": "PINES MAIN",
+          "promoName": "장기 추가할인 (12주이상 2주당 5만원)",
+          "active": true
+        },
+        {
+          "id": "66254822-1bbc-411f-a54a-70f575b09395",
+          "schoolName": "PINES MAIN",
+          "promoName": "여름 가족캠프",
+          "active": true
+        },
+        {
+          "id": "9cc17daf-46ed-4a7a-b362-6a7ff977bb04",
+          "schoolName": "PINES MAIN",
+          "promoName": "비수기 가족연수",
+          "active": true
+        },
+        {
+          "id": "594147f0-aeb2-45c7-824c-f4a62ea0abd1",
+          "schoolName": "PINES MAIN",
+          "promoName": "BESA 하반기 얼리버드",
+          "active": true
+        }
+      ]
+    },
+    "WALES": {
+      "count": 5,
+      "active": 5,
+      "promos": [
+        {
+          "id": "949f537d-9bc6-4a46-93ad-a128e53cefd6",
+          "schoolName": "WALES",
+          "promoName": "BESA 하반기 얼리버드",
+          "active": true
+        },
+        {
+          "id": "5f2b8fc4-f1f0-4048-af51-c206ee8a5aab",
+          "schoolName": "WALES",
+          "promoName": "가족 프로모션",
+          "active": true
+        },
+        {
+          "id": "352c0a4f-d9fd-482c-849b-75503b52537a",
+          "schoolName": "WALES",
+          "promoName": "성인 주수별 프로모션",
+          "active": true
+        },
+        {
+          "id": "c38eafca-ada7-493b-8dd4-d0743b9074fd",
+          "schoolName": "WALES",
+          "promoName": "워킹홀리데이 지원",
+          "active": true
+        },
+        {
+          "id": "c45de843-e5a5-4c93-9ffb-adebaec4bf55",
+          "schoolName": "WALES",
+          "promoName": "비수기 체험단",
+          "active": true
+        }
+      ]
+    },
+    "JOYFUL": {
+      "count": 5,
+      "active": 5,
+      "promos": [
+        {
+          "id": "0d64ccbb-cf11-40dc-a22c-d02e5455a9c5",
+          "schoolName": "JOYFUL",
+          "promoName": "여름 가족캠프 얼리버드",
+          "active": true
+        },
+        {
+          "id": "a82c55fa-4696-4a38-b25e-902f35aeaaa9",
+          "schoolName": "JOYFUL",
+          "promoName": "2027년 겨울/여름 가족캠프 얼리버드",
+          "active": true
+        },
+        {
+          "id": "73096f78-48f1-47f1-a429-08d1eddbb8c8",
+          "schoolName": "JOYFUL",
+          "promoName": "성수기 가족연수",
+          "active": true
+        },
+        {
+          "id": "3ef3f47d-e375-47e3-8ed3-7b8a6459523e",
+          "schoolName": "JOYFUL",
+          "promoName": "성인 비수기 3+1 프로모션",
+          "active": true
+        },
+        {
+          "id": "d264ddeb-c33f-478d-8fdd-3317038c458e",
+          "schoolName": "JOYFUL",
+          "promoName": "비수기 체험단",
+          "active": true
+        }
+      ]
+    },
+    "CNS": {
+      "count": 4,
+      "active": 4,
+      "promos": [
+        {
+          "id": "6b5920f4-f0fb-4162-a198-3ec2e4592372",
+          "schoolName": "CNS",
+          "promoName": "상반기 코스·기숙사별 할인",
+          "active": true
+        },
+        {
+          "id": "6f8447d9-a0f3-4ef3-ae31-d0292dfc164c",
+          "schoolName": "CNS",
+          "promoName": "BESA 하반기 얼리버드",
+          "active": true
+        },
+        {
+          "id": "064c574e-34af-4397-adf2-982072101914",
+          "schoolName": "CNS",
+          "promoName": "성수기 프로모션",
+          "active": true
+        },
+        {
+          "id": "daee2db3-975c-408e-a68d-03d0a9f89171",
+          "schoolName": "CNS",
+          "promoName": "하반기 비수기 프로모션",
+          "active": true
+        }
+      ]
+    },
+    "PINES CHAPIS": {
+      "count": 4,
+      "active": 4,
+      "promos": [
+        {
+          "id": "16317151-eb63-4952-8d95-f458f90ad6a3",
+          "schoolName": "PINES CHAPIS",
+          "promoName": "2026 상반기 프로모션 (4주당 20만원)",
+          "active": true
+        },
+        {
+          "id": "84a06ccf-99a0-454b-bf81-8aa0220b971b",
+          "schoolName": "PINES CHAPIS",
+          "promoName": "2026 하반기 프로모션 (4주당 10만원)",
+          "active": true
+        },
+        {
+          "id": "35e7933a-86e7-48fa-808a-a50dfc4c1cc8",
+          "schoolName": "PINES CHAPIS",
+          "promoName": "장기 추가할인 (12주이상 2주당 5만원)",
+          "active": true
+        },
+        {
+          "id": "548f4154-4933-4399-bc0d-b84d05deb5f4",
+          "schoolName": "PINES CHAPIS",
+          "promoName": "BESA 하반기 얼리버드",
+          "active": true
+        }
+      ]
+    },
+    "BANANA KIDS": {
+      "count": 4,
+      "active": 4,
+      "promos": [
+        {
+          "id": "eb2ff01a-8e37-4cdc-aa53-822bc5d515dd",
+          "schoolName": "BANANA KIDS",
+          "promoName": "비수기 내부숙소 프로모션",
+          "active": true
+        },
+        {
+          "id": "42720781-9480-4ed4-b701-c9182df6ca00",
+          "schoolName": "BANANA KIDS",
+          "promoName": "비수기 독채 프로모션",
+          "active": true
+        },
+        {
+          "id": "0582ede8-99c7-4631-baf0-39d29e138f2d",
+          "schoolName": "BANANA KIDS",
+          "promoName": "성수기 독채",
+          "active": true
+        },
+        {
+          "id": "a3459b63-9e29-40ea-9d67-f61a69307cdb",
+          "schoolName": "BANANA KIDS",
+          "promoName": "성수기 내부숙소",
+          "active": true
+        }
+      ]
+    },
+    "IMS Banilad": {
+      "count": 4,
+      "active": 4,
+      "promos": [
+        {
+          "id": "c427cbdd-fd8b-4569-8985-bf2f9e835379",
+          "schoolName": "IMS Banilad",
+          "promoName": "여름 캠프 얼리버드",
+          "active": true
+        },
+        {
+          "id": "f37384e5-46b5-42aa-8950-bad9199f6985",
+          "schoolName": "IMS Banilad",
+          "promoName": "장기할인 (8주이상)",
+          "active": true
+        },
+        {
+          "id": "293b0955-3b47-4785-b4b0-1108a6f21d7c",
+          "schoolName": "IMS Banilad",
+          "promoName": "비수기 프로모션 (4주당 30만원)",
+          "active": true
+        },
+        {
+          "id": "ebdaa624-2dfe-4c8b-9484-51e744e444ed",
+          "schoolName": "IMS Banilad",
+          "promoName": "성수기 가족연수",
+          "active": true
+        }
+      ]
+    },
+    "GS": {
+      "count": 3,
+      "active": 3,
+      "promos": [
+        {
+          "id": "152d05b2-f1fe-435d-a1ce-07967ada6cce",
+          "schoolName": "GS",
+          "promoName": "비수기 기숙사 업그레이드",
+          "active": true
+        },
+        {
+          "id": "309b016b-cac6-42e6-a17e-46b4d10f4731",
+          "schoolName": "GS",
+          "promoName": "장기할인",
+          "active": true
+        },
+        {
+          "id": "5e5cba30-6739-4c54-a45b-ef3e2debc65b",
+          "schoolName": "GS",
+          "promoName": "비수기 럭셔리룸 20% 할인",
+          "active": true
+        }
+      ]
+    },
+    "HANA": {
+      "count": 3,
+      "active": 3,
+      "promos": [
+        {
+          "id": "3c24d50c-5640-41be-bcb1-20a618b1f2eb",
+          "schoolName": "HANA",
+          "promoName": "비수기 가족 프로모션",
+          "active": true
+        },
+        {
+          "id": "a3cf5716-5842-4171-a2c5-b7d2b94eea6d",
+          "schoolName": "HANA",
+          "promoName": "성수기 가족연수",
+          "active": true
+        },
+        {
+          "id": "a0541c47-b2ba-4172-8793-0f62b745e6f4",
+          "schoolName": "HANA",
+          "promoName": "비수기 성인 프로모션",
+          "active": true
+        }
+      ]
+    },
+    "SMEAG Tarlac": {
+      "count": 3,
+      "active": 3,
+      "promos": [
+        {
+          "id": "9ac0ef12-51e0-485f-b8de-aecc848bdacb",
+          "schoolName": "SMEAG Tarlac",
+          "promoName": "재등록 할인",
+          "active": true
+        },
+        {
+          "id": "5efd47c0-083c-4b89-a606-c4a445219239",
+          "schoolName": "SMEAG Tarlac",
+          "promoName": "형제할인",
+          "active": true
+        },
+        {
+          "id": "3bbac726-fa53-4ecb-bd7a-83d9eebf908c",
+          "schoolName": "SMEAG Tarlac",
+          "promoName": "성수기 가족연수",
+          "active": true
+        }
+      ]
+    },
+    "BECI CITY": {
+      "count": 3,
+      "active": 3,
+      "promos": [
+        {
+          "id": "fe37321f-126f-46a3-8be7-2b47909c004c",
+          "schoolName": "BECI CITY",
+          "promoName": "장기등록 할인 (8주이상)",
+          "active": true
+        },
+        {
+          "id": "998a059e-82d1-4356-a582-2885aa2bfbe8",
+          "schoolName": "BECI CITY",
+          "promoName": "비수기 10% 할인",
+          "active": true
+        },
+        {
+          "id": "5400eba0-891e-466b-b7a9-30bd7c2c368b",
+          "schoolName": "BECI CITY",
+          "promoName": "BESA 하반기 얼리버드",
+          "active": true
+        }
+      ]
+    },
+    "BECI THE CAFE": {
+      "count": 3,
+      "active": 3,
+      "promos": [
+        {
+          "id": "28c06e1c-68c0-4364-97e6-d2dc8c0545ea",
+          "schoolName": "BECI THE CAFE",
+          "promoName": "장기등록 할인 (8주이상)",
+          "active": true
+        },
+        {
+          "id": "ba30aeef-3241-4bb2-bb35-df94c3f100e2",
+          "schoolName": "BECI THE CAFE",
+          "promoName": "비수기 10% 할인",
+          "active": true
+        },
+        {
+          "id": "97b22904-0407-4b5e-8292-8df3bf70179a",
+          "schoolName": "BECI THE CAFE",
+          "promoName": "BESA 하반기 얼리버드",
+          "active": true
+        }
+      ]
+    },
+    "e-EDU Eco": {
+      "count": 3,
+      "active": 3,
+      "promos": [
+        {
+          "id": "77bcdfcb-f6b1-4af1-8034-54255e77c1ad",
+          "schoolName": "e-EDU Eco",
+          "promoName": "캠퍼스 통합 선착순 이벤트",
+          "active": true
+        },
+        {
+          "id": "487faa48-fc3e-4988-8104-c00fab5d5a4c",
+          "schoolName": "e-EDU Eco",
+          "promoName": "여름캠프 조기할인",
+          "active": true
+        },
+        {
+          "id": "aed14c03-4bd8-425c-9c0a-48ca19365400",
+          "schoolName": "e-EDU Eco",
+          "promoName": "BESA 하반기 얼리버드",
+          "active": true
+        }
+      ]
+    },
+    "BESTA": {
+      "count": 3,
+      "active": 3,
+      "promos": [
+        {
+          "id": "ddef7b22-0bd8-434e-b08d-bf8e85bc424a",
+          "schoolName": "BESTA",
+          "promoName": "온라인 후기 작성 할인",
+          "active": true
+        },
+        {
+          "id": "b46e69e4-414b-4644-b712-9c5489345007",
+          "schoolName": "BESTA",
+          "promoName": "라메디 비수기",
+          "active": true
+        },
+        {
+          "id": "ca48b340-34ec-4fb0-a309-02026c261157",
+          "schoolName": "BESTA",
+          "promoName": "라메디 성수기",
+          "active": true
+        }
+      ]
+    },
+    "CIA CAMP": {
+      "count": 3,
+      "active": 3,
+      "promos": [
+        {
+          "id": "748547fd-73fc-46e0-be3e-7807b94c80b2",
+          "schoolName": "CIA CAMP",
+          "promoName": "비수기 가족캠프",
+          "active": true
+        },
+        {
+          "id": "7d1e5505-5ff1-4f86-a96a-f688d78dcbed",
+          "schoolName": "CIA CAMP",
+          "promoName": "여름캠프 얼리버드",
+          "active": true
+        },
+        {
+          "id": "2d3f7720-238c-4718-a64e-7b5f8844ae6c",
+          "schoolName": "CIA CAMP",
+          "promoName": "성수기 가족연수",
+          "active": true
+        }
+      ]
+    },
+    "ELSA": {
+      "count": 3,
+      "active": 3,
+      "promos": [
+        {
+          "id": "8e562958-5e47-465b-bc9a-d1d504f06202",
+          "schoolName": "ELSA",
+          "promoName": "성수기 가족연수",
+          "active": true
+        },
+        {
+          "id": "444b021f-9eb2-4e04-92ef-143ddbf57fd6",
+          "schoolName": "ELSA",
+          "promoName": "비수기 성인 프로모션",
+          "active": true
+        },
+        {
+          "id": "7e2f68e7-a056-4c61-81e4-b4767e412235",
+          "schoolName": "ELSA",
+          "promoName": "비수기 가족연수",
+          "active": true
+        }
+      ]
+    },
+    "PILAedu": {
+      "count": 3,
+      "active": 3,
+      "promos": [
+        {
+          "id": "c814a2af-0085-4c82-b871-a93cfa3cfab8",
+          "schoolName": "PILAedu",
+          "promoName": "워크인 프로그램",
+          "active": true
+        },
+        {
+          "id": "7b159b74-d321-4324-87e1-c16a24ce9c53",
+          "schoolName": "PILAedu",
+          "promoName": "비/성수기 기숙사별 프로모션",
+          "active": true
+        },
+        {
+          "id": "9a9a05cf-76c2-459c-b6f3-063856961828",
+          "schoolName": "PILAedu",
+          "promoName": "신 강의동 체험단",
+          "active": true
+        }
+      ]
+    },
+    "SMEAG Encanto": {
+      "count": 3,
+      "active": 3,
+      "promos": [
+        {
+          "id": "5392c88b-2bca-43d2-9430-d1d3ed912399",
+          "schoolName": "SMEAG Encanto",
+          "promoName": "성수기 유학원 할인",
+          "active": true
+        },
+        {
+          "id": "3a1129c3-5bd3-4d7e-9a9a-69058c5cbf72",
+          "schoolName": "SMEAG Encanto",
+          "promoName": "재등록 할인",
+          "active": true
+        },
+        {
+          "id": "f25a808e-ce50-44bc-b348-f5db383d195b",
+          "schoolName": "SMEAG Encanto",
+          "promoName": "비수기 체험단",
+          "active": true
+        }
+      ]
+    },
+    "TALK": {
+      "count": 3,
+      "active": 3,
+      "promos": [
+        {
+          "id": "6ce9a1b4-76a5-417a-b04b-abc29243c64d",
+          "schoolName": "TALK",
+          "promoName": "3인실 기숙사 할인",
+          "active": true
+        },
+        {
+          "id": "b7e91657-6a95-4867-b3a8-12a62867e27b",
+          "schoolName": "TALK",
+          "promoName": "비수기 학비 할인 (TALK4/6/시니어)",
+          "active": true
+        },
+        {
+          "id": "8796da33-5a32-4a42-bdf4-691fd2e0125f",
+          "schoolName": "TALK",
+          "promoName": "비수기 학비 할인 (TOEIC/IELTS/하이브리드)",
+          "active": true
+        }
+      ]
+    },
+    "BaekAkGwan": {
+      "count": 2,
+      "active": 2,
+      "promos": [
+        {
+          "id": "3bb6a632-beba-4d1b-872a-de20b2f02f66",
+          "schoolName": "BaekAkGwan",
+          "promoName": "상반기 비수기 프로모션",
+          "active": true
+        },
+        {
+          "id": "783f64fe-ebbf-4419-8099-b2b4c356c003",
+          "schoolName": "BaekAkGwan",
+          "promoName": "하반기 비수기 프로모션",
+          "active": true
+        }
+      ]
+    },
+    "EG": {
+      "count": 2,
+      "active": 2,
+      "promos": [
+        {
+          "id": "c76be1bf-00d9-4a9b-ac9c-056bce0bbdb7",
+          "schoolName": "EG",
+          "promoName": "성수기 가족연수",
+          "active": true
+        },
+        {
+          "id": "a4fa405a-f942-41ca-8386-b6e3c39c57d1",
+          "schoolName": "EG",
+          "promoName": "상반기 프로모션 (성인/가족)",
+          "active": true
+        }
+      ]
+    },
+    "MK (Iloilo)": {
+      "count": 2,
+      "active": 2,
+      "promos": [
+        {
+          "id": "0f0b9b99-72ac-4db0-9419-ca0d96a7cfcd",
+          "schoolName": "MK (Iloilo)",
+          "promoName": "여름 주니어캠프 얼리버드",
+          "active": true
+        },
+        {
+          "id": "d5fea120-6a89-44b7-976a-2afd2473c5e4",
+          "schoolName": "MK (Iloilo)",
+          "promoName": "1+1 특파원 프로모션",
+          "active": true
+        }
+      ]
+    },
+    "We Woori": {
+      "count": 2,
+      "active": 2,
+      "promos": [
+        {
+          "id": "d7f8ffeb-63ca-481c-85c8-be06b89c715a",
+          "schoolName": "We Woori",
+          "promoName": "상반기 비수기 프로모션",
+          "active": true
+        },
+        {
+          "id": "561cd851-3fd9-4ec4-9a57-2b4612b80d8c",
+          "schoolName": "We Woori",
+          "promoName": "하반기 비수기 프로모션",
+          "active": true
+        }
+      ]
+    },
+    "BECI SPARTA": {
+      "count": 2,
+      "active": 2,
+      "promos": [
+        {
+          "id": "23438349-ec8c-4c16-862f-fe7dbabf29df",
+          "schoolName": "BECI SPARTA",
+          "promoName": "장기등록 할인 (8주이상)",
+          "active": true
+        },
+        {
+          "id": "6e345c8e-b63c-4795-8811-e3871eea87ef",
+          "schoolName": "BECI SPARTA",
+          "promoName": "BESA 하반기 얼리버드",
+          "active": true
+        }
+      ]
+    },
+    "IZAM CITY": {
+      "count": 2,
+      "active": 2,
+      "promos": [
+        {
+          "id": "3ded7902-114e-4921-8867-89ae6cb16ee4",
+          "schoolName": "IZAM CITY",
+          "promoName": "후기조건 수업료 30% 할인",
+          "active": true
+        },
+        {
+          "id": "9dae87d8-4496-42e7-9b53-0197d4828918",
+          "schoolName": "IZAM CITY",
+          "promoName": "2026 상반기 10% 할인",
+          "active": true
+        }
+      ]
+    },
+    "Boracay COCO": {
+      "count": 1,
+      "active": 1,
+      "promos": [
+        {
+          "id": "53299ef7-49ab-4abd-8ab4-7ed662e4d5d4",
+          "schoolName": "Boracay COCO",
+          "promoName": "비수기 프로모션 20%",
+          "active": true
+        }
+      ]
+    },
+    "GITC (CNC)": {
+      "count": 1,
+      "active": 1,
+      "promos": [
+        {
+          "id": "06496265-424f-431e-9335-75d4c964ab1e",
+          "schoolName": "GITC (CNC)",
+          "promoName": "여름 주니어캠프 얼리버드",
+          "active": true
+        }
+      ]
+    },
+    "HELP (clark)": {
+      "count": 1,
+      "active": 1,
+      "promos": [
+        {
+          "id": "d8febb7c-d883-4941-80f9-89d5976154a5",
+          "schoolName": "HELP (clark)",
+          "promoName": "비수기 프로모션",
+          "active": true
+        }
+      ]
+    },
+    "CIJ JUNIOR": {
+      "count": 1,
+      "active": 0,
+      "promos": [
+        {
+          "id": "a9f904a9-9146-478d-bae3-7597480cd964",
+          "schoolName": "CIJ JUNIOR",
+          "promoName": "여름방학 주니어캠프 얼리버드",
+          "active": false
+        }
+      ]
+    },
+    "CPI": {
+      "count": 1,
+      "active": 1,
+      "promos": [
+        {
+          "id": "31bbea78-c90f-44b9-8d8e-0a1af748e2e0",
+          "schoolName": "CPI",
+          "promoName": "하반기 프로모션",
+          "active": true
+        }
+      ]
+    },
+    "CPILS": {
+      "count": 1,
+      "active": 1,
+      "promos": [
+        {
+          "id": "0bd5bd09-0633-47bc-a797-b7d837c17478",
+          "schoolName": "CPILS",
+          "promoName": "TOEIC/IELTS 공인테스트 무료",
+          "active": true
+        }
+      ]
+    },
+    "EDU TALK": {
+      "count": 1,
+      "active": 1,
+      "promos": [
+        {
+          "id": "9f54f779-12de-41ff-8b97-222dadeddfb9",
+          "schoolName": "EDU TALK",
+          "promoName": "주니어캠프 조기 등록 혜택",
+          "active": true
+        }
+      ]
+    },
+    "English Fella 1·2캠퍼스": {
+      "count": 1,
+      "active": 1,
+      "promos": [
+        {
+          "id": "ec029216-d001-49ca-9b0b-d89d5ae34fc9",
+          "schoolName": "English Fella 1·2캠퍼스",
+          "promoName": "장기 등록 할인",
+          "active": true
+        }
+      ]
+    },
+    "GLC": {
+      "count": 1,
+      "active": 1,
+      "promos": [
+        {
+          "id": "b5717c80-df60-4a2f-8dcc-479defe2a39c",
+          "schoolName": "GLC",
+          "promoName": "하반기 프로모션 (4주당 10만원)",
+          "active": true
+        }
+      ]
+    },
+    "PHILINTER": {
+      "count": 1,
+      "active": 1,
+      "promos": [
+        {
+          "id": "c8462d07-d843-4f8e-95af-fcdad9e46df4",
+          "schoolName": "PHILINTER",
+          "promoName": "성인연수 CALA 10%",
+          "active": true
+        }
+      ]
+    },
+    "PJ Academy": {
+      "count": 1,
+      "active": 1,
+      "promos": [
+        {
+          "id": "351ebba1-c718-450d-9366-6490c08d1f3b",
+          "schoolName": "PJ Academy",
+          "promoName": "동시등록 / 재방문 할인",
+          "active": true
+        }
+      ]
+    },
+    "QQ English BFC·ITP": {
+      "count": 1,
+      "active": 1,
+      "promos": [
+        {
+          "id": "9f733979-734c-457c-867a-fc713c46dfdc",
+          "schoolName": "QQ English BFC·ITP",
+          "promoName": "하반기 프로모션",
+          "active": true
+        }
+      ]
+    },
+    "SK119": {
+      "count": 1,
+      "active": 1,
+      "promos": [
+        {
+          "id": "f0bc7aa7-73cb-4f8e-9f6e-8af990663099",
+          "schoolName": "SK119",
+          "promoName": "가족연수 비수기 15% 할인",
+          "active": true
+        }
+      ]
+    },
+    "eROOM": {
+      "count": 1,
+      "active": 1,
+      "promos": [
+        {
+          "id": "0a90d584-9622-40c4-91ca-82447c87420f",
+          "schoolName": "eROOM",
+          "promoName": "비수기 프로모션",
+          "active": true
+        }
+      ]
+    }
+  }
+}
