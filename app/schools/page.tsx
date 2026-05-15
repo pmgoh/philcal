@@ -283,11 +283,12 @@ function SchoolCard({ school, selectMode, selected, onToggle }: {
       </div>
 
       {/* 통계 */}
-      <div className="grid grid-cols-3 gap-2 mb-3">
+      <div className="grid grid-cols-4 gap-2 mb-3">
         {[
-          { label: '코스', count: school.courses?.length ?? 0 },
-          { label: '기숙사', count: school.dormitories?.length ?? 0 },
-          { label: '서차지', count: school.surcharges?.length ?? 0 },
+          { label: '코스',    count: school.courses?.length ?? 0 },
+          { label: '기숙사',  count: school.dormitories?.length ?? 0 },
+          { label: '패키지',  count: school.packages?.length ?? 0 },
+          { label: '서차지',  count: school.surcharges?.length ?? 0 },
         ].map(({ label, count }) => (
           <div key={label} className="bg-gray-50 rounded-lg p-2 text-center">
             <div className="text-lg font-bold text-gray-800">{count}</div>

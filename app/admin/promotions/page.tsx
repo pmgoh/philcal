@@ -174,7 +174,20 @@ export default function PromotionsPage() {
     try {
       const text = await file.text()
       const data = JSON.parse(text)
-      const arr = (Array.isArray(data) ? data : [data]) as Record<string, unknown>[]
+
+      // 다양한 형식 지원:
+      //   - 배열: [{ ... }, { ... }]
+      //   - 단일 객체: { promoName: ..., ... }
+      //   - 래퍼 객체: { promotions: [...] } (학원별 JSON 파일에서 자주 쓰임)
+      //   - 래퍼 객체: { _meta: {...}, promotions: [...] }
+      let arr: Record<string, unknown>[]
+      if (Array.isArray(data)) {
+        arr = data as Record<string, unknown>[]
+      } else if (data && typeof data === 'object' && Array.isArray((data as Record<string, unknown>).promotions)) {
+        arr = (data as { promotions: Record<string, unknown>[] }).promotions
+      } else {
+        arr = [data as Record<string, unknown>]
+      }
 
       const sample = arr[0]
       if (!sample) return
@@ -183,7 +196,7 @@ export default function PromotionsPage() {
         return
       }
       if (!('promoName' in sample) && !('schoolName' in sample)) {
-        setImportDiff({ added: [], updated: [], unchanged: [], incoming: [], blocked: '❌ 프로모션 JSON 형식이 아닙니다. promoName, schoolName 필드를 확인하세요.' })
+        setImportDiff({ added: [], updated: [], unchanged: [], incoming: [], blocked: '❌ 프로모션 JSON 형식이 아닙니다. promoName, schoolName 필드를 확인하세요.\n\n지원 형식:\n  - 배열: [{...}, {...}]\n  - 래퍼 객체: { "promotions": [...] }' })
         return
       }
 

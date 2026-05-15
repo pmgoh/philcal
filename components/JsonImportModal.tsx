@@ -149,9 +149,19 @@ export default function JsonImportModal({ onClose, onImported }: Props) {
   }, [])
 
   const processJson = (text: string) => {
-    setParseError(''); setErrors([]); setParsed(null); setParsedArray(null); setDiffs({})
+    setParseError(''); setErrors([]); setParsedArray(null); setParsed(null); setDiffs({})
     try {
-      const raw = JSON.parse(text)
+      let raw = JSON.parse(text)
+
+      // 래퍼 객체 풀기: { schools: [...] } 또는 { school: {...} } 형식 지원
+      if (raw && typeof raw === 'object' && !Array.isArray(raw)) {
+        if (Array.isArray((raw as Record<string, unknown>).schools)) {
+          raw = (raw as { schools: unknown[] }).schools
+        } else if ((raw as Record<string, unknown>).school && typeof (raw as Record<string, unknown>).school === 'object') {
+          raw = (raw as { school: unknown }).school
+        }
+      }
+
       const sample = Array.isArray(raw) ? raw[0] : raw
 
       // ── 타입 검증: 프로모션/기타 JSON 차단 ──────────────────────────────
