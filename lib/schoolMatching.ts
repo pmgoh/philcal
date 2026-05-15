@@ -319,6 +319,38 @@ export function getSchoolCode(school: School): string {
 }
 
 /**
+ * PromoEntry → 매칭되는 모든 School 찾기 (같은 schoolCode 공유 학원 여러 개 가능)
+ *
+ * 사용 케이스: 사용자가 한 학원의 시즌별 row를 따로 등록한 경우
+ * (예: SMEAG_ENCANTO 비수기 / 성수기로 학원 2개 등록 → 둘 다 반환)
+ */
+export function findSchoolsForPromo(
+  promo: PromoEntry | { schoolId?: string; schoolCode?: string; schoolName?: string; region?: string },
+  schools: School[],
+  aliasIdx?: AliasIndex,
+): School[] {
+  const targetCode = (promo as { schoolCode?: string }).schoolCode
+    ?? (promo.schoolName ? resolveSchoolCode(promo.schoolName) : null)
+
+  // schoolCode 일치하는 학원 모두 (region 필터 추가 가능)
+  if (targetCode) {
+    const byCode = schools.filter(s => getSchoolCode(s) === targetCode)
+    if (byCode.length > 0) {
+      const targetRegion = (promo as { region?: string }).region
+      if (targetRegion) {
+        const inRegion = byCode.filter(s => s.region === targetRegion)
+        if (inRegion.length > 0) return inRegion
+      }
+      return byCode
+    }
+  }
+
+  // code 매칭 실패 시 단일 매칭으로 fallback
+  const single = findSchoolForPromo(promo, schools, aliasIdx)
+  return single ? [single] : []
+}
+
+/**
  * PromoEntry → 매칭되는 School 찾기
  *
  * 매칭 우선순위:

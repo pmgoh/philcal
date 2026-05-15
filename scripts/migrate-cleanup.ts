@@ -197,7 +197,8 @@ async function main() {
     })
   }
 
-  // 중복 매칭 검사 (같은 Firestore 학원에 여러 master가 매칭되는 경우)
+  // 중복 매칭 검사 (정보용 표시만, 자동 적용은 모두 진행)
+  // 현재 구조에서는 같은 학원의 시즌별 row가 여러 개일 수 있으므로 같은 code 공유 허용
   const reverseMap = new Map<string, MasterSchool[]>()
   for (const { master, school } of matched) {
     const list = reverseMap.get(school.id) ?? []
@@ -206,11 +207,11 @@ async function main() {
   }
   const conflicts = Array.from(reverseMap.entries()).filter(([, masters]) => masters.length > 1)
   if (conflicts.length > 0) {
-    console.log('\n⚠️ 중복 매칭 경고 (같은 학원에 여러 master 매칭됨):')
+    console.log('\n⚠️ 동일 학원에 여러 master 매칭됨 (시즌별 분리 학원으로 추정):')
     conflicts.forEach(([schoolId, masters]) => {
       const school = schools.find((s) => s.id === schoolId)
-      console.log(`  Firestore "${school?.name}" ←`)
-      masters.forEach((m) => console.log(`    ${m.code} (${m.campus})`))
+      console.log(`  Firestore "${school?.name}" ← 첫 번째 master(${masters[0].code}) 적용`)
+      masters.forEach((m, idx) => console.log(`    ${idx === 0 ? '✓' : ' '} ${m.code} (${m.campus})`))
     })
   }
 
@@ -256,7 +257,15 @@ async function main() {
   console.log('schools에 schoolCode 부여 중...')
   let updated = 0
   const skipExisting = matched.filter(({ school }) => school.schoolCode)
-  const toUpdate = matched.filter(({ school }) => !school.schoolCode)
+  // 같은 schoolId에 여러 master 매칭된 경우 첫 번째만 (중복 적용 시 마지막 값으로 덮어쓰기 방지)
+  const seenSchoolIds = new Set<string>()
+  const toUpdate: typeof matched = []
+  for (const m of matched) {
+    if (m.school.schoolCode) continue
+    if (seenSchoolIds.has(m.school.id)) continue
+    seenSchoolIds.add(m.school.id)
+    toUpdate.push(m)
+  }
 
   for (let i = 0; i < toUpdate.length; i += 400) {
     const slice = toUpdate.slice(i, i + 400)

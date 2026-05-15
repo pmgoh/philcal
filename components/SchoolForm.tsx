@@ -195,6 +195,32 @@ export default function SchoolForm({ schoolId }: Props) {
                     </select>
                   </div>
                 </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      학원 코드 (schoolCode)
+                      <span className="text-xs text-gray-400 ml-2">프로모션 매칭용 - 영문 대문자_언더스코어 (예: BANANA_KIDS, CIA_CAMP)</span>
+                    </label>
+                    <input
+                      value={school.schoolCode ?? ''}
+                      onChange={e => update('schoolCode', e.target.value.toUpperCase().replace(/[^A-Z0-9_]/g, ''))}
+                      className="input-field font-mono"
+                      placeholder="예: SMEAG_ENCANTO"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      캠퍼스
+                      <span className="text-xs text-gray-400 ml-2">선택 - 같은 학원 여러 캠퍼스 구분용</span>
+                    </label>
+                    <input
+                      value={school.campus ?? ''}
+                      onChange={e => update('campus', e.target.value)}
+                      className="input-field"
+                      placeholder="예: 본원 / 비수기 / 성수기 등"
+                    />
+                  </div>
+                </div>
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">학원 형태</label>
