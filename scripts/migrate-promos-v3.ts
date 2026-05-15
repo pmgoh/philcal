@@ -161,41 +161,44 @@ function parseDate(text: string): string | null {
 
 /**
  * 텍스트에서 기간(start~end) 추출
- * 처리 형식:
- *   - "26.02.22 ~ 26.06.27"
- *   - "26/02/22~26/06/27"
- *   - "26년 2월 22일 ~ 5월 24일"
- *   - "26년 2월~12월"
- *   - "26년 3월 ~ 26년 6월 30일까지" (끝에 "까지" 붙음)
- *   - "2026년 9월 1일부터 2026년 12월 30일까지"
- *   - "8월 16일 ~ 11월 29일 시작 자" (연도 누락 - 가장 가까운 미래 연도)
- *   - "5월 24일 등록자까지" (등록 마감 - 시작일은 오늘)
- *   - "2026 1월 1일 등록생부터" (시작 단독)
- *   - "26년 3월" (단일 월 → 그 달의 1~말일)
- *   - "26년 12월 / 27년 2월" (분리 표기 → 첫 항목의 1일~마지막날)
- *   - "[적용기간] 26.03.01 ~ 26.05.30"
- *   - "출국일 기준 26.06.30 이전"
- *   - 멀티 기간: 첫 번째 기간만 사용
+ *
+ * 원칙:
+ * - 시작일이 자료에 명시되지 않으면 null 반환 → 호출하는 쪽에서 alwaysApply=true로 처리
+ * - 절대 오늘 날짜를 시작일로 임의 박지 않음
+ * - 멀티 기간 (예: "26/2/8 ~ 6/14 / 26/9/6 ~ 12/27")은 첫 번째 기간만 사용
  */
 function parseDateRange(text: string): ParsedRange | null {
   if (!text) return null
   const cleaned = text.replace(/\s+/g, ' ').trim()
 
-  // 멀티 기간 첫 번째 추출 시도용 - 너무 적극적이면 전체 fallback
-  const firstSegment = cleaned.split(/[/]\s*\d{2,4}/)[0]
-  const target = firstSegment.length < cleaned.length / 2 ? cleaned : firstSegment
+  // ── 1. 명시적 시작~끝 패턴 (가장 우선) ────────────────────────────────
+  // "26.02.22 ~ 26.06.27" / "26/2/8 ~ 6/14" / "26.02.22~26.06.27"
+  // 시작쪽은 풀 날짜, 끝쪽은 풀 날짜 또는 월/일만
+  let m
 
-  // 1. 명시적 ~ 또는 - 구분자 (숫자 점/슬래시/하이픈 표기)
-  // "26.02.22 ~ 26.06.27"
-  let m = target.match(/(\d{2,4}[.\/\-]\d{1,2}[.\/\-]\d{1,2})\s*[~\-–至到]\s*(\d{2,4}[.\/\-]\d{1,2}[.\/\-]\d{1,2})/)
+  // (a) 풀 날짜 ~ 풀 날짜
+  m = cleaned.match(/(\d{2,4})[.\/\-](\d{1,2})[.\/\-](\d{1,2})\s*[~\-–]\s*(\d{2,4})[.\/\-](\d{1,2})[.\/\-](\d{1,2})/)
   if (m) {
-    const s = parseDate(m[1])
-    const e = parseDate(m[2])
-    if (s && e) return { startDate: s, endDate: e }
+    const y1 = normalizeYear(Number(m[1]))
+    const y2 = normalizeYear(Number(m[4]))
+    return {
+      startDate: `${y1}-${pad2(Number(m[2]))}-${pad2(Number(m[3]))}`,
+      endDate: `${y2}-${pad2(Number(m[5]))}-${pad2(Number(m[6]))}`,
+    }
   }
 
-  // 한글 풀형: "2026년 9월 1일부터 2026년 12월 30일까지" / "26년 2월 22일 ~ 5월 24일"
-  m = target.match(/(\d{2,4})\s*년\s*(\d{1,2})\s*월\s*(\d{1,2})\s*일\s*(?:부터|이후)?\s*[~\-–]?\s*(?:(\d{2,4})\s*년\s*)?(\d{1,2})\s*월\s*(\d{1,2})\s*일\s*(?:까지|이전)?/)
+  // (b) 풀 날짜 ~ 월/일 (같은 연도 가정): "26/2/8 ~ 6/14"
+  m = cleaned.match(/(\d{2,4})[.\/\-](\d{1,2})[.\/\-](\d{1,2})\s*[~\-–]\s*(\d{1,2})[.\/\-](\d{1,2})(?:\s|$|[^.\/\-\d])/)
+  if (m) {
+    const y = normalizeYear(Number(m[1]))
+    return {
+      startDate: `${y}-${pad2(Number(m[2]))}-${pad2(Number(m[3]))}`,
+      endDate: `${y}-${pad2(Number(m[4]))}-${pad2(Number(m[5]))}`,
+    }
+  }
+
+  // (c) 한국어 풀형: "2026년 9월 1일 ~ 2026년 12월 30일" / "26년 2월 22일 ~ 5월 24일"
+  m = cleaned.match(/(\d{2,4})\s*년\s*(\d{1,2})\s*월\s*(\d{1,2})\s*일\s*(?:부터|이후)?\s*[~\-–]?\s*(?:(\d{2,4})\s*년\s*)?(\d{1,2})\s*월\s*(\d{1,2})\s*일\s*(?:까지|이전)?/)
   if (m) {
     const y1 = normalizeYear(Number(m[1]))
     const y2 = m[4] ? normalizeYear(Number(m[4])) : y1
@@ -205,8 +208,8 @@ function parseDateRange(text: string): ParsedRange | null {
     }
   }
 
-  // 한국어 + "까지" 한쪽만 명시: "26년 3월 ~ 26년 6월 30일까지" (시작에 일 없음)
-  m = target.match(/(\d{2,4})\s*년\s*(\d{1,2})\s*월\s*[~\-–]\s*(?:(\d{2,4})\s*년\s*)?(\d{1,2})\s*월\s*(\d{1,2})\s*일/)
+  // (d) 한국어 + "까지" 한쪽만: "26년 3월 ~ 26년 6월 30일까지" (시작은 월만)
+  m = cleaned.match(/(\d{2,4})\s*년\s*(\d{1,2})\s*월\s*[~\-–]\s*(?:(\d{2,4})\s*년\s*)?(\d{1,2})\s*월\s*(\d{1,2})\s*일/)
   if (m) {
     const y1 = normalizeYear(Number(m[1]))
     const y2 = m[3] ? normalizeYear(Number(m[3])) : y1
@@ -216,8 +219,8 @@ function parseDateRange(text: string): ParsedRange | null {
     }
   }
 
-  // 한글 짧음: "26년 2월~12월" 또는 "26년 6월"
-  m = target.match(/(\d{2,4})\s*년\s*(\d{1,2})\s*월\s*[~\-–]\s*(\d{1,2})\s*월/)
+  // (e) 한국어 월-월 범위: "26년 2월~12월"
+  m = cleaned.match(/(\d{2,4})\s*년\s*(\d{1,2})\s*월\s*[~\-–]\s*(\d{1,2})\s*월/)
   if (m) {
     const y = normalizeYear(Number(m[1]))
     const m1 = Number(m[2])
@@ -229,8 +232,8 @@ function parseDateRange(text: string): ParsedRange | null {
     }
   }
 
-  // 단일 월: "26년 3월" → 그 달 1일~말일
-  m = target.match(/^(?:\[[^\]]*\]\s*)?(\d{2,4})\s*년\s*(\d{1,2})\s*월(?:\s|$|\D)/)
+  // (f) 단일 월: "26년 3월" → 그 달 1일~말일
+  m = cleaned.match(/^(?:\[[^\]]*\]\s*)?(\d{2,4})\s*년\s*(\d{1,2})\s*월(?:\s|$|[^\d])/)
   if (m) {
     const y = normalizeYear(Number(m[1]))
     const mo = Number(m[2])
@@ -241,55 +244,21 @@ function parseDateRange(text: string): ParsedRange | null {
     }
   }
 
-  // 월/일 범위 (연도 누락): "8월 16일 ~ 11월 29일 시작 자" → 가장 가까운 미래 연도
-  m = target.match(/(\d{1,2})\s*월\s*(\d{1,2})\s*일\s*[~\-–]\s*(\d{1,2})\s*월\s*(\d{1,2})\s*일/)
-  if (m) {
-    const today = new Date()
-    let y = today.getFullYear()
-    // 연도 추정: target에 "26년" "2026" 같은 연도 단서가 있으면 사용
-    const yMatch = target.match(/(?:^|\D)(?:20)?(\d{2})\s*년/)
-    if (yMatch) y = normalizeYear(Number(yMatch[1]))
-    const m1 = Number(m[1])
-    const m2 = Number(m[3])
-    // 시작월이 현재월보다 과거면 다음 연도로
-    if (!yMatch && m1 < today.getMonth() + 1) y += 1
-    return {
-      startDate: `${y}-${pad2(m1)}-${pad2(Number(m[2]))}`,
-      endDate: `${y}-${pad2(m2)}-${pad2(Number(m[4]))}`,
+  // (g) 월/일 ~ 월/일 (같은 연도, 자료에 "26년" 등 연도 단서 있을 때만)
+  const yearMatch = cleaned.match(/(?:^|\D)(?:20)?(\d{2})\s*년/)
+  if (yearMatch) {
+    m = cleaned.match(/(\d{1,2})\s*월\s*(\d{1,2})\s*일\s*[~\-–]\s*(\d{1,2})\s*월\s*(\d{1,2})\s*일/)
+    if (m) {
+      const y = normalizeYear(Number(yearMatch[1]))
+      return {
+        startDate: `${y}-${pad2(Number(m[1]))}-${pad2(Number(m[2]))}`,
+        endDate: `${y}-${pad2(Number(m[3]))}-${pad2(Number(m[4]))}`,
+      }
     }
   }
 
-  // "3~7월, 9~11월" (멀티 - 첫 번째만)
-  m = target.match(/(\d{1,2})\s*[~\-–]\s*(\d{1,2})\s*월/)
-  if (m) {
-    const now = new Date()
-    const y = now.getFullYear()
-    const m1 = Number(m[1])
-    const m2 = Number(m[2])
-    const lastDay = new Date(y, m2, 0).getDate()
-    return {
-      startDate: `${y}-${pad2(m1)}-01`,
-      endDate: `${y}-${pad2(m2)}-${pad2(lastDay)}`,
-    }
-  }
-
-  // 등록 마감 단독: "5월 24일 등록자까지" → 시작은 오늘, 종료는 그 날짜
-  m = target.match(/(\d{1,2})\s*월\s*(\d{1,2})\s*일\s*(?:등록자\s*까지|까지|이전)/)
-  if (m) {
-    const today = new Date()
-    let y = today.getFullYear()
-    const yMatch = target.match(/(?:^|\D)(?:20)?(\d{2})\s*년/)
-    if (yMatch) y = normalizeYear(Number(yMatch[1]))
-    const mo = Number(m[1])
-    if (!yMatch && mo < today.getMonth() + 1) y += 1
-    return {
-      startDate: today.toISOString().split('T')[0],
-      endDate: `${y}-${pad2(mo)}-${pad2(Number(m[2]))}`,
-    }
-  }
-
-  // "2026 1월 1일 등록생부터" — 시작 단독, 종료는 연말
-  m = target.match(/(\d{4})\s*(\d{1,2})\s*월\s*(\d{1,2})\s*일\s*(?:등록생)?\s*(?:부터|이후)/)
+  // (h) "2026 1월 1일 부터" — 시작 단독, 종료는 연말
+  m = cleaned.match(/(\d{4})\s*(\d{1,2})\s*월\s*(\d{1,2})\s*일\s*(?:등록생)?\s*(?:부터|이후)/)
   if (m) {
     const y = Number(m[1])
     return {
@@ -297,8 +266,7 @@ function parseDateRange(text: string): ParsedRange | null {
       endDate: `${y}-12-31`,
     }
   }
-  // 같은 패턴 (한글 "년"): "2026년 1월 1일 부터"
-  m = target.match(/(\d{2,4})\s*년\s*(\d{1,2})\s*월\s*(\d{1,2})\s*일\s*(?:등록생)?\s*(?:부터|이후)/)
+  m = cleaned.match(/(\d{2,4})\s*년\s*(\d{1,2})\s*월\s*(\d{1,2})\s*일\s*(?:등록생)?\s*(?:부터|이후)/)
   if (m) {
     const y = normalizeYear(Number(m[1]))
     return {
@@ -307,8 +275,8 @@ function parseDateRange(text: string): ParsedRange | null {
     }
   }
 
-  // "2026년 12월 일정 이내에 입학" — 단일 월 only
-  m = target.match(/(\d{2,4})\s*년\s*(\d{1,2})\s*월\s*일정\s*이내/)
+  // (i) "2026년 12월 일정 이내에 입학" — 단일 월
+  m = cleaned.match(/(\d{2,4})\s*년\s*(\d{1,2})\s*월\s*일정\s*이내/)
   if (m) {
     const y = normalizeYear(Number(m[1]))
     const mo = Number(m[2])
@@ -319,21 +287,9 @@ function parseDateRange(text: string): ParsedRange | null {
     }
   }
 
-  // "06.28-08.22 제외" — 부정 표현 (적용 X) 이므로 스킵
-  if (/제외|적용\s*X|적용\s*x|적용\s*안/.test(target)) {
-    return null
-  }
-
-  // 단일 날짜만 (등록 마감): "~ 26.05.31까지" 또는 "26/05/31까지"
-  m = target.match(/(?:~|까지)?\s*(\d{2,4}[.\/\-]\d{1,2}[.\/\-]\d{1,2})\s*(?:까지|이전)?/)
-  if (m) {
-    const e = parseDate(m[1])
-    if (e) {
-      const today = new Date().toISOString().split('T')[0]
-      return { startDate: today, endDate: e }
-    }
-  }
-
+  // ── 매칭 실패 ─────────────────────────────────────────────────────────
+  // 끝-단독 표기 ("5월 24일 등록자까지" 등)는 시작일을 임의로 박지 않고 null 반환
+  // → 호출 측에서 alwaysApply=true로 처리하고 자료 원문은 applyPeriodNote에 보존
   return null
 }
 
@@ -382,8 +338,23 @@ function convertV3ToFirestore(
   }
 
   if (parsed) {
-    startDate = parsed.startDate
-    endDate = parsed.endDate
+    // 시작 > 끝 역전 검증 → 이상하면 alwaysApply로 안전 처리
+    const sDate = new Date(parsed.startDate)
+    const eDate = new Date(parsed.endDate)
+    if (isNaN(sDate.getTime()) || isNaN(eDate.getTime())) {
+      warnings.push(`날짜 변환 실패: ${parsed.startDate} ~ ${parsed.endDate}`)
+      alwaysApply = true
+      startDate = ''
+      endDate = ''
+    } else if (sDate.getTime() > eDate.getTime()) {
+      warnings.push(`시작일이 종료일보다 늦음 (${parsed.startDate} > ${parsed.endDate}) — alwaysApply로 처리`)
+      alwaysApply = true
+      startDate = ''
+      endDate = ''
+    } else {
+      startDate = parsed.startDate
+      endDate = parsed.endDate
+    }
   } else if (periodSources.length === 0) {
     // 자료에 기간 정보 자체가 없음 → alwaysApply
     alwaysApply = true
