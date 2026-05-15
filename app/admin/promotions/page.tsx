@@ -1,9 +1,9 @@
 'use client'
 import { useState, useEffect, useRef } from 'react'
 import AdminLayout from '@/components/AdminLayout'
-import { getPromotions, savePromotion, deletePromotion, saveBatchPromotions, getSchools, PromoEntry } from '@/lib/db'
+import { getPromotions, savePromotion, deletePromotion, deleteBatchPromotions, saveBatchPromotions, getSchools, PromoEntry } from '@/lib/db'
 import { v4 as uuid } from 'uuid'
-import { Plus, Trash2, Upload, Bell, BellOff, Search, RefreshCw, X, Link2 } from 'lucide-react'
+import { Plus, Trash2, Upload, Bell, BellOff, Search, RefreshCw, X, Link2, CheckSquare, Square } from 'lucide-react'
 import { findSchoolForPromo, buildAliasIndex, type AliasMap } from '@/lib/schoolMatching'
 import schoolAliases from '@/data/school-aliases.json'
 import type { School } from '@/types'
@@ -68,6 +68,10 @@ export default function PromotionsPage() {
   const [importing, setImporting] = useState(false)
   const fileRef = useRef<HTMLInputElement>(null)
 
+  // 일괄 선택 상태
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set())
+  const [selectMode, setSelectMode] = useState(false)
+
   const aliasIdx = buildAliasIndex(schoolAliases as unknown as AliasMap)
 
   const load = async () => {
@@ -118,6 +122,38 @@ export default function PromotionsPage() {
   const handleDelete = async (id: string) => {
     if (!confirm('삭제하시겠습니까?')) return
     await deletePromotion(id); load()
+  }
+
+  // 일괄삭제 핸들러
+  const toggleSelectMode = () => {
+    setSelectMode(prev => !prev)
+    setSelectedIds(new Set())
+  }
+  const toggleOne = (id: string) => {
+    setSelectedIds(prev => {
+      const next = new Set(prev)
+      if (next.has(id)) next.delete(id)
+      else next.add(id)
+      return next
+    })
+  }
+  const selectAllFiltered = () => {
+    setSelectedIds(new Set(filtered.map(p => p.id)))
+  }
+  const clearSelection = () => setSelectedIds(new Set())
+  const handleBatchDelete = async () => {
+    if (selectedIds.size === 0) return
+    if (!confirm(`선택된 ${selectedIds.size}개 프로모션을 모두 삭제하시겠습니까?\n\n이 작업은 되돌릴 수 없습니다.`)) return
+    if (selectedIds.size >= 50 && !confirm(`정말 ${selectedIds.size}개를 한 번에 삭제하시겠습니까?\n다시 한 번 확인합니다.`)) return
+    try {
+      await deleteBatchPromotions(Array.from(selectedIds))
+      setSelectedIds(new Set())
+      setSelectMode(false)
+      load()
+    } catch (e) {
+      console.error(e)
+      alert('일괄삭제 중 오류가 발생했습니다.')
+    }
   }
 
   const handleToggleActive = async (p: PromoEntry) => {
@@ -225,6 +261,15 @@ export default function PromotionsPage() {
             </p>
           </div>
           <div className="flex gap-2 flex-wrap">
+            <button onClick={toggleSelectMode}
+              className={`flex items-center gap-1.5 text-sm px-3 py-2 rounded-lg border transition-colors ${
+                selectMode
+                  ? 'bg-red-50 border-red-300 text-red-700'
+                  : 'border-gray-200 text-gray-600 hover:bg-gray-50'
+              }`}>
+              {selectMode ? <X size={14} /> : <CheckSquare size={14} />}
+              {selectMode ? '선택 취소' : '선택 모드'}
+            </button>
             <button onClick={() => {
               const blob = new Blob([JSON.stringify(promos, null, 2)], { type: 'application/json' })
               const url = URL.createObjectURL(blob)
@@ -263,6 +308,31 @@ export default function PromotionsPage() {
           </label>
           <button onClick={load} className="btn-secondary p-2"><RefreshCw size={14} /></button>
         </div>
+
+        {/* 일괄삭제 모드 액션 바 */}
+        {selectMode && (
+          <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-xl flex items-center justify-between gap-2 flex-wrap">
+            <div className="flex items-center gap-3 flex-wrap">
+              <span className="text-sm font-medium text-red-800">
+                {selectedIds.size}개 선택됨 (현재 화면: {filtered.length}개)
+              </span>
+              <button onClick={selectAllFiltered}
+                className="text-xs px-2 py-1 bg-white border border-red-300 text-red-700 rounded hover:bg-red-100">
+                현재 화면 전체 선택
+              </button>
+              {selectedIds.size > 0 && (
+                <button onClick={clearSelection}
+                  className="text-xs px-2 py-1 bg-white border border-gray-200 text-gray-600 rounded hover:bg-gray-50">
+                  선택 해제
+                </button>
+              )}
+            </div>
+            <button onClick={handleBatchDelete} disabled={selectedIds.size === 0}
+              className="flex items-center gap-1.5 px-4 py-1.5 bg-red-600 text-white rounded-lg text-sm font-medium hover:bg-red-700 disabled:opacity-40 disabled:cursor-not-allowed">
+              <Trash2 size={14} /> 선택 일괄 삭제 ({selectedIds.size})
+            </button>
+          </div>
+        )}
 
         {loading ? (
           <div className="text-center py-12 text-gray-400">불러오는 중...</div>
@@ -467,6 +537,15 @@ export default function PromotionsPage() {
                     </div>
                   ) : (
                     <div className="flex items-start gap-3 p-3 sm:p-4">
+                      {/* 선택 모드 체크박스 */}
+                      {selectMode && (
+                        <button onClick={() => toggleOne(p.id)}
+                          className="flex-shrink-0 mt-1 p-1 hover:bg-gray-100 rounded">
+                          {selectedIds.has(p.id)
+                            ? <CheckSquare size={18} className="text-red-600" />
+                            : <Square size={18} className="text-gray-400" />}
+                        </button>
+                      )}
                       <div className="flex flex-col items-center gap-1 flex-shrink-0 w-16">
                         <DdayBadge promo={p} />
                         <span className="text-xs text-gray-400">{p.region}</span>

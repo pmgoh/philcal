@@ -69,6 +69,17 @@ export async function deleteSchool(id: string): Promise<void> {
   await deleteDoc(doc(db, 'schools', id))
 }
 
+export async function deleteBatchSchools(ids: string[]): Promise<void> {
+  const { writeBatch } = await import('firebase/firestore')
+  const CHUNK = 400
+  for (let i = 0; i < ids.length; i += CHUNK) {
+    const slice = ids.slice(i, i + CHUNK)
+    const batch = writeBatch(db)
+    for (const id of slice) batch.delete(doc(db, 'schools', id))
+    await batch.commit()
+  }
+}
+
 // ─── 환율 설정 ────────────────────────────────────────────────────────────────
 export async function getExchangeRate(): Promise<ExchangeRate> {
   const snap = await getDoc(doc(db, 'settings', 'exchangeRate'))
@@ -184,6 +195,18 @@ export async function savePromotion(promo: PromoEntry): Promise<void> {
 
 export async function deletePromotion(id: string): Promise<void> {
   await deleteDoc(doc(db, 'promotions', id))
+}
+
+export async function deleteBatchPromotions(ids: string[]): Promise<void> {
+  const { writeBatch } = await import('firebase/firestore')
+  // Firestore writeBatch는 한 번에 500개까지. 청크 분할
+  const CHUNK = 400
+  for (let i = 0; i < ids.length; i += CHUNK) {
+    const slice = ids.slice(i, i + CHUNK)
+    const batch = writeBatch(db)
+    for (const id of slice) batch.delete(doc(db, 'promotions', id))
+    await batch.commit()
+  }
 }
 
 export async function saveBatchPromotions(promos: PromoEntry[]): Promise<void> {

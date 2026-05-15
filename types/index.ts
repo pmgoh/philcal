@@ -168,10 +168,18 @@ export interface PackageAdditionalRule {
   currency: Currency
 }
 
+export interface PackageSchedule {
+  startDate: string       // YYYY-MM-DD
+  endDate: string         // YYYY-MM-DD
+  season?: string         // "비수기" | "성수기" | 그 외 자유 입력 (이 일정의 시즌)
+  weeks?: number          // 일정 주수 (기본 패키지 주수와 다를 때)
+  note?: string
+}
+
 export interface Package {
   id: string
   label: string                       // 패키지명
-  season: string                      // "비수기" | "성수기" | "연중" | 자유 입력
+  season: string                      // "비수기" | "성수기" | "연중" | 자유 입력 (전체 기본 시즌, 일정별로 다를 수 있음)
   currency: Currency
 
   // 가격 행렬: 행=주수, 열=인원/구성
@@ -187,7 +195,8 @@ export interface Package {
 
   startDate?: string
   endDate?: string
-  includesLocalFees?: boolean   // true = 패키지에 현지납부비 포함 → 별도 청구 안 함
+  schedules?: PackageSchedule[]       // 기간이 정해진 패키지의 일정 목록 (시즌별 가격이 다르거나 4주 단위 고정 일정인 경우)
+  includesLocalFees?: boolean         // true = 패키지에 현지납부비 포함 → 별도 청구 안 함
   note?: string
 }
 
