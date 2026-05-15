@@ -270,12 +270,13 @@ export function calculateQuote(input: QuoteInput, rate: ExchangeRate): CalcResul
   let surchargeDiscount = 0
   const appliedPromoLabels: string[] = []
 
-  const promoWidth = (p: typeof school.promotions[0]) => {
+  const schoolPromotions = school.promotions ?? []
+  const promoWidth = (p: typeof schoolPromotions[0]) => {
     if (p.alwaysApply) return Infinity
     if (!p.startDate || !p.endDate) return Infinity
     return new Date(p.endDate).getTime() - new Date(p.startDate).getTime()
   }
-  const sortedPromos = [...(school.promotions ?? [])].sort((a, b) => promoWidth(a) - promoWidth(b))
+  const sortedPromos = [...schoolPromotions].sort((a, b) => promoWidth(a) - promoWidth(b))
 
   for (const promo of sortedPromos) {
     // 이미 non-stackable 프로모션이 적용됐으면 non-stackable은 스킵

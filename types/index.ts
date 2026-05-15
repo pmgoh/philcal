@@ -222,7 +222,7 @@ export interface School {
   courses: Course[]
   dormitories: Dormitory[]
   surcharges: Surcharge[]
-  promotions: Promotion[]
+  promotions: Promotion[] | null   // null = 프로모션 미확인 상태 (data-health 페이지가 표시)
   localFees: LocalFee[]
   packages: Package[]
   refundPolicy: string
