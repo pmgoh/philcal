@@ -111,6 +111,7 @@ export interface AgencyWeekTier {
 export interface PromoEntry {
   id: string
   schoolName: string       // 표시용 (구버전 호환)
+  schoolId?: string        // 학원 문서 ID 참조 (구버전 호환)
   schoolCode?: string      // 신구조: 학원 매칭 키 (영문 대문자_숫자_언더스코어)
   promoName: string
   region: string
