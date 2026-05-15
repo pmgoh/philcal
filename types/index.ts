@@ -210,6 +210,8 @@ export interface PriceIncrease {
 export interface School {
   id: string
   name: string
+  schoolCode?: string                 // v3: 영문 대문자_언더스코어 (예: BANANA_KIDS). promotions 매칭 키.
+  campus?: string                     // v3: 캠퍼스명 (예: "본원", "프리미엄 캠퍼스")
   region: Region
   schoolType: SchoolType
   programTags: ProgramTag[]

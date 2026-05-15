@@ -3,9 +3,10 @@ import { useState, useEffect, useRef } from 'react'
 import AdminLayout from '@/components/AdminLayout'
 import { getSchools, getExchangeRate, getPromotions } from '@/lib/db'
 import type { School, ExchangeRate, LocalFee } from '@/types'
-import { Send, RotateCcw, Copy, Check, ChevronDown, ChevronUp, DollarSign, FileText } from 'lucide-react'
+import { Send, RotateCcw, Copy, Check, ChevronDown, ChevronUp, DollarSign, FileText, MessageSquare, Calculator } from 'lucide-react'
 import { formatKrw } from '@/lib/utils'
 import QuoteFormModal from '@/components/QuoteFormModal'
+import DirectCalculator from '@/components/DirectCalculator'
 import type { CalcResult } from '@/lib/calcEngine'
 
 // ── 메시지 타입 ───────────────────────────────────────────────────────────────
@@ -437,6 +438,7 @@ export default function QuotePage() {
   const [loading, setLoading] = useState(false)
   const [copied, setCopied] = useState(false)
   const [quoteModal, setQuoteModal] = useState<{ calcResult: CalcResult; school: School; startDate: string; localFees: LocalFee[] } | null>(null)
+  const [tab, setTab] = useState<'chat' | 'direct'>('chat')
   const bottomRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
@@ -570,19 +572,59 @@ export default function QuotePage() {
         {/* 헤더 */}
         <div className="flex items-center justify-between px-3 md:px-6 py-3 border-b border-gray-200 bg-white shadow-sm flex-shrink-0">
           <div>
-            <h1 className="text-sm md:text-base font-bold text-gray-900">견적 상담</h1>
+            <h1 className="text-sm md:text-base font-bold text-gray-900">견적 챗봇</h1>
             <p className="text-xs text-gray-400">{schools.length}개 학원 · ₱1={rate.phpToKrw}원</p>
           </div>
           <div className="flex gap-1.5">
-            <button onClick={copyLastResult} className="btn-secondary flex items-center gap-1 text-xs py-1.5 px-2.5">
-              {copied ? <><Check size={11} /> 복사됨</> : <><Copy size={11} /> <span className="hidden sm:inline">마지막 견적 </span>복사</>}
-            </button>
-            <button onClick={reset} className="btn-secondary flex items-center gap-1 text-xs py-1.5 px-2.5">
-              <RotateCcw size={11} /> 초기화
-            </button>
+            {tab === 'chat' && (
+              <>
+                <button onClick={copyLastResult} className="btn-secondary flex items-center gap-1 text-xs py-1.5 px-2.5">
+                  {copied ? <><Check size={11} /> 복사됨</> : <><Copy size={11} /> <span className="hidden sm:inline">마지막 견적 </span>복사</>}
+                </button>
+                <button onClick={reset} className="btn-secondary flex items-center gap-1 text-xs py-1.5 px-2.5">
+                  <RotateCcw size={11} /> 초기화
+                </button>
+              </>
+            )}
           </div>
         </div>
 
+        {/* 탭 */}
+        <div className="flex border-b border-gray-200 bg-white flex-shrink-0">
+          <button
+            onClick={() => setTab('chat')}
+            className={`flex items-center gap-1.5 px-4 py-2.5 text-sm font-medium border-b-2 transition-colors ${
+              tab === 'chat'
+                ? 'border-blue-600 text-blue-700'
+                : 'border-transparent text-gray-500 hover:text-gray-700'
+            }`}
+          >
+            <MessageSquare size={14} />
+            챗봇 상담
+          </button>
+          <button
+            onClick={() => setTab('direct')}
+            className={`flex items-center gap-1.5 px-4 py-2.5 text-sm font-medium border-b-2 transition-colors ${
+              tab === 'direct'
+                ? 'border-blue-600 text-blue-700'
+                : 'border-transparent text-gray-500 hover:text-gray-700'
+            }`}
+          >
+            <Calculator size={14} />
+            직접 계산
+          </button>
+        </div>
+
+        {/* 직접 계산 탭 */}
+        {tab === 'direct' && (
+          <div className="flex-1 overflow-y-auto bg-gray-50">
+            <DirectCalculator schools={schools} promos={promotions} rate={rate} />
+          </div>
+        )}
+
+        {/* 챗봇 탭 (기존 내용) */}
+        {tab === 'chat' && (
+        <>
         {/* 메시지 영역 */}
         <div className="flex-1 overflow-y-auto px-3 md:px-4 py-4 space-y-3">
           {messages.map((msg, i) => {
@@ -724,6 +766,8 @@ export default function QuotePage() {
           </div>
           <p className="text-xs text-gray-400 mt-1 hidden md:block">Enter 전송 · Shift+Enter 줄바꿈</p>
         </div>
+        </>
+        )}
       </div>
 
       {/* 견적서 모달 */}

@@ -8,7 +8,8 @@
     "build": "next build",
     "start": "next start",
     "migrate:dry": "tsx scripts/migrate-promos-v3.ts",
-    "migrate:apply": "tsx scripts/migrate-promos-v3.ts --apply"
+    "migrate:apply": "tsx scripts/migrate-promos-v3.ts --apply",
+    "migrate:cleanup": "tsx scripts/migrate-cleanup.ts"
   },
   "keywords": [],
   "author": "",
