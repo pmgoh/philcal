@@ -6,7 +6,9 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start"
+    "start": "next start",
+    "migrate:dry": "tsx scripts/migrate-promos-v3.ts",
+    "migrate:apply": "tsx scripts/migrate-promos-v3.ts --apply"
   },
   "keywords": [],
   "author": "",
@@ -28,6 +30,7 @@
     "uuid": "^11.0.0"
   },
   "devDependencies": {
-    "@types/uuid": "^10.0.0"
+    "@types/uuid": "^10.0.0",
+    "tsx": "^4.19.0"
   }
 }
