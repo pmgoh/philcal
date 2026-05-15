@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import AdminLayout from '@/components/AdminLayout'
 import { getSchools, getPromotions, type PromoEntry } from '@/lib/db'
-import { findSchoolForPromo, buildAliasIndex, normalizeSchoolName, findSimilarSchoolNames, type AliasMap } from '@/lib/schoolMatching'
+import { findSchoolForPromo, buildAliasIndex, findSimilarSchoolNames, type AliasMap } from '@/lib/schoolMatching'
 import schoolAliases from '@/data/school-aliases.json'
 import type { School } from '@/types'
 import { AlertTriangle, Link2, Building2, Tag, RefreshCw, ChevronRight } from 'lucide-react'
@@ -36,11 +36,11 @@ export default function DataHealthPage() {
 
   const aliasIdx = buildAliasIndex(schoolAliases as unknown as AliasMap)
 
-  // ── 미연결 프로모션 (orphan promos) ────────────────────────────────────────
+  // ── 미연결 프로모션 (orphan promos) - v3 schoolCode 포함 매칭 ─────────────
   const orphanGroups: OrphanGroup[] = (() => {
     const orphans = promos.filter(p => {
       const matched = findSchoolForPromo(
-        { schoolId: p.schoolId, schoolName: p.schoolName },
+        { schoolId: p.schoolId, schoolCode: p.schoolCode, schoolName: p.schoolName, region: p.region },
         schools,
         aliasIdx
       )
@@ -82,7 +82,6 @@ export default function DataHealthPage() {
   return (
     <AdminLayout>
       <div className="p-4 md:p-6 max-w-5xl mx-auto">
-        {/* 헤더 */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-5">
           <div>
             <h1 className="text-xl font-bold text-gray-900 flex items-center gap-2">
@@ -100,7 +99,6 @@ export default function DataHealthPage() {
           </button>
         </div>
 
-        {/* 탭 */}
         <div className="flex gap-1 mb-4 border-b border-gray-200">
           <TabButton
             active={tab === 'orphan_promos'}
@@ -119,7 +117,6 @@ export default function DataHealthPage() {
           />
         </div>
 
-        {/* ── 미연결 프로모션 ── */}
         {tab === 'orphan_promos' && (
           <div className="space-y-3">
             {orphanGroups.length === 0 ? (
@@ -164,7 +161,7 @@ export default function DataHealthPage() {
                           ))}
                         </div>
                         <div className="text-xs text-gray-400 mt-1.5">
-                          같은 학원이라면 위 학원의 편집 페이지에서 "{g.schoolName}"의 프로모션을 연결할 수 있습니다.
+                          같은 학원이라면 위 학원의 편집 페이지에서 &ldquo;{g.schoolName}&rdquo;의 프로모션을 연결할 수 있습니다.
                         </div>
                       </div>
                     )}
@@ -189,7 +186,6 @@ export default function DataHealthPage() {
           </div>
         )}
 
-        {/* ── 프로모션 미확인 학원 ── */}
         {tab === 'unknown_schools' && (
           <div className="space-y-3">
             {unknownPromoSchools.length === 0 ? (
@@ -198,7 +194,7 @@ export default function DataHealthPage() {
               <>
                 <p className="text-xs text-gray-500">
                   학원은 등록되어 있지만 프로모션 정보가 입력되지 않았습니다.
-                  견적 봇은 이 학원의 견적에 "프로모션 미확인" 경고를 표시합니다.
+                  견적 봇은 이 학원의 견적에 &ldquo;프로모션 미확인&rdquo; 경고를 표시합니다.
                 </p>
                 {unknownPromoSchools.map(s => (
                   <div key={s.id} className="card p-4 flex items-center gap-3">

@@ -3,22 +3,42 @@ import { useState, useEffect, useRef } from 'react'
 import AdminLayout from '@/components/AdminLayout'
 import { getPromotions, savePromotion, deletePromotion, saveBatchPromotions, getSchools, PromoEntry } from '@/lib/db'
 import { v4 as uuid } from 'uuid'
-import { Plus, Trash2, Upload, Bell, BellOff, Search, Filter, RefreshCw, X, Link2 } from 'lucide-react'
+import { Plus, Trash2, Upload, Bell, BellOff, Search, RefreshCw, X, Link2 } from 'lucide-react'
 import { findSchoolForPromo, buildAliasIndex, type AliasMap } from '@/lib/schoolMatching'
 import schoolAliases from '@/data/school-aliases.json'
 import type { School } from '@/types'
 
 const REGIONS = ['전체', '세부', '바기오', '마닐라', '기타']
 
+// v3 호환 D-day 계산
 function getDdays(endDate: string): number {
+  if (!endDate) return NaN
   const today = new Date(); today.setHours(0,0,0,0)
   const end = new Date(endDate); end.setHours(0,0,0,0)
+  if (isNaN(end.getTime())) return NaN
   return Math.ceil((end.getTime() - today.getTime()) / 86400000)
 }
 
-function DdayBadge({ endDate, active }: { endDate: string; active: boolean }) {
-  if (!active) return <span className="text-xs px-2 py-0.5 rounded-full bg-gray-100 text-gray-400">비활성</span>
-  const d = getDdays(endDate)
+// 만료 여부 (v3 호환)
+// - alwaysApply=true → 만료 안 됨
+// - endDate 없음/잘못됨 → 만료 안 됨 (자료 원문에 기간 없는 경우 - 상시/성수기 등)
+function isExpired(p: PromoEntry): boolean {
+  if (p.alwaysApply) return false
+  const d = getDdays(p.endDate)
+  if (isNaN(d)) return false
+  return d < 0
+}
+
+function isActiveValid(p: PromoEntry): boolean {
+  if (!p.active) return false
+  return !isExpired(p)
+}
+
+function DdayBadge({ promo }: { promo: PromoEntry }) {
+  if (!promo.active) return <span className="text-xs px-2 py-0.5 rounded-full bg-gray-100 text-gray-400">비활성</span>
+  if (promo.alwaysApply) return <span className="text-xs px-2 py-0.5 rounded-full bg-blue-50 text-blue-700">상시</span>
+  const d = getDdays(promo.endDate)
+  if (isNaN(d)) return <span className="text-xs px-2 py-0.5 rounded-full bg-purple-50 text-purple-700">기간없음</span>
   if (d < 0) return <span className="text-xs px-2 py-0.5 rounded-full bg-gray-200 text-gray-500">만료</span>
   if (d === 0) return <span className="text-xs px-2 py-0.5 rounded-full bg-red-600 text-white font-bold animate-pulse">D-day</span>
   if (d <= 7)  return <span className="text-xs px-2 py-0.5 rounded-full bg-red-100 text-red-700 font-bold">D-{d}</span>
@@ -27,10 +47,12 @@ function DdayBadge({ endDate, active }: { endDate: string; active: boolean }) {
   return <span className="text-xs px-2 py-0.5 rounded-full bg-green-50 text-green-700">D-{d}</span>
 }
 
-function urgencyLevel(endDate: string, active: boolean): number {
-  if (!active) return 999
-  const d = getDdays(endDate)
-  if (d < 0) return 998
+function urgencyLevel(p: PromoEntry): number {
+  if (!p.active) return 9999
+  if (p.alwaysApply) return 500
+  const d = getDdays(p.endDate)
+  if (isNaN(d)) return 600
+  if (d < 0) return 9998
   return d
 }
 
@@ -46,13 +68,12 @@ export default function PromotionsPage() {
   const [importing, setImporting] = useState(false)
   const fileRef = useRef<HTMLInputElement>(null)
 
-  // 별칭 사전 인덱스 — 한 번만 빌드
   const aliasIdx = buildAliasIndex(schoolAliases as unknown as AliasMap)
 
   const load = async () => {
     setLoading(true)
     const [data, schs] = await Promise.all([getPromotions(), getSchools()])
-    setPromos(data.sort((a, b) => urgencyLevel(a.endDate, a.active) - urgencyLevel(b.endDate, b.active)))
+    setPromos(data.sort((a, b) => urgencyLevel(a) - urgencyLevel(b)))
     setSchools(schs)
     setLoading(false)
   }
@@ -60,25 +81,34 @@ export default function PromotionsPage() {
   useEffect(() => { load() }, [])
 
   const filtered = promos.filter(p => {
-    const expired = getDdays(p.endDate) < 0
-    if (!showExpired && expired) return false
+    if (!showExpired && isExpired(p)) return false
     if (regionFilter !== '전체' && p.region !== regionFilter) return false
     if (search && !p.schoolName.toLowerCase().includes(search.toLowerCase()) &&
         !p.promoName.toLowerCase().includes(search.toLowerCase())) return false
     return true
   })
 
-  const urgentCount = promos.filter(p => p.active && getDdays(p.endDate) >= 0 && getDdays(p.endDate) <= 7).length
-  const soonCount = promos.filter(p => p.active && getDdays(p.endDate) > 7 && getDdays(p.endDate) <= 30).length
+  const activeCount = promos.filter(p => isActiveValid(p)).length
+  const urgentCount = promos.filter(p => {
+    if (!isActiveValid(p) || p.alwaysApply) return false
+    const d = getDdays(p.endDate)
+    return !isNaN(d) && d >= 0 && d <= 7
+  }).length
+  const soonCount = promos.filter(p => {
+    if (!isActiveValid(p) || p.alwaysApply) return false
+    const d = getDdays(p.endDate)
+    return !isNaN(d) && d > 7 && d <= 30
+  }).length
 
   const handleSave = async (p: PromoEntry) => {
-    // schoolId 자동 매칭: 사용자가 명시적으로 schoolId를 안 줬으면 schoolName으로 찾아본다
     let toSave = p
-    if (!p.schoolId && p.schoolName) {
-      const matched = findSchoolForPromo({ schoolName: p.schoolName }, schools, aliasIdx)
-      if (matched) {
-        toSave = { ...p, schoolId: matched.id }
-      }
+    if (!p.schoolId) {
+      const matched = findSchoolForPromo(
+        { schoolCode: p.schoolCode, schoolName: p.schoolName, region: p.region },
+        schools,
+        aliasIdx,
+      )
+      if (matched) toSave = { ...p, schoolId: matched.id }
     }
     await savePromotion(toSave)
     setEditId(null); setEditData({})
@@ -110,7 +140,6 @@ export default function PromotionsPage() {
       const data = JSON.parse(text)
       const arr = (Array.isArray(data) ? data : [data]) as Record<string, unknown>[]
 
-      // 타입 검증: 학원 JSON 차단
       const sample = arr[0]
       if (!sample) return
       if ('courses' in sample || 'dormitories' in sample) {
@@ -135,7 +164,6 @@ export default function PromotionsPage() {
           'alwaysApply','stackable','applyToCourses','applyToDorms','applyToSurcharge','condition',
           'details','active','note','agencyDiscountNote','agencyDiscountType',
           'agencyDiscountValue','agencyDiscountApplyTo','isUrgent','urgentDays'
-          // updatedAt/createdAt 제외 — 타임스탬프 차이는 변경사항 아님
         ]
         const normalize = (v: unknown) => {
           if (v === null || v === undefined || v === '') return ''
@@ -156,10 +184,13 @@ export default function PromotionsPage() {
     if (!importDiff) return
     setImporting(true)
     try {
-      // 임포트되는 promo에 schoolId가 없으면 자동 매칭 시도
       const enriched = importDiff.incoming.map(p => {
         if (p.schoolId) return p
-        const matched = findSchoolForPromo({ schoolName: p.schoolName }, schools, aliasIdx)
+        const matched = findSchoolForPromo(
+          { schoolCode: p.schoolCode, schoolName: p.schoolName, region: p.region },
+          schools,
+          aliasIdx,
+        )
         return matched ? { ...p, schoolId: matched.id } : p
       })
       await saveBatchPromotions(enriched)
@@ -184,12 +215,11 @@ export default function PromotionsPage() {
   return (
     <AdminLayout>
       <div className="p-4 md:p-6 max-w-5xl mx-auto">
-        {/* 헤더 */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-5">
           <div>
             <h1 className="text-xl font-bold text-gray-900">프로모션 관리</h1>
             <p className="text-sm text-gray-500 mt-0.5">
-              전체 {promos.filter(p => p.active && getDdays(p.endDate) >= 0).length}개 활성
+              전체 {activeCount}개 활성
               {urgentCount > 0 && <span className="ml-2 text-red-600 font-semibold">🔴 D-7 이내 {urgentCount}개</span>}
               {soonCount > 0 && <span className="ml-2 text-yellow-600 font-semibold">🟡 D-30 이내 {soonCount}개</span>}
             </p>
@@ -217,7 +247,6 @@ export default function PromotionsPage() {
           </div>
         </div>
 
-        {/* 필터 */}
         <div className="flex flex-col sm:flex-row gap-2 mb-4">
           <div className="relative flex-1">
             <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
@@ -235,7 +264,6 @@ export default function PromotionsPage() {
           <button onClick={load} className="btn-secondary p-2"><RefreshCw size={14} /></button>
         </div>
 
-        {/* 테이블 */}
         {loading ? (
           <div className="text-center py-12 text-gray-400">불러오는 중...</div>
         ) : (
@@ -244,17 +272,19 @@ export default function PromotionsPage() {
             {filtered.map(p => {
               const isEditing = editId === p.id
               const d = getDdays(p.endDate)
-              const expired = d < 0
+              const expired = isExpired(p)
+              const hasNoDates = !p.alwaysApply && isNaN(d)
 
               return (
                 <div key={p.id} className={`card rounded-xl border overflow-hidden transition-colors ${
                   expired || !p.active ? 'opacity-50' :
+                  hasNoDates ? 'border-purple-200 bg-purple-50/20' :
+                  p.alwaysApply ? 'border-blue-200 bg-blue-50/20' :
                   d <= 7 ? 'border-red-200 bg-red-50/30' :
                   d <= 14 ? 'border-orange-200 bg-orange-50/20' :
                   d <= 30 ? 'border-yellow-200 bg-yellow-50/20' : 'border-gray-200'
                 }`}>
                   {isEditing ? (
-                    // 편집 모드
                     <div className="p-4 space-y-3">
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                         <div>
@@ -294,7 +324,6 @@ export default function PromotionsPage() {
                         </div>
                       </div>
 
-                      {/* ── 견적 계산 연동 섹션 ── */}
                       <div className="border border-blue-200 rounded-xl p-3 bg-blue-50/30 space-y-3">
                         <p className="text-xs font-semibold text-blue-700">🧮 견적 계산 설정</p>
                         <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
@@ -358,7 +387,6 @@ export default function PromotionsPage() {
                           className="input-field text-sm" placeholder="메모" />
                       </div>
 
-                      {/* 유학원 할인 섹션 */}
                       <div className="border border-red-200 rounded-xl p-3 bg-red-50/30 space-y-2">
                         <p className="text-xs font-semibold text-red-700">✂️ 이 프로모션 활성 시 유학원 할인</p>
                         <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
@@ -371,6 +399,7 @@ export default function PromotionsPage() {
                               <option value="none">유학원 할인 없음</option>
                               <option value="percent">% 할인</option>
                               <option value="amount_per_week">주당 금액</option>
+                              <option value="amount_per_4weeks">4주당 금액</option>
                               <option value="amount_flat">고정 금액</option>
                               <option value="reg_fee_only">등록비만 할인</option>
                             </select>
@@ -402,6 +431,7 @@ export default function PromotionsPage() {
                                 <option value="all">전체</option>
                                 <option value="course_only">학비만</option>
                                 <option value="dorm_only">기숙사만</option>
+                                <option value="course_and_dorm">학비+기숙사</option>
                               </select>
                             </div>
                           )}
@@ -436,22 +466,18 @@ export default function PromotionsPage() {
                       </div>
                     </div>
                   ) : (
-                    // 보기 모드
                     <div className="flex items-start gap-3 p-3 sm:p-4">
-                      {/* D-day 배지 */}
                       <div className="flex flex-col items-center gap-1 flex-shrink-0 w-16">
-                        <DdayBadge endDate={p.endDate} active={p.active} />
+                        <DdayBadge promo={p} />
                         <span className="text-xs text-gray-400">{p.region}</span>
                       </div>
 
-                      {/* 내용 */}
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2 flex-wrap mb-1">
                           <span className="font-semibold text-gray-900 text-sm">{p.schoolName}</span>
-                          {/* 미연결 배지 - schoolId가 없거나 schools에 매칭 학원이 없으면 표시 */}
                           {(() => {
                             const matched = findSchoolForPromo(
-                              { schoolId: p.schoolId, schoolName: p.schoolName },
+                              { schoolId: p.schoolId, schoolCode: p.schoolCode, schoolName: p.schoolName, region: p.region },
                               schools,
                               aliasIdx
                             )
@@ -464,28 +490,35 @@ export default function PromotionsPage() {
                           })()}
                           <span className="text-xs text-blue-600 bg-blue-50 px-1.5 py-0.5 rounded">{p.promoName}</span>
                           {p.note && <span className="text-xs text-orange-600">{p.note}</span>}
-                          {/* 유학원 할인 배지 */}
-                          {p.agencyDiscountType === 'none'
+                          {p.agencyDiscountStatus === 'disabled'
+                            ? <span className="text-xs px-1.5 py-0.5 bg-gray-100 text-gray-400 rounded">유학원할인X</span>
+                            : p.agencyDiscountStatus === 'unconfirmed'
+                            ? <span className="text-xs px-1.5 py-0.5 bg-amber-100 text-amber-600 rounded">유학원 확인 필요</span>
+                            : p.agencyDiscountType === 'none'
                             ? <span className="text-xs px-1.5 py-0.5 bg-gray-100 text-gray-400 rounded">유학원할인X</span>
                             : p.agencyDiscountType
                               ? <span className="text-xs px-1.5 py-0.5 bg-red-50 text-red-600 border border-red-200 rounded">
                                   ✂️ {p.agencyDiscountType === 'reg_fee_only' ? `등록비 ${p.agencyDiscountRegFee?.toLocaleString()}원` :
                                        p.agencyDiscountType === 'percent' ? `${p.agencyDiscountValue}%` :
                                        p.agencyDiscountType === 'amount_per_week' ? `${p.agencyDiscountValue?.toLocaleString()}원/주` :
+                                       p.agencyDiscountType === 'amount_per_4weeks' ? `${p.agencyDiscountValue?.toLocaleString()}원/4주` :
                                        `${p.agencyDiscountValue?.toLocaleString()}원`}
                                   {p.agencyDiscountRegFee && p.agencyDiscountType !== 'reg_fee_only' ? ` + 등록비 ${p.agencyDiscountRegFee.toLocaleString()}원` : ''}
                                 </span>
                               : <span className="text-xs text-gray-300">할인미설정</span>
                           }
                         </div>
-                        <p className="text-xs text-gray-600 leading-relaxed line-clamp-2">{p.details}</p>
+                        <p className="text-xs text-gray-600 leading-relaxed line-clamp-2">{p.details || p.promoContent}</p>
                         <p className="text-xs text-gray-400 mt-1">
-                          {p.basisType === 'enrollment_date' ? '등록일' : '연수시작일'} 기준
-                          {' '}· {p.startDate} ~ {p.endDate}
+                          {p.alwaysApply
+                            ? '상시 적용'
+                            : hasNoDates
+                            ? '기간 정보 없음'
+                            : <>{p.basisType === 'enrollment_date' ? '등록일' : '연수시작일'} 기준 · {p.startDate} ~ {p.endDate}</>
+                          }
                         </p>
                       </div>
 
-                      {/* 액션 */}
                       <div className="flex items-center gap-1 flex-shrink-0">
                         <button onClick={() => handleToggleActive(p)} title={p.active ? '비활성화' : '활성화'}
                           className="p-2 rounded-lg hover:bg-gray-100 text-gray-400 hover:text-gray-600">
@@ -508,7 +541,6 @@ export default function PromotionsPage() {
           </div>
         )}
       </div>
-      {/* ── 프로모션 Import Diff 모달 ── */}
       {importDiff && (
         <div className="fixed inset-0 bg-black/50 z-50 flex items-end md:items-center justify-center p-0 md:p-4">
           <div className="bg-white rounded-t-2xl md:rounded-2xl w-full md:max-w-2xl max-h-[90dvh] flex flex-col shadow-xl">
@@ -522,14 +554,12 @@ export default function PromotionsPage() {
                 <div className="p-4 bg-red-50 border border-red-200 rounded-xl text-sm text-red-700">{importDiff.blocked}</div>
               ) : (
                 <>
-                  {/* 요약 */}
                   <div className="flex gap-3 flex-wrap">
                     {importDiff.added.length > 0 && <span className="px-3 py-1.5 bg-green-50 border border-green-200 text-green-700 text-sm rounded-full font-medium">✚ 신규 {importDiff.added.length}개</span>}
                     {importDiff.updated.length > 0 && <span className="px-3 py-1.5 bg-amber-50 border border-amber-200 text-amber-700 text-sm rounded-full font-medium">✎ 변경 {importDiff.updated.length}개</span>}
                     {importDiff.unchanged.length > 0 && <span className="px-3 py-1.5 bg-gray-50 border border-gray-200 text-gray-500 text-sm rounded-full">변경없음 {importDiff.unchanged.length}개</span>}
                   </div>
 
-                  {/* 신규 */}
                   {importDiff.added.length > 0 && (
                     <div>
                       <p className="text-xs font-semibold text-green-700 mb-2">✚ 새로 추가됨</p>
@@ -544,7 +574,6 @@ export default function PromotionsPage() {
                     </div>
                   )}
 
-                  {/* 변경 */}
                   {importDiff.updated.length > 0 && (
                     <div>
                       <p className="text-xs font-semibold text-amber-700 mb-2">✎ 변경됨</p>
