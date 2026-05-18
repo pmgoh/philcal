@@ -16,6 +16,14 @@ const EXTRACT_PROMPT = `엠버시유학 내부 견적 계산 시스템입니다.
 - 응답은 JSON 하나만. { 로 시작 } 로 끝.
 - 코드블록, 설명 텍스트 금지.
 
+[학원 데이터 구조 안내]
+- courses: 정규 코스 (price4Weeks). 시스템이 자동 계산.
+- dorms: 기숙사 (price4Weeks). 시스템이 자동 계산.
+- packages: 가족캠프 등 행렬형 패키지. 시스템이 자동 계산.
+- addCharges: 옵션 비용 (시스템 자동 계산 X). 견적 시 별도 안내 필요.
+  예: CELLA 익스프레서 (1주/2주 단기 옵션), CIA 추가숙박 (1박당), Booster ESL (1주/2주 단독 코스).
+  학생이 해당 옵션 신청 시 calculate에 반영 못 함 → message에 옵션 비용을 명시하고 운영자가 수동 추가하도록 안내.
+
 [필수 확인]
 ① 시작일: "8월 초"→8-04, "8월 중순"→8-11, "8월 말"→8-25.
 ② 코스: 미지정 → 코스 목록 제시
@@ -374,6 +382,16 @@ export async function POST(req: NextRequest) {
         weeks: (p.priceMatrix ?? []).map(r => r.weeks),
       }))
 
+      const additionalCharges = ((s as unknown as { additionalCharges?: Array<Record<string,unknown>> }).additionalCharges ?? [])
+        .map(ac => ({
+          label: ac.label as string,
+          amount: ac.amount as number,
+          unit: ac.unit as string,
+          cur: ac.currency as string,
+          cat: ac.category as string | undefined,
+          note: ac.note as string | undefined,
+        }))
+
       const promoStatus: 'unknown' | 'none' | 'has' =
         s.promotions === null ? 'unknown'
         : (s.promotions ?? []).length === 0 ? 'none'
@@ -392,6 +410,7 @@ export async function POST(req: NextRequest) {
         minW: s.minWeeks,
         short: s.allowShortTerm,
         courses, dorms, packages,
+        addCharges: additionalCharges,
         promos,
         promoStatus,
       }

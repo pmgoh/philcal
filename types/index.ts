@@ -137,6 +137,7 @@ export type LocalFeeChargeUnit =
   | 'per_person'  // 인당
   | 'per_trip'    // 편도당 (픽업/샌딩)
   | 'per_night'   // 박당
+  | 'per_room'    // 방당 (호텔보증금, 가족당 픽업 등)
 
 export interface LocalFee {
   id: string
@@ -215,6 +216,20 @@ export interface PriceIncrease {
   dormitories: PriceIncreaseItem[]
 }
 
+// ─── 추가 옵션 비용 ──────────────────────────────────────────────────────────
+// 자동 계산 대상은 아님 (코스/기숙사/패키지 외 별도 옵션)
+// 견적 봇이 학원 컨텍스트로 인지하여 안내 시 활용
+// 예: CELLA 익스프레서 (1주/2주 + 기숙사별 가격), CIA 추가숙박 (1박당), CIDEC 한 학년 학비, Booster ESL 단기 코스
+export interface AdditionalCharge {
+  id?: string             // 선택. 미설정 시 시스템이 label 기준으로 식별
+  label: string           // 옵션 항목명
+  amount: number          // 금액
+  unit: string            // "1주" | "2주" | "1박" | "4주당" | "1회" 등 자유 입력
+  currency: Currency
+  category?: string       // 분류 (예: "단기옵션" | "추가숙박" | "옵션수업" | "1회성")
+  note?: string
+}
+
 // ─── 학원 ────────────────────────────────────────────────────────────────────
 export interface School {
   id: string
@@ -236,6 +251,7 @@ export interface School {
   promotions: Promotion[] | null   // null = 프로모션 미확인 상태 (data-health 페이지가 표시)
   localFees: LocalFee[]
   packages: Package[]
+  additionalCharges?: AdditionalCharge[]   // 옵션 비용 (자동 계산 X, 견적 봇 안내용)
   refundPolicy: string
   dormitoryRules: string
   generalNotes: string
