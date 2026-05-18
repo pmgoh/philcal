@@ -93,6 +93,13 @@ export interface AgencyDiscount {
   note: string
 }
 
+// ─── 프로모션 주수 구간별 할인 (학원 자체 장기등록 할인용) ────────────────────
+export interface PromotionWeekTier {
+  minWeeks: number       // 이 주수 이상부터 적용
+  maxWeeks?: number      // 미설정 = 상한 없음
+  amount: number         // 할인 금액 (KRW)
+}
+
 export interface Promotion {
   id: string
   label: string
@@ -100,18 +107,21 @@ export interface Promotion {
   alwaysApply: boolean
   startDate: string
   endDate: string
-  discountType: 'percent' | 'amount' | 'amount_per_week' | 'amount_per_4weeks'
+  discountType: 'percent' | 'amount' | 'amount_per_week' | 'amount_per_4weeks' | 'week_tiers'
   discountValue: number
   currency?: Currency
   applyToCourses: boolean
   applyToDorms: boolean
   applyToSurcharge: boolean
+  weekTiers?: PromotionWeekTier[]   // discountType='week_tiers'일 때
   condition?: string
   note?: string
   // 특정 기숙사/코스에만 적용 (빈 배열 또는 미설정 = 전체 적용)
   applicableItems?: string[]
-  // true = 다른 프로모션과 중복 적용 가능 / false(기본) = 단독 적용
+  // stackable 의미 변경: 기본 true (중복 적용 가능). 명시적으로 false 지정 시에만 단독.
   stackable?: boolean
+  // 학원 프로모션과 별개로 적용되는 추가 항목 (예: 학원 자체 장기할인 + 본 프로모션)
+  excludeCourses?: string[]    // 이 코스 IDs는 본 프로모션 적용 제외 (예: GEC, JEC)
   agencyDiscount?: AgencyDiscount | null
 }
 

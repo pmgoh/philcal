@@ -269,6 +269,7 @@ export function calculateQuote(input: QuoteInput, rate: ExchangeRate): CalcResul
   let promotionDiscount = 0
   let surchargeDiscount = 0
   const appliedPromoLabels: string[] = []
+  const appliedPromoDetails: Array<{ label: string; discount: number }> = []
 
   const schoolPromotions = school.promotions ?? []
   const promoWidth = (p: typeof schoolPromotions[0]) => {
@@ -278,11 +279,16 @@ export function calculateQuote(input: QuoteInput, rate: ExchangeRate): CalcResul
   }
   const sortedPromos = [...schoolPromotions].sort((a, b) => promoWidth(a) - promoWidth(b))
 
+  // stackable 기본값: true (명시적 false 시에만 단독)
+  const isStackable = (p: typeof schoolPromotions[0]) => p.stackable !== false
+
   for (const promo of sortedPromos) {
-    // 이미 non-stackable 프로모션이 적용됐으면 non-stackable은 스킵
-    const hasNonStackable = appliedPromoLabels.length > 0 &&
-      sortedPromos.some(p => appliedPromoLabels.includes(p.label) && !p.stackable)
-    if (hasNonStackable && !promo.stackable) continue
+    // 이미 non-stackable 프로모션이 적용됐으면 다른 프로모션은 스킵
+    const hasNonStackableApplied = appliedPromoLabels.length > 0 &&
+      sortedPromos.some(p => appliedPromoLabels.includes(p.label) && !isStackable(p))
+    if (hasNonStackableApplied) continue
+    // 본 프로모션이 non-stackable인데 이미 다른 프로모션이 적용됐으면 스킵
+    if (!isStackable(promo) && appliedPromoLabels.length > 0) continue
 
     // 기간 체크
     if (!promo.startDate && !promo.alwaysApply) continue
@@ -303,7 +309,7 @@ export function calculateQuote(input: QuoteInput, rate: ExchangeRate): CalcResul
           if (other.label === promo.label) return false
           const m2 = other.condition?.match(/(\d+)주/)
           return m2 && Number(m2[1]) > required && Number(m2[1]) <= totalWeeks &&
-            !!other.stackable === !!promo.stackable
+            isStackable(other) === isStackable(promo)
         })
         if (betterExists) continue
       }
@@ -326,8 +332,13 @@ export function calculateQuote(input: QuoteInput, rate: ExchangeRate): CalcResul
     const toDorms     = promo.applyToDorms     !== false
     const toSurcharge = promo.applyToSurcharge !== false
 
-    const targetKrw = (toCourses ? courseItems.reduce((s,i)=>s+i.krwAmount,0) : 0)
-                    + (toDorms   ? dormItems.reduce((s,i)=>s+i.krwAmount,0)   : 0)
+    // excludeCourses: 본 프로모션 적용 제외 코스
+    const excludeIds = ('excludeCourses' in promo ? (promo as { excludeCourses?: string[] }).excludeCourses : undefined) ?? []
+    const courseTargetKrw = toCourses
+      ? courseItems.filter(i => !excludeIds.includes((i as unknown as { courseId?: string }).courseId ?? ''))
+                   .reduce((s,i)=>s+i.krwAmount,0)
+      : 0
+    const targetKrw = courseTargetKrw + (toDorms ? dormItems.reduce((s,i)=>s+i.krwAmount,0) : 0)
 
     let thisDiscount = 0
     if (promo.discountType === 'percent') {
@@ -344,14 +355,29 @@ export function calculateQuote(input: QuoteInput, rate: ExchangeRate): CalcResul
       thisDiscount = toKrw(promo.discountValue, promo.currency ?? 'KRW', rate) * Math.floor(totalWeeks / 4)
     } else if (promo.discountType === 'amount_per_week') {
       thisDiscount = toKrw(promo.discountValue, promo.currency ?? 'KRW', rate) * totalWeeks
+    } else if (promo.discountType === 'week_tiers') {
+      // 주수 구간별 차등 정액 할인 (학원 자체 장기등록 할인 등)
+      const tiers = ('weekTiers' in promo ? (promo as { weekTiers?: Array<{ minWeeks: number; maxWeeks?: number; amount: number }> }).weekTiers : undefined) ?? []
+      // totalWeeks가 minWeeks 이상이면서 가장 큰 amount의 tier를 선택
+      const matched = tiers
+        .filter(t => totalWeeks >= t.minWeeks && (t.maxWeeks == null || totalWeeks <= t.maxWeeks))
+        .sort((a, b) => b.amount - a.amount)[0]
+      if (matched) {
+        thisDiscount = toKrw(matched.amount, promo.currency ?? 'KRW', rate)
+        notes.push(`ℹ️ ${promo.label}: ${matched.minWeeks}주 이상 적용 = ${matched.amount.toLocaleString()}${promo.currency === 'PHP' ? '페소' : '원'}`)
+      } else {
+        continue  // 적용 tier 없음
+      }
     } else {
       thisDiscount = toKrw(promo.discountValue, promo.currency ?? 'KRW', rate)
     }
     promotionDiscount += thisDiscount
     appliedPromoLabels.push(promo.label)
+    appliedPromoDetails.push({ label: promo.label, discount: thisDiscount })
 
     if (!toCourses && toDorms) notes.push(`ℹ️ ${promo.label}: 기숙사비에만 적용`)
     if (toCourses && !toDorms) notes.push(`ℹ️ ${promo.label}: 코스 학비에만 적용`)
+    if (excludeIds.length > 0) notes.push(`ℹ️ ${promo.label}: 일부 코스 제외 (${excludeIds.join(', ')})`)
 
     // agencyDiscount 처리 (v3 status 모델)
     if ('agencyDiscount' in promo) {
@@ -436,13 +462,17 @@ export function calculateQuote(input: QuoteInput, rate: ExchangeRate): CalcResul
       }
     }
 
-    // stackable이 아니면 이후 non-stackable 프로모션 차단 (루프는 계속 — stackable 것들은 계속 적용)
-    if (!promo.stackable) promotionLabel = promo.label
+    // 단독 적용 프로모션 표시 (legacy 호환)
+    if (!isStackable(promo)) promotionLabel = promo.label
   }
 
-  // 여러 프로모션 적용 시 label 표시
+  // 여러 프로모션 적용 시 - 사용자에게 명시
   if (appliedPromoLabels.length > 1) {
     promotionLabel = appliedPromoLabels.join(' + ')
+    notes.push(`ℹ️ 어학원 프로모션 ${appliedPromoLabels.length}개가 중복 적용되었습니다:`)
+    for (const detail of appliedPromoDetails) {
+      notes.push(`  • ${detail.label}: -${detail.discount.toLocaleString()}원`)
+    }
   } else if (appliedPromoLabels.length === 1) {
     promotionLabel = appliedPromoLabels[0]
   }

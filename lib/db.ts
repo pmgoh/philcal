@@ -139,11 +139,13 @@ export interface PromoEntry {
   // ── calcEngine 연동 필드 (legacy 호환) ────────────────────────────────────
   basisType: string                    // 'enrollment_date' | 'start_date'
   alwaysApply?: boolean
-  stackable?: boolean                  // true = 타 프로모션 중복 적용 가능
+  stackable?: boolean                  // 기본 true (중복 적용 가능). 명시적 false 시 단독 적용.
   startDate: string
   endDate: string
-  discountType: string                 // 'percent' | 'amount' | 'amount_per_4weeks' | 'amount_per_week'
+  discountType: string                 // 'percent' | 'amount' | 'amount_per_4weeks' | 'amount_per_week' | 'week_tiers'
   discountValue?: number               // 할인값 (% 또는 원)
+  weekTiers?: Array<{ minWeeks: number; maxWeeks?: number; amount: number }>  // week_tiers 타입일 때
+  excludeCourses?: string[]            // 본 프로모션 제외 코스 IDs (예: GEC, JEC)
   applyToCourses?: boolean
   applyToDorms?: boolean
   applyToSurcharge?: boolean

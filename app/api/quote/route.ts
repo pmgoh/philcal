@@ -21,14 +21,25 @@ const EXTRACT_PROMPT = `엠버시유학 내부 견적 계산 시스템입니다.
 - dorms: 기숙사 (price4Weeks). 시스템이 자동 계산.
 - packages: 가족캠프 등 행렬형 패키지. 시스템이 자동 계산.
 - addCharges: 옵션 비용 (시스템 자동 계산 X). 견적 시 별도 안내 필요.
-  예: CELLA 익스프레서 (1주/2주 단기 옵션), CIA 추가숙박 (1박당), Booster ESL (1주/2주 단독 코스).
+  예: CELLA 익스프레서 (1주/2주 단기 옵션), CIA 추가숙박 (1박당), Booster ESL (1주/2주 단독 코스), 가디언비, CIDEC 한 학년 학비.
   학생이 해당 옵션 신청 시 calculate에 반영 못 함 → message에 옵션 비용을 명시하고 운영자가 수동 추가하도록 안내.
 
-[필수 확인]
-① 시작일: "8월 초"→8-04, "8월 중순"→8-11, "8월 말"→8-25.
-② 코스: 미지정 → 코스 목록 제시
-③ 기숙사: 코스 확인 후 미지정 → 기숙사 목록 제시
-④ 주수: 미지정 → 되물음
+[필수 확인 - 절대 누락 금지]
+모든 견적은 ① 시작일 ② 코스 ③ 기숙사 ④ 주수를 모두 확인 후 계산. 하나라도 빠지면 need_info로 되묻기.
+견적이 새는 가장 흔한 케이스는 기숙사 누락. 코스만 정해지면 즉시 기숙사 확인.
+
+① 시작일: "8월 초"→8-04, "8월 중순"→8-11, "8월 말"→8-25. 미지정 → need_info.
+② 코스: 미지정 → 코스 목록 제시 (need_info)
+③ 기숙사 - 절대 누락 금지:
+   - 코스 확인 후 기숙사 미지정 → 기숙사 목록 제시 (need_info)
+   - 기숙사 목록에 반드시 "워크인(통학, 기숙사 없음)" 옵션을 추가하여 제시. 학원에 워크인 가능 명시가 있거나, 학생이 명시적으로 "통학" 또는 "기숙사 없이" 언급한 경우만 dormitories=[]로 설정.
+   - "기숙사 안 함" / "통학" / "워크인" 같은 명시가 없으면 반드시 기숙사 선택 받기.
+④ 주수: 미지정 → 되물음 (need_info)
+
+[프로모션 중복 적용]
+- 어학원 프로모션은 명시적으로 stackable=false인 경우 외에는 중복 적용 가능.
+- 시스템이 자동으로 적용 가능한 프로모션을 모두 적용하고 사용자에게 알림.
+- 견적 봇이 별도로 안내할 필요 없음 (시스템 메시지로 표시됨).
 
 [응답 형식]
 
@@ -37,6 +48,12 @@ const EXTRACT_PROMPT = `엠버시유학 내부 견적 계산 시스템입니다.
  "courses":[{"courseId":"ID","weeks":4}],
  "dormitories":[{"dormitoryId":"ID1","weeks":2}],
  "packages":[],"specialNote":"","message":""}
+
+워크인(통학) 견적 - 기숙사 없음:
+{"action":"calculate","schoolId":"ID","startDate":"YYYY-MM-DD","enrollmentDate":"YYYY-MM-DD",
+ "courses":[{"courseId":"ID","weeks":4}],
+ "dormitories":[],
+ "packages":[],"specialNote":"워크인(통학) 견적","message":""}
 
 패키지 견적:
 {"action":"calculate","schoolId":"ID","startDate":"YYYY-MM-DD","enrollmentDate":"YYYY-MM-DD",
