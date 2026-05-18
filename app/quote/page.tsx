@@ -24,10 +24,15 @@ interface AssistantResultMessage extends BaseMessage {
   localFeePhp?: number
   localFeeKrwEstimate?: number
   startDate?: string
+  enrollmentDate?: string
   totalWeeks?: number
   surchargeItems?: Array<{ label: string; weeks: number }>
   calcResult?: CalcResult
   school?: School
+  // 검증 봇 결과
+  verification?: string
+  verifying?: boolean
+  verifyError?: string
 }
 
 interface AssistantNeedInfoMessage extends BaseMessage {
@@ -459,6 +464,55 @@ export default function QuotePage() {
     return [...history, { role: 'user' as const, content: userText }]
   }
 
+  const verifyQuote = async (messageIndex: number) => {
+    setMessages(prev => prev.map((m, i) => {
+      if (i !== messageIndex) return m
+      if (m.role !== 'assistant' || m.type !== 'result') return m
+      return { ...(m as AssistantResultMessage), verifying: true, verifyError: undefined }
+    }))
+
+    try {
+      const target = messages[messageIndex]
+      if (target?.role !== 'assistant' || target.type !== 'result') return
+      const m = target as AssistantResultMessage
+
+      const res = await fetch('/api/quote/verify', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          school: m.school,
+          calcResult: m.calcResult,
+          startDate: m.startDate,
+          enrollmentDate: m.enrollmentDate,
+          rate,
+          message: m.content,
+        }),
+      })
+      const data = await res.json()
+
+      setMessages(prev => prev.map((mm, i) => {
+        if (i !== messageIndex) return mm
+        if (mm.role !== 'assistant' || mm.type !== 'result') return mm
+        return {
+          ...(mm as AssistantResultMessage),
+          verifying: false,
+          verification: data.ok ? data.verification : undefined,
+          verifyError: data.ok ? undefined : (data.error ?? '검증 실패'),
+        }
+      }))
+    } catch (err) {
+      setMessages(prev => prev.map((mm, i) => {
+        if (i !== messageIndex) return mm
+        if (mm.role !== 'assistant' || mm.type !== 'result') return mm
+        return {
+          ...(mm as AssistantResultMessage),
+          verifying: false,
+          verifyError: err instanceof Error ? err.message : String(err),
+        }
+      }))
+    }
+  }
+
   const sendMessage = async (text: string) => {
     if (!text.trim() || loading) return
     const userMsg: UserMessage = { role: 'user', type: 'user', content: text.trim() }
@@ -490,6 +544,7 @@ export default function QuotePage() {
           localFeePhp: data.localFeePhp ?? 0,
           localFeeKrwEstimate: data.localFeeKrwEstimate ?? 0,
           startDate: data.startDate,
+          enrollmentDate: data.enrollmentDate,
           totalWeeks: data.totalWeeks,
           surchargeItems: data.surchargeItems ?? [],
           calcResult: data.calcResult,
@@ -656,19 +711,49 @@ export default function QuotePage() {
                           totalWeeks={m.totalWeeks}
                           surchargeItems={m.surchargeItems}
                         />
-                        {/* 견적서 뽑기 버튼 */}
+                        {/* 견적서 뽑기 + 검증 버튼 */}
                         {m.totalWeeks && m.totalWeeks > 0 && (() => {
                           const school = m.school ?? schools.find(s => m.content.includes(s.name))
                           const calcResult = m.calcResult
                           if (!school || !calcResult) return null
                           return (
-                            <button
-                              onClick={() => setQuoteModal({ calcResult, school, startDate: m.startDate ?? '', localFees: m.localFees ?? [] })}
-                              className="mt-3 w-full flex items-center justify-center gap-2 px-3 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-sm font-semibold transition-colors">
-                              <FileText size={15} /> 견적서 뽑기
-                            </button>
+                            <div className="mt-3 flex gap-2">
+                              <button
+                                onClick={() => setQuoteModal({ calcResult, school, startDate: m.startDate ?? '', localFees: m.localFees ?? [] })}
+                                className="flex-1 flex items-center justify-center gap-2 px-3 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-sm font-semibold transition-colors">
+                                <FileText size={15} /> 견적서 뽑기
+                              </button>
+                              <button
+                                onClick={() => verifyQuote(i)}
+                                disabled={m.verifying}
+                                className="flex items-center justify-center gap-2 px-3 py-2.5 bg-amber-100 hover:bg-amber-200 text-amber-800 border border-amber-300 rounded-xl text-sm font-semibold transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+                                {m.verifying ? (
+                                  <>
+                                    <div className="w-3.5 h-3.5 border-2 border-amber-600 border-t-transparent rounded-full animate-spin" />
+                                    검증 중...
+                                  </>
+                                ) : (
+                                  <>🔍 검증하기</>
+                                )}
+                              </button>
+                            </div>
                           )
                         })()}
+                        {/* 검증 결과 */}
+                        {m.verification && (
+                          <div className="mt-3 bg-amber-50 border border-amber-300 rounded-xl px-4 py-3">
+                            <p className="text-xs font-semibold text-amber-700 mb-1.5">🔍 검증 봇 (의심 모드)</p>
+                            <div className="text-sm text-gray-800 leading-relaxed">
+                              <MarkdownText text={m.verification} />
+                            </div>
+                          </div>
+                        )}
+                        {m.verifyError && (
+                          <div className="mt-3 bg-red-50 border border-red-200 rounded-xl px-4 py-3">
+                            <p className="text-xs font-semibold text-red-700 mb-1">❌ 검증 실패</p>
+                            <p className="text-sm text-red-800">{m.verifyError}</p>
+                          </div>
+                        )}
                         {/* 규정 검토 결과 */}
                         {m.regulationWarning && (
                           <div className="mt-3 bg-amber-50 border border-amber-200 rounded-xl px-4 py-3">

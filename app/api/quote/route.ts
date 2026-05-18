@@ -497,6 +497,7 @@ export async function POST(req: NextRequest) {
         localFeeKrwEstimate: calcResult.localFeeKrwEstimate,
         weeksForFees: calcResult.totalWeeks,
         startDate: parsed.startDate,
+        enrollmentDate: parsed.enrollmentDate ?? parsed.startDate,
         totalWeeks: calcResult.totalWeeks,
         surchargeItems: calcResult.surchargeItems.map(s => ({ label: s.label, weeks: s.weeks })),
         calcResult,
