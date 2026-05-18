@@ -63,10 +63,9 @@ function buildInitialItems(school: School, calc: CalcResult): QuoteLineItem[] {
     items.push({ id: uid(), label: `어학원 프로모션 할인 (${calc.promotionLabel})`, amount: totalPromoDiscount, isDiscount: true, editable: true })
   }
 
-  // 엠버시유학 자체 할인
+  // 엠버시유학 자체 할인 (견적표는 고객용이므로 상담원 내부 노트는 노출하지 않음)
   if ((calc.agencyDiscountKrw ?? 0) > 0) {
-    const note = calc.agencyDiscountNote ? ` (${calc.agencyDiscountNote})` : ''
-    items.push({ id: uid(), label: `엠버시유학 할인${note}`, amount: calc.agencyDiscountKrw, isDiscount: true, editable: true })
+    items.push({ id: uid(), label: `엠버시유학 할인`, amount: calc.agencyDiscountKrw, isDiscount: true, editable: true })
   }
 
   return items

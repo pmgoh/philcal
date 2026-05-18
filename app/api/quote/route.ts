@@ -168,7 +168,7 @@ function buildQuoteMessage(school: School, calcResult: CalcResult, _totalWeeks: 
       lines.push(`- 학원 프로모션 (${calcResult.promotionLabel}): -${formatKrw(totalPromoDiscount)}`)
     }
     if (agencyDiscount > 0) {
-      lines.push(`- !!AGENCY_DISCOUNT!!엠버시유학 자체 할인${calcResult.agencyDiscountNote ? ` (${calcResult.agencyDiscountNote})` : ''}: -${formatKrw(agencyDiscount)}`)
+      lines.push(`- 엠버시유학 자체 할인: -${formatKrw(agencyDiscount)}`)
     }
     lines.push(`- **총 할인: -${formatKrw(totalAllDiscount)}**`)
   }
@@ -292,7 +292,8 @@ export async function POST(req: NextRequest) {
         label: p.promoName,
         basisType: p.basisType ?? 'enrollment_date',
         alwaysApply: p.alwaysApply ?? false,
-        stackable: p.stackable ?? false,
+        // stackable 기본 true (중복 적용 가능). 명시적 false 시에만 단독.
+        stackable: p.stackable !== false,
         startDate: p.startDate,
         endDate: p.endDate,
         discountType: p.discountType ?? 'amount',
@@ -304,6 +305,8 @@ export async function POST(req: NextRequest) {
         condition: p.condition,
         note: p.note,
         applicableItems: p.applicableItems,
+        weekTiers: p.weekTiers,
+        excludeCourses: p.excludeCourses,
         agencyDiscount,
       }
     }
