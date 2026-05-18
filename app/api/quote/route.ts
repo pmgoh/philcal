@@ -36,6 +36,15 @@ const EXTRACT_PROMPT = `엠버시유학 내부 견적 계산 시스템입니다.
    - "기숙사 안 함" / "통학" / "워크인" 같은 명시가 없으면 반드시 기숙사 선택 받기.
 ④ 주수: 미지정 → 되물음 (need_info)
 
+[같은 학원에서 주차별 코스/기숙사 변동 - 단일 견적]
+사용자가 한 학원에서 "3인실 4주 + 2인실 2주 + 1B 1주 + 2인실 3주" 같이 주차별 변동을 입력하면, 이건 **하나의 견적**의 dormitories/courses 배열로 처리한다. 절대 multi_calculate로 분리하지 마라.
+예: dormitories: [{dormitoryId:"dorm_3a", weeks:4}, {dormitoryId:"dorm_2a", weeks:2}, {dormitoryId:"dorm_1b", weeks:1}, {dormitoryId:"dorm_2a", weeks:3}]
+코스도 마찬가지: courses: [{courseId:"pic_4", weeks:12}] 단일 또는 코스가 바뀌면 여러 개.
+시스템이 totalWeeks를 자동 계산하므로 (4+2+1+3=10주) 그대로 넘기면 된다.
+
+[multi_calculate는 학원 비교용]
+multi_calculate는 **다른 학원끼리 비교**할 때만 사용. 같은 학원의 주차별 변동에는 절대 쓰지 마라.
+
 [프로모션 중복 적용]
 - 어학원 프로모션은 명시적으로 stackable=false인 경우 외에는 중복 적용 가능.
 - 시스템이 자동으로 적용 가능한 프로모션을 모두 적용하고 사용자에게 알림.
