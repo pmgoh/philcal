@@ -114,9 +114,13 @@ async function checkRegulations(school: School, scenario: string): Promise<strin
 [${school.name} 규정]
 ${school.refundPolicy   ? `환불규정:\n${school.refundPolicy}\n`   : ''}${school.dormitoryRules ? `기숙사규정:\n${school.dormitoryRules}\n` : ''}${school.generalNotes   ? `유의사항:\n${school.generalNotes}\n`   : ''}
 
-문제없으면 "규정상 특이사항 없습니다." 한 줄만.`
+[작성 규칙]
+- 안내사항이 많아도 잘리지 않게 핵심만 5개 이내로 간결하게.
+- 각 항목은 2-3줄로 짧게. 긴 설명 X.
+- 시나리오와 직접 관련 있는 것만. 일반론 X.
+- 문제없으면 "규정상 특이사항 없습니다." 한 줄만.`
   try {
-    const r = (await callClaude(prompt, [{ role: 'user', content: '검토해줘.' }], 300)).trim()
+    const r = (await callClaude(prompt, [{ role: 'user', content: '검토해줘.' }], 1500)).trim()
     return r === '규정상 특이사항 없습니다.' ? '' : r
   } catch { return '' }
 }
