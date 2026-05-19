@@ -251,6 +251,11 @@ export interface School {
   programTags: ProgramTag[]
   minWeeks: number
   allowShortTerm: boolean
+  // 4주 미만 단기 가격 데이터 상태:
+  // - 'confirmed' (기본): 자료에 단기 비율 명시됨 (예: CG 40/60/85%)
+  // - 'unconfirmed': 자료에 단기 비율 명시 없음. 시스템 fallback(정비례) 사용하되,
+  //   견적 결과에 강한 경고 자동 추가. 정보 없음 ≠ 불가 원칙에 따라 계산은 진행.
+  shortTermDataStatus?: 'confirmed' | 'unconfirmed'
   courseShortTermRates?: ShortTermRates
   dormShortTermRates?: ShortTermRates
   registrationFee?: RegistrationFee

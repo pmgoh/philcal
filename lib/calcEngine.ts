@@ -182,6 +182,16 @@ export function calculateQuote(input: QuoteInput, rate: ExchangeRate): CalcResul
   // 단기가 적용 여부 — 총 주수가 4 미만일 때만
   const isShortTerm = school.allowShortTerm && totalWeeks < 4
 
+  // 단기 가격 정보 미확인 학원에 4주 미만 견적 요청 시 — 강한 경고 자동 추가
+  // (정보 없음 ≠ 불가 원칙: 계산은 정비례 fallback으로 진행하되 견적이 추정값임을 명시)
+  if (totalWeeks < 4 && school.shortTermDataStatus === 'unconfirmed') {
+    warnings.push(
+      `🔴 [단기-미확인] ${school.name}은(는) 4주 미만 단기 가격이 자료에 명시되어 있지 않습니다. ` +
+      `시스템은 정비례(4주 단가 ÷ 4 × 주수)로 자동 계산했으나, 학원 실제 단기가와 다를 수 있습니다. ` +
+      `정확한 단기 견적은 본사 또는 학원에 직접 문의 필요합니다.`
+    )
+  }
+
   // 24주 이상 → 반드시 학원 문의 안내
   if (totalWeeks >= 24) {
     warnings.push(`⚠️ 24주 이상 장기 연수입니다. 정확한 학비 및 조건은 반드시 학원에 직접 문의하세요.`)

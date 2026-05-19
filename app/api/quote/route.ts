@@ -50,6 +50,15 @@ multi_calculate는 **다른 학원끼리 비교**할 때만 사용. 같은 학�
 - 시스템이 자동으로 적용 가능한 프로모션을 모두 적용하고 사용자에게 알림.
 - 견적 봇이 별도로 안내할 필요 없음 (시스템 메시지로 표시됨).
 
+[단기 견적 (4주 미만) 처리]
+- 학생/상담원이 1~3주 같은 단기 견적을 요청하면 calculate 호출은 정상 진행한다 (차단 X).
+- 학원 컨텍스트의 shortStatus 필드 확인:
+  - 'confirmed': 자료에 단기 비율 명시됨. 시스템이 정확히 계산하므로 그대로 응답.
+  - 'unconfirmed': 자료에 단기 가격 없음. 계산은 진행되지만 시스템이 자동으로 견적 결과에
+    "🔴 [단기-미확인]" 경고를 강하게 표시한다. 견적 봇은 추가로 message 필드에
+    "이 학원은 4주 미만 단기 가격이 자료에 없습니다. 견적은 정비례 추정값이며, 정확한 가격은 본사/학원 확인 필요합니다."를 명시.
+- "단기 가격이 없다"고 답변을 회피하지 말 것. 일단 계산은 주고 경고를 함께 전달.
+
 [응답 형식]
 
 코스/기숙사 견적:
@@ -442,6 +451,7 @@ export async function POST(req: NextRequest) {
         tags: s.programTags ?? [],
         minW: s.minWeeks,
         short: s.allowShortTerm,
+        shortStatus: s.shortTermDataStatus ?? 'confirmed',   // 'confirmed' | 'unconfirmed' — 단기 가격 자료 명시 여부
         courses, dorms, packages,
         addCharges: additionalCharges,
         promos,

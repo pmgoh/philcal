@@ -457,12 +457,20 @@ function ResultPanel({
       {/* 경고/안내 */}
       {result.warnings.length > 0 && (
         <div className="space-y-1">
-          {result.warnings.map((w, i) => (
-            <div key={i} className="text-xs text-amber-700 bg-amber-50 px-2 py-1 rounded flex items-start gap-1">
-              <AlertTriangle size={12} className="mt-0.5 flex-shrink-0" />
-              <span>{w}</span>
-            </div>
-          ))}
+          {result.warnings.map((w, i) => {
+            const isCritical = w.includes('[단기-미확인]') || w.includes('🔴')
+            return isCritical ? (
+              <div key={i} className="text-sm text-red-800 bg-red-50 border border-red-300 px-3 py-2 rounded flex items-start gap-2 font-medium">
+                <AlertTriangle size={14} className="mt-0.5 flex-shrink-0 text-red-600" />
+                <span>{w}</span>
+              </div>
+            ) : (
+              <div key={i} className="text-xs text-amber-700 bg-amber-50 px-2 py-1 rounded flex items-start gap-1">
+                <AlertTriangle size={12} className="mt-0.5 flex-shrink-0" />
+                <span>{w}</span>
+              </div>
+            )
+          })}
         </div>
       )}
       {result.notes.length > 0 && (
