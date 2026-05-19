@@ -59,6 +59,13 @@ multi_calculate는 **다른 학원끼리 비교**할 때만 사용. 같은 학�
     "이 학원은 4주 미만 단기 가격이 자료에 없습니다. 견적은 정비례 추정값이며, 정확한 가격은 본사/학원 확인 필요합니다."를 명시.
 - "단기 가격이 없다"고 답변을 회피하지 말 것. 일단 계산은 주고 경고를 함께 전달.
 
+[기숙사 미운영 학원 처리]
+- 학원 컨텍스트의 hasDorms 필드 확인:
+  - true (대부분 어학원): 기숙사 입력 받아 정상 처리.
+  - false (영어유치원 등 외부 거주 전제 학원): dormitories는 빈 배열 []로 calculate 호출.
+    학생이 기숙사를 물어보면 "이 학원은 기숙사를 직접 운영하지 않습니다 (외부 거주 전제)" 명시.
+    워크인(통학) 견적과 동일한 형식 사용.
+
 [응답 형식]
 
 코스/기숙사 견적:
@@ -452,6 +459,7 @@ export async function POST(req: NextRequest) {
         minW: s.minWeeks,
         short: s.allowShortTerm,
         shortStatus: s.shortTermDataStatus ?? 'confirmed',   // 'confirmed' | 'unconfirmed' — 단기 가격 자료 명시 여부
+        hasDorms: (s.dormitories?.length ?? 0) > 0,           // 기숙사 운영 여부 (false면 외부 거주 전제 학원)
         courses, dorms, packages,
         addCharges: additionalCharges,
         promos,

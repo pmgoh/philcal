@@ -196,6 +196,20 @@ export function calculateQuote(input: QuoteInput, rate: ExchangeRate): CalcResul
   if (totalWeeks >= 24) {
     warnings.push(`⚠️ 24주 이상 장기 연수입니다. 정확한 학비 및 조건은 반드시 학원에 직접 문의하세요.`)
   }
+
+  // 기숙사 미운영 학원 (영어유치원 등 외부 거주 전제) 안내
+  // 학원 데이터에 dormitories가 비어있으면 시스템 안내. 사용자가 dormItems를 넣어도 빈 학원이라 무시됨.
+  if ((dorms?.length ?? 0) === 0) {
+    if (input.dormitories.length > 0) {
+      warnings.push(
+        `ℹ️ ${school.name}은(는) 기숙사를 운영하지 않습니다 (외부 거주 전제). ` +
+        `요청하신 기숙사 항목은 견적에서 제외됩니다.`
+      )
+    } else {
+      notes.push(`ℹ️ ${school.name}은(는) 기숙사를 직접 운영하지 않습니다. 견적에 기숙사비는 미포함.`)
+    }
+  }
+
   const today = new Date().toISOString().split('T')[0]
   const pi = school.priceIncrease
   const increaseActive = pi && pi.fromDate <= today

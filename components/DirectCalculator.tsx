@@ -87,12 +87,17 @@ export default function DirectCalculator({ schools, promos, rate }: DirectCalcul
     setDormSelections(p => p.map((d, j) => j === i ? { ...d, ...patch } : d))
 
   // 학원 선택 시 코스/기숙사 1개씩 자동 추가
+  // 단, 기숙사가 없는 학원(영어유치원 등)이면 기숙사 자동 추가 안 함
   useEffect(() => {
     if (selectedSchool && courseSelections.length === 0) {
       setCourseSelections([{ courseId: '', weeks: 4 }])
     }
-    if (selectedSchool && dormSelections.length === 0) {
+    if (selectedSchool && dormSelections.length === 0 && (selectedSchool.dormitories?.length ?? 0) > 0) {
       setDormSelections([{ dormitoryId: '', weeks: 4 }])
+    }
+    // 학원 변경 시 기존 기숙사 선택은 비우기 (이전 학원의 dormitoryId가 남아있으면 안 됨)
+    if (selectedSchool && (selectedSchool.dormitories?.length ?? 0) === 0) {
+      setDormSelections([])
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [schoolId])
@@ -287,7 +292,7 @@ export default function DirectCalculator({ schools, promos, rate }: DirectCalcul
       )}
 
       {/* 5. 기숙사 선택 */}
-      {selectedSchool && (
+      {selectedSchool && (selectedSchool.dormitories?.length ?? 0) > 0 && (
         <Section step={5} icon={<Home size={16} />} title="기숙사 선택" subtitle="옵션 — 기숙사 없이도 견적 가능">
           <div className="space-y-2">
             {dormSelections.map((d, i) => (
@@ -303,6 +308,15 @@ export default function DirectCalculator({ schools, promos, rate }: DirectCalcul
               className="w-full px-3 py-2 text-xs text-blue-600 border border-dashed border-blue-300 rounded-lg hover:bg-blue-50 transition-colors flex items-center justify-center gap-1">
               <Plus size={12} /> 기숙사 추가
             </button>
+          </div>
+        </Section>
+      )}
+
+      {/* 기숙사 없는 학원 안내 (영어유치원 등 외부 거주 전제 학원) */}
+      {selectedSchool && (selectedSchool.dormitories?.length ?? 0) === 0 && (
+        <Section step={5} icon={<Home size={16} />} title="기숙사" subtitle="이 학원은 기숙사를 운영하지 않습니다">
+          <div className="text-xs text-blue-700 bg-blue-50 border border-blue-200 px-3 py-2 rounded">
+            ℹ️ {selectedSchool.name}은(는) 자료 기준 기숙사를 직접 운영하지 않습니다. 외부 거주 전제이며, 견적에 기숙사비는 포함되지 않습니다.
           </div>
         </Section>
       )}
