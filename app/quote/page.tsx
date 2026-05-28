@@ -6,6 +6,7 @@ import type { School, ExchangeRate, LocalFee } from '@/types'
 import { Send, RotateCcw, Copy, Check, ChevronDown, ChevronUp, DollarSign, FileText, MessageSquare, Calculator } from 'lucide-react'
 import { formatKrw } from '@/lib/utils'
 import QuoteFormModal from '@/components/QuoteFormModal'
+import QuoteResultCard from '@/components/QuoteResultCard'
 import DirectCalculator from '@/components/DirectCalculator'
 import type { CalcResult } from '@/lib/calcEngine'
 
@@ -41,6 +42,7 @@ interface AssistantNeedInfoMessage extends BaseMessage {
   question: string
   suggestions?: string[]
   allowFreeText?: boolean
+  isDateQuestion?: boolean   // 시작일 질문이면 달력(데이트피커) 표시
 }
 
 interface AssistantAnswerMessage extends BaseMessage {
@@ -423,18 +425,63 @@ function NeedInfoBubble({
   return (
     <div className="space-y-3">
       <p className="text-sm text-gray-800 font-medium">{msg.question}</p>
-      {msg.suggestions && msg.suggestions.length > 0 && (
-        <div className="flex flex-col gap-1.5">
-          {msg.suggestions.map((s, i) => (
-            <button key={i} onClick={() => handleSelect(s)}
-              className="w-full text-left px-3 py-2.5 bg-white hover:bg-blue-50 border border-gray-200 hover:border-blue-300 rounded-xl text-sm text-gray-800 hover:text-blue-700 transition-all font-medium flex items-center justify-between group">
-              <span>{s}</span>
-              <span className="text-gray-300 group-hover:text-blue-400 text-xs">선택 →</span>
-            </button>
-          ))}
+
+      {/* [v5 UI] 시작일 질문이면 달력 표시 — 날짜를 클릭으로 선택 */}
+      {msg.isDateQuestion && (
+        <div className="flex flex-col gap-2">
+          <button
+            onClick={() => handleSelect('미정 (날짜 없이 기본 견적)')}
+            className="w-full px-3 py-2.5 bg-white hover:bg-amber-50 border border-amber-200 hover:border-amber-300 rounded-xl text-sm text-amber-700 font-medium transition-all text-left">
+            📋 미정 — 날짜 없이 기본 견적 보기
+          </button>
+          <div className="flex items-center gap-2 px-3 py-2.5 bg-white border border-gray-200 rounded-xl">
+            <span className="text-sm text-gray-500 whitespace-nowrap">날짜 선택</span>
+            <input
+              type="date"
+              onChange={e => { if (e.target.value) handleSelect(e.target.value) }}
+              className="flex-1 text-sm bg-transparent outline-none cursor-pointer"
+            />
+          </div>
+          <div className="flex gap-2">
+            <input
+              value={custom}
+              onChange={e => setCustom(e.target.value)}
+              onKeyDown={e => { if (e.key === 'Enter' && custom.trim()) handleSelect(custom.trim()) }}
+              className="input-field text-sm flex-1"
+              placeholder='예: 8월 초, 7~8월 (대략적 시기)'
+            />
+            <button onClick={() => { if (custom.trim()) handleSelect(custom.trim()) }}
+              disabled={!custom.trim()}
+              className="btn-primary px-3 text-sm">입력</button>
+          </div>
         </div>
       )}
-      {msg.allowFreeText !== false && (
+
+      {!msg.isDateQuestion && msg.suggestions && msg.suggestions.length > 0 && (
+        <div className={msg.suggestions.length > 4 ? 'grid grid-cols-1 sm:grid-cols-2 gap-1.5' : 'flex flex-col gap-1.5'}>
+          {msg.suggestions.map((s, i) => {
+            // "이름 (가격/4주)" 형태면 이름과 가격 분리해서 정렬
+            const m = s.match(/^(.*?)\s*\(([\d,]+원\/4주)\)$/)
+            return (
+              <button key={i} onClick={() => handleSelect(s)}
+                className="w-full text-left px-3 py-2.5 bg-white hover:bg-blue-50 border border-gray-200 hover:border-blue-300 rounded-xl text-sm text-gray-800 hover:text-blue-700 transition-all font-medium flex items-center justify-between gap-2 group">
+                {m ? (
+                  <>
+                    <span className="truncate">{m[1]}</span>
+                    <span className="text-xs text-gray-500 group-hover:text-blue-500 tabular-nums whitespace-nowrap">{m[2]}</span>
+                  </>
+                ) : (
+                  <>
+                    <span className="truncate">{s}</span>
+                    <span className="text-gray-300 group-hover:text-blue-400 text-xs whitespace-nowrap">선택 →</span>
+                  </>
+                )}
+              </button>
+            )
+          })}
+        </div>
+      )}
+      {!msg.isDateQuestion && msg.allowFreeText !== false && (
         <div className="flex gap-2 pt-1 border-t border-gray-100">
           <input
             value={custom}
@@ -599,6 +646,7 @@ export default function QuotePage() {
           question: data.question ?? data.message ?? '',
           suggestions: data.suggestions ?? [],
           allowFreeText: data.allowFreeText !== false,
+          isDateQuestion: data.isDateQuestion === true,
         }
         setMessages(prev => [...prev, needMsg])
       } else if (data.action === 'confirm' && data.confirmCard) {
@@ -724,14 +772,23 @@ export default function QuotePage() {
             return (
               <div key={i} className="flex justify-start gap-2">
                 <div className="w-6 h-6 md:w-7 md:h-7 rounded-full bg-blue-600 flex items-center justify-center text-white text-xs font-bold flex-shrink-0 mt-0.5">AI</div>
-                <div className="max-w-[85vw] md:max-w-2xl flex-1 min-w-0">
+                <div className={`max-w-[85vw] flex-1 min-w-0 ${msg.type === 'result' ? 'md:max-w-3xl' : 'md:max-w-2xl'}`}>
 
                   {/* 견적 결과 */}
                   {msg.type === 'result' && (() => {
                     const m = msg as AssistantResultMessage
+                    const resultSchool = m.school ?? schools.find(s => m.content.includes(s.name))
                     return (
-                      <div className="bg-white border border-blue-100 rounded-2xl rounded-tl-sm px-3 md:px-4 py-3 shadow-sm overflow-x-auto">
-                        <MarkdownText text={m.content} />
+                      <div className="bg-white border border-blue-100 rounded-2xl rounded-tl-sm px-3 md:px-5 py-4 shadow-sm">
+                        {/* calcResult 있으면 표, 없으면 마크다운 폴백 */}
+                        {m.calcResult && resultSchool ? (
+                          <>
+                            <QuoteResultCard school={resultSchool} calc={m.calcResult} startDate={m.startDate} />
+                            <p className="text-[10px] text-gray-300 mt-2 text-right">v6-2026.05.28</p>
+                          </>
+                        ) : (
+                          <MarkdownText text={m.content} />
+                        )}
                         {/* 기간 타임라인 */}
                         <PeriodTimeline
                           startDate={m.startDate}

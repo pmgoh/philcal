@@ -9,7 +9,8 @@ import type { School, ExchangeRate, Promotion } from '@/types'
 // v1: 초기 / v2: 단기 계산 수정 / v3: 단계 분리·날짜 미정 모드
 // v4: 코드 주도 챗봇 (롤백됨 — 대화 부자연스러움)
 // v5: LLM 주도 대화 + 사용자 확인 카드 + regulationWarning 제거
-const CODE_VERSION = 'v5-2026.05.28'
+// v6: UI/UX 개선 (시작일 달력, 견적 결과 표, 선택지 그리드, 넓은 레이아웃)
+const CODE_VERSION = 'v6-2026.05.28'
 
 // [LLM 역할 = 자연어 대화 주도]
 // LLM이 사용자와 자연어로 대화하며 견적에 필요한 정보를 모은다.
@@ -478,6 +479,7 @@ export async function POST(req: NextRequest) {
         parsed.suggestions = ['미정 (날짜 없이 기본 견적)', ...(sugg ?? [])]
         parsed.allowFreeText = true
         parsed.type = 'select'
+        parsed.isDateQuestion = true   // UI가 달력(데이트피커)을 띄우게 하는 플래그
       } else if (isCourseQ && targetSchool && (targetSchool.courses ?? []).length > 0) {
         parsed.suggestions = targetSchool.courses.map(c =>
           `${c.name} (${((c as unknown as Record<string,number>).price4Weeks ?? 0).toLocaleString()}원/4주)`
