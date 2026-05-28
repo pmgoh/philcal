@@ -649,6 +649,17 @@ export function calculateQuote(input: QuoteInput, rate: ExchangeRate): CalcResul
   const localFees = school.localFees ?? []
   let localFeePhp = 0
   let localFeeKrw = 0
+  let localFeeEstimateNote = false   // 4주 미만 per_4weeks 추정 부과 시 경고용
+  // [택일 그룹] 같은 exclusiveGroup 항목은 자동 합산하지 않고 그룹 기본값만 합산.
+  // 그룹 목록은 결과에 담아 UI가 < >로 선택하게 한다.
+  const exclusiveGroups = new Map<string, LocalFee[]>()
+  for (const lf of localFees) {
+    const g = (lf as { exclusiveGroup?: string }).exclusiveGroup
+    if (g) {
+      if (!exclusiveGroups.has(g)) exclusiveGroups.set(g, [])
+      exclusiveGroups.get(g)!.push(lf)
+    }
+  }
 
   if (pkgIncludesLocal) {
     notes.push('ℹ️ 패키지 가격에 현지납부비 포함')
@@ -660,13 +671,28 @@ export function calculateQuote(input: QuoteInput, rate: ExchangeRate): CalcResul
         : raw.condition as string ?? 'always')
       if (trigger === 'optional') continue
 
+      // [택일 그룹] 그룹에 속하면, 기본값(groupDefault 또는 그룹 첫 항목)만 합산
+      const grp = (lf as { exclusiveGroup?: string }).exclusiveGroup
+      if (grp) {
+        const members = exclusiveGroups.get(grp) ?? []
+        const defaultMember = members.find(m => (m as { groupDefault?: boolean }).groupDefault) ?? members[0]
+        if (lf.id !== defaultMember?.id) continue   // 기본값 아니면 합산 안 함 (UI에서 선택)
+      }
+
       const isKrw = lf.currency === 'KRW'
       const amt = lf.amount ?? 0
       const add = (v: number) => isKrw ? (localFeeKrw += v) : (localFeePhp += v)
 
       if (trigger === 'always')          { add(amt) }
       else if (trigger === 'per_week')   { add(amt * totalWeeks) }
-      else if (trigger === 'per_4weeks') { add(amt * Math.ceil(totalWeeks / 4)) }
+      else if (trigger === 'per_4weeks') {
+        // 4주 미만이면 4주치(올림)로 부과 — 자료 미명시, 추정치. 현지 관리비 특성상 보통 1주라도 한 달치.
+        const blocks = Math.ceil(totalWeeks / 4)
+        add(amt * blocks)
+        if (totalWeeks < 4 && amt > 0) {
+          localFeeEstimateNote = true   // 아래에서 경고 한 번만
+        }
+      }
       else if (trigger === 'over_weeks') {
         const threshold = lf.triggerWeeks ?? (raw.minWeeks as number) ?? 4
         if (totalWeeks > threshold) add(amt)
@@ -675,6 +701,9 @@ export function calculateQuote(input: QuoteInput, rate: ExchangeRate): CalcResul
   }
 
   const localFeeKrwEstimate = toKrw(localFeePhp, 'PHP', rate) + localFeeKrw
+  if (localFeeEstimateNote) {
+    notes.push('ℹ️ 현지납부비 중 4주 단위 항목(관리비·전기·수도·교재 등)은 4주 미만이어도 4주치로 추정 부과했습니다. 학원 확인 필요.')
+  }
 
   return {
     courseItems, dormItems, packageItems, surchargeItems,

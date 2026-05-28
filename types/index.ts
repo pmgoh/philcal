@@ -192,6 +192,12 @@ export interface LocalFee {
   chargeUnit: LocalFeeChargeUnit
   triggerWeeks?: number   // over_weeks일 때 기준 주수 (예: 4주 초과 = 4)
   note?: string
+  // [택일 그룹] 같은 group 값을 가진 항목들은 상호 배타 — 하나만 선택해 합산.
+  // 예: 공항픽업 주말/평일, 픽업 성인/가족. 견적 화면에서 < >로 선택.
+  // 미설정이면 단독 항목(기존대로 trigger에 따라 합산).
+  exclusiveGroup?: string
+  // 그룹 내 기본 선택 항목 여부 (미지정 시 그룹의 첫 항목이 기본)
+  groupDefault?: boolean
 }
 
 // ─── 패키지 ───────────────────────────────────────────────────────────────────

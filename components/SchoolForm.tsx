@@ -984,6 +984,24 @@ function LocalFeeRow({ fee, onChange, onDelete }: {
           className="flex-1 min-w-24 text-xs border border-gray-200 rounded px-2 py-1.5 bg-white"
           placeholder="메모" />
       </div>
+
+      {/* 행 3: 택일 그룹 — 같은 그룹명끼리 상호배타(하나만 선택). 예: 픽업 주말/평일 */}
+      <div className="flex items-center gap-2 flex-wrap pt-1 border-t border-indigo-100/50">
+        <label className="text-xs text-gray-500">택일 그룹:</label>
+        <input
+          value={(fee as { exclusiveGroup?: string }).exclusiveGroup ?? ''}
+          onChange={e => onChange({ ...fee, exclusiveGroup: e.target.value || undefined } as LocalFee)}
+          className="w-32 text-xs border border-gray-200 rounded px-2 py-1.5 bg-white"
+          placeholder="예: pickup" />
+        <label className="flex items-center gap-1 text-xs text-gray-500">
+          <input type="checkbox"
+            checked={(fee as { groupDefault?: boolean }).groupDefault ?? false}
+            onChange={e => onChange({ ...fee, groupDefault: e.target.checked } as LocalFee)}
+            className="rounded" />
+          기본 선택
+        </label>
+        <span className="text-xs text-gray-400">같은 그룹명끼리 하나만 합산 (입국 요일·대상에 따라 택일)</span>
+      </div>
     </div>
   )
 }

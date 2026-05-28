@@ -10,7 +10,8 @@ import type { School, ExchangeRate, Promotion } from '@/types'
 // v4: 코드 주도 챗봇 (롤백됨 — 대화 부자연스러움)
 // v5: LLM 주도 대화 + 사용자 확인 카드 + regulationWarning 제거
 // v6: UI/UX 개선 (시작일 달력, 견적 결과 표, 선택지 그리드, 넓은 레이아웃)
-const CODE_VERSION = 'v6-2026.05.28'
+// v7: 현지비 택일그룹(픽업 등 < > 선택) + per_4weeks 4주미만 추정경고 + 선택지 폭 확대
+const CODE_VERSION = 'v7-2026.05.28'
 
 // [LLM 역할 = 자연어 대화 주도]
 // LLM이 사용자와 자연어로 대화하며 견적에 필요한 정보를 모은다.

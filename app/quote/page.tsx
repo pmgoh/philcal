@@ -215,6 +215,8 @@ function LocalFeePanel({ fees, php, krwEstimate, weeks, phpToKrw }: {
   fees: LocalFee[]; php: number; krwEstimate: number; weeks?: number; phpToKrw: number
 }) {
   const [open, setOpen] = useState(false)
+  // 택일 그룹별 선택 인덱스 (groupId → 선택된 멤버 index)
+  const [groupSel, setGroupSel] = useState<Record<string, number>>({})
   if (!fees.length) return null
 
   const triggerLabel = (f: LocalFee) => {
@@ -243,6 +245,61 @@ function LocalFeePanel({ fees, php, krwEstimate, weeks, phpToKrw }: {
     return f.amount
   }
 
+  // 택일 그룹 분리
+  const groups: Record<string, LocalFee[]> = {}
+  const singles: LocalFee[] = []
+  for (const f of fees) {
+    const g = (f as { exclusiveGroup?: string }).exclusiveGroup
+    if (g) { (groups[g] ??= []).push(f) }
+    else singles.push(f)
+  }
+  const groupKeys = Object.keys(groups)
+  const selectedIdx = (g: string) => groupSel[g] ?? Math.max(0, groups[g].findIndex(m => (m as {groupDefault?: boolean}).groupDefault))
+  const cycleGroup = (g: string, dir: number) => {
+    const len = groups[g].length
+    const cur = selectedIdx(g)
+    setGroupSel(s => ({ ...s, [g]: (cur + dir + len) % len }))
+  }
+
+  // 합계 재계산 (단독 + 그룹 선택분)
+  const recalcEstimate = () => {
+    let p = 0, k = 0
+    for (const f of singles) {
+      if ((f.trigger ?? 'always') === 'optional') continue
+      const a = calcAmount(f)
+      if (f.currency === 'KRW') k += a; else p += a
+    }
+    for (const g of groupKeys) {
+      const sel = groups[g][selectedIdx(g)]
+      const a = calcAmount(sel)
+      if (sel.currency === 'KRW') k += a; else p += a
+    }
+    return Math.round(p * phpToKrw) + k
+  }
+  const liveEstimate = groupKeys.length > 0 ? recalcEstimate() : krwEstimate
+
+  const renderFeeRow = (f: LocalFee, key: string) => {
+    const amt = calcAmount(f)
+    const isOptional = (f.trigger ?? 'always') === 'optional'
+    if (amt === 0 && !isOptional) return null
+    const isKrw = f.currency === 'KRW'
+    return (
+      <div key={key} className="flex justify-between items-center text-sm">
+        <div className="flex items-center gap-1.5 min-w-0 flex-1">
+          <span className={`truncate text-sm ${isOptional ? 'text-gray-400' : 'text-gray-700'}`}>{f.name}</span>
+          <span className={`text-xs px-1.5 py-0.5 rounded flex-shrink-0 ${isOptional ? 'bg-gray-100 text-gray-400' : 'bg-amber-50 text-amber-600'}`}>
+            {triggerLabel(f)}{unitLabel(f)}
+          </span>
+        </div>
+        <span className={`font-medium flex-shrink-0 ml-2 ${isOptional ? 'text-gray-400' : 'text-gray-800'}`}>
+          {isKrw ? formatKrw(amt) : `₱${amt.toLocaleString()}${f.amountMax ? `~${f.amountMax.toLocaleString()}` : ''}`}
+          {!isKrw && <span className="text-xs text-gray-400 ml-1">(약 {formatKrw(Math.round(amt * phpToKrw))})</span>}
+          {isOptional && <span className="text-xs text-gray-400 ml-1">[선택]</span>}
+        </span>
+      </div>
+    )
+  }
+
   return (
     <div className="mt-3 border border-amber-200 rounded-xl overflow-hidden">
       <button onClick={() => setOpen(!open)}
@@ -250,41 +307,38 @@ function LocalFeePanel({ fees, php, krwEstimate, weeks, phpToKrw }: {
         <div className="flex items-center gap-2 text-amber-800 font-medium">
           <DollarSign size={14} />
           현지납부비 {weeks ? `(${weeks}주 기준)` : ''}
-          <span className="text-xs text-amber-600 font-normal">
-            {php > 0 ? `₱${php.toLocaleString()} · ` : ''}약 {formatKrw(krwEstimate)}
-          </span>
+          <span className="text-xs text-amber-600 font-normal">약 {formatKrw(liveEstimate)}</span>
         </div>
         {open ? <ChevronUp size={14} className="text-amber-600" /> : <ChevronDown size={14} className="text-amber-600" />}
       </button>
       {open && (
         <div className="bg-white px-3 py-2 space-y-1.5">
           <p className="text-xs text-gray-400 mb-2">※ 현지 도착 후 직접 납부. 견적 총액 미포함.</p>
-          {fees.map((f, i) => {
-            const amt = calcAmount(f)
-            const isOptional = (f.trigger ?? 'always') === 'optional'
-            if (amt === 0 && !isOptional) return null
-            const isKrw = f.currency === 'KRW'
+          {singles.map((f, i) => renderFeeRow(f, `s${i}`))}
+          {/* 택일 그룹 — < >로 선택 */}
+          {groupKeys.map(g => {
+            const idx = selectedIdx(g)
+            const sel = groups[g][idx]
+            const amt = calcAmount(sel)
+            const isKrw = sel.currency === 'KRW'
             return (
-              <div key={i} className="flex justify-between items-center text-sm">
+              <div key={g} className="flex justify-between items-center text-sm bg-blue-50 rounded-lg px-2 py-1.5">
                 <div className="flex items-center gap-1.5 min-w-0 flex-1">
-                  <span className={`truncate text-sm ${isOptional ? 'text-gray-400' : 'text-gray-700'}`}>{f.name}</span>
-                  <span className={`text-xs px-1.5 py-0.5 rounded flex-shrink-0 ${isOptional ? 'bg-gray-100 text-gray-400' : 'bg-amber-50 text-amber-600'}`}>
-                    {triggerLabel(f)}{unitLabel(f)}
-                  </span>
+                  <button onClick={() => cycleGroup(g, -1)} className="text-blue-500 hover:text-blue-700 px-1 font-bold">‹</button>
+                  <span className="truncate text-sm text-gray-700">{sel.name}</span>
+                  <button onClick={() => cycleGroup(g, 1)} className="text-blue-500 hover:text-blue-700 px-1 font-bold">›</button>
+                  <span className="text-xs text-blue-400">({idx + 1}/{groups[g].length} 택일)</span>
                 </div>
-                <span className={`font-medium flex-shrink-0 ml-2 ${isOptional ? 'text-gray-400' : 'text-gray-800'}`}>
-                  {isKrw
-                    ? formatKrw(amt)
-                    : `₱${amt.toLocaleString()}${f.amountMax ? `~${f.amountMax.toLocaleString()}` : ''}`}
+                <span className="font-medium flex-shrink-0 ml-2 text-gray-800">
+                  {isKrw ? formatKrw(amt) : `₱${amt.toLocaleString()}`}
                   {!isKrw && <span className="text-xs text-gray-400 ml-1">(약 {formatKrw(Math.round(amt * phpToKrw))})</span>}
-                  {isOptional && <span className="text-xs text-gray-400 ml-1">[선택]</span>}
                 </span>
               </div>
             )
           })}
           <div className="border-t border-gray-100 pt-1.5 flex justify-between text-sm font-semibold">
             <span className="text-gray-700">합계 (선택 제외)</span>
-            <span className="text-amber-700">약 {formatKrw(krwEstimate)}</span>
+            <span className="text-amber-700">약 {formatKrw(liveEstimate)}</span>
           </div>
         </div>
       )}
@@ -458,22 +512,22 @@ function NeedInfoBubble({
       )}
 
       {!msg.isDateQuestion && msg.suggestions && msg.suggestions.length > 0 && (
-        <div className={msg.suggestions.length > 4 ? 'grid grid-cols-1 sm:grid-cols-2 gap-1.5' : 'flex flex-col gap-1.5'}>
+        <div className={msg.suggestions.length > 8 ? 'grid grid-cols-1 lg:grid-cols-2 gap-1.5' : 'flex flex-col gap-1.5'}>
           {msg.suggestions.map((s, i) => {
             // "이름 (가격/4주)" 형태면 이름과 가격 분리해서 정렬
             const m = s.match(/^(.*?)\s*\(([\d,]+원\/4주)\)$/)
             return (
               <button key={i} onClick={() => handleSelect(s)}
-                className="w-full text-left px-3 py-2.5 bg-white hover:bg-blue-50 border border-gray-200 hover:border-blue-300 rounded-xl text-sm text-gray-800 hover:text-blue-700 transition-all font-medium flex items-center justify-between gap-2 group">
+                className="w-full text-left px-3 py-2.5 bg-white hover:bg-blue-50 border border-gray-200 hover:border-blue-300 rounded-xl text-sm text-gray-800 hover:text-blue-700 transition-all font-medium flex items-center justify-between gap-3 group">
                 {m ? (
                   <>
-                    <span className="truncate">{m[1]}</span>
-                    <span className="text-xs text-gray-500 group-hover:text-blue-500 tabular-nums whitespace-nowrap">{m[2]}</span>
+                    <span className="truncate flex-1">{m[1]}</span>
+                    <span className="text-xs text-gray-500 group-hover:text-blue-500 tabular-nums whitespace-nowrap flex-shrink-0">{m[2]}</span>
                   </>
                 ) : (
                   <>
-                    <span className="truncate">{s}</span>
-                    <span className="text-gray-300 group-hover:text-blue-400 text-xs whitespace-nowrap">선택 →</span>
+                    <span className="flex-1">{s}</span>
+                    <span className="text-gray-300 group-hover:text-blue-400 text-xs whitespace-nowrap flex-shrink-0">선택 →</span>
                   </>
                 )}
               </button>
@@ -772,7 +826,7 @@ export default function QuotePage() {
             return (
               <div key={i} className="flex justify-start gap-2">
                 <div className="w-6 h-6 md:w-7 md:h-7 rounded-full bg-blue-600 flex items-center justify-center text-white text-xs font-bold flex-shrink-0 mt-0.5">AI</div>
-                <div className={`max-w-[85vw] flex-1 min-w-0 ${msg.type === 'result' ? 'md:max-w-3xl' : 'md:max-w-2xl'}`}>
+                <div className={`max-w-[85vw] flex-1 min-w-0 ${msg.type === 'result' ? 'md:max-w-3xl' : msg.type === 'need_info' ? 'md:max-w-3xl' : 'md:max-w-2xl'}`}>
 
                   {/* 견적 결과 */}
                   {msg.type === 'result' && (() => {
@@ -784,7 +838,7 @@ export default function QuotePage() {
                         {m.calcResult && resultSchool ? (
                           <>
                             <QuoteResultCard school={resultSchool} calc={m.calcResult} startDate={m.startDate} />
-                            <p className="text-[10px] text-gray-300 mt-2 text-right">v6-2026.05.28</p>
+                            <p className="text-[10px] text-gray-300 mt-2 text-right">v7-2026.05.28</p>
                           </>
                         ) : (
                           <MarkdownText text={m.content} />
