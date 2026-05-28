@@ -212,7 +212,9 @@ export default function PromotionsPage() {
           'promoName','schoolName','startDate','endDate','discountType','discountValue',
           'alwaysApply','stackable','applyToCourses','applyToDorms','applyToSurcharge','condition',
           'details','active','note','agencyDiscountNote','agencyDiscountType',
-          'agencyDiscountValue','agencyDiscountApplyTo','isUrgent','urgentDays'
+          'agencyDiscountValue','agencyDiscountApplyTo','isUrgent','urgentDays',
+          'minWeeks','blockMethod','methodConfirmed',
+          'stackWith','exclusiveWith','relationConfirmed','agencyDiscountBase'
         ]
         const normalize = (v: unknown) => {
           if (v === null || v === undefined || v === '') return ''
@@ -459,6 +461,31 @@ export default function PromotionsPage() {
                             className="input-field text-xs py-1.5" placeholder="예: 8주 등록 시 적용 (코스 학비만)" />
                         </div>
                       </div>
+                      <div className="grid grid-cols-3 gap-2 p-2 bg-amber-50 border border-amber-200 rounded">
+                        <div>
+                          <label className="block text-xs text-gray-600 mb-1">최소 주수 (숫자)</label>
+                          <input type="number" value={editData.minWeeks ?? ''}
+                            onChange={e => setEditData(d => ({...d, minWeeks: e.target.value === '' ? undefined : Number(e.target.value)}))}
+                            className="input-field text-xs py-1.5" placeholder="예: 4" />
+                        </div>
+                        <div>
+                          <label className="block text-xs text-gray-600 mb-1">4주당 잔여 처리</label>
+                          <select value={editData.blockMethod ?? ''}
+                            onChange={e => setEditData(d => ({...d, blockMethod: (e.target.value || undefined) as 'floor'|'proportional'|undefined}))}
+                            className="input-field text-xs py-1.5">
+                            <option value="">(미설정)</option>
+                            <option value="floor">4주 단위 내림</option>
+                            <option value="proportional">비례 (1/N)</option>
+                          </select>
+                        </div>
+                        <div className="flex items-end pb-1">
+                          <label className="flex items-center gap-1.5 text-xs">
+                            <input type="checkbox" checked={editData.methodConfirmed ?? false}
+                              onChange={e => setEditData(d => ({...d, methodConfirmed: e.target.checked}))} className="rounded" />
+                            <span>계산방식 확인됨</span>
+                          </label>
+                        </div>
+                      </div>
                       <div>
                         <label className="block text-xs text-gray-500 mb-1">할인 상세</label>
                         <textarea value={editData.details ?? ''} onChange={e => setEditData(d => ({...d, details: e.target.value}))}
@@ -519,12 +546,54 @@ export default function PromotionsPage() {
                             </div>
                           )}
                           <div className="sm:col-span-2">
+                            <label className="block text-xs text-gray-500 mb-1">기준 시점 (차감 전/후)</label>
+                            <select value={editData.agencyDiscountBase ?? 'after_discount'}
+                              onChange={e => setEditData(d => ({...d, agencyDiscountBase: e.target.value as 'after_discount'|'before_discount'}))}
+                              className="input-field text-xs py-1.5">
+                              <option value="after_discount">학원 할인 차감 후 (기본)</option>
+                              <option value="before_discount">학원 할인 차감 전 (원금)</option>
+                            </select>
+                            <p className="text-xs text-gray-400 mt-1">자료에 &quot;(학비+기숙사-장기할인-...)의 N%&quot; 같은 표현이 있으면 차감 후</p>
+                          </div>
+                          <div className="sm:col-span-2">
                             <label className="block text-xs text-gray-500 mb-1">표시 메모</label>
                             <input value={editData.agencyDiscountNote ?? ''}
                               onChange={e => setEditData(d => ({...d, agencyDiscountNote: e.target.value}))}
                               className="input-field text-xs py-1.5" placeholder="예: CALA 10%, 등록비 10만원" />
                           </div>
                         </div>
+                      </div>
+
+                      <div className="border border-purple-200 rounded-xl p-3 bg-purple-50/30 space-y-2">
+                        <p className="text-xs font-semibold text-purple-700">🔗 다른 프로모션과의 호환 관계</p>
+                        <p className="text-xs text-gray-500">대부분 프로모션은 시기·대상으로 안 겹쳐 비워둠. 동시 적용될 수 있는 것만 명시. 프로모션 ID 쉼표 구분.</p>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                          <div>
+                            <label className="block text-xs text-gray-600 mb-1">중복 가능 (stackWith)</label>
+                            <input
+                              value={(editData.stackWith ?? []).join(', ')}
+                              onChange={e => setEditData(d => ({
+                                ...d,
+                                stackWith: e.target.value.split(',').map(s => s.trim()).filter(Boolean)
+                              }))}
+                              className="input-field text-xs py-1.5" placeholder="예: cg_banilad_school_long_term" />
+                          </div>
+                          <div>
+                            <label className="block text-xs text-gray-600 mb-1">택일 (exclusiveWith)</label>
+                            <input
+                              value={(editData.exclusiveWith ?? []).join(', ')}
+                              onChange={e => setEditData(d => ({
+                                ...d,
+                                exclusiveWith: e.target.value.split(',').map(s => s.trim()).filter(Boolean)
+                              }))}
+                              className="input-field text-xs py-1.5" placeholder="예: cij_low_h1_1plus1" />
+                          </div>
+                        </div>
+                        <label className="flex items-center gap-1.5 text-xs">
+                          <input type="checkbox" checked={editData.relationConfirmed ?? false}
+                            onChange={e => setEditData(d => ({...d, relationConfirmed: e.target.checked}))} className="rounded" />
+                          <span>관계 확인됨 (체크 안 하면 동시 적용 시 미확인 경고)</span>
+                        </label>
                       </div>
 
                       <div className="border border-orange-200 rounded-xl p-3 bg-orange-50/30 space-y-2">

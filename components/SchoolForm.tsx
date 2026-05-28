@@ -3,7 +3,8 @@ import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { v4 as uuid } from 'uuid'
 import AdminLayout from '@/components/AdminLayout'
-import { getSchool, saveSchool, deleteSchool } from '@/lib/db'
+import { getSchool, saveSchool, deleteSchool, getPromotions, type PromoEntry } from '@/lib/db'
+import SchoolDatasheet from '@/components/SchoolDatasheet'
 import type {
   School, Course, Dormitory, ShortTermRates,
   Surcharge, Promotion, PromotionBasis, LocalFee,
@@ -60,6 +61,8 @@ export default function SchoolForm({ schoolId }: Props) {
   const [saving, setSaving] = useState(false)
   const [saved, setSaved] = useState(false)
   const [openSection, setOpenSection] = useState<string>('basic')
+  const [datasheetOpen, setDatasheetOpen] = useState(false)
+  const [schoolPromos, setSchoolPromos] = useState<PromoEntry[]>([])
 
   useEffect(() => {
     if (!isNew && schoolId) {
@@ -167,6 +170,18 @@ export default function SchoolForm({ schoolId }: Props) {
                 URL.revokeObjectURL(url)
               }} className="btn-secondary flex items-center gap-1.5 text-sm">
                 <span>⬇</span> JSON 내보내기
+              </button>
+            )}
+            {!isNew && (
+              <button onClick={async () => {
+                const all = await getPromotions()
+                const filtered = all.filter(p =>
+                  p.schoolCode === school.schoolCode || p.schoolName === school.name
+                )
+                setSchoolPromos(filtered)
+                setDatasheetOpen(true)
+              }} className="btn-secondary flex items-center gap-1.5 text-sm">
+                <span>📋</span> 데이터시트 PNG
               </button>
             )}
             {!isNew && <button onClick={handleDelete} className="btn-danger">삭제</button>}
@@ -514,6 +529,13 @@ export default function SchoolForm({ schoolId }: Props) {
           </button>
         </div>
       </div>
+      {datasheetOpen && (
+        <SchoolDatasheet
+          school={school as School}
+          promotions={schoolPromos}
+          onClose={() => setDatasheetOpen(false)}
+        />
+      )}
     </AdminLayout>
   )
 }

@@ -5,95 +5,46 @@ import { buildAliasIndex, findSchoolForPromo, type AliasMap } from '@/lib/school
 import schoolAliases from '@/data/school-aliases.json'
 import type { School, ExchangeRate, Promotion } from '@/types'
 
-const EXTRACT_PROMPT = `엠버시유학 내부 견적 계산 시스템입니다. 사용자는 상담원입니다.
+// [코드 버전] 패치마다 증가. 응답에 표시되어 어느 버전 빌드가 돌고 있는지 즉시 확인 가능.
+// v1: 초기 / v2: 단기 계산 수정 / v3: 단계 분리·날짜 미정 모드
+// v4: 코드 주도 챗봇 (롤백됨 — 대화 부자연스러움)
+// v5: LLM 주도 대화 + 사용자 확인 카드 + regulationWarning 제거
+const CODE_VERSION = 'v5-2026.05.28'
 
-[태도]
-- 상담원이 쓰는 내부 도구. 고객 응대 말투 금지.
-- "죄송합니다", "담당자 확인 필요" 같은 말 절대 금지.
-- 군더더기 없이 바로 계산 결과 또는 필요한 정보 요청.
+// [LLM 역할 = 자연어 대화 주도]
+// LLM이 사용자와 자연어로 대화하며 견적에 필요한 정보를 모은다.
+// 다 모이면 confirm 액션으로 코드에 인계 → 사용자 확인 카드 표시 → 사용자 승인 → calculate.
+// 행동 규칙(긍정문)으로 LLM을 규율한다. 부정문보다 LLM이 잘 따른다.
+const EXTRACT_PROMPT = `엠버시유학 견적 시스템. 사용자는 상담원이다.
 
-[계산 규칙]
-- 응답은 JSON 하나만. { 로 시작 } 로 끝.
-- 코드블록, 설명 텍스트 금지.
+[역할]
+사용자와 자연어로 대화하며 견적에 필요한 정보(학원, 주수, 코스, 기숙사, 시작일)를 모은다.
+다 모이면 "confirm" 액션으로 코드에 인계한다. 그 외엔 "need_info"로 다음 필요 정보를 묻는다.
 
-[학원 데이터 구조 안내]
-- courses: 정규 코스 (price4Weeks). 시스템이 자동 계산.
-- dorms: 기숙사 (price4Weeks). 시스템이 자동 계산.
-- packages: 가족캠프 등 행렬형 패키지. 시스템이 자동 계산.
-- addCharges: 옵션 비용 (시스템 자동 계산 X). 견적 시 별도 안내 필요.
-  예: CELLA 익스프레서 (1주/2주 단기 옵션), CIA 추가숙박 (1박당), Booster ESL (1주/2주 단독 코스), 가디언비, CIDEC 한 학년 학비.
-  학생이 해당 옵션 신청 시 calculate에 반영 못 함 → message에 옵션 비용을 명시하고 운영자가 수동 추가하도록 안내.
+[행동 규칙 - 반드시 지킨다]
+1. 사용자가 답하지 않은 값은 빈 값으로 둔다. 임의로 채우지 않는다.
+2. 사용자가 코스를 안 골랐으면 ESL Regular 같은 기본값을 넣지 않는다. need_info로 코스를 묻는다.
+3. 시작일은 선택사항이다. 사용자가 "미정/무관/상관없음/아무때나"라고 답하면 startDate는 빈 문자열로 두고 즉시 confirm 단계로 간다.
+4. 시작일이 미정일 때 임시 날짜(오늘 날짜 등)를 넣지 않는다. 빈 문자열을 그대로 보낸다.
+5. 시작일을 한 번 물어보고 사용자가 미정이라 답하면, 다시 묻지 않는다.
+6. 학원 ID, 코스 ID, 기숙사 ID는 [학원 데이터]에 실제 존재하는 ID만 사용한다.
 
-[필수 확인 - 절대 누락 금지]
-모든 견적은 ① 시작일 ② 코스 ③ 기숙사 ④ 주수를 모두 확인 후 계산. 하나라도 빠지면 need_info로 되묻기.
-견적이 새는 가장 흔한 케이스는 기숙사 누락. 코스만 정해지면 즉시 기숙사 확인.
+[출력 형식 - JSON 하나만]
+정보 부족 시:
+{"action":"need_info","question":"...","type":"select|text","suggestions":[...],"allowFreeText":true|false}
 
-① 시작일: "8월 초"→8-04, "8월 중순"→8-11, "8월 말"→8-25. 미지정 → need_info.
-② 코스: 미지정 → 코스 목록 제시 (need_info)
-③ 기숙사 - 절대 누락 금지:
-   - 코스 확인 후 기숙사 미지정 → 기숙사 목록 제시 (need_info)
-   - 기숙사 목록에 반드시 "워크인(통학, 기숙사 없음)" 옵션을 추가하여 제시. 학원에 워크인 가능 명시가 있거나, 학생이 명시적으로 "통학" 또는 "기숙사 없이" 언급한 경우만 dormitories=[]로 설정.
-   - "기숙사 안 함" / "통학" / "워크인" 같은 명시가 없으면 반드시 기숙사 선택 받기.
-④ 주수: 미지정 → 되물음 (need_info)
+정보 다 모임 (코스/기숙사/주수 확인됨, 시작일은 빈 값이어도 OK):
+{"action":"confirm","schoolId":"...","totalWeeks":N,"courses":[{"courseId":"...","weeks":N}],"dormitories":[{"dormitoryId":"...","weeks":N}],"startDate":"YYYY-MM-DD 또는 빈문자열","enrollmentDate":"YYYY-MM-DD 또는 빈문자열"}
 
-[같은 학원에서 주차별 코스/기숙사 변동 - 단일 견적]
-사용자가 한 학원에서 "3인실 4주 + 2인실 2주 + 1B 1주 + 2인실 3주" 같이 주차별 변동을 입력하면, 이건 **하나의 견적**의 dormitories/courses 배열로 처리한다. 절대 multi_calculate로 분리하지 마라.
-예: dormitories: [{dormitoryId:"dorm_3a", weeks:4}, {dormitoryId:"dorm_2a", weeks:2}, {dormitoryId:"dorm_1b", weeks:1}, {dormitoryId:"dorm_2a", weeks:3}]
-코스도 마찬가지: courses: [{courseId:"pic_4", weeks:12}] 단일 또는 코스가 바뀌면 여러 개.
-시스템이 totalWeeks를 자동 계산하므로 (4+2+1+3=10주) 그대로 넘기면 된다.
+사용자가 확인 카드를 승인:
+{"action":"calculate", ... confirm과 동일한 필드들}
 
-[multi_calculate는 학원 비교용]
-multi_calculate는 **다른 학원끼리 비교**할 때만 사용. 같은 학원의 주차별 변동에는 절대 쓰지 마라.
+[학원 데이터 사용]
+- courses, dormitories는 ID로 매칭. 사용자가 이름으로 말하면 가장 가까운 것 선택.
+- 사용자가 모호하게 말하면 need_info로 명확히 묻는다.
 
-[프로모션 중복 적용]
-- 어학원 프로모션은 명시적으로 stackable=false인 경우 외에는 중복 적용 가능.
-- 시스템이 자동으로 적용 가능한 프로모션을 모두 적용하고 사용자에게 알림.
-- 견적 봇이 별도로 안내할 필요 없음 (시스템 메시지로 표시됨).
+JSON 외 텍스트 금지. 코드블록 금지.`
 
-[단기 견적 (4주 미만) 처리]
-- 학생/상담원이 1~3주 같은 단기 견적을 요청하면 calculate 호출은 정상 진행한다 (차단 X).
-- 학원 컨텍스트의 shortStatus 필드 확인:
-  - 'confirmed': 자료에 단기 비율 명시됨. 시스템이 정확히 계산하므로 그대로 응답.
-  - 'unconfirmed': 자료에 단기 가격 없음. 계산은 진행되지만 시스템이 자동으로 견적 결과에
-    "🔴 [단기-미확인]" 경고를 강하게 표시한다. 견적 봇은 추가로 message 필드에
-    "이 학원은 4주 미만 단기 가격이 자료에 없습니다. 견적은 정비례 추정값이며, 정확한 가격은 본사/학원 확인 필요합니다."를 명시.
-- "단기 가격이 없다"고 답변을 회피하지 말 것. 일단 계산은 주고 경고를 함께 전달.
-
-[기숙사 미운영 학원 처리]
-- 학원 컨텍스트의 hasDorms 필드 확인:
-  - true (대부분 어학원): 기숙사 입력 받아 정상 처리.
-  - false (영어유치원 등 외부 거주 전제 학원): dormitories는 빈 배열 []로 calculate 호출.
-    학생이 기숙사를 물어보면 "이 학원은 기숙사를 직접 운영하지 않습니다 (외부 거주 전제)" 명시.
-    워크인(통학) 견적과 동일한 형식 사용.
-
-[응답 형식]
-
-코스/기숙사 견적:
-{"action":"calculate","schoolId":"ID","startDate":"YYYY-MM-DD","enrollmentDate":"YYYY-MM-DD",
- "courses":[{"courseId":"ID","weeks":4}],
- "dormitories":[{"dormitoryId":"ID1","weeks":2}],
- "packages":[],"specialNote":"","message":""}
-
-워크인(통학) 견적 - 기숙사 없음:
-{"action":"calculate","schoolId":"ID","startDate":"YYYY-MM-DD","enrollmentDate":"YYYY-MM-DD",
- "courses":[{"courseId":"ID","weeks":4}],
- "dormitories":[],
- "packages":[],"specialNote":"워크인(통학) 견적","message":""}
-
-패키지 견적:
-{"action":"calculate","schoolId":"ID","startDate":"YYYY-MM-DD","enrollmentDate":"YYYY-MM-DD",
- "courses":[],"dormitories":[],
- "packages":[{"packageId":"ID","weeks":4,"columnLabel":"보호자1+자녀1"}],
- "specialNote":"","message":""}
-
-비교:
-{"action":"multi_calculate","items":[...]}
-
-정보 부족:
-{"action":"need_info","question":"","type":"select","suggestions":[],"allowFreeText":false}
-
-답변:
-{"action":"answer","message":""}`
 
 function extractJson(text: string): Record<string, unknown> | null {
   const stripped = text.replace(/```(?:json)?\n?/g, '').replace(/```/g, '').trim()
@@ -193,13 +144,27 @@ function buildQuoteMessage(school: School, calcResult: CalcResult, _totalWeeks: 
 
   if (totalAllDiscount > 0) {
     lines.push('\n**🎁 할인 내역**')
-    if (calcResult.promotionLabel && totalPromoDiscount > 0) {
-      lines.push(`- 학원 프로모션 (${calcResult.promotionLabel}): -${formatKrw(totalPromoDiscount)}`)
-    }
-    if (agencyDiscount > 0) {
-      lines.push(`- 엠버시유학 자체 할인: -${formatKrw(agencyDiscount)}`)
+    const appliedSchoolLines = (calcResult.promotionLines ?? []).filter(l => l.kind === 'school' && l.status === 'applied')
+    const appliedAgencyLines = (calcResult.promotionLines ?? []).filter(l => l.kind === 'agency' && l.status === 'applied')
+    if (appliedSchoolLines.length > 0 || appliedAgencyLines.length > 0) {
+      for (const l of appliedSchoolLines) lines.push(`- ${l.label} *(${l.basis})*: -${formatKrw(l.discountKrw)}`)
+      for (const l of appliedAgencyLines) lines.push(`- 유학원 할인 · ${l.label.replace(' (유학원 할인)','')}: -${formatKrw(l.discountKrw)}`)
+    } else {
+      if (calcResult.promotionLabel && totalPromoDiscount > 0) {
+        lines.push(`- 학원 프로모션 (${calcResult.promotionLabel}): -${formatKrw(totalPromoDiscount)}`)
+      }
+      if (agencyDiscount > 0) {
+        lines.push(`- 엠버시유학 자체 할인: -${formatKrw(agencyDiscount)}`)
+      }
     }
     lines.push(`- **총 할인: -${formatKrw(totalAllDiscount)}**`)
+  }
+
+  // 조건 미충족 프로모션 안내 (적용 안 됐지만 존재 — 조건 보완 시 가능)
+  const unmetLines = (calcResult.promotionLines ?? []).filter(l => l.status === 'unmet')
+  if (unmetLines.length > 0) {
+    lines.push('\n**🔸 조건 충족 시 적용 가능**')
+    for (const l of unmetLines) lines.push(`- ${l.label} *(${l.unmetReason})*`)
   }
 
   if (calcResult.registrationFee && calcResult.registrationFeeKrw > 0) {
@@ -212,6 +177,16 @@ function buildQuoteMessage(school: School, calcResult: CalcResult, _totalWeeks: 
   if (agencyDiscount > 0)
     lines.push(`> 💡 엠버시유학 할인 **${formatKrw(agencyDiscount)}** 적용된 가격입니다`)
   lines.push('*(현지납부비 별도)*')
+
+  // 날짜 미정 보류 항목 (성수기 추가비·기간 한정 프로모션)
+  const pendingLines = (calcResult.promotionLines ?? []).filter(l => l.status === 'pending')
+  if (pendingLines.length > 0) {
+    lines.push('\n**📅 입국일을 정하면 반영될 항목**')
+    for (const pl of pendingLines) {
+      lines.push(`- ${pl.label} *(${pl.periodNote ?? pl.basis})*`)
+    }
+    lines.push('> 위 견적은 입국일 미정 기준 기본 견적입니다. 날짜를 알려주시면 성수기 추가비·기간 한정 프로모션을 반영해 드립니다.')
+  }
 
   if (calcResult.warnings.length > 0) lines.push('\n' + calcResult.warnings.join('\n'))
   if (calcResult.notes.length > 0)    lines.push('\n' + calcResult.notes.join('\n'))
@@ -312,6 +287,7 @@ export async function POST(req: NextRequest) {
           minWeeks: p.agencyDiscountMinWeeks,
           weekTiers: p.agencyDiscountWeekTiers,
           regFeeDiscount: p.agencyDiscountRegFee,
+          base: p.agencyDiscountBase ?? 'after_discount',
           rawText: p.agencyDiscountRawText,
           note: p.agencyDiscountNote ?? '',
         }
@@ -336,6 +312,14 @@ export async function POST(req: NextRequest) {
         applicableItems: p.applicableItems,
         weekTiers: p.weekTiers,
         excludeCourses: p.excludeCourses,
+        // 허용조건·계산방식 (자료 근거)
+        minWeeks: p.minWeeks,
+        blockMethod: p.blockMethod,
+        methodConfirmed: p.methodConfirmed,
+        // 호환 관계 (ID 기반)
+        stackWith: p.stackWith,
+        exclusiveWith: p.exclusiveWith,
+        relationConfirmed: p.relationConfirmed,
         agencyDiscount,
       }
     }
@@ -475,17 +459,26 @@ export async function POST(req: NextRequest) {
     const parsed = extractJson(rawText)
     if (!parsed) return NextResponse.json({ action: 'answer', message: rawText })
 
+    // [LLM 주도 흐름] LLM이 대화 주도, 코드는 보조.
+    // need_info일 때 코드가 selectable 후보(코스/기숙사/시작일 등)를 보강한다.
     if (parsed.action === 'need_info') {
       const q = (parsed.question as string ?? '').toLowerCase()
       const isCourseQ = q.includes('코스') || q.includes('수업') || q.includes('과정')
       const isDormQ   = q.includes('기숙사') || q.includes('숙소') || q.includes('룸')
       const isPkgQ    = q.includes('패키지') || q.includes('인원') || q.includes('가족') || q.includes('성수기') || q.includes('비수기')
+      const isDateQ   = (q.includes('시작일') || q.includes('입국') || q.includes('날짜') || q.includes('언제') || q.includes('일정'))
+                        && !isCourseQ && !isDormQ
 
-      const schoolId  = parsed.schoolId as string | undefined
+      const schoolId = parsed.schoolId as string | undefined
       const targetSchool = schoolId ? schoolsWithPromos.find(s => s.id === schoolId) : undefined
       const sugg = parsed.suggestions as string[] | undefined
 
-      if (isCourseQ && targetSchool && (targetSchool.courses ?? []).length > 0) {
+      if (isDateQ) {
+        // 시작일 미정 선택지 자동 추가. 미정 선택해도 빈 값으로 진행되게.
+        parsed.suggestions = ['미정 (날짜 없이 기본 견적)', ...(sugg ?? [])]
+        parsed.allowFreeText = true
+        parsed.type = 'select'
+      } else if (isCourseQ && targetSchool && (targetSchool.courses ?? []).length > 0) {
         parsed.suggestions = targetSchool.courses.map(c =>
           `${c.name} (${((c as unknown as Record<string,number>).price4Weeks ?? 0).toLocaleString()}원/4주)`
         )
@@ -506,6 +499,51 @@ export async function POST(req: NextRequest) {
       }
     }
 
+    // [확인 카드] LLM이 confirm 액션을 보내면 코드가 즉시 calculate로 가지 않고
+    // "이 값으로 계산할게요. 맞나요?" 사용자 확인 카드를 띄운다. 사용자가 검토/수정 후
+    // 승인 버튼을 누르면 그때 calculate. LLM 5% 실패(임의값, 임시 날짜 등)가 자동 통과
+    // 되지 않게 사용자에게 즉시 노출하는 방어선.
+    if (parsed.action === 'confirm') {
+      const school = schoolsWithPromos.find(s => s.id === parsed.schoolId)
+      if (!school) {
+        return NextResponse.json({
+          action: 'need_info', type: 'select',
+          question: '학원을 다시 확인해주세요.',
+          suggestions: schoolsWithPromos.map(s => s.name),
+          allowFreeText: false,
+          _version: CODE_VERSION,
+        })
+      }
+      const courses = (parsed.courses as { courseId: string; weeks: number }[] | undefined) ?? []
+      const dorms   = (parsed.dormitories as { dormitoryId: string; weeks: number }[] | undefined) ?? []
+      const courseLabels = courses.map(c => {
+        const cobj = (school.courses ?? []).find(x => x.id === c.courseId)
+        return cobj ? `${cobj.name} (${c.weeks}주)` : `${c.courseId} (${c.weeks}주)`
+      })
+      const dormLabels = dorms.map(d => {
+        const dobj = (school.dormitories ?? []).find(x => x.id === d.dormitoryId)
+        return dobj ? `${dobj.name} (${d.weeks}주)` : `${d.dormitoryId} (${d.weeks}주)`
+      })
+      const sd = (parsed.startDate as string) ?? ''
+      return NextResponse.json({
+        action: 'confirm',
+        message: '아래 내용으로 계산할게요. 맞으면 [계산하기]를 누르고, 수정할 게 있으면 알려주세요.',
+        confirmCard: {
+          schoolId: parsed.schoolId,
+          schoolName: school.name,
+          totalWeeks: parsed.totalWeeks,
+          courses: courses,
+          courseLabels,
+          dormitories: dorms,
+          dormLabels,
+          startDate: sd,
+          startDateLabel: sd ? sd : '미정 (날짜 없이 기본 견적)',
+          enrollmentDate: (parsed.enrollmentDate as string) ?? sd,
+        },
+        _version: CODE_VERSION,
+      })
+    }
+
     if (parsed.action === 'calculate') {
       const school = schoolsWithPromos.find(s => s.id === parsed.schoolId)
       if (!school) return NextResponse.json({ action: 'need_info', question: '학원을 찾을 수 없습니다.', type: 'select', suggestions: schoolsWithPromos.map(s => s.name), allowFreeText: false })
@@ -514,8 +552,8 @@ export async function POST(req: NextRequest) {
 
       const calcResult = runCalc(school, {
         schoolId: parsed.schoolId as string,
-        startDate: parsed.startDate as string,
-        enrollmentDate: parsed.enrollmentDate as string,
+        startDate: (parsed.startDate as string) ?? '',
+        enrollmentDate: (parsed.enrollmentDate as string) ?? (parsed.startDate as string) ?? '',
         courses: (parsed.courses as CourseItem[]) ?? [],
         dormitories: (parsed.dormitories as DormItem[]) ?? [],
         packages: (parsed.packages as PackageInput[]) ?? [],
@@ -530,17 +568,15 @@ export async function POST(req: NextRequest) {
         return true
       })
 
-      const courseSummary = calcResult.courseItems.map(i => i.label).join(', ')
-      const dormSummary   = calcResult.dormItems.map(i => i.label).join(', ')
-      const scenario = `${school.name} / 총 ${calcResult.totalWeeks}주 / 입국: ${parsed.startDate}\n코스: ${courseSummary || '패키지'}\n기숙사: ${dormSummary || '-'}`
-
-      const regWarning = await checkRegulations(school, scenario)
+      // [v5] regulationWarning 제거 — LLM이 만드는 규정 검토는 정확도 검증 안 됨.
+      // 상담사가 검산해야 하는 산출물을 줄이는 게 본질이므로 빼버린다.
 
       return NextResponse.json({
         action: 'result',
-        message: (parsed.message ? `*${parsed.message}*\n\n` : '') +
-          buildQuoteMessage(school, calcResult, calcResult.totalWeeks, specialNote),
-        regulationWarning: regWarning,
+        // [v4] LLM이 임의로 끼운 message는 무시. 코드가 만든 buildQuoteMessage만 사용.
+        // 이전 버전에서 LLM이 "promoStatus: none" 같은 내부 필드명을 응답에 노출하던 문제 차단.
+        message: buildQuoteMessage(school, calcResult, calcResult.totalWeeks, specialNote)
+          + `\n\n_ver: ${CODE_VERSION}_`,
         evidenceMessage: buildEvidenceMessage(school, calcResult, rate),
         discountEvidence: buildDiscountEvidence(school, calcResult),
         localFees: filteredLocalFees,
@@ -555,6 +591,7 @@ export async function POST(req: NextRequest) {
         schoolData: school,
         schoolId: school.id,
         specialNote,
+        _version: CODE_VERSION,
       })
     }
 

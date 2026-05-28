@@ -1,5 +1,4 @@
-import type { School, Course, Dormitory, QuoteItem, ExchangeRate, LocalFee, RegistrationFee, Package } from '@/types'
-import { calcShortTermPrice } from '@/types'
+import type { School, Course, Dormitory, QuoteItem, ExchangeRate, LocalFee, RegistrationFee, Package, ShortTermRates, Promotion } from '@/types'
 import { toKrw } from './utils'
 
 export interface CourseItem   { courseId: string; weeks: number }
@@ -30,6 +29,23 @@ export interface PackageResultItem {
   appliedRules: string[]
 }
 
+// 프로모션 1건의 적용 상태 + 근거 (화면 표시용)
+// - status: 'applied' 자동 적용됨 / 'unmet' 조건 미충족(미적용, 회색 표시) / 'manual' 수동 적용
+//           / 'pending' 시작일 미정이라 시기 판정 보류 (날짜 정하면 확정 가능 — 화면에서 데이트피커 제공)
+// - 자동 적용은 그대로 두되, 어떤 프로모션이 어떤 근거로 얼마 할인됐는지 노출하여
+//   상담사가 보고 수동으로 켜고 끌 수 있게 한다 (수동 수정은 화면단에서 처리).
+export interface PromotionLineItem {
+  id: string
+  label: string
+  status: 'applied' | 'unmet' | 'manual' | 'pending'
+  kind: 'school' | 'agency'    // 학원 자체 할인 / 유학원(필자닷컴) 할인
+  discountKrw: number          // 이 프로모션의 할인액 (원화, 양수). pending이면 0
+  basis: string                // 적용/미적용 근거 (예: "비수기 4주 이상, 4주당 25만원")
+  unmetReason?: string         // status='unmet'일 때 사유 (예: "최소 4주 미달")
+  periodNote?: string          // status='pending'일 때 적용 기간 안내 (예: "비수기 3-6월")
+  stackable: boolean
+}
+
 export interface CalcResult {
   courseItems: QuoteItem[]
   dormItems:   QuoteItem[]
@@ -52,6 +68,8 @@ export interface CalcResult {
   localFees: LocalFee[]
   localFeePhp: number
   localFeeKrwEstimate: number
+  // 프로모션 상태별 근거 목록 (화면이 단계별로 표시) — 자동 적용 + 근거 노출
+  promotionLines: PromotionLineItem[]
   warnings: string[]
   notes: string[]
 }
@@ -114,7 +132,7 @@ export function calculateQuote(input: QuoteInput, rate: ExchangeRate): CalcResul
     // ── 패키지 유효기간 체크 ────────────────────────────────────────────────
     const pkgStart = pkg.startDate
     const pkgEnd   = pkg.endDate
-    if (pkgStart && pkgEnd) {
+    if (pkgStart && pkgEnd && startDate && startDate.trim() !== '') {
       if (startDate < pkgStart || startDate > pkgEnd) {
         warnings.push(
           `⚠️ [혼합기간 주의] "${pkg.label}" 유효기간 ${pkgStart}~${pkgEnd} / 입국일 ${startDate} 는 범위 밖입니다. ` +
@@ -215,6 +233,21 @@ export function calculateQuote(input: QuoteInput, rate: ExchangeRate): CalcResul
   const increaseActive = pi && pi.fromDate <= today
   if (increaseActive) notes.push(`ℹ️ ${pi!.label ?? '비용 인상'} 적용 중 (${pi!.fromDate}~)`)
 
+  // [단기 비율] 총 주수가 4주 미만이면 "정비례 대비 목표 비율"을 분자/분모로 들고 곱셈 먼저 적용.
+  // 대전제: 총 주수 하나로 결정, 코스 조합 무관. 학원은 %로 주므로 데이터는 %.
+  // 핵심: 배율(80/75)을 미리 나눠 무한소수로 만들지 말 것. price = round(주당 × 주수 × pct / propPct)로
+  //       곱셈을 먼저 하고 나눗셈(반올림)을 마지막에 한 번만 → %로 계산할 때처럼 오차 0.
+  // rates 미확인이면 pct=propPct(배율 1, 정비례 그대로).
+  function shortTermPct(rates?: ShortTermRates): { pct: number; propPct: number } {
+    const propPct = totalWeeks * 100 / 4   // 정비례 시 % (3주 → 75)
+    if (!isShortTerm || !rates) return { pct: propPct, propPct }
+    const raw = rates[`week${totalWeeks}` as 'week1'|'week2'|'week3']
+    if (rates.mode === 'percent' && raw != null) return { pct: raw, propPct }
+    return { pct: propPct, propPct }   // fixed 등은 정비례 fallback
+  }
+  const courseSt = shortTermPct(school.courseShortTermRates)
+  const dormSt   = shortTermPct(school.dormShortTermRates)
+
   // ── 코스 계산 ─────────────────────────────────────────────────────────────
   for (const ci of input.courses) {
     const w = Math.max(1, Math.round(Number(ci.weeks)||1))
@@ -225,12 +258,12 @@ export function calculateQuote(input: QuoteInput, rate: ExchangeRate): CalcResul
     const addKrw = increaseActive ? toKrw(pi!.courses.find(c=>c.id===course.id)?.add??0, pi!.currency, rate) : 0
 
     let price: number, label: string
-    if (isShortTerm && w <= 3) {
-      price = calcShortTermPrice(p4w, w as 1|2|3, school.courseShortTermRates)
-      label = `코스: ${course.name} (${w}주 단기가)`
-    } else if (isShortTerm && w === 4 && school.courseShortTermRates?.week4Included) {
-      price = school.courseShortTermRates.week4 ?? p4w
-      label = `코스: ${course.name} (4주 특별가)`
+    if (isShortTerm) {
+      // [단기] 주당단가 × 주수 × 목표% ÷ 정비례%. 곱셈을 먼저 하고 나눗셈을 마지막에 한 번(round).
+      // %로 계산할 때와 동일하게 오차 없음. 코스 여러 개여도 같은 비율이 적용됨.
+      const weekly = p4w / 4
+      price = Math.round(weekly * w * courseSt.pct / courseSt.propPct)
+      label = `코스: ${course.name} × ${w}주 (총 ${totalWeeks}주 단기가)`
     } else {
       price = Math.round(p4w / 4 * w)
       label = `코스: ${course.name} × ${w}주`
@@ -248,12 +281,11 @@ export function calculateQuote(input: QuoteInput, rate: ExchangeRate): CalcResul
     const addKrw = increaseActive ? toKrw(pi!.dormitories.find(d=>d.id===dorm.id)?.add??0, pi!.currency, rate) : 0
 
     let price: number, label: string
-    if (isShortTerm && w <= 3) {
-      price = calcShortTermPrice(p4w, w as 1|2|3, school.dormShortTermRates)
-      label = `기숙사: ${dorm.name} (${w}주 단기가)`
-    } else if (isShortTerm && w === 4 && school.dormShortTermRates?.week4Included) {
-      price = school.dormShortTermRates.week4 ?? p4w
-      label = `기숙사: ${dorm.name} (4주 특별가)`
+    if (isShortTerm) {
+      // [단기] 코스와 동일: 주당단가 × 주수 × 목표% ÷ 정비례% (곱셈 먼저, 반올림 마지막).
+      const weekly = p4w / 4
+      price = Math.round(weekly * w * dormSt.pct / dormSt.propPct)
+      label = `기숙사: ${dorm.name} × ${w}주 (총 ${totalWeeks}주 단기가)`
     } else {
       price = Math.round(p4w / 4 * w)
       label = `기숙사: ${dorm.name} × ${w}주`
@@ -273,12 +305,27 @@ export function calculateQuote(input: QuoteInput, rate: ExchangeRate): CalcResul
   let agencyDiscountNote = ''
 
   // ── 서차지 ────────────────────────────────────────────────────────────────
+  // [날짜 미정 모드] startDate가 비어있으면 시기 의존 항목(서차지·기간한정 프로모션)을 보류 처리.
+  // 학비·기숙사·등록비·현지납부비는 날짜와 무관하게 정상 계산 → "덜 확정적인 견적" 제공.
+  const dateUnset = !startDate || startDate.trim() === ''
   let surchargeKrw = 0
-  const endDate = addWeeksHelper(startDate, totalWeeks)
+  const endDate = dateUnset ? '' : addWeeksHelper(startDate, totalWeeks)
   const surchargeDetails: Array<{krw:number; discountAllowed:boolean; label:string}> = []
+  const pendingSeasonalLines: PromotionLineItem[] = []   // 날짜 미정 보류 항목
 
   for (const sc of (school.surcharges ?? [])) {
     if (!sc.startDate || !sc.endDate) continue
+    if (dateUnset) {
+      // 날짜 미정 → 서차지 존재만 보류로 알림 (날짜 정하면 확정)
+      pendingSeasonalLines.push({
+        id: `surcharge__${sc.label}`, label: `성수기 추가비: ${sc.label}`,
+        status: 'pending', kind: 'school', discountKrw: 0,
+        basis: `주당 ${sc.pricePerWeek.toLocaleString()}${sc.currency}`,
+        periodNote: `${sc.startDate} ~ ${sc.endDate} 기간 입국 시 부과`,
+        stackable: true,
+      })
+      continue
+    }
     const overlap = getOverlapWeeks(startDate, endDate, sc.startDate, sc.endDate)
     if (overlap > 0) {
       const krw = toKrw(sc.pricePerWeek * overlap, sc.currency, rate)
@@ -294,6 +341,10 @@ export function calculateQuote(input: QuoteInput, rate: ExchangeRate): CalcResul
   let surchargeDiscount = 0
   const appliedPromoLabels: string[] = []
   const appliedPromoDetails: Array<{ label: string; discount: number }> = []
+  const promotionLines: PromotionLineItem[] = []   // 상태별 근거 기록 (화면 표시용)
+  // [단계 분리] 유학원 할인은 학원 할인이 전부 합산된 뒤 계산해야 차감 후 base가 정확하다.
+  // 1차 루프에서는 학원 할인만 계산하고, 유학원 할인은 이 배열에 모아 2차에서 처리.
+  const agencyPending: Array<{ label: string; id: string; pad: NonNullable<Promotion['agencyDiscount']> }> = []
 
   const schoolPromotions = school.promotions ?? []
   const promoWidth = (p: typeof schoolPromotions[0]) => {
@@ -303,42 +354,85 @@ export function calculateQuote(input: QuoteInput, rate: ExchangeRate): CalcResul
   }
   const sortedPromos = [...schoolPromotions].sort((a, b) => promoWidth(a) - promoWidth(b))
 
-  // stackable 기본값: true (명시적 false 시에만 단독)
-  const isStackable = (p: typeof schoolPromotions[0]) => p.stackable !== false
+  // [호환 관계] stackable boolean 대신 ID 기반 관계(stackWith/exclusiveWith)로 조합 검사.
+  // 대부분 프로모션은 시기·대상으로 안 겹쳐 관계 미설정. 동시 적용될 수 있는 것만 명시.
+  const promoId = (p: typeof schoolPromotions[0]) => (p as { id?: string }).id ?? p.label
+  const isStackable = (p: typeof schoolPromotions[0]) => p.stackable !== false   // legacy 호환
+  const appliedPromoIds: string[] = []   // 적용 확정된 프로모션 ID 추적
+
+  // 현재 프로모션을 이미 적용된 것들과 함께 적용 가능한지 판정.
+  // 반환: { ok: 적용가능 여부, reason: 불가 사유, needConfirm: 관계 미확인 경고 }
+  function checkCompat(p: typeof schoolPromotions[0]): { ok: boolean; reason?: string; needConfirm?: boolean } {
+    if (appliedPromoIds.length === 0) return { ok: true }
+    const pid = promoId(p)
+    const stackWith = (p as { stackWith?: string[] }).stackWith ?? []
+    const exclWith  = (p as { exclusiveWith?: string[] }).exclusiveWith ?? []
+    const relConfirmed = (p as { relationConfirmed?: boolean }).relationConfirmed
+    for (const aid of appliedPromoIds) {
+      const applied = sortedPromos.find(x => promoId(x) === aid)
+      if (!applied) continue
+      const aStackWith = (applied as { stackWith?: string[] }).stackWith ?? []
+      const aExclWith  = (applied as { exclusiveWith?: string[] }).exclusiveWith ?? []
+      // 배타 관계 (양방향): 둘 중 하나라도 상대를 exclusiveWith에 두면 택일 → 스킵
+      if (exclWith.includes(aid) || aExclWith.includes(pid)) {
+        return { ok: false, reason: `${applied.label}와(과) 택일 (둘 중 하나만 적용 가능)` }
+      }
+      // 호환 관계 (양방향): 명시돼 있으면 OK
+      if (stackWith.includes(aid) || aStackWith.includes(pid)) continue
+      // 관계 미설정 → legacy stackable 폴백, 그래도 불명확하면 미확인 경고
+      if (!isStackable(p) || !isStackable(applied)) {
+        return { ok: false, reason: `${applied.label}와(과) 중복 불가 (단독 적용)` }
+      }
+      if (relConfirmed === false) return { ok: true, needConfirm: true }
+    }
+    return { ok: true }
+  }
 
   for (const promo of sortedPromos) {
-    // 이미 non-stackable 프로모션이 적용됐으면 다른 프로모션은 스킵
-    const hasNonStackableApplied = appliedPromoLabels.length > 0 &&
-      sortedPromos.some(p => appliedPromoLabels.includes(p.label) && !isStackable(p))
-    if (hasNonStackableApplied) continue
-    // 본 프로모션이 non-stackable인데 이미 다른 프로모션이 적용됐으면 스킵
-    if (!isStackable(promo) && appliedPromoLabels.length > 0) continue
+    // 이미 적용된 프로모션들과의 호환 관계 검사
+    const compat = checkCompat(promo)
+    if (!compat.ok) {
+      notes.push(`ℹ️ ${promo.label}: ${compat.reason} → 미적용`)
+      continue
+    }
+    if (compat.needConfirm) {
+      warnings.push(`⚠️ ${promo.label}: 다른 프로모션과 중복 적용 가능 여부 미확인 — 본사 확인 필요`)
+    }
 
     // 기간 체크
     if (!promo.startDate && !promo.alwaysApply) continue
     if (!promo.alwaysApply) {
       if (!promo.endDate) continue
+      // [날짜 미정 모드] 기간 한정 프로모션은 시작일이 있어야 판정 가능 → 보류(pending)로 기록
+      if (dateUnset) {
+        pendingSeasonalLines.push({
+          id: ((promo as { id?: string }).id ?? promo.label) + '__pending',
+          label: promo.label, status: 'pending', kind: 'school', discountKrw: 0,
+          basis: promo.condition ?? '기간 한정 프로모션',
+          periodNote: `${promo.startDate} ~ ${promo.endDate} 입국 시 적용 가능`,
+          stackable: isStackable(promo),
+        })
+        continue
+      }
       const checkDate = promo.basisType === 'start_date' ? startDate : enrollmentDate
       if (!isInRange(checkDate, promo.startDate, promo.endDate)) continue
     }
 
-    // condition 주수 체크
-    if (promo.condition) {
-      const weekMatch = promo.condition.match(/(\d+)주/)
-      if (weekMatch) {
-        const required = Number(weekMatch[1])
-        if (totalWeeks < required) continue
-        // 같은 stackable 그룹 내에서 더 나은 조건 있으면 스킵
-        const betterExists = sortedPromos.some(other => {
-          if (other.label === promo.label) return false
-          const m2 = other.condition?.match(/(\d+)주/)
-          return m2 && Number(m2[1]) > required && Number(m2[1]) <= totalWeeks &&
-            isStackable(other) === isStackable(promo)
-        })
-        if (betterExists) continue
-      }
-      notes.push(`ℹ️ 프로모션 조건: ${promo.condition}`)
+    // [허용조건] minWeeks 명시 필드 우선. 없으면 condition 문자열 정규식(구버전 폴백).
+    const promoMinWeeks = (promo as { minWeeks?: number }).minWeeks
+      ?? (promo.condition?.match(/(\d+)주/) ? Number(promo.condition.match(/(\d+)주/)![1]) : undefined)
+    if (promoMinWeeks != null && totalWeeks < promoMinWeeks) {
+      // 조건 미충족 — 버리지 않고 unmet으로 기록 (화면에 회색 표시, 상담사가 수동 적용 가능)
+      promotionLines.push({
+        id: (promo as { id?: string }).id ?? promo.label,
+        label: promo.label, status: 'unmet', kind: 'school', discountKrw: 0,
+        basis: promo.condition ?? `${promoMinWeeks}주 이상 조건`,
+        unmetReason: `최소 ${promoMinWeeks}주 미달 (요청 ${totalWeeks}주)`,
+        stackable: isStackable(promo),
+      })
+      continue
     }
+    if (promo.condition) notes.push(`ℹ️ 프로모션 조건: ${promo.condition}`)
 
     // applicableItems 체크
     if (promo.applicableItems && promo.applicableItems.length > 0) {
@@ -376,7 +470,14 @@ export function calculateQuote(input: QuoteInput, rate: ExchangeRate): CalcResul
         }
       }
     } else if (promo.discountType === 'amount_per_4weeks') {
-      thisDiscount = toKrw(promo.discountValue, promo.currency ?? 'KRW', rate) * Math.floor(totalWeeks / 4)
+      // [계산방식] floor(기본): 4주 블록 내림 / proportional: 비례
+      const method = (promo as { blockMethod?: 'floor'|'proportional' }).blockMethod ?? 'floor'
+      const blocks = method === 'proportional' ? (totalWeeks / 4) : Math.floor(totalWeeks / 4)
+      thisDiscount = Math.round(toKrw(promo.discountValue, promo.currency ?? 'KRW', rate) * blocks)
+      // 계산방식 미확인이면 경고 (자료에 명시 없어 floor 기본 적용된 경우)
+      if ((promo as { methodConfirmed?: boolean }).methodConfirmed === false) {
+        warnings.push(`⚠️ ${promo.label}: 할인 계산방식 미확인 — 4주 단위 내림(적게 할인)으로 처리됨. 정확한 방식은 본사 확인 필요.`)
+      }
     } else if (promo.discountType === 'amount_per_week') {
       thisDiscount = toKrw(promo.discountValue, promo.currency ?? 'KRW', rate) * totalWeeks
     } else if (promo.discountType === 'week_tiers') {
@@ -399,103 +500,131 @@ export function calculateQuote(input: QuoteInput, rate: ExchangeRate): CalcResul
     // 할인액이 0이 아닌 프로모션만 적용된 것으로 기록
     if (thisDiscount > 0) {
       appliedPromoLabels.push(promo.label)
+      appliedPromoIds.push(promoId(promo))
       appliedPromoDetails.push({ label: promo.label, discount: thisDiscount })
+      // 근거 문자열 구성
+      const basisParts: string[] = []
+      if (promo.discountType === 'percent') basisParts.push(`${promo.discountValue}% 할인`)
+      else if (promo.discountType === 'amount_per_week') basisParts.push(`주당 ${promo.discountValue.toLocaleString()} × ${totalWeeks}주`)
+      else if (promo.discountType === 'amount_per_4weeks') basisParts.push(`4주당 ${promo.discountValue.toLocaleString()}`)
+      else basisParts.push(promo.condition ?? '할인')
+      promotionLines.push({
+        id: (promo as { id?: string }).id ?? promo.label,
+        label: promo.label, status: 'applied', kind: 'school', discountKrw: thisDiscount,
+        basis: basisParts.join(', '),
+        stackable: isStackable(promo),
+      })
+      // 단독 적용 프로모션 표시 (legacy 호환)
+      if (!isStackable(promo)) promotionLabel = promo.label
     }
 
     if (!toCourses && toDorms) notes.push(`ℹ️ ${promo.label}: 기숙사비에만 적용`)
     if (toCourses && !toDorms) notes.push(`ℹ️ ${promo.label}: 코스 학비에만 적용`)
     if (excludeIds.length > 0) notes.push(`ℹ️ ${promo.label}: 일부 코스 제외 (${excludeIds.join(', ')})`)
 
-    // agencyDiscount 처리 (v3 status 모델)
-    // 여러 프로모션의 agencyDiscount는 각각 독립 슬롯이므로 합산. disabled/null은 추가 안 하고 skip.
+    // agencyDiscount 처리 (v3 status 모델) — [단계분리] 여기선 status 판정 + 수집만.
+    // 실제 금액 계산은 학원 할인 전체 합산 후 2차에서 (차감 후 base 정확성 위해).
     if ('agencyDiscount' in promo) {
       if (promo.agencyDiscount === null) {
-        // null = 이 프로모션엔 유학원 할인 슬롯 없음. 다른 프로모션이 채운 값 유지.
+        // null = 이 프로모션엔 유학원 할인 슬롯 없음.
       } else if (promo.agencyDiscount) {
         const pad = promo.agencyDiscount
-        const status = pad.status ?? 'enabled'   // 기본 enabled (구버전 호환)
-
+        const status = pad.status ?? 'enabled'
         if (status === 'disabled') {
-          // 자료에 명시적으로 "X"/"없음" → 이 프로모션의 유학원 할인 슬롯은 비활성. 다른 프로모션 값 유지.
           notes.push(`ℹ️ ${promo.label}: 유학원 자체 할인 불가 (학원 측 명시)`)
         } else if (status === 'unconfirmed') {
-          // 자료 빈 칸 → 본사 확인 필요. 이 프로모션의 슬롯만 비활성.
           warnings.push(`⚠️ ${promo.label}: 유학원 할인 정보 미확정 — 본사 확인 필요`)
           if (!agencyDiscountNote) agencyDiscountNote = pad.note || '본사 확인 필요'
         } else {
-          // status === 'enabled' → 정상 계산
-          // minWeeks 게이트
-          if (pad.minWeeks && totalWeeks < pad.minWeeks) {
-            notes.push(`ℹ️ ${promo.label}: ${pad.minWeeks}주 미만은 유학원 할인 불가 (요청 ${totalWeeks}주)`)
-          } else {
-            const applyTo = pad.applyTo ?? 'all'
-            let base = 0
-            if (applyTo === 'all')             base = baseKrw
-            else if (applyTo === 'course_only') base = courseItems.reduce((s,i) => s + i.krwAmount, 0)
-            else if (applyTo === 'dorm_only')   base = dormItems.reduce((s,i) => s + i.krwAmount, 0)
-            else if (applyTo === 'package_only') base = pkgBaseKrw
-            else if (applyTo === 'course_and_dorm') {
-              base = courseItems.reduce((s,i) => s + i.krwAmount, 0)
-                   + dormItems.reduce((s,i) => s + i.krwAmount, 0)
-            }
-
-            // 유학원 할인은 학원 할인 차감 전 base에 적용 (자료의 "학교할인 차감 후" 표현은
-            // 운영 관행상 적용 안 함 - 견적서 검증 결과로 확인됨)
-            let thisAgencyDiscount = 0
-            if (pad.type === 'percent') {
-              thisAgencyDiscount = Math.round(base * pad.value / 100)
-              if (pad.maxAmount) thisAgencyDiscount = Math.min(thisAgencyDiscount, pad.maxAmount)
-            } else if (pad.type === 'amount_per_week') {
-              thisAgencyDiscount = pad.value * totalWeeks
-              if (pad.maxAmount) thisAgencyDiscount = Math.min(thisAgencyDiscount, pad.maxAmount)
-            } else if (pad.type === 'amount_per_4weeks') {
-              // 4주 단위로 적용 (3주는 0, 4-7주는 1배, 8-11주는 2배...)
-              const blocks = Math.floor(totalWeeks / 4)
-              thisAgencyDiscount = pad.value * blocks
-              if (pad.maxAmount) thisAgencyDiscount = Math.min(thisAgencyDiscount, pad.maxAmount)
-            } else if (pad.type === 'amount_flat') {
-              thisAgencyDiscount = pad.value
-            } else if (pad.type === 'reg_fee_only') {
-              thisAgencyDiscount = 0  // 학비/기숙사 할인 없음 (등록비는 아래에서 별도 처리)
-            } else if (pad.type === 'week_tiers') {
-              // 주수 구간별 차등 정액
-              const tier = (pad.weekTiers ?? []).find(t => {
-                if (totalWeeks < t.minWeeks) return false
-                if (t.maxWeeks !== undefined && totalWeeks > t.maxWeeks) return false
-                return true
-              })
-              if (tier) {
-                thisAgencyDiscount = tier.amount
-                if (tier.scope === 'per_person') {
-                  notes.push(`ℹ️ ${promo.label}: 인당 ${tier.amount.toLocaleString()}원 (인원수만큼 곱하기는 운영자 입력)`)
-                }
-              } else {
-                notes.push(`ℹ️ ${promo.label}: 주수 구간 매칭 없음 (총 ${totalWeeks}주)`)
-              }
-            }
-
-            // 등록비 할인: registrationFeeKrw에서 직접 차감
-            if (pad.regFeeDiscount && pad.regFeeDiscount > 0) {
-              const regDiscount = Math.min(pad.regFeeDiscount, registrationFeeKrw)
-              registrationFeeKrw = Math.max(0, registrationFeeKrw - regDiscount)
-              thisAgencyDiscount += regDiscount
-            }
-
-            // 합산 (여러 프로모션의 agencyDiscount는 누적)
-            agencyDiscountKrw += thisAgencyDiscount
-            if (thisAgencyDiscount > 0) {
-              // 노트는 첫 번째 enabled 프로모션 것을 유지 (또는 가장 큰 것)
-              if (!agencyDiscountNote || agencyDiscountNote === '본사 확인 필요') {
-                agencyDiscountNote = pad.note ?? ''
-              }
-            }
-          }
+          // enabled → 2차 처리용으로 수집
+          agencyPending.push({ label: promo.label, id: (promo as { id?: string }).id ?? promo.label, pad })
         }
       }
     }
+  }
 
-    // 단독 적용 프로모션 표시 (legacy 호환)
-    if (!isStackable(promo)) promotionLabel = promo.label
+  // ── 2차: 유학원 할인 계산 (학원 할인 전부 합산된 뒤) ──────────────────────────
+  // base 기준: 'after_discount'(기본) = 학원 할인 차감 후 / 'before_discount' = 차감 전 원금.
+  // 자료 표현대로 학원별 지정. 차감 후가 정확하려면 promotionDiscount가 확정된 이 시점이어야 함.
+  for (const { label, id, pad } of agencyPending) {
+    if (pad.minWeeks && totalWeeks < pad.minWeeks) {
+      notes.push(`ℹ️ ${label}: ${pad.minWeeks}주 미만은 유학원 할인 불가 (요청 ${totalWeeks}주)`)
+      continue
+    }
+    const applyTo = pad.applyTo ?? 'all'
+    const courseSum = courseItems.reduce((s,i) => s + i.krwAmount, 0)
+    const dormSum   = dormItems.reduce((s,i) => s + i.krwAmount, 0)
+    let base = 0
+    if (applyTo === 'all')                   base = baseKrw
+    else if (applyTo === 'course_only')      base = courseSum
+    else if (applyTo === 'dorm_only')        base = dormSum
+    else if (applyTo === 'package_only')     base = pkgBaseKrw
+    else if (applyTo === 'course_and_dorm')  base = courseSum + dormSum
+
+    // [차감 전/후] 기본 after_discount: 학원 할인(promotionDiscount)을 비례 차감한 금액에 적용.
+    const baseMode = (pad as { base?: 'after_discount'|'before_discount' }).base ?? 'after_discount'
+    if (baseMode === 'after_discount' && promotionDiscount > 0 && baseKrw > 0) {
+      // base가 전체(baseKrw)면 학원할인 전액 차감, 부분이면 그 비중만큼 차감
+      const ratio = base / baseKrw
+      base = Math.max(0, base - Math.round(promotionDiscount * ratio))
+    }
+
+    let thisAgencyDiscount = 0
+    if (pad.type === 'percent') {
+      thisAgencyDiscount = Math.round(base * pad.value / 100)
+      if (pad.maxAmount) thisAgencyDiscount = Math.min(thisAgencyDiscount, pad.maxAmount)
+    } else if (pad.type === 'amount_per_week') {
+      thisAgencyDiscount = pad.value * totalWeeks
+      if (pad.maxAmount) thisAgencyDiscount = Math.min(thisAgencyDiscount, pad.maxAmount)
+    } else if (pad.type === 'amount_per_4weeks') {
+      const method = (pad as { blockMethod?: 'floor'|'proportional' }).blockMethod ?? 'floor'
+      const blocks = method === 'proportional' ? (totalWeeks / 4) : Math.floor(totalWeeks / 4)
+      thisAgencyDiscount = Math.round(pad.value * blocks)
+      if (pad.maxAmount) thisAgencyDiscount = Math.min(thisAgencyDiscount, pad.maxAmount)
+      if ((pad as { methodConfirmed?: boolean }).methodConfirmed === false) {
+        warnings.push(`⚠️ ${label}(유학원할인): 계산방식 미확인 — 4주 단위 내림(적게 할인)으로 처리됨. 본사 확인 필요.`)
+      }
+    } else if (pad.type === 'amount_flat') {
+      thisAgencyDiscount = pad.value
+    } else if (pad.type === 'reg_fee_only') {
+      thisAgencyDiscount = 0
+    } else if (pad.type === 'week_tiers') {
+      const tier = (pad.weekTiers ?? []).find(t => {
+        if (totalWeeks < t.minWeeks) return false
+        if (t.maxWeeks !== undefined && totalWeeks > t.maxWeeks) return false
+        return true
+      })
+      if (tier) {
+        thisAgencyDiscount = tier.amount
+        if (tier.scope === 'per_person') notes.push(`ℹ️ ${label}: 인당 ${tier.amount.toLocaleString()}원 (인원수만큼 곱하기는 운영자 입력)`)
+      } else {
+        notes.push(`ℹ️ ${label}: 주수 구간 매칭 없음 (총 ${totalWeeks}주)`)
+      }
+    }
+
+    if (pad.regFeeDiscount && pad.regFeeDiscount > 0) {
+      const regDiscount = Math.min(pad.regFeeDiscount, registrationFeeKrw)
+      registrationFeeKrw = Math.max(0, registrationFeeKrw - regDiscount)
+      thisAgencyDiscount += regDiscount
+    }
+
+    agencyDiscountKrw += thisAgencyDiscount
+    if (thisAgencyDiscount > 0) {
+      if (!agencyDiscountNote || agencyDiscountNote === '본사 확인 필요') agencyDiscountNote = pad.note ?? ''
+      promotionLines.push({
+        id: id + '__agency',
+        label: `${label} (유학원 할인)`, status: 'applied', kind: 'agency',
+        discountKrw: thisAgencyDiscount,
+        basis: pad.rawText ?? pad.note ?? `${pad.type}`,
+        stackable: true,
+      })
+    }
+  }
+
+  // 날짜 미정 보류 항목(서차지·기간한정 프로모션)을 promotionLines에 합침
+  for (const pl of pendingSeasonalLines) promotionLines.push(pl)
+  if (dateUnset && pendingSeasonalLines.length > 0) {
+    notes.push(`ℹ️ 시작일 미정 — 성수기 추가비/기간 한정 프로모션은 날짜 확정 후 반영됩니다. (현재 기본 견적)`)
   }
 
   // 여러 프로모션 적용 시 - 사용자에게 명시
@@ -557,6 +686,7 @@ export function calculateQuote(input: QuoteInput, rate: ExchangeRate): CalcResul
     totalWeeks, courseTotalWeeks, dormTotalWeeks,
     localFees, localFeePhp,
     localFeeKrwEstimate,
+    promotionLines,
     warnings, notes,
   }
 }

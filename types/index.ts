@@ -86,7 +86,19 @@ export interface AgencyDiscount {
   maxAmount?: number
   applyTo: 'all' | 'course_only' | 'dorm_only' | 'package_only' | 'course_and_dorm'
   scope?: 'per_person' | 'per_family'
-  minWeeks?: number                   // 유학원 할인 적용 최소 주수
+  // [할인 기준 시점] 유학원 10%를 학원 할인 차감 전/후 어느 금액에 매기는지.
+  // - 'after_discount' (기본): 학원 할인(프로모션·장기할인)을 뺀 후 금액에 적용. (CG 등 자료 명시)
+  // - 'before_discount': 할인 전 원금에 적용. (자료가 원금 기준일 때)
+  // 자료 표현대로 학원별 지정. 미설정이면 after_discount(계산 다 하고 10%).
+  base?: 'after_discount' | 'before_discount'
+  minWeeks?: number                   // [허용조건] 유학원 할인 적용 최소 주수 (이 주수 이상부터 켜짐)
+  // [계산방식] type='amount_per_4weeks'일 때 4주 미만 잔여 주수 처리:
+  // - 'floor' (기본): 4주 블록 단위 내림 (6주 → 1블록). 보수적(적게 할인).
+  // - 'proportional': 비례 (6주 → 1.5블록).
+  blockMethod?: 'floor' | 'proportional'
+  // [계산방식 확인 여부] 자료에 계산방식이 명시되지 않아 floor로 기본 처리한 경우 false.
+  // false면 견적 시 "계산방식 미확인 - 적게 할인 적용됨" 경고 자동 표시. (정보없음≠불가 원칙)
+  methodConfirmed?: boolean
   regFeeDiscount?: number              // 등록비 할인 금액 (원)
   weekTiers?: AgencyWeekTier[]         // type='week_tiers'일 때
   rawText?: string                     // 자료 원문 보존
@@ -114,11 +126,32 @@ export interface Promotion {
   applyToDorms: boolean
   applyToSurcharge: boolean
   weekTiers?: PromotionWeekTier[]   // discountType='week_tiers'일 때
-  condition?: string
+  // [허용조건] 이 주수 이상일 때만 할인 적용 (예: "4주 이상 등록 시" → 4).
+  // condition 자유문자열 대신 명시적 숫자로. 미설정이면 제한 없음.
+  minWeeks?: number
+  // [계산방식] discountType='amount_per_4weeks'일 때 4주 미만 잔여 주수 처리:
+  // - 'floor' (기본): 4주 블록 단위 내림 (6주 → 1블록). 보수적(적게 할인).
+  // - 'proportional': 비례 (6주 → 1.5블록).
+  blockMethod?: 'floor' | 'proportional'
+  // [계산방식 확인 여부] 자료에 계산방식 명시 없어 floor로 기본 처리한 경우 false.
+  // false면 견적 시 "계산방식 미확인" 경고 자동 표시.
+  methodConfirmed?: boolean
+  condition?: string                // 자료 원문 보존용 (계산엔 minWeeks 사용)
   note?: string
   // 특정 기숙사/코스에만 적용 (빈 배열 또는 미설정 = 전체 적용)
   applicableItems?: string[]
-  // stackable 의미 변경: 기본 true (중복 적용 가능). 명시적으로 false 지정 시에만 단독.
+  // [중복 적용 관계] 다른 프로모션과 동시 적용 가능한지를 ID 기반으로 표현.
+  // 대부분 프로모션은 시기·대상으로 이미 안 겹치므로 미설정(빈 값). 동시 적용 상황이
+  // 생길 수 있는 것들만 관계를 명시한다. 학원마다 표현이 달라도 관계는 ID 쌍으로 통일 저장.
+  // - stackWith: 이 ID들과는 함께 적용 가능 (예: 장기할인 + 비수기할인)
+  // - exclusiveWith: 이 ID들과는 택일 (둘 중 하나만. 예: 1+1특파원 vs 20%할인)
+  // 관계는 대칭으로 해석(a가 b와 stack이면 b도 a와 stack). 한쪽만 적어도 됨.
+  stackWith?: string[]
+  exclusiveWith?: string[]
+  // [관계 확인 여부] 동시 적용될 수 있는 다른 프로모션이 있는데 관계가 자료에 명시 안 된 경우 false.
+  // false면 함께 적용 시 "중복 가능 여부 미확인 — 본사 확인 필요" 경고. (정보없음≠임의처리 원칙)
+  relationConfirmed?: boolean
+  // (구버전 호환) stackable: 기본 true. 명시적 false면 단독. 위 관계 필드가 우선.
   stackable?: boolean
   // 학원 프로모션과 별개로 적용되는 추가 항목 (예: 학원 자체 장기할인 + 본 프로모션)
   excludeCourses?: string[]    // 이 코스 IDs는 본 프로모션 적용 제외 (예: GEC, JEC)

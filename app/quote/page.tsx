@@ -48,9 +48,28 @@ interface AssistantAnswerMessage extends BaseMessage {
   type: 'answer'
 }
 
+// [v5] 사용자 확인 카드. LLM이 정보 다 모았다고 confirm 보내면, calculate 직전에
+// 사용자에게 "이 값으로 계산할게요" 카드 노출. 사용자가 [계산하기] 누르면 calculate 진행.
+interface AssistantConfirmMessage extends BaseMessage {
+  role: 'assistant'
+  type: 'confirm'
+  confirmCard: {
+    schoolId: string
+    schoolName: string
+    totalWeeks?: number
+    courses: { courseId: string; weeks: number }[]
+    courseLabels: string[]
+    dormitories: { dormitoryId: string; weeks: number }[]
+    dormLabels: string[]
+    startDate: string
+    startDateLabel: string
+    enrollmentDate: string
+  }
+}
+
 interface UserMessage extends BaseMessage { role: 'user'; type: 'user' }
 
-type ChatMessage = UserMessage | AssistantResultMessage | AssistantNeedInfoMessage | AssistantAnswerMessage
+type ChatMessage = UserMessage | AssistantResultMessage | AssistantNeedInfoMessage | AssistantAnswerMessage | AssistantConfirmMessage
 
 // ── 초기 메시지 ───────────────────────────────────────────────────────────────
 const INITIAL_MSG: AssistantAnswerMessage = {
@@ -582,6 +601,14 @@ export default function QuotePage() {
           allowFreeText: data.allowFreeText !== false,
         }
         setMessages(prev => [...prev, needMsg])
+      } else if (data.action === 'confirm' && data.confirmCard) {
+        // [v5] 사용자 확인 카드 표시. 사용자가 [계산하기] 누르면 그때 calculate.
+        const confirmMsg: AssistantConfirmMessage = {
+          role: 'assistant', type: 'confirm',
+          content: data.message ?? '아래 내용으로 계산할게요.',
+          confirmCard: data.confirmCard,
+        }
+        setMessages(prev => [...prev, confirmMsg])
       } else {
         const answerMsg: AssistantAnswerMessage = {
           role: 'assistant', type: 'answer',
@@ -790,6 +817,36 @@ export default function QuotePage() {
                     return (
                       <div className="bg-white border border-gray-200 rounded-2xl rounded-tl-sm px-4 py-3 shadow-sm">
                         <NeedInfoBubble msg={m} onSelect={v => sendMessage(v)} />
+                      </div>
+                    )
+                  })()}
+
+                  {/* [v5] 사용자 확인 카드 - LLM이 모은 값을 계산 직전에 검증 */}
+                  {msg.type === 'confirm' && (() => {
+                    const m = msg as AssistantConfirmMessage
+                    const c = m.confirmCard
+                    return (
+                      <div className="bg-amber-50 border border-amber-300 rounded-2xl rounded-tl-sm px-4 py-3 shadow-sm space-y-2">
+                        <p className="text-sm text-amber-900 font-medium">{m.content}</p>
+                        <div className="bg-white border border-amber-200 rounded-lg p-3 space-y-1.5 text-sm">
+                          <div className="flex"><span className="text-gray-500 w-20">학원</span><span className="font-medium">{c.schoolName}</span></div>
+                          <div className="flex"><span className="text-gray-500 w-20">기간</span><span className="font-medium">{c.totalWeeks}주</span></div>
+                          <div className="flex"><span className="text-gray-500 w-20">코스</span><span className="font-medium">{c.courseLabels.join(', ') || '-'}</span></div>
+                          <div className="flex"><span className="text-gray-500 w-20">기숙사</span><span className="font-medium">{c.dormLabels.join(', ') || '-'}</span></div>
+                          <div className="flex"><span className="text-gray-500 w-20">시작일</span><span className={`font-medium ${c.startDate ? '' : 'text-gray-500 italic'}`}>{c.startDateLabel}</span></div>
+                        </div>
+                        <div className="flex gap-2 pt-1">
+                          <button
+                            onClick={() => sendMessage('계산해주세요')}
+                            className="flex-1 bg-amber-600 hover:bg-amber-700 text-white text-sm font-medium py-2 rounded-lg transition-colors">
+                            계산하기
+                          </button>
+                          <button
+                            onClick={() => sendMessage('수정할게요')}
+                            className="px-4 bg-white border border-amber-300 hover:bg-amber-50 text-amber-700 text-sm py-2 rounded-lg transition-colors">
+                            수정
+                          </button>
+                        </div>
                       </div>
                     )
                   })()}

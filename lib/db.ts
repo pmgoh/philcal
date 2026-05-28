@@ -173,8 +173,17 @@ export interface PromoEntry {
   agencyDiscountMinWeeks?: number                // 유학원 할인 적용 최소 주수
   agencyDiscountRegFee?: number
   agencyDiscountWeekTiers?: AgencyWeekTier[]     // week_tiers 타입일 때
+  agencyDiscountBase?: 'after_discount' | 'before_discount'   // 유학원 할인 기준(차감 전/후). 기본 after_discount
   agencyDiscountRawText?: string                 // 자료 '유학원프로모션' 컬럼 원문 그대로
   agencyDiscountNote?: string
+
+  // ── 허용조건·계산방식·호환관계 (알고리즘 v4) ──────────────────────────────
+  minWeeks?: number                              // 이 주수 이상부터 적용 (condition 문자열 대신 숫자)
+  blockMethod?: 'floor' | 'proportional'         // amount_per_4weeks 잔여 처리
+  methodConfirmed?: boolean                      // 계산방식 자료 확인 여부 (false면 경고)
+  stackWith?: string[]                           // 함께 적용 가능한 프로모션 ID들
+  exclusiveWith?: string[]                       // 택일(배타) 프로모션 ID들
+  relationConfirmed?: boolean                    // 호환 관계 확인 여부 (false면 미확인 경고)
 
   // ── 분기 조건 (성인/가족 외 추가 조건) ────────────────────────────────────
   conditions?: {

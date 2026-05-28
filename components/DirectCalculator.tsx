@@ -28,7 +28,7 @@ export default function DirectCalculator({ schools, promos, rate }: DirectCalcul
   const [schoolId, setSchoolId] = useState<string>('')
   const [courseSelections, setCourseSelections] = useState<Array<{ courseId: string; weeks: number }>>([])
   const [dormSelections, setDormSelections] = useState<Array<{ dormitoryId: string; weeks: number }>>([])
-  const [startDate, setStartDate] = useState<string>(new Date().toISOString().split('T')[0])
+  const [startDate, setStartDate] = useState<string>('')   // 빈 값 = 시작일 미정 (기본 견적만)
   const [appliedPromoIds, setAppliedPromoIds] = useState<Set<string>>(new Set())
   const [showBasis, setShowBasis] = useState(false)
   const [quoteModal, setQuoteModal] = useState<{
@@ -121,6 +121,12 @@ export default function DirectCalculator({ schools, promos, rate }: DirectCalcul
         stackable: p.stackable,
         condition: p.condition,
         applicableItems: p.applicableItems,
+        minWeeks: (p as { minWeeks?: number }).minWeeks,
+        blockMethod: (p as { blockMethod?: 'floor'|'proportional' }).blockMethod,
+        methodConfirmed: (p as { methodConfirmed?: boolean }).methodConfirmed,
+        stackWith: (p as { stackWith?: string[] }).stackWith,
+        exclusiveWith: (p as { exclusiveWith?: string[] }).exclusiveWith,
+        relationConfirmed: (p as { relationConfirmed?: boolean }).relationConfirmed,
         agencyDiscount: p.agencyDiscountStatus
           ? {
               status: p.agencyDiscountStatus,
@@ -131,6 +137,7 @@ export default function DirectCalculator({ schools, promos, rate }: DirectCalcul
               minWeeks: p.agencyDiscountMinWeeks,
               regFeeDiscount: p.agencyDiscountRegFee,
               weekTiers: p.agencyDiscountWeekTiers,
+              base: (p as { agencyDiscountBase?: 'after_discount'|'before_discount' }).agencyDiscountBase ?? 'after_discount',
               rawText: p.agencyDiscountRawText,
               note: p.agencyDiscountNote ?? '',
             }
@@ -262,11 +269,24 @@ export default function DirectCalculator({ schools, promos, rate }: DirectCalcul
         </Section>
       )}
 
-      {/* 3. 입국일 */}
+      {/* 3. 입국일 (선택) */}
       {selectedSchool && (
-        <Section step={3} icon={<Calendar size={16} />} title="입국 예정일" value={startDate}>
-          <input type="date" value={startDate} onChange={e => setStartDate(e.target.value)}
-            className="px-3 py-2 border border-gray-200 rounded-lg text-sm" />
+        <Section step={3} icon={<Calendar size={16} />} title="입국 예정일 (선택)" value={startDate || '미정'}>
+          <div className="space-y-1.5">
+            <input type="date" value={startDate} onChange={e => setStartDate(e.target.value)}
+              className="px-3 py-2 border border-gray-200 rounded-lg text-sm" />
+            {!startDate && (
+              <p className="text-xs text-gray-500">
+                날짜를 정하지 않아도 기본 견적(학비·기숙사·등록비)은 계산됩니다. 성수기 추가비·기간 한정 프로모션은 날짜를 정하면 반영됩니다.
+              </p>
+            )}
+            {startDate && (
+              <button onClick={() => setStartDate('')}
+                className="text-xs text-gray-400 hover:text-gray-600 underline">
+                날짜 미정으로 되돌리기
+              </button>
+            )}
+          </div>
         </Section>
       )}
 
@@ -326,7 +346,8 @@ export default function DirectCalculator({ schools, promos, rate }: DirectCalcul
         <ResultPanel result={calcResult} promos={schoolPromos}
           appliedIds={appliedPromoIds} previewDiffs={promoPreviewDiffs}
           onToggle={togglePromo}
-          onOpenQuote={openQuoteForm} />
+          onOpenQuote={openQuoteForm}
+          startDate={startDate} setStartDate={setStartDate} />
       )}
 
       {/* 견적 근거 (학원 가격표) */}
@@ -423,7 +444,7 @@ function ItemSelectorRow<T>({
 
 // ─── 결과 패널 (프로모션 미리보기 차감액 + 견적 만들기 버튼) ──────────
 function ResultPanel({
-  result, promos, appliedIds, previewDiffs, onToggle, onOpenQuote,
+  result, promos, appliedIds, previewDiffs, onToggle, onOpenQuote, startDate, setStartDate,
 }: {
   result: CalcResult
   promos: PromoEntry[]
@@ -431,6 +452,8 @@ function ResultPanel({
   previewDiffs: Map<string, number>
   onToggle: (id: string) => void
   onOpenQuote: () => void
+  startDate: string
+  setStartDate: (d: string) => void
 }) {
   return (
     <div className="card p-4 bg-gradient-to-b from-blue-50/60 to-white border-blue-200 space-y-4">
@@ -439,29 +462,82 @@ function ResultPanel({
         <div className="text-xs text-gray-500">{result.totalWeeks}주</div>
       </div>
 
-      {/* 비용 내역 */}
+      {/* 비용 내역 — 고정 순서: 등록비 → 코스 → 기숙사 → 현지납부비 → 프로모션 → 유학원할인 */}
       <div className="space-y-1 text-sm">
-        {result.courseItems.map((item, i) => (
-          <PriceLine key={`c-${i}`} label={item.label} value={item.krwAmount} />
-        ))}
-        {result.dormItems.map((item, i) => (
-          <PriceLine key={`d-${i}`} label={item.label} value={item.krwAmount} />
-        ))}
-        {result.surchargeItems.map((item, i) => (
-          <PriceLine key={`s-${i}`} label={item.label} value={item.krwAmount} sub />
-        ))}
+        {/* 1. 등록비 */}
         {result.registrationFeeKrw > 0 && (
           <PriceLine label="등록비" value={result.registrationFeeKrw} sub />
         )}
-        {result.promotionDiscount > 0 && (
+        {/* 2. 코스 */}
+        {result.courseItems.map((item, i) => (
+          <PriceLine key={`c-${i}`} label={item.label} value={item.krwAmount} />
+        ))}
+        {/* 3. 기숙사 */}
+        {result.dormItems.map((item, i) => (
+          <PriceLine key={`d-${i}`} label={item.label} value={item.krwAmount} />
+        ))}
+        {/* 4. 서차지 (성수기) */}
+        {result.surchargeItems.map((item, i) => (
+          <PriceLine key={`s-${i}`} label={item.label} value={item.krwAmount} sub />
+        ))}
+        {/* 5. 현지납부비 — 별도 표기 (원화 합계 미포함) */}
+        {result.localFeePhp > 0 && (
+          <div className="flex items-center justify-between text-xs text-gray-500 pt-1">
+            <span>현지납부비 (현지 직접 납부)</span>
+            <span>₱{result.localFeePhp.toLocaleString()} · 약 {result.localFeeKrwEstimate.toLocaleString()}원</span>
+          </div>
+        )}
+        {/* 6. 프로모션 (학원 자체 할인) */}
+        {result.promotionLines.filter(l => l.kind === 'school' && l.status === 'applied').map((l) => (
+          <PriceLine key={`ps-${l.id}`} label={`${l.label} (${l.basis})`} value={-l.discountKrw} discount />
+        ))}
+        {/* 7. 유학원 할인 */}
+        {result.promotionLines.filter(l => l.kind === 'agency' && l.status === 'applied').map((l) => (
+          <PriceLine key={`pa-${l.id}`} label={`유학원 할인 · ${l.label.replace(' (유학원 할인)','')} (${l.basis})`} value={-l.discountKrw} discount />
+        ))}
+        {/* 구버전 폴백 */}
+        {result.promotionLines.length === 0 && result.promotionDiscount > 0 && (
           <PriceLine label={`프로모션 할인${result.promotionLabel ? ` (${result.promotionLabel})` : ''}`}
             value={-result.promotionDiscount} discount />
         )}
-        {result.agencyDiscountKrw > 0 && (
+        {result.promotionLines.length === 0 && result.agencyDiscountKrw > 0 && (
           <PriceLine label={`유학원 자체 할인${result.agencyDiscountNote ? ` (${result.agencyDiscountNote})` : ''}`}
             value={-result.agencyDiscountKrw} discount />
         )}
       </div>
+
+      {/* 조건 미충족 프로모션 — 회색 안내 (적용 안 됐지만 존재함을 알림) */}
+      {result.promotionLines.filter(l => l.status === 'unmet').length > 0 && (
+        <div className="space-y-1 pt-2">
+          <p className="text-xs text-gray-400 font-medium">조건 미충족 (미적용)</p>
+          {result.promotionLines.filter(l => l.status === 'unmet').map((l) => (
+            <div key={`pu-${l.id}`} className="flex items-center justify-between text-xs text-gray-400">
+              <span>{l.label} — {l.unmetReason}</span>
+              <span className="line-through">{l.basis}</span>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* 날짜 미정 보류 항목 — 데이트피커로 확정 유도 */}
+      {result.promotionLines.filter(l => l.status === 'pending').length > 0 && (
+        <div className="space-y-2 pt-3 border-t border-amber-200 bg-amber-50/50 -mx-1 px-3 py-2 rounded">
+          <div className="flex items-center gap-1.5">
+            <Calendar size={13} className="text-amber-600" />
+            <p className="text-xs text-amber-700 font-medium">입국일을 정하면 아래 항목이 견적에 반영됩니다</p>
+          </div>
+          {result.promotionLines.filter(l => l.status === 'pending').map((l) => (
+            <div key={`pp-${l.id}`} className="flex items-center justify-between text-xs text-amber-800">
+              <span>{l.label}</span>
+              <span className="text-amber-600">{l.periodNote ?? l.basis}</span>
+            </div>
+          ))}
+          <input type="date" value={startDate}
+            onChange={e => setStartDate(e.target.value)}
+            className="w-full px-3 py-2 border border-amber-300 rounded-lg text-sm bg-white"
+            placeholder="입국일 선택" />
+        </div>
+      )}
 
       <div className="pt-3 border-t border-blue-200 flex items-baseline justify-between">
         <span className="text-sm font-medium text-gray-700">최종 견적</span>

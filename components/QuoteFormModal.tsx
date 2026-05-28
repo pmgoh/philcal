@@ -57,15 +57,25 @@ function buildInitialItems(school: School, calc: CalcResult): QuoteLineItem[] {
   // 수속비 (기본값 0, 편집 가능)
   items.push({ id: uid(), label: '수속비', amount: 0, isDiscount: false, editable: true })
 
-  // 어학원 프로모션 할인
-  const totalPromoDiscount = calc.promotionDiscount + calc.surchargeDiscount
-  if (totalPromoDiscount > 0 && calc.promotionLabel) {
-    items.push({ id: uid(), label: `어학원 프로모션 할인 (${calc.promotionLabel})`, amount: totalPromoDiscount, isDiscount: true, editable: true })
-  }
-
-  // 엠버시유학 자체 할인 (견적표는 고객용이므로 상담원 내부 노트는 노출하지 않음)
-  if ((calc.agencyDiscountKrw ?? 0) > 0) {
-    items.push({ id: uid(), label: `엠버시유학 할인`, amount: calc.agencyDiscountKrw, isDiscount: true, editable: true })
+  // 어학원 프로모션 할인 — promotionLines 우선 (각 프로모션 개별 라인 + 근거)
+  const appliedSchool = (calc.promotionLines ?? []).filter(l => l.kind === 'school' && l.status === 'applied')
+  const appliedAgency = (calc.promotionLines ?? []).filter(l => l.kind === 'agency' && l.status === 'applied')
+  if (appliedSchool.length > 0 || appliedAgency.length > 0) {
+    for (const l of appliedSchool) {
+      items.push({ id: uid(), label: `${l.label}`, amount: l.discountKrw, isDiscount: true, editable: true })
+    }
+    for (const l of appliedAgency) {
+      items.push({ id: uid(), label: `유학원 할인 · ${l.label.replace(' (유학원 할인)','')}`, amount: l.discountKrw, isDiscount: true, editable: true })
+    }
+  } else {
+    // 구버전 폴백: 합계 라인
+    const totalPromoDiscount = calc.promotionDiscount + calc.surchargeDiscount
+    if (totalPromoDiscount > 0 && calc.promotionLabel) {
+      items.push({ id: uid(), label: `어학원 프로모션 할인 (${calc.promotionLabel})`, amount: totalPromoDiscount, isDiscount: true, editable: true })
+    }
+    if ((calc.agencyDiscountKrw ?? 0) > 0) {
+      items.push({ id: uid(), label: `엠버시유학 할인`, amount: calc.agencyDiscountKrw, isDiscount: true, editable: true })
+    }
   }
 
   return items
