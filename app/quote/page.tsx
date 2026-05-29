@@ -9,6 +9,7 @@ import QuoteFormModal from '@/components/QuoteFormModal'
 import QuoteResultCard from '@/components/QuoteResultCard'
 import DirectCalculator from '@/components/DirectCalculator'
 import type { CalcResult } from '@/lib/calcEngine'
+import { inferSchoolMode, MODE_LABELS, type SchoolMode } from '@/lib/schoolMode'
 
 // ── 메시지 타입 ───────────────────────────────────────────────────────────────
 type MessageRole = 'user' | 'assistant'
@@ -63,6 +64,8 @@ interface AssistantConfirmMessage extends BaseMessage {
     courseLabels: string[]
     dormitories: { dormitoryId: string; weeks: number }[]
     dormLabels: string[]
+    packages?: { packageId: string; weeks: number; columnLabel: string }[]
+    packageLabels?: string[]
     startDate: string
     startDateLabel: string
     enrollmentDate: string
@@ -564,6 +567,9 @@ export default function QuotePage() {
   const [copied, setCopied] = useState(false)
   const [quoteModal, setQuoteModal] = useState<{ calcResult: CalcResult; school: School; startDate: string; localFees: LocalFee[] } | null>(null)
   const [tab, setTab] = useState<'chat' | 'direct'>('chat')
+  // 챗봇 모드: 'regular'(일반 연수) | 'camp_family'(캠프·가족·주니어).
+  // 모드 변경 시 채팅 이력 리셋 — 이전 모드에서 정해진 학원이 새 모드에 없을 수 있고, LLM 컨텍스트가 꼬이지 않게.
+  const [mode, setMode] = useState<SchoolMode>('regular')
   const bottomRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
@@ -641,14 +647,17 @@ export default function QuotePage() {
     setLoading(true)
 
     try {
+      // 현재 모드에 해당하는 학원만 LLM에 전달. 모드가 다른 학원은 안 보이게 해서 헷갈림 방지.
+      const filteredSchools = schools.filter(s => inferSchoolMode(s) === mode)
       const res = await fetch('/api/quote', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           messages: buildApiMessages(messages, text.trim()),
-          schoolsData: schools,
+          schoolsData: filteredSchools,
           promotionsData: promotions,
           rateData: rate,
+          mode,
         }),
       })
       const data = await res.json()
@@ -809,6 +818,27 @@ export default function QuotePage() {
         {/* 챗봇 탭 (기존 내용) */}
         {tab === 'chat' && (
         <>
+        {/* 모드 토글 — 일반 연수 / 캠프·가족·주니어. 모드 변경 시 채팅 이력 리셋(이전 모드 학원이 새 모드에 없을 수 있고 LLM 컨텍스트가 꼬이지 않게). */}
+        <div className="px-3 md:px-4 pt-3 pb-2 bg-white border-b border-gray-100 flex-shrink-0">
+          <div className="text-xs font-medium text-gray-500 mb-1.5">어떤 견적인가요?</div>
+          <div className="grid grid-cols-2 gap-1.5">
+            {(['regular', 'camp_family'] as SchoolMode[]).map(m => (
+              <button key={m}
+                onClick={() => {
+                  if (m === mode) return
+                  setMode(m)
+                  reset()  // 모드 바뀌면 채팅도 처음부터
+                }}
+                className={`px-3 py-2 text-xs font-medium rounded-md border transition-colors
+                  ${mode === m
+                    ? 'bg-blue-600 text-white border-blue-600'
+                    : 'bg-white text-gray-700 border-gray-200 hover:border-blue-400 hover:bg-blue-50'}`}>
+                {MODE_LABELS[m]}
+              </button>
+            ))}
+          </div>
+        </div>
+
         {/* 메시지 영역 */}
         <div className="flex-1 overflow-y-auto px-3 md:px-4 py-4 space-y-3">
           {messages.map((msg, i) => {
@@ -936,14 +966,24 @@ export default function QuotePage() {
                   {msg.type === 'confirm' && (() => {
                     const m = msg as AssistantConfirmMessage
                     const c = m.confirmCard
+                    const hasPackages = (c.packageLabels?.length ?? 0) > 0
+                    const hasCourses = c.courseLabels.length > 0
                     return (
                       <div className="bg-amber-50 border border-amber-300 rounded-2xl rounded-tl-sm px-4 py-3 shadow-sm space-y-2">
                         <p className="text-sm text-amber-900 font-medium">{m.content}</p>
                         <div className="bg-white border border-amber-200 rounded-lg p-3 space-y-1.5 text-sm">
                           <div className="flex"><span className="text-gray-500 w-20">학원</span><span className="font-medium">{c.schoolName}</span></div>
                           <div className="flex"><span className="text-gray-500 w-20">기간</span><span className="font-medium">{c.totalWeeks}주</span></div>
-                          <div className="flex"><span className="text-gray-500 w-20">코스</span><span className="font-medium">{c.courseLabels.join(', ') || '-'}</span></div>
-                          <div className="flex"><span className="text-gray-500 w-20">기숙사</span><span className="font-medium">{c.dormLabels.join(', ') || '-'}</span></div>
+                          {hasPackages && (
+                            <div className="flex"><span className="text-gray-500 w-20">패키지</span><span className="font-medium">{c.packageLabels!.join(', ')}</span></div>
+                          )}
+                          {hasCourses && (
+                            <div className="flex"><span className="text-gray-500 w-20">코스</span><span className="font-medium">{c.courseLabels.join(', ')}</span></div>
+                          )}
+                          {/* 기숙사: 패키지 학원은 패키지에 포함이므로 숨김. 일반 학원이거나 기숙사 별도 입력 시만 표시 */}
+                          {!hasPackages && (
+                            <div className="flex"><span className="text-gray-500 w-20">기숙사</span><span className="font-medium">{c.dormLabels.join(', ') || '-'}</span></div>
+                          )}
                           <div className="flex"><span className="text-gray-500 w-20">시작일</span><span className={`font-medium ${c.startDate ? '' : 'text-gray-500 italic'}`}>{c.startDateLabel}</span></div>
                         </div>
                         <div className="flex gap-2 pt-1">

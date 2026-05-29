@@ -20,30 +20,40 @@ const CODE_VERSION = 'v7-2026.05.28'
 const EXTRACT_PROMPT = `엠버시유학 견적 시스템. 사용자는 상담원이다.
 
 [역할]
-사용자와 자연어로 대화하며 견적에 필요한 정보(학원, 주수, 코스, 기숙사, 시작일)를 모은다.
+사용자와 자연어로 대화하며 견적에 필요한 정보를 모은다.
 다 모이면 "confirm" 액션으로 코드에 인계한다. 그 외엔 "need_info"로 다음 필요 정보를 묻는다.
+
+[현재 모드는 시스템 프롬프트 아래에 표시된다]
+- 일반 연수 모드: 코스 + 기숙사 + 주수 + 시작일을 모은다. 학원 데이터에 packages가 있어도 무시한다.
+- 캠프·가족·주니어 모드: 패키지 + 주수 + 구성(2인가족/주니어 1인 등 columnLabel) + 시작일을 모은다. 코스·기숙사는 묻지 않는다(패키지에 포함됨).
 
 [행동 규칙 - 반드시 지킨다]
 1. 사용자가 답하지 않은 값은 빈 값으로 둔다. 임의로 채우지 않는다.
-2. 사용자가 코스를 안 골랐으면 ESL Regular 같은 기본값을 넣지 않는다. need_info로 코스를 묻는다.
+2. 사용자가 코스나 패키지를 안 골랐으면 기본값을 넣지 않는다. need_info로 묻는다.
 3. 시작일은 선택사항이다. 사용자가 "미정/무관/상관없음/아무때나"라고 답하면 startDate는 빈 문자열로 두고 즉시 confirm 단계로 간다.
 4. 시작일이 미정일 때 임시 날짜(오늘 날짜 등)를 넣지 않는다. 빈 문자열을 그대로 보낸다.
 5. 시작일을 한 번 물어보고 사용자가 미정이라 답하면, 다시 묻지 않는다.
-6. 학원 ID, 코스 ID, 기숙사 ID는 [학원 데이터]에 실제 존재하는 ID만 사용한다.
+6. 학원 ID, 코스 ID, 기숙사 ID, 패키지 ID는 [학원 데이터]에 실제 존재하는 ID만 사용한다.
+7. 패키지에 columns(['2인가족','3인가족','주니어 1인' 등])가 있으면 columnLabel을 반드시 받는다.
+8. 사용자가 현재 모드와 안 맞는 학원(예: 일반 연수 모드에서 "CIA 캠프")을 찾으면, "그 학원은 캠프·가족·주니어 모드에 있습니다. 화면 위의 모드 토글로 전환해주세요"라고 안내한다(need_info에 question으로).
 
 [출력 형식 - JSON 하나만]
 정보 부족 시:
 {"action":"need_info","question":"...","type":"select|text","suggestions":[...],"allowFreeText":true|false}
 
-정보 다 모임 (코스/기숙사/주수 확인됨, 시작일은 빈 값이어도 OK):
+정보 다 모임 — 일반 연수 모드(코스/기숙사/주수 확인됨):
 {"action":"confirm","schoolId":"...","totalWeeks":N,"courses":[{"courseId":"...","weeks":N}],"dormitories":[{"dormitoryId":"...","weeks":N}],"startDate":"YYYY-MM-DD 또는 빈문자열","enrollmentDate":"YYYY-MM-DD 또는 빈문자열"}
+
+정보 다 모임 — 캠프·가족·주니어 모드(패키지/주수/구성 확인됨):
+{"action":"confirm","schoolId":"...","totalWeeks":N,"packages":[{"packageId":"...","weeks":N,"columnLabel":"..."}],"startDate":"YYYY-MM-DD 또는 빈문자열","enrollmentDate":"YYYY-MM-DD 또는 빈문자열"}
 
 사용자가 확인 카드를 승인:
 {"action":"calculate", ... confirm과 동일한 필드들}
 
 [학원 데이터 사용]
-- courses, dormitories는 ID로 매칭. 사용자가 이름으로 말하면 가장 가까운 것 선택.
+- courses, dormitories, packages는 ID로 매칭. 사용자가 이름으로 말하면 가장 가까운 것 선택.
 - 사용자가 모호하게 말하면 need_info로 명확히 묻는다.
+- "CIA 캠프 3주" 같은 짧은 입력: 캠프 모드면 그 학원의 패키지 중 3주짜리를 찾거나, 없으면 가까운 주수의 패키지를 제안한다.
 
 JSON 외 텍스트 금지. 코드블록 금지.`
 
@@ -267,9 +277,12 @@ function runCalc(school: School, item: CalcInputItem, rate: ExchangeRate): CalcR
 
 export async function POST(req: NextRequest) {
   try {
-    const { messages, schoolsData, rateData, promotionsData } = await req.json()
+    const { messages, schoolsData, rateData, promotionsData, mode } = await req.json()
     const schools = (schoolsData as School[]) ?? []
     const promoEntries = (promotionsData as Array<Record<string, unknown>>) ?? []
+    // mode: 'regular'(일반 연수) | 'camp_family'(캠프·가족·주니어) — 챗봇 토글로 결정.
+    // schoolsData는 이 모드로 이미 필터링돼서 옴. 여기선 LLM에 모드를 알려줘서 흐름을 명확히 한다.
+    const chatMode = (mode === 'camp_family' ? 'camp_family' : 'regular') as 'regular' | 'camp_family'
 
     type PromoLike = Record<string, unknown>
     function entryToPromotion(p: PromoLike) {
@@ -453,8 +466,13 @@ export async function POST(req: NextRequest) {
       }
     })
 
+    // 모드 안내 — 챗봇 토글로 결정된 모드를 LLM에 명시. 학원 목록은 이 모드로 이미 필터링돼 있음.
+    const modeNote = chatMode === 'camp_family'
+      ? `[현재 모드: 캠프·가족·주니어] 정액 패키지로 운영되는 학원만 보입니다. 사용자 질문은 packages 흐름으로 처리하세요. courses/dormitories는 묻지 않습니다.`
+      : `[현재 모드: 일반 연수] 일반 ESL/IELTS 등 코스 학원만 보입니다. courses + dormitories + 주수 + 시작일 흐름으로 처리하세요.`
+
     const rawText = await callClaude(
-      EXTRACT_PROMPT + `\n\n[학원 데이터]\n${JSON.stringify(schoolsSummary)}\n\n[오늘]\n${new Date().toISOString().split('T')[0]}`,
+      EXTRACT_PROMPT + `\n\n${modeNote}\n\n[학원 데이터]\n${JSON.stringify(schoolsSummary)}\n\n[오늘]\n${new Date().toISOString().split('T')[0]}`,
       messages, 1500
     )
 
@@ -519,6 +537,7 @@ export async function POST(req: NextRequest) {
       }
       const courses = (parsed.courses as { courseId: string; weeks: number }[] | undefined) ?? []
       const dorms   = (parsed.dormitories as { dormitoryId: string; weeks: number }[] | undefined) ?? []
+      const packages = (parsed.packages as { packageId: string; weeks: number; columnLabel: string }[] | undefined) ?? []
       const courseLabels = courses.map(c => {
         const cobj = (school.courses ?? []).find(x => x.id === c.courseId)
         return cobj ? `${cobj.name} (${c.weeks}주)` : `${c.courseId} (${c.weeks}주)`
@@ -526,6 +545,11 @@ export async function POST(req: NextRequest) {
       const dormLabels = dorms.map(d => {
         const dobj = (school.dormitories ?? []).find(x => x.id === d.dormitoryId)
         return dobj ? `${dobj.name} (${d.weeks}주)` : `${d.dormitoryId} (${d.weeks}주)`
+      })
+      const packageLabels = packages.map(p => {
+        const pobj = (school.packages ?? []).find(x => x.id === p.packageId)
+        const base = pobj ? pobj.label : p.packageId
+        return `${base} — ${p.columnLabel} (${p.weeks}주)`
       })
       const sd = (parsed.startDate as string) ?? ''
       return NextResponse.json({
@@ -539,6 +563,8 @@ export async function POST(req: NextRequest) {
           courseLabels,
           dormitories: dorms,
           dormLabels,
+          packages,
+          packageLabels,
           startDate: sd,
           startDateLabel: sd ? sd : '미정 (날짜 없이 기본 견적)',
           enrollmentDate: (parsed.enrollmentDate as string) ?? sd,

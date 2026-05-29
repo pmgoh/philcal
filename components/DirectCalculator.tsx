@@ -1,9 +1,10 @@
 'use client'
 import { useState, useMemo, useEffect } from 'react'
-import type { School, ExchangeRate, Course, Dormitory, LocalFee } from '@/types'
+import type { School, ExchangeRate, Course, Dormitory, LocalFee, Package } from '@/types'
 import type { PromoEntry } from '@/lib/db'
 import { calculateQuote, type CalcResult, type QuoteInput } from '@/lib/calcEngine'
 import { findSchoolForPromo } from '@/lib/schoolMatching'
+import { inferSchoolMode, MODE_LABELS, type SchoolMode } from '@/lib/schoolMode'
 import { formatKrw } from '@/lib/utils'
 import QuoteFormModal from './QuoteFormModal'
 import {
@@ -24,10 +25,14 @@ interface DirectCalculatorProps {
  * 3. 견적서 만들기 버튼
  */
 export default function DirectCalculator({ schools, promos, rate }: DirectCalculatorProps) {
+  // 모드: 'regular'(일반 연수) | 'camp_family'(캠프·가족·주니어).
+  // 학원 목록을 이 모드로 필터링한다(자동 추론: courses>0 → regular, packages만 → camp_family).
+  const [mode, setMode] = useState<SchoolMode>('regular')
   const [region, setRegion] = useState<string>('')
   const [schoolId, setSchoolId] = useState<string>('')
   const [courseSelections, setCourseSelections] = useState<Array<{ courseId: string; weeks: number }>>([])
   const [dormSelections, setDormSelections] = useState<Array<{ dormitoryId: string; weeks: number }>>([])
+  const [packageSelections, setPackageSelections] = useState<Array<{ packageId: string; weeks: number; columnLabel: string; additionalRuleIds: string[] }>>([])
   const [startDate, setStartDate] = useState<string>('')   // 빈 값 = 시작일 미정 (기본 견적만)
   const [appliedPromoIds, setAppliedPromoIds] = useState<Set<string>>(new Set())
   const [showBasis, setShowBasis] = useState(false)
@@ -35,17 +40,20 @@ export default function DirectCalculator({ schools, promos, rate }: DirectCalcul
     calcResult: CalcResult; school: School; startDate: string; localFees: LocalFee[]
   } | null>(null)
 
-  // 지역 목록
+  // 지역 목록 — 모드에 해당하는 학원이 있는 지역만 표시
   const regions = useMemo(() => {
-    const set = new Set(schools.map(s => s.region))
+    const filtered = schools.filter(s => inferSchoolMode(s) === mode)
+    const set = new Set(filtered.map(s => s.region))
     return Array.from(set).sort()
-  }, [schools])
+  }, [schools, mode])
 
-  // 선택된 지역의 학원
+  // 선택된 지역의 학원 — 모드 필터 적용
   const schoolsInRegion = useMemo(() => {
     if (!region) return []
-    return schools.filter(s => s.region === region).sort((a, b) => a.name.localeCompare(b.name))
-  }, [schools, region])
+    return schools
+      .filter(s => s.region === region && inferSchoolMode(s) === mode)
+      .sort((a, b) => a.name.localeCompare(b.name))
+  }, [schools, region, mode])
 
   // 선택된 학원
   const selectedSchool = useMemo(() => schools.find(s => s.id === schoolId), [schools, schoolId])
@@ -67,12 +75,19 @@ export default function DirectCalculator({ schools, promos, rate }: DirectCalcul
     setSchoolId('')
     setCourseSelections([])
     setDormSelections([])
+    setPackageSelections([])
     setAppliedPromoIds(new Set())
     setShowBasis(false)
   }
   const resetFromRegion = () => {
     setRegion('')
     resetFromSchool()
+  }
+  // 모드 변경 시 — 모드가 바뀌면 이전 학원이 새 모드에 안 보일 수 있으므로 전체 리셋.
+  const changeMode = (next: SchoolMode) => {
+    if (next === mode) return
+    setMode(next)
+    resetFromRegion()
   }
 
   // 코스/기숙사 추가/삭제/수정
@@ -86,18 +101,40 @@ export default function DirectCalculator({ schools, promos, rate }: DirectCalcul
   const updateDorm = (i: number, patch: Partial<{ dormitoryId: string; weeks: number }>) =>
     setDormSelections(p => p.map((d, j) => j === i ? { ...d, ...patch } : d))
 
-  // 학원 선택 시 코스/기숙사 1개씩 자동 추가
-  // 단, 기숙사가 없는 학원(영어유치원 등)이면 기숙사 자동 추가 안 함
+  // 패키지 추가/삭제/수정. 패키지 변경 시 columnLabel과 weeks를 그 패키지의 기본값(첫 행/첫 열)로 자동 세팅.
+  const addPackage = () => setPackageSelections(p => [...p, { packageId: '', weeks: 4, columnLabel: '', additionalRuleIds: [] }])
+  const removePackage = (i: number) => setPackageSelections(p => p.filter((_, j) => j !== i))
+  const updatePackage = (i: number, patch: Partial<{ packageId: string; weeks: number; columnLabel: string; additionalRuleIds: string[] }>) =>
+    setPackageSelections(p => p.map((c, j) => j === i ? { ...c, ...patch } : c))
+
+  // 학원 선택 시 자동 세팅:
+  // - 코스가 있는 학원이면 코스 1개 자동 추가, 코스 없는(패키지 전용) 학원이면 자동 추가 안 함
+  // - 기숙사가 있는 학원이면 기숙사 1개 자동 추가, 없으면 비움
+  // - 패키지가 있는 학원이면 패키지 1개 자동 추가
+  // - 코스도 패키지도 없는 학원(본사 확인 대기)은 둘 다 비움
   useEffect(() => {
-    if (selectedSchool && courseSelections.length === 0) {
+    if (!selectedSchool) return
+    const hasCourses = (selectedSchool.courses?.length ?? 0) > 0
+    const hasDorms = (selectedSchool.dormitories?.length ?? 0) > 0
+    const hasPackages = (selectedSchool.packages?.length ?? 0) > 0
+
+    if (hasCourses && courseSelections.length === 0) {
       setCourseSelections([{ courseId: '', weeks: 4 }])
     }
-    if (selectedSchool && dormSelections.length === 0 && (selectedSchool.dormitories?.length ?? 0) > 0) {
+    if (!hasCourses) {
+      setCourseSelections([])
+    }
+    if (hasDorms && dormSelections.length === 0) {
       setDormSelections([{ dormitoryId: '', weeks: 4 }])
     }
-    // 학원 변경 시 기존 기숙사 선택은 비우기 (이전 학원의 dormitoryId가 남아있으면 안 됨)
-    if (selectedSchool && (selectedSchool.dormitories?.length ?? 0) === 0) {
+    if (!hasDorms) {
       setDormSelections([])
+    }
+    if (hasPackages && packageSelections.length === 0) {
+      setPackageSelections([{ packageId: '', weeks: 4, columnLabel: '', additionalRuleIds: [] }])
+    }
+    if (!hasPackages) {
+      setPackageSelections([])
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [schoolId])
@@ -150,7 +187,8 @@ export default function DirectCalculator({ schools, promos, rate }: DirectCalcul
     if (!selectedSchool) return null
     const validCourses = courseSelections.filter(c => c.courseId)
     const validDorms = dormSelections.filter(d => d.dormitoryId)
-    if (validCourses.length === 0 && validDorms.length === 0) return null
+    const validPackages = packageSelections.filter(p => p.packageId && p.columnLabel)
+    if (validCourses.length === 0 && validDorms.length === 0 && validPackages.length === 0) return null
 
     const schoolForCalc: School = {
       ...selectedSchool,
@@ -163,6 +201,7 @@ export default function DirectCalculator({ schools, promos, rate }: DirectCalcul
       enrollmentDate: startDate,
       courses: validCourses,
       dormitories: validDorms,
+      packages: validPackages,
     }
 
     try {
@@ -176,7 +215,7 @@ export default function DirectCalculator({ schools, promos, rate }: DirectCalcul
   // 현재 적용 상태 결과
   const calcResult = useMemo(() => computeWith(appliedPromoIds),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [selectedSchool, courseSelections, dormSelections, startDate, schoolPromos, appliedPromoIds, rate])
+    [selectedSchool, courseSelections, dormSelections, packageSelections, startDate, schoolPromos, appliedPromoIds, rate])
 
   // 각 프로모션 토글 시 차감액 미리보기 계산
   const promoPreviewDiffs = useMemo(() => {
@@ -227,6 +266,22 @@ export default function DirectCalculator({ schools, promos, rate }: DirectCalcul
           단계별 선택 → 결과 확인 → 프로모션 토글 → 견적서 만들기
         </p>
       </header>
+
+      {/* 모드 토글 — 일반 연수 / 캠프·가족·주니어. 학원 목록을 자동 추론된 모드로 필터링한다. */}
+      <div className="card p-4">
+        <div className="text-xs font-medium text-gray-500 mb-2">어떤 견적인가요?</div>
+        <div className="grid grid-cols-2 gap-2">
+          {(['regular', 'camp_family'] as SchoolMode[]).map(m => (
+            <button key={m} onClick={() => changeMode(m)}
+              className={`px-3 py-2.5 text-sm font-medium rounded-lg border transition-colors
+                ${mode === m
+                  ? 'bg-blue-600 text-white border-blue-600'
+                  : 'bg-white text-gray-700 border-gray-200 hover:border-blue-400 hover:bg-blue-50'}`}>
+              {MODE_LABELS[m]}
+            </button>
+          ))}
+        </div>
+      </div>
 
       {/* 1. 지역 선택 */}
       <Section step={1} icon={<MapPin size={16} />} title="지역 선택"
@@ -337,6 +392,44 @@ export default function DirectCalculator({ schools, promos, rate }: DirectCalcul
         <Section step={5} icon={<Home size={16} />} title="기숙사" subtitle="이 학원은 기숙사를 운영하지 않습니다">
           <div className="text-xs text-blue-700 bg-blue-50 border border-blue-200 px-3 py-2 rounded">
             ℹ️ {selectedSchool.name}은(는) 자료 기준 기숙사를 직접 운영하지 않습니다. 외부 거주 전제이며, 견적에 기숙사비는 포함되지 않습니다.
+          </div>
+        </Section>
+      )}
+
+      {/* 6. 패키지 선택 - 학원에 packages가 있을 때만 표시 */}
+      {selectedSchool && (selectedSchool.packages?.length ?? 0) > 0 && (
+        <Section step={6} icon={<BookOpen size={16} />} title="패키지 선택"
+          subtitle={`${selectedSchool.name}의 정액 패키지 (가족캠프·주니어캠프·정액 코스 등)`}>
+          <div className="space-y-2">
+            {packageSelections.map((p, i) => (
+              <PackageSelectorRow key={i}
+                packages={filterAvailablePackages(selectedSchool.packages ?? [], startDate)}
+                allPackages={selectedSchool.packages ?? []}
+                packageId={p.packageId}
+                columnLabel={p.columnLabel}
+                weeks={p.weeks}
+                onSelectPackage={id => {
+                  // 패키지 변경 시 weeks/columnLabel을 그 패키지 기본값으로
+                  const pkg = (selectedSchool.packages ?? []).find(pk => pk.id === id)
+                  const firstRow = pkg?.priceMatrix?.[0]
+                  const firstWeeks = firstRow?.weeks ?? 4
+                  const firstCol = firstRow?.prices?.[0]?.label ?? ''
+                  updatePackage(i, { packageId: id, weeks: firstWeeks, columnLabel: firstCol })
+                }}
+                onSelectColumn={lbl => updatePackage(i, { columnLabel: lbl })}
+                onWeeks={w => updatePackage(i, { weeks: w })}
+                onDelete={packageSelections.length > 1 ? () => removePackage(i) : undefined}
+              />
+            ))}
+            <button onClick={addPackage}
+              className="w-full px-3 py-2 text-xs text-blue-600 border border-dashed border-blue-300 rounded-lg hover:bg-blue-50 transition-colors flex items-center justify-center gap-1">
+              <Plus size={12} /> 패키지 추가
+            </button>
+            {startDate && filterAvailablePackages(selectedSchool.packages ?? [], startDate).length < (selectedSchool.packages?.length ?? 0) && (
+              <div className="text-xs text-gray-500 px-1">
+                ℹ️ 시작일({startDate}) 기준 유효한 패키지만 표시. 전체 패키지는 시작일을 비우면 볼 수 있습니다.
+              </div>
+            )}
           </div>
         </Section>
       )}
@@ -840,6 +933,116 @@ function DataTable({ headers, rows }: { headers?: string[]; rows: Array<Array<st
           ))}
         </tbody>
       </table>
+    </div>
+  )
+}
+
+// ─── 패키지 필터링 ──────────────────────────────────────────────────────
+// 시작일(startDate)이 주어지면, 해당 날짜에 유효한 패키지만 반환.
+// 매칭 규칙:
+//   1. 패키지에 startDate/endDate가 있으면 그 범위에 있는 것
+//   2. 패키지에 schedules가 있으면 어느 일정 기간에 들어가는 것
+//   3. 둘 다 없으면 항상 표시(연중)
+// startDate가 비어있으면 전체 표시.
+function filterAvailablePackages(packages: Package[], startDate: string): Package[] {
+  if (!startDate || !startDate.trim()) return packages
+  return packages.filter(p => {
+    // 1. 직접 범위
+    if (p.startDate && p.endDate) {
+      if (startDate >= p.startDate && startDate <= p.endDate) return true
+    }
+    // 2. schedules 중 어느 일정에 들어가는지
+    if (p.schedules && p.schedules.length > 0) {
+      const match = p.schedules.some(s => startDate >= s.startDate && startDate <= s.endDate)
+      if (match) return true
+      // schedules가 있는데 어느 일정에도 안 맞으면 제외
+      return false
+    }
+    // 3. 기간 정보 없으면 연중으로 보고 표시
+    if (!p.startDate && !p.endDate && (!p.schedules || p.schedules.length === 0)) return true
+    return false
+  })
+}
+
+// ─── 패키지 선택 행 ──────────────────────────────────────────────────────
+function PackageSelectorRow({
+  packages, allPackages, packageId, columnLabel, weeks,
+  onSelectPackage, onSelectColumn, onWeeks, onDelete,
+}: {
+  packages: Package[]        // 시즌 필터 통과한 것 (드롭다운에 표시)
+  allPackages: Package[]     // 전체 (선택된 패키지가 필터 밖이어도 찾기 위함)
+  packageId: string
+  columnLabel: string
+  weeks: number
+  onSelectPackage: (id: string) => void
+  onSelectColumn: (lbl: string) => void
+  onWeeks: (w: number) => void
+  onDelete?: () => void
+}) {
+  // 현재 선택된 패키지 객체 - 필터 밖이라도 전체에서 찾기 (사용자가 시작일 바꿔 필터 변경된 경우)
+  const selectedPkg = allPackages.find(p => p.id === packageId)
+  const availableWeeks = selectedPkg?.priceMatrix?.map(r => r.weeks) ?? []
+  const currentRow = selectedPkg?.priceMatrix?.find(r => r.weeks === weeks) ?? selectedPkg?.priceMatrix?.[0]
+  const availableColumns = currentRow?.prices?.map(c => c.label) ?? selectedPkg?.columns ?? []
+
+  return (
+    <div className="flex flex-col gap-2 p-2 bg-gray-50 rounded-lg">
+      {/* 패키지 + 삭제 */}
+      <div className="flex flex-col sm:flex-row sm:items-center gap-2">
+        <select value={packageId} onChange={e => onSelectPackage(e.target.value)}
+          className="flex-1 px-2 py-1.5 text-sm border border-gray-200 rounded bg-white">
+          <option value="">패키지 선택...</option>
+          {packages.map(p => (
+            <option key={p.id} value={p.id}>
+              {p.label}{p.season ? ` [${p.season}]` : ''}
+            </option>
+          ))}
+        </select>
+        {onDelete && (
+          <button onClick={onDelete} className="p-1 text-gray-400 hover:text-red-600 self-end sm:self-center">
+            <Minus size={14} />
+          </button>
+        )}
+      </div>
+
+      {/* 선택된 패키지가 있을 때만 주수/구성 옵션 표시 */}
+      {selectedPkg && (
+        <div className="flex flex-col sm:flex-row gap-2 pl-1">
+          {/* 주수 */}
+          {availableWeeks.length > 1 ? (
+            <select value={weeks} onChange={e => onWeeks(Number(e.target.value))}
+              className="px-2 py-1.5 text-xs border border-gray-200 rounded bg-white">
+              {availableWeeks.map(w => <option key={w} value={w}>{w}주</option>)}
+            </select>
+          ) : availableWeeks.length === 1 ? (
+            <span className="px-2 py-1.5 text-xs text-gray-600">{availableWeeks[0]}주 (고정)</span>
+          ) : (
+            <input type="number" min={1} max={52} value={weeks}
+              onChange={e => onWeeks(Math.max(1, Number(e.target.value) || 1))}
+              className="w-20 px-2 py-1.5 text-xs border border-gray-200 rounded text-right" />
+          )}
+
+          {/* 구성(columnLabel) */}
+          {availableColumns.length > 0 && (
+            <select value={columnLabel} onChange={e => onSelectColumn(e.target.value)}
+              className="flex-1 px-2 py-1.5 text-xs border border-gray-200 rounded bg-white">
+              <option value="">구성 선택...</option>
+              {availableColumns.map(c => <option key={c} value={c}>{c}</option>)}
+            </select>
+          )}
+        </div>
+      )}
+
+      {/* 선택된 패키지 설명(시즌·일정·포함내역 요약) */}
+      {selectedPkg && (
+        <div className="text-xs text-gray-500 pl-1 space-y-0.5">
+          {selectedPkg.season && <div>시즌: {selectedPkg.season}</div>}
+          {selectedPkg.startDate && selectedPkg.endDate && (
+            <div>유효기간: {selectedPkg.startDate} ~ {selectedPkg.endDate}</div>
+          )}
+          {selectedPkg.note && <div className="text-gray-600">{selectedPkg.note}</div>}
+        </div>
+      )}
     </div>
   )
 }
