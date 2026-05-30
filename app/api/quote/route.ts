@@ -571,98 +571,49 @@ export async function POST(req: NextRequest) {
     // 파서가 학원·코스·기숙·주수를 자신 있게 잡으면 confirm을 바로 만들어 LLM을 건너뛴다.
     // 일부만 잡히면 코드가 선택지(need_info)를 띄운다. 못 잡으면 아래 기존 LLM 흐름으로 폴백.
     // 계산(calcEngine)·확인카드 구조는 기존 그대로 재사용한다.
-    const lastUserMsg = [...(messages as Array<{ role: string; content: string }>)]
-      .reverse().find(m => m.role === 'user')?.content ?? ''
-    if (chatMode === 'regular' && lastUserMsg.trim()) {
+    //
+    // [중요] 파서는 "대화의 첫 견적 요청"에만 작동한다. 선택지 클릭·되묻기 답변 같은
+    // 후속 메시지는 맥락이 필요하므로 파서를 건너뛰고 기존 LLM 흐름이 처리한다.
+    // (후속 메시지를 파서가 또 해석하면 같은 질문을 반복하는 무한 루프가 생긴다)
+    const msgArr = (messages as Array<{ role: string; content: string }>) ?? []
+    const userMsgs = msgArr.filter(m => m.role === 'user')
+    const assistantMsgs = msgArr.filter(m => m.role === 'assistant')
+    const isFirstTurn = userMsgs.length === 1 && assistantMsgs.length === 0
+    const lastUserMsg = [...msgArr].reverse().find(m => m.role === 'user')?.content ?? ''
+    if (isFirstTurn && chatMode === 'regular' && lastUserMsg.trim()) {
       const p = parseQuoteIntent(lastUserMsg, schoolsWithPromos as School[], aliasData as Record<string, string[]> | undefined)
-      // 학원이 auto로 확정된 경우만 코드가 주도(choices/none이면 아래에서 분기)
-      if (p.school.kind === 'auto') {
-        const sid = p.school.pick.id
+      // 학원이 잡히면(auto 또는 choices) 견적 카드를 띄운다. 카드 안에서 학원(캠퍼스)·코스·
+      // 기숙·주수·날짜를 드롭다운으로 고르므로, 별도 선택지 질문(대화 왕복)이 필요 없다.
+      // 코드가 자신 있게 잡은 값은 카드에 미리 채워지고, 못 잡은 항목만 사용자가 고른다.
+      const picked = p.school.kind === 'auto' ? p.school.pick
+        : p.school.kind === 'choices' ? p.school.options[0] : null
+      if (picked) {
+        const sid = picked.id
         const courseAuto = p.course?.kind === 'auto' ? p.course.pick : null
         const dormAuto = p.dorm?.kind === 'auto' ? p.dorm.pick : null
-
-        // (a) 코스·기숙·주수 모두 확정 → confirm 카드 직행 (LLM 0)
-        if (courseAuto && dormAuto && p.weeks) {
-          return NextResponse.json({
-            action: 'confirm',
-            message: '아래 내용으로 계산할게요. 맞으면 [계산하기]를 누르고, 수정할 게 있으면 알려주세요.',
-            confirmCard: {
-              schoolId: sid,
-              schoolName: p.school.pick.name,
-              totalWeeks: p.weeks,
-              courses: [{ courseId: courseAuto.id, weeks: p.weeks }],
-              courseLabels: [`${courseAuto.name} (${p.weeks}주)`],
-              dormitories: [{ dormitoryId: dormAuto.id, weeks: p.weeks }],
-              dormLabels: [`${dormAuto.name} (${p.weeks}주)`],
-              packages: [],
-              packageLabels: [],
-              startDate: p.startDate,
-              startDateLabel: p.startDate ? p.startDate : '미정 (날짜 없이 기본 견적)',
-              enrollmentDate: p.startDate,
-            },
-            _via: 'parser',
-          })
-        }
-
-        // (b) 코스가 여러 후보 또는 못 찾음 → 코드가 그 학원 코스 목록을 선택지로 (LLM 0)
-        const targetSchool = schoolsWithPromos.find(s => s.id === sid)
-        if (p.course?.kind === 'choices') {
-          return NextResponse.json({
-            action: 'need_info', type: 'select', schoolId: sid,
-            question: `${p.school.pick.name} — 어느 코스인가요?`,
-            suggestions: p.course.options.map(o => o.name),
-            allowFreeText: true, _via: 'parser',
-          })
-        }
-        if (p.course?.kind === 'none' && targetSchool && (targetSchool.courses?.length ?? 0) > 0) {
-          // 코드가 코스를 못 집음 → 그 학원 전체 코스 목록을 보여주고 고르게 (LLM보다 정확)
-          return NextResponse.json({
-            action: 'need_info', type: 'select', schoolId: sid,
-            question: `${p.school.pick.name} — 어느 코스인가요?`,
-            suggestions: (targetSchool.courses ?? []).map(c =>
-              `${c.name} (${((c as unknown as Record<string, number>).price4Weeks ?? 0).toLocaleString()}원/4주)`),
-            allowFreeText: true, _via: 'parser',
-          })
-        }
-        // (c) 코스는 정해졌는데 기숙 후보 여럿/못찾음 → 기숙 선택지
-        if (courseAuto && p.dorm?.kind === 'choices') {
-          return NextResponse.json({
-            action: 'need_info', type: 'select', schoolId: sid,
-            question: `${p.school.pick.name} — 어느 기숙사인가요?`,
-            suggestions: p.dorm.options.map(o => o.name),
-            allowFreeText: true, _via: 'parser',
-          })
-        }
-        if (courseAuto && p.dorm?.kind === 'none' && targetSchool && (targetSchool.dormitories?.length ?? 0) > 0) {
-          return NextResponse.json({
-            action: 'need_info', type: 'select', schoolId: sid,
-            question: `${p.school.pick.name} — 어느 기숙사인가요?`,
-            suggestions: (targetSchool.dormitories ?? []).map(d =>
-              `${d.name} (${((d as unknown as Record<string, number>).price4Weeks ?? 0).toLocaleString()}원/4주)`),
-            allowFreeText: true, _via: 'parser',
-          })
-        }
-        // (d) 코스·기숙 정해졌는데 주수만 없음 → 주수 되묻기
-        if (courseAuto && dormAuto && !p.weeks) {
-          return NextResponse.json({
-            action: 'need_info', type: 'text', schoolId: sid,
-            question: '몇 주 과정으로 알아볼까요? (예: 4주, 8주)',
-            allowFreeText: true, _via: 'parser',
-          })
-        }
-        // 여기까지 안 걸리면(학원만 잡고 나머지 불명확) LLM 폴백으로 내려감
-      } else if (p.school.kind === 'choices') {
-        // 학원이 여러 후보(캠퍼스 등) → 코드가 학원 선택지 (LLM 0)
+        const wk = p.weeks ?? 0
         return NextResponse.json({
-          action: 'need_info', type: 'select',
-          question: '어느 학원/캠퍼스인가요?',
-          suggestions: p.school.options.map(o => o.name),
-          allowFreeText: true, _via: 'parser',
+          action: 'confirm',
+          message: '견적 내용을 확인하고, 바꿀 항목은 직접 고르세요.',
+          confirmCard: {
+            schoolId: sid,
+            schoolName: picked.name,
+            totalWeeks: p.weeks ?? 4,
+            courses: courseAuto ? [{ courseId: courseAuto.id, weeks: wk || 4 }] : [],
+            courseLabels: courseAuto ? [`${courseAuto.name}${wk ? ` (${wk}주)` : ''}`] : [],
+            dormitories: dormAuto ? [{ dormitoryId: dormAuto.id, weeks: wk || 4 }] : [],
+            dormLabels: dormAuto ? [`${dormAuto.name}${wk ? ` (${wk}주)` : ''}`] : [],
+            packages: [],
+            packageLabels: [],
+            startDate: p.startDate,
+            startDateLabel: p.startDate ? p.startDate : '미정 (날짜 없이 기본 견적)',
+            enrollmentDate: p.startDate,
+          },
+          _via: 'parser',
         })
-      } else {
-        // 학원조차 코드가 못 잡음 → 수집 후 LLM 폴백
-        logUnresolved(lastUserMsg, 'school_not_found')
       }
+      // 학원조차 코드가 못 잡음 → 수집 후 LLM 폴백
+      logUnresolved(lastUserMsg, 'school_not_found')
     }
 
     const rawText = await callClaude(

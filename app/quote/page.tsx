@@ -195,12 +195,14 @@ function MarkdownText({ text, isUser = false }: { text: string; isUser?: boolean
   return <div className="space-y-0.5 leading-relaxed">{result}</div>
 }
 
-// ── 편집 가능한 확인 카드 ────────────────────────────────────────────────────
-// 코스/기숙/주수/시작일을 드롭다운·인풋으로 그 자리에서 바꾸고 [계산하기]로 directCalc.
-// "수정"을 말로 해서 LLM을 다시 타는 대신, UI에서 직접 바꾼다(LLM 0, 429 방지).
-function EditableConfirmCard({ card, school, onCalculate }: {
+// ── 견적 카드 (계산기) ───────────────────────────────────────────────────────
+// 자연어 입력 후 파서가 채운 값을 이 카드로 보여주고, 부족한 건 드롭다운으로 직접 고른다.
+// 선택지 질문→클릭→재해석 같은 대화 왕복 없이, 카드 하나에서 다 정하고 [계산하기]→directCalc.
+// 본질은 계산기다: 입력 한 번 → 카드 → 계산.
+function EditableConfirmCard({ card, schools, mode, onCalculate }: {
   card: AssistantConfirmMessage['confirmCard']
-  school?: School
+  schools: School[]
+  mode: SchoolMode
   onCalculate: (payload: {
     schoolId: string; startDate: string; enrollmentDate: string
     courses?: { courseId: string; weeks: number }[]
@@ -208,19 +210,33 @@ function EditableConfirmCard({ card, school, onCalculate }: {
     packages?: { packageId: string; weeks: number; columnLabel: string }[]
   }) => void
 }) {
-  const hasPackages = (card.packages?.length ?? 0) > 0
+  const [schoolId, setSchoolId] = useState<string>(card.schoolId ?? '')
   const [weeks, setWeeks] = useState<number>(card.totalWeeks ?? 4)
   const [courseId, setCourseId] = useState<string>(card.courses[0]?.courseId ?? '')
   const [dormId, setDormId] = useState<string>(card.dormitories[0]?.dormitoryId ?? '')
   const [startDate, setStartDate] = useState<string>(card.startDate ?? '')
-  const [editing, setEditing] = useState(false)
 
-  const courseOpts = (school?.courses ?? [])
-  const dormOpts = (school?.dormitories ?? [])
+  // 같은 이름의 다른 캠퍼스까지 학원 후보로 (EV / EV 라메르 등)
+  const baseName = (schools.find(s => s.id === (card.schoolId || schoolId))?.name ?? card.schoolName).split('(')[0].trim()
+  const schoolOpts = schools.filter(s => s.id === card.schoolId || s.name.split('(')[0].trim() === baseName)
+  const school = schools.find(s => s.id === schoolId)
+  const hasPackages = (school?.packages?.length ?? 0) > 0 && (school?.courses?.length ?? 0) === 0
+  const courseOpts = school?.courses ?? []
+  const dormOpts = school?.dormitories ?? []
+
+  // 학원이 바뀌면 코스/기숙 선택 초기화 (다른 학원의 id는 무효)
+  const onSchoolChange = (id: string) => {
+    setSchoolId(id)
+    setCourseId(''); setDormId('')
+  }
+
+  // 계산 가능 조건: 학원 + (패키지 학원이면 통과 / 일반이면 코스 선택) + 주수
+  const ready = !!schoolId && !!weeks && (hasPackages || !!courseId)
 
   const fire = () => {
+    if (!ready) return
     onCalculate({
-      schoolId: card.schoolId,
+      schoolId,
       startDate, enrollmentDate: startDate,
       courses: hasPackages ? undefined : (courseId ? [{ courseId, weeks }] : []),
       dormitories: hasPackages ? undefined : (dormId ? [{ dormitoryId: dormId, weeks }] : []),
@@ -228,73 +244,67 @@ function EditableConfirmCard({ card, school, onCalculate }: {
     })
   }
 
-  const rowLabel = "text-gray-500 w-20 shrink-0"
+  const rowLabel = "text-gray-500 w-16 shrink-0 text-sm"
+  const sel = "border border-gray-300 rounded-md px-2 py-1.5 text-sm bg-white max-w-[62vw] md:max-w-md"
   return (
     <div className="bg-amber-50 border border-amber-300 rounded-2xl rounded-tl-sm px-4 py-3 shadow-sm space-y-2">
-      <p className="text-sm text-amber-900 font-medium">아래 내용으로 계산할게요. 바꿀 게 있으면 직접 고치세요.</p>
-      <div className="bg-white border border-amber-200 rounded-lg p-3 space-y-2 text-sm">
-        <div className="flex items-center"><span className={rowLabel}>학원</span><span className="font-medium">{card.schoolName}</span></div>
+      <p className="text-sm text-amber-900 font-medium">견적 내용을 확인하고, 바꿀 항목은 직접 고르세요.</p>
+      <div className="bg-white border border-amber-200 rounded-lg p-3 space-y-2">
+        {/* 학원 (후보 여럿이면 드롭다운, 하나면 텍스트) */}
+        <div className="flex items-center"><span className={rowLabel}>학원</span>
+          {schoolOpts.length > 1 ? (
+            <select value={schoolId} onChange={e => onSchoolChange(e.target.value)} className={sel}>
+              {schoolOpts.map(s => <option key={s.id} value={s.id}>{s.name}</option>)}
+            </select>
+          ) : <span className="font-medium text-sm">{school?.name ?? card.schoolName}</span>}
+        </div>
 
         {/* 주수 */}
         <div className="flex items-center"><span className={rowLabel}>기간</span>
-          {editing ? (
-            <select value={weeks} onChange={e => setWeeks(Number(e.target.value))}
-              className="border border-gray-300 rounded-md px-2 py-1 text-sm">
-              {[1,2,3,4,5,6,7,8,9,10,11,12,16,20,24].map(w => <option key={w} value={w}>{w}주</option>)}
-            </select>
-          ) : <span className="font-medium">{weeks}주</span>}
+          <select value={weeks} onChange={e => setWeeks(Number(e.target.value))} className={sel}>
+            {[1,2,3,4,5,6,7,8,9,10,11,12,16,20,24].map(w => <option key={w} value={w}>{w}주</option>)}
+          </select>
         </div>
 
-        {/* 코스 (패키지 학원이 아니면) */}
+        {/* 코스 (일반 학원) */}
         {!hasPackages && (
           <div className="flex items-center"><span className={rowLabel}>코스</span>
-            {editing && courseOpts.length > 0 ? (
-              <select value={courseId} onChange={e => setCourseId(e.target.value)}
-                className="border border-gray-300 rounded-md px-2 py-1 text-sm max-w-[60vw] md:max-w-md">
-                {courseOpts.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
-              </select>
-            ) : <span className="font-medium">{courseOpts.find(c => c.id === courseId)?.name ?? card.courseLabels.join(', ')}</span>}
+            <select value={courseId} onChange={e => setCourseId(e.target.value)} className={sel}>
+              <option value="">선택하세요</option>
+              {courseOpts.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
+            </select>
           </div>
         )}
 
-        {/* 기숙사 (패키지 학원이 아니면) */}
-        {!hasPackages && (
+        {/* 기숙사 (일반 학원, 선택) */}
+        {!hasPackages && dormOpts.length > 0 && (
           <div className="flex items-center"><span className={rowLabel}>기숙사</span>
-            {editing && dormOpts.length > 0 ? (
-              <select value={dormId} onChange={e => setDormId(e.target.value)}
-                className="border border-gray-300 rounded-md px-2 py-1 text-sm max-w-[60vw] md:max-w-md">
-                {dormOpts.map(d => <option key={d.id} value={d.id}>{d.name}</option>)}
-              </select>
-            ) : <span className="font-medium">{dormOpts.find(d => d.id === dormId)?.name ?? card.dormLabels.join(', ') ?? '-'}</span>}
+            <select value={dormId} onChange={e => setDormId(e.target.value)} className={sel}>
+              <option value="">통학 (기숙사 없음)</option>
+              {dormOpts.map(d => <option key={d.id} value={d.id}>{d.name}</option>)}
+            </select>
           </div>
         )}
 
         {hasPackages && (
-          <div className="flex items-center"><span className={rowLabel}>패키지</span><span className="font-medium">{card.packageLabels?.join(', ')}</span></div>
+          <div className="flex items-center"><span className={rowLabel}>패키지</span><span className="font-medium text-sm">{card.packageLabels?.join(', ')}</span></div>
         )}
 
         {/* 시작일 */}
         <div className="flex items-center"><span className={rowLabel}>시작일</span>
-          {editing ? (
-            <div className="flex items-center gap-2">
-              <input type="date" value={startDate} onChange={e => setStartDate(e.target.value)}
-                className="border border-gray-300 rounded-md px-2 py-1 text-sm" />
-              {startDate && <button onClick={() => setStartDate('')} className="text-xs text-gray-400 underline">미정으로</button>}
-            </div>
-          ) : <span className={`font-medium ${startDate ? '' : 'text-gray-500 italic'}`}>{startDate || '미정 (날짜 없이 기본 견적)'}</span>}
+          <div className="flex items-center gap-2">
+            <input type="date" value={startDate} onChange={e => setStartDate(e.target.value)} className="border border-gray-300 rounded-md px-2 py-1.5 text-sm bg-white" />
+            {startDate
+              ? <button onClick={() => setStartDate('')} className="text-xs text-gray-400 underline">미정</button>
+              : <span className="text-xs text-gray-400 italic">미정 (기본 견적)</span>}
+          </div>
         </div>
       </div>
 
-      <div className="flex gap-2 pt-1">
-        <button onClick={fire}
-          className="flex-1 bg-amber-600 hover:bg-amber-700 text-white text-sm font-medium py-2 rounded-lg transition-colors">
-          계산하기
-        </button>
-        <button onClick={() => setEditing(v => !v)}
-          className="px-4 bg-white border border-amber-300 hover:bg-amber-50 text-amber-700 text-sm py-2 rounded-lg transition-colors">
-          {editing ? '완료' : '수정'}
-        </button>
-      </div>
+      <button onClick={fire} disabled={!ready}
+        className={`w-full text-sm font-medium py-2 rounded-lg transition-colors ${ready ? 'bg-amber-600 hover:bg-amber-700 text-white' : 'bg-gray-200 text-gray-400 cursor-not-allowed'}`}>
+        {ready ? '계산하기' : '코스를 선택하세요'}
+      </button>
     </div>
   )
 }
@@ -1276,7 +1286,8 @@ export default function QuotePage() {
                     return (
                       <EditableConfirmCard
                         card={c}
-                        school={schools.find(s => s.id === c.schoolId)}
+                        schools={schools}
+                        mode={mode}
                         onCalculate={(payload) => sendMessage('계산해주세요', payload)}
                       />
                     )
