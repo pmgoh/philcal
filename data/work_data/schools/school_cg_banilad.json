@@ -1,0 +1,354 @@
+{
+  "id": "cg_banilad",
+  "schoolCode": "CG_BANILAD",
+  "name": "CG (Banilad 캠퍼스)",
+  "campus": "Banilad 캠퍼스",
+  "region": "세부",
+  "schoolType": "general",
+  "minWeeks": 1,
+  "allowShortTerm": true,
+  "programTags": [
+    "ESL",
+    "IELTS",
+    "토익",
+    "비즈니스",
+    "가족연수",
+    "주니어"
+  ],
+  "courseShortTermRates": {
+    "mode": "percent",
+    "week1": 40,
+    "week2": 60,
+    "week3": 85,
+    "week4Included": false
+  },
+  "dormShortTermRates": {
+    "mode": "percent",
+    "week1": 40,
+    "week2": 60,
+    "week3": 85,
+    "week4Included": false
+  },
+  "registrationFee": {
+    "amount": 100000,
+    "currency": "KRW",
+    "note": "등록금 10만원 (환불불가)"
+  },
+  "courses": [
+    {
+      "id": "cg_b_semi_sparta",
+      "name": "Semi-Sparta (ESL)",
+      "price4Weeks": 950000,
+      "currency": "KRW",
+      "note": ""
+    },
+    {
+      "id": "cg_b_premier_semi",
+      "name": "Premier Semi-Sparta (ESL)",
+      "price4Weeks": 1000000,
+      "currency": "KRW",
+      "note": ""
+    },
+    {
+      "id": "cg_b_light",
+      "name": "Light (ESL)",
+      "price4Weeks": 800000,
+      "currency": "KRW",
+      "note": "개별 명시가 기준 (합산표는 75만 상당이나 개별가 우선)"
+    },
+    {
+      "id": "cg_b_general",
+      "name": "General (ESL)",
+      "price4Weeks": 850000,
+      "currency": "KRW",
+      "note": ""
+    },
+    {
+      "id": "cg_b_intensive",
+      "name": "Intensive (ESL)",
+      "price4Weeks": 900000,
+      "currency": "KRW",
+      "note": ""
+    },
+    {
+      "id": "cg_b_power",
+      "name": "Power (ESL)",
+      "price4Weeks": 950000,
+      "currency": "KRW",
+      "note": ""
+    },
+    {
+      "id": "cg_b_ielts_basic",
+      "name": "IELTS Basic",
+      "price4Weeks": 1000000,
+      "currency": "KRW",
+      "note": ""
+    },
+    {
+      "id": "cg_b_toeic",
+      "name": "TOEIC Course",
+      "price4Weeks": 1000000,
+      "currency": "KRW",
+      "note": ""
+    },
+    {
+      "id": "cg_b_business",
+      "name": "Business English",
+      "price4Weeks": 1000000,
+      "currency": "KRW",
+      "note": ""
+    },
+    {
+      "id": "cg_b_family_guardian",
+      "name": "Family ESL - Guardian (보호자)",
+      "price4Weeks": 900000,
+      "currency": "KRW",
+      "note": "가족연수"
+    },
+    {
+      "id": "cg_b_family_junior",
+      "name": "Family ESL - Junior (자녀)",
+      "price4Weeks": 1350000,
+      "currency": "KRW",
+      "note": "가족연수"
+    },
+    {
+      "id": "cg_b_booster_1w",
+      "name": "Booster ESL (1주)",
+      "price4Weeks": 460000,
+      "currency": "KRW",
+      "note": "단기 전용. 1:1 8교시. 1주 46만원 (2025.11.3~). 만15세 이상"
+    },
+    {
+      "id": "cg_b_booster_2w",
+      "name": "Booster ESL (2주)",
+      "price4Weeks": 820000,
+      "currency": "KRW",
+      "note": "단기 전용. 2주 82만원"
+    }
+  ],
+  "dormitories": [
+    {
+      "id": "cg_b_1p",
+      "name": "1인실 (내부)",
+      "price4Weeks": 1150000,
+      "currency": "KRW",
+      "note": ""
+    },
+    {
+      "id": "cg_b_2p",
+      "name": "2인실 (내부)",
+      "price4Weeks": 900000,
+      "currency": "KRW",
+      "note": ""
+    },
+    {
+      "id": "cg_b_3p",
+      "name": "3인실 (내부)",
+      "price4Weeks": 800000,
+      "currency": "KRW",
+      "note": ""
+    },
+    {
+      "id": "cg_b_4p",
+      "name": "4인실 (내부)",
+      "price4Weeks": 750000,
+      "currency": "KRW",
+      "note": ""
+    },
+    {
+      "id": "cg_b_alicia_1p",
+      "name": "외부 Alicia 1인실",
+      "price4Weeks": 1600000,
+      "currency": "KRW",
+      "note": "3주 등록 불가"
+    },
+    {
+      "id": "cg_b_alicia_2p",
+      "name": "외부 Alicia 2인실",
+      "price4Weeks": 1100000,
+      "currency": "KRW",
+      "note": "3주 등록 불가"
+    },
+    {
+      "id": "cg_b_alicia_3p",
+      "name": "외부 Alicia 3인실",
+      "price4Weeks": 1000000,
+      "currency": "KRW",
+      "note": "3주 등록 불가"
+    },
+    {
+      "id": "cg_b_alicia_4p",
+      "name": "외부 Alicia 4인실",
+      "price4Weeks": 950000,
+      "currency": "KRW",
+      "note": "3주 등록 불가"
+    },
+    {
+      "id": "cg_b_88th_1p",
+      "name": "외부 88th Avenue 1인실",
+      "price4Weeks": 1800000,
+      "currency": "KRW",
+      "note": ""
+    },
+    {
+      "id": "cg_b_88th_2p",
+      "name": "외부 88th Avenue 2인실",
+      "price4Weeks": 1300000,
+      "currency": "KRW",
+      "note": ""
+    },
+    {
+      "id": "cg_b_88th_3p",
+      "name": "외부 88th Avenue 3인실",
+      "price4Weeks": 1200000,
+      "currency": "KRW",
+      "note": ""
+    },
+    {
+      "id": "cg_b_88th_4p",
+      "name": "외부 88th Avenue 4인실",
+      "price4Weeks": 1100000,
+      "currency": "KRW",
+      "note": ""
+    },
+    {
+      "id": "cg_b_mj_1p",
+      "name": "외부 M&J Pension 1인실",
+      "price4Weeks": 1300000,
+      "currency": "KRW",
+      "note": "A/C Fee 포함"
+    }
+  ],
+  "packages": [],
+  "surcharges": [
+    {
+      "id": "cg_b_summer_surcharge",
+      "name": "여름 성수기 서차지",
+      "amountPerWeek": 50000,
+      "currency": "KRW",
+      "startDate": "2026-07-05",
+      "endDate": "2026-08-30",
+      "note": "서차지 포함 비용에서 학비&기숙사 10% 유학원 할인 가능."
+    }
+  ],
+  "localFees": [
+    {
+      "id": "cg_b_ssp",
+      "name": "SSP (Special Study Permit)",
+      "amount": 7800,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "note": "E-Card 4,500페소 별도"
+    },
+    {
+      "id": "cg_b_ecard",
+      "name": "E-Card (SSP)",
+      "amount": 4500,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "note": ""
+    },
+    {
+      "id": "cg_b_visa1",
+      "name": "비자연장 1차 (5~8주)",
+      "amount": 5160,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "note": "1~4주 무비자 30일. 5~8주 구간 적용"
+    },
+    {
+      "id": "cg_b_visa2",
+      "name": "비자연장 2차 (9~12주)",
+      "amount": 6390,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "note": "+ I-Card 4,500페소"
+    },
+    {
+      "id": "cg_b_visa3",
+      "name": "비자연장 3차 (13~16주)",
+      "amount": 4460,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "note": ""
+    },
+    {
+      "id": "cg_b_maintenance",
+      "name": "관리비",
+      "amount": 2000,
+      "currency": "PHP",
+      "chargeUnit": "per_4weeks",
+      "note": "4주당"
+    },
+    {
+      "id": "cg_b_electric",
+      "name": "공용 전기세",
+      "amount": 4000,
+      "currency": "PHP",
+      "chargeUnit": "per_4weeks",
+      "note": "4주당. 에어컨 전기세 별도"
+    },
+    {
+      "id": "cg_b_water",
+      "name": "수도세",
+      "amount": 500,
+      "currency": "PHP",
+      "chargeUnit": "per_4weeks",
+      "note": "4주당"
+    },
+    {
+      "id": "cg_b_deposit",
+      "name": "보증금",
+      "amount": 1000,
+      "currency": "PHP",
+      "chargeUnit": "per_4weeks",
+      "note": "4주당"
+    },
+    {
+      "id": "cg_b_pickup",
+      "name": "픽업비",
+      "amount": 1200,
+      "currency": "PHP",
+      "chargeUnit": "per_visit",
+      "note": ""
+    },
+    {
+      "id": "cg_b_book",
+      "name": "교재비",
+      "amount": 350,
+      "currency": "PHP",
+      "chargeUnit": "per_usage",
+      "note": "250~450페소/권당"
+    }
+  ],
+  "longTermDiscount": [
+    {
+      "weeks": 12,
+      "discount": 50000,
+      "currency": "KRW"
+    },
+    {
+      "weeks": 16,
+      "discount": 100000,
+      "currency": "KRW"
+    },
+    {
+      "weeks": 20,
+      "discount": 150000,
+      "currency": "KRW"
+    },
+    {
+      "weeks": 24,
+      "discount": 200000,
+      "currency": "KRW"
+    }
+  ],
+  "refundPolicy": "",
+  "dormitoryRules": "",
+  "generalNotes": "가격은 개별 명시가(코스/기숙 단가) 기준. 합산표는 참고용. 단기율 1주40%/2주60%/3주85%. 장기할인 12주-5만/16주-10만/20주-15만/24주-20만.",
+  "isActive": true,
+  "shortTermDataStatus": "confirmed",
+  "createdAt": "2026-05-30T00:00:00.000Z",
+  "updatedAt": "2026-05-30T00:00:00.000Z"
+}
