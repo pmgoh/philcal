@@ -1,14 +1,14 @@
 'use client'
 import { useState, useEffect, useRef } from 'react'
 import AdminLayout from '@/components/AdminLayout'
-import { getSchools, getExchangeRate, getPromotions } from '@/lib/db'
+import { getSchools, getExchangeRate, getPromotions, getSchoolAliases } from '@/lib/db'
 import type { School, ExchangeRate, LocalFee } from '@/types'
 import { Send, RotateCcw, Copy, Check, ChevronDown, ChevronUp, DollarSign, FileText, MessageSquare, Calculator } from 'lucide-react'
 import { formatKrw } from '@/lib/utils'
 import QuoteFormModal from '@/components/QuoteFormModal'
 import QuoteResultCard from '@/components/QuoteResultCard'
 import DirectCalculator from '@/components/DirectCalculator'
-import type { CalcResult } from '@/lib/calcEngine'
+import type { CalcResult, PromotionLineItem } from '@/lib/calcEngine'
 import { inferSchoolMode, MODE_LABELS, type SchoolMode } from '@/lib/schoolMode'
 
 // ── 메시지 타입 ───────────────────────────────────────────────────────────────
@@ -31,6 +31,13 @@ interface AssistantResultMessage extends BaseMessage {
   surchargeItems?: Array<{ label: string; weeks: number }>
   calcResult?: CalcResult
   school?: School
+  // 데이트피커 재계산용: 이 견적을 만든 directCalc 입력 (날짜만 바꿔 다시 계산)
+  calcInput?: {
+    schoolId: string
+    courses?: { courseId: string; weeks: number }[]
+    dormitories?: { dormitoryId: string; weeks: number }[]
+    packages?: { packageId: string; weeks: number; columnLabel: string }[]
+  }
   // 검증 봇 결과
   verification?: string
   verifying?: boolean
@@ -186,6 +193,187 @@ function MarkdownText({ text, isUser = false }: { text: string; isUser?: boolean
   }
 
   return <div className="space-y-0.5 leading-relaxed">{result}</div>
+}
+
+// ── 편집 가능한 확인 카드 ────────────────────────────────────────────────────
+// 코스/기숙/주수/시작일을 드롭다운·인풋으로 그 자리에서 바꾸고 [계산하기]로 directCalc.
+// "수정"을 말로 해서 LLM을 다시 타는 대신, UI에서 직접 바꾼다(LLM 0, 429 방지).
+function EditableConfirmCard({ card, school, onCalculate }: {
+  card: AssistantConfirmMessage['confirmCard']
+  school?: School
+  onCalculate: (payload: {
+    schoolId: string; startDate: string; enrollmentDate: string
+    courses?: { courseId: string; weeks: number }[]
+    dormitories?: { dormitoryId: string; weeks: number }[]
+    packages?: { packageId: string; weeks: number; columnLabel: string }[]
+  }) => void
+}) {
+  const hasPackages = (card.packages?.length ?? 0) > 0
+  const [weeks, setWeeks] = useState<number>(card.totalWeeks ?? 4)
+  const [courseId, setCourseId] = useState<string>(card.courses[0]?.courseId ?? '')
+  const [dormId, setDormId] = useState<string>(card.dormitories[0]?.dormitoryId ?? '')
+  const [startDate, setStartDate] = useState<string>(card.startDate ?? '')
+  const [editing, setEditing] = useState(false)
+
+  const courseOpts = (school?.courses ?? [])
+  const dormOpts = (school?.dormitories ?? [])
+
+  const fire = () => {
+    onCalculate({
+      schoolId: card.schoolId,
+      startDate, enrollmentDate: startDate,
+      courses: hasPackages ? undefined : (courseId ? [{ courseId, weeks }] : []),
+      dormitories: hasPackages ? undefined : (dormId ? [{ dormitoryId: dormId, weeks }] : []),
+      packages: hasPackages ? (card.packages ?? []).map(p => ({ ...p, weeks })) : undefined,
+    })
+  }
+
+  const rowLabel = "text-gray-500 w-20 shrink-0"
+  return (
+    <div className="bg-amber-50 border border-amber-300 rounded-2xl rounded-tl-sm px-4 py-3 shadow-sm space-y-2">
+      <p className="text-sm text-amber-900 font-medium">아래 내용으로 계산할게요. 바꿀 게 있으면 직접 고치세요.</p>
+      <div className="bg-white border border-amber-200 rounded-lg p-3 space-y-2 text-sm">
+        <div className="flex items-center"><span className={rowLabel}>학원</span><span className="font-medium">{card.schoolName}</span></div>
+
+        {/* 주수 */}
+        <div className="flex items-center"><span className={rowLabel}>기간</span>
+          {editing ? (
+            <select value={weeks} onChange={e => setWeeks(Number(e.target.value))}
+              className="border border-gray-300 rounded-md px-2 py-1 text-sm">
+              {[1,2,3,4,5,6,7,8,9,10,11,12,16,20,24].map(w => <option key={w} value={w}>{w}주</option>)}
+            </select>
+          ) : <span className="font-medium">{weeks}주</span>}
+        </div>
+
+        {/* 코스 (패키지 학원이 아니면) */}
+        {!hasPackages && (
+          <div className="flex items-center"><span className={rowLabel}>코스</span>
+            {editing && courseOpts.length > 0 ? (
+              <select value={courseId} onChange={e => setCourseId(e.target.value)}
+                className="border border-gray-300 rounded-md px-2 py-1 text-sm max-w-[60vw] md:max-w-md">
+                {courseOpts.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
+              </select>
+            ) : <span className="font-medium">{courseOpts.find(c => c.id === courseId)?.name ?? card.courseLabels.join(', ')}</span>}
+          </div>
+        )}
+
+        {/* 기숙사 (패키지 학원이 아니면) */}
+        {!hasPackages && (
+          <div className="flex items-center"><span className={rowLabel}>기숙사</span>
+            {editing && dormOpts.length > 0 ? (
+              <select value={dormId} onChange={e => setDormId(e.target.value)}
+                className="border border-gray-300 rounded-md px-2 py-1 text-sm max-w-[60vw] md:max-w-md">
+                {dormOpts.map(d => <option key={d.id} value={d.id}>{d.name}</option>)}
+              </select>
+            ) : <span className="font-medium">{dormOpts.find(d => d.id === dormId)?.name ?? card.dormLabels.join(', ') ?? '-'}</span>}
+          </div>
+        )}
+
+        {hasPackages && (
+          <div className="flex items-center"><span className={rowLabel}>패키지</span><span className="font-medium">{card.packageLabels?.join(', ')}</span></div>
+        )}
+
+        {/* 시작일 */}
+        <div className="flex items-center"><span className={rowLabel}>시작일</span>
+          {editing ? (
+            <div className="flex items-center gap-2">
+              <input type="date" value={startDate} onChange={e => setStartDate(e.target.value)}
+                className="border border-gray-300 rounded-md px-2 py-1 text-sm" />
+              {startDate && <button onClick={() => setStartDate('')} className="text-xs text-gray-400 underline">미정으로</button>}
+            </div>
+          ) : <span className={`font-medium ${startDate ? '' : 'text-gray-500 italic'}`}>{startDate || '미정 (날짜 없이 기본 견적)'}</span>}
+        </div>
+      </div>
+
+      <div className="flex gap-2 pt-1">
+        <button onClick={fire}
+          className="flex-1 bg-amber-600 hover:bg-amber-700 text-white text-sm font-medium py-2 rounded-lg transition-colors">
+          계산하기
+        </button>
+        <button onClick={() => setEditing(v => !v)}
+          className="px-4 bg-white border border-amber-300 hover:bg-amber-50 text-amber-700 text-sm py-2 rounded-lg transition-colors">
+          {editing ? '완료' : '수정'}
+        </button>
+      </div>
+    </div>
+  )
+}
+
+// ── 프로모션 목록 패널 ───────────────────────────────────────────────────────
+// calcResult.promotionLines를 적용/보류/미적용으로 나눠 보여준다.
+// - applied: 자동 적용된 할인 (초록, 할인액 표시)
+// - pending: 시작일 미정이라 보류 (노랑) — 데이트피커로 날짜 정하면 재계산
+// - unmet:   조건 미충족 등 미적용 (회색, 사유 표시) — 다른 프로모션이 뭐가 있는지 보여줌
+function PromotionPanel({ lines, dateUnset, onPickDate }: {
+  lines: PromotionLineItem[]
+  dateUnset: boolean
+  onPickDate?: (date: string) => void
+}) {
+  const applied = lines.filter(l => l.status === 'applied')
+  const pending = lines.filter(l => l.status === 'pending')
+  const others  = lines.filter(l => l.status === 'unmet' || l.status === 'manual')
+  if (applied.length === 0 && pending.length === 0 && others.length === 0) return null
+
+  const fmt = (n: number) => n.toLocaleString() + '원'
+
+  return (
+    <div className="mt-2 border border-gray-200 rounded-xl overflow-hidden text-sm">
+      <div className="px-4 py-2 bg-gray-50 border-b border-gray-200 font-medium text-gray-700 text-xs">
+        프로모션 · 할인 내역
+      </div>
+      <div className="divide-y divide-gray-100">
+        {/* 적용된 할인 */}
+        {applied.map(l => (
+          <div key={l.id} className="px-4 py-2.5 flex items-start gap-2 bg-emerald-50/40">
+            <span className="shrink-0 mt-0.5 text-[10px] font-bold px-1.5 py-0.5 rounded bg-emerald-600 text-white">적용</span>
+            <div className="flex-1 min-w-0">
+              <div className="flex justify-between gap-2">
+                <span className="font-medium text-gray-800">{l.label}{l.kind === 'agency' && <span className="ml-1 text-[10px] text-emerald-700">(유학원)</span>}</span>
+                <span className="font-semibold text-emerald-700 shrink-0">−{fmt(l.discountKrw)}</span>
+              </div>
+              {l.basis && <div className="text-xs text-gray-500 mt-0.5">{l.basis}</div>}
+            </div>
+          </div>
+        ))}
+
+        {/* 날짜 미정 보류 */}
+        {pending.map(l => (
+          <div key={l.id} className="px-4 py-2.5 flex items-start gap-2 bg-amber-50/50">
+            <span className="shrink-0 mt-0.5 text-[10px] font-bold px-1.5 py-0.5 rounded bg-amber-500 text-white">보류</span>
+            <div className="flex-1 min-w-0">
+              <span className="font-medium text-gray-800">{l.label}</span>
+              <div className="text-xs text-amber-700 mt-0.5">
+                시작일이 정해지면 적용 여부가 확정됩니다{l.periodNote ? ` · ${l.periodNote}` : ''}
+              </div>
+            </div>
+          </div>
+        ))}
+
+        {/* 미적용 (다른 프로모션 존재 안내) */}
+        {others.map(l => (
+          <div key={l.id} className="px-4 py-2.5 flex items-start gap-2 opacity-70">
+            <span className="shrink-0 mt-0.5 text-[10px] font-bold px-1.5 py-0.5 rounded bg-gray-300 text-gray-600">미적용</span>
+            <div className="flex-1 min-w-0">
+              <span className="font-medium text-gray-600 line-through decoration-gray-300">{l.label}</span>
+              {(l.unmetReason || l.basis) && <div className="text-xs text-gray-400 mt-0.5">{l.unmetReason || l.basis}</div>}
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* 날짜 미정 + 보류 항목 있을 때: 데이트피커로 확정 */}
+      {dateUnset && pending.length > 0 && onPickDate && (
+        <div className="px-4 py-3 bg-amber-50 border-t border-amber-200 flex items-center gap-2 flex-wrap">
+          <span className="text-xs text-amber-800 font-medium">시작일을 정하면 보류 항목이 확정됩니다:</span>
+          <input
+            type="date"
+            className="text-xs border border-amber-300 rounded-lg px-2 py-1 bg-white"
+            onChange={e => { if (e.target.value) onPickDate(e.target.value) }}
+          />
+        </div>
+      )}
+    </div>
+  )
 }
 
 // ── 기간 타임라인 ────────────────────────────────────────────────────────────
@@ -601,12 +789,20 @@ export default function QuotePage() {
   // 다른 캠퍼스)만 LLM에 보내 프롬프트 토큰을 줄인다(전체 81개 → 1~2개). 사용자가 새 학원명을
   // 말하거나 초기화하면 해제. rate limit(429) 방지의 핵심.
   const [activeSchoolId, setActiveSchoolId] = useState<string | null>(null)
+  // 코드 파서용 별칭 (Firestore에서 로드 → route에 함께 전송해 파서가 코드 기본값과 병합)
+  const [aliasData, setAliasData] = useState<Record<string, string[]>>({})
   const bottomRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     Promise.all([getSchools(), getExchangeRate(), getPromotions()]).then(([s, r, p]) => {
       setSchools(s); setRate(r); setPromotions(p)
     })
+    // 별칭은 실패해도 파서가 코드 기본 별칭으로 동작하므로 조용히 무시
+    getSchoolAliases().then(docs => {
+      const map: Record<string, string[]> = {}
+      for (const d of docs) map[d.schoolCode] = d.aliases
+      setAliasData(map)
+    }).catch(() => {})
   }, [])
 
   useEffect(() => {
@@ -705,6 +901,7 @@ export default function QuotePage() {
             startDate: data.startDate, enrollmentDate: data.enrollmentDate, totalWeeks: data.totalWeeks,
             surchargeItems: data.surchargeItems ?? [], calcResult: data.calcResult,
             school: data.schoolData ?? (data.calcResult ? schools.find(s => s.id === data.schoolId) : undefined),
+            calcInput: { schoolId: directCalc.schoolId, courses: directCalc.courses, dormitories: directCalc.dormitories, packages: directCalc.packages },
           }
           setMessages(prev => [...prev, resultMsg])
         } else if (data.action === 'need_info') {
@@ -747,6 +944,7 @@ export default function QuotePage() {
           promotionsData: promotions,
           rateData: rate,
           mode,
+          aliasData,
         }),
       })
       const data = await res.json()
@@ -1033,6 +1231,20 @@ export default function QuotePage() {
                           />
                         )}
                         {m.evidenceMessage && <EvidenceCard text={m.evidenceMessage} school={m.school} />}
+                        {m.calcResult?.promotionLines && (
+                          <PromotionPanel
+                            lines={m.calcResult.promotionLines}
+                            dateUnset={!m.startDate}
+                            onPickDate={m.calcInput ? (date) => sendMessage(`${date} 시작으로 다시 계산`, {
+                              schoolId: m.calcInput!.schoolId,
+                              startDate: date,
+                              enrollmentDate: date,
+                              courses: m.calcInput!.courses,
+                              dormitories: m.calcInput!.dormitories,
+                              packages: m.calcInput!.packages,
+                            }) : undefined}
+                          />
+                        )}
                         {m.discountEvidence && (
                           <details className="mt-2">
                             <summary className="cursor-pointer text-xs text-red-600 font-medium px-3 py-2 bg-red-50 border border-red-200 rounded-xl hover:bg-red-100 transition-colors">
@@ -1061,46 +1273,12 @@ export default function QuotePage() {
                   {msg.type === 'confirm' && (() => {
                     const m = msg as AssistantConfirmMessage
                     const c = m.confirmCard
-                    const hasPackages = (c.packageLabels?.length ?? 0) > 0
-                    const hasCourses = c.courseLabels.length > 0
                     return (
-                      <div className="bg-amber-50 border border-amber-300 rounded-2xl rounded-tl-sm px-4 py-3 shadow-sm space-y-2">
-                        <p className="text-sm text-amber-900 font-medium">{m.content}</p>
-                        <div className="bg-white border border-amber-200 rounded-lg p-3 space-y-1.5 text-sm">
-                          <div className="flex"><span className="text-gray-500 w-20">학원</span><span className="font-medium">{c.schoolName}</span></div>
-                          <div className="flex"><span className="text-gray-500 w-20">기간</span><span className="font-medium">{c.totalWeeks}주</span></div>
-                          {hasPackages && (
-                            <div className="flex"><span className="text-gray-500 w-20">패키지</span><span className="font-medium">{c.packageLabels!.join(', ')}</span></div>
-                          )}
-                          {hasCourses && (
-                            <div className="flex"><span className="text-gray-500 w-20">코스</span><span className="font-medium">{c.courseLabels.join(', ')}</span></div>
-                          )}
-                          {/* 기숙사: 패키지 학원은 패키지에 포함이므로 숨김. 일반 학원이거나 기숙사 별도 입력 시만 표시 */}
-                          {!hasPackages && (
-                            <div className="flex"><span className="text-gray-500 w-20">기숙사</span><span className="font-medium">{c.dormLabels.join(', ') || '-'}</span></div>
-                          )}
-                          <div className="flex"><span className="text-gray-500 w-20">시작일</span><span className={`font-medium ${c.startDate ? '' : 'text-gray-500 italic'}`}>{c.startDateLabel}</span></div>
-                        </div>
-                        <div className="flex gap-2 pt-1">
-                          <button
-                            onClick={() => sendMessage('계산해주세요', {
-                              schoolId: c.schoolId,
-                              startDate: c.startDate,
-                              enrollmentDate: c.enrollmentDate,
-                              courses: c.courses,
-                              dormitories: c.dormitories,
-                              packages: c.packages,
-                            })}
-                            className="flex-1 bg-amber-600 hover:bg-amber-700 text-white text-sm font-medium py-2 rounded-lg transition-colors">
-                            계산하기
-                          </button>
-                          <button
-                            onClick={() => sendMessage('수정할게요')}
-                            className="px-4 bg-white border border-amber-300 hover:bg-amber-50 text-amber-700 text-sm py-2 rounded-lg transition-colors">
-                            수정
-                          </button>
-                        </div>
-                      </div>
+                      <EditableConfirmCard
+                        card={c}
+                        school={schools.find(s => s.id === c.schoolId)}
+                        onCalculate={(payload) => sendMessage('계산해주세요', payload)}
+                      />
                     )
                   })()}
 

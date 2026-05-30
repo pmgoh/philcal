@@ -230,3 +230,24 @@ export async function saveBatchPromotions(promos: PromoEntry[]): Promise<void> {
   }
   await batch.commit()
 }
+
+// ─── 학원 별칭 (코드 우선 파서용) ─────────────────────────────────────────────
+// 비속어 필터처럼 어드민에서 추가/삭제. schoolCode별로 한 문서에 별칭 배열을 저장.
+// 파서는 코드 기본 별칭(schoolAliases.ts) + 이 Firestore 별칭을 병합해 사용한다.
+export interface SchoolAliasDoc { schoolCode: string; aliases: string[]; updatedAt?: string }
+
+export async function getSchoolAliases(): Promise<SchoolAliasDoc[]> {
+  const snap = await getDocs(collection(db, 'schoolAliases'))
+  return snap.docs.map(d => d.data() as SchoolAliasDoc)
+}
+
+export async function saveSchoolAliases(schoolCode: string, aliases: string[]): Promise<void> {
+  const now = new Date().toISOString()
+  // 정규화: 공백 트림, 빈값/중복 제거
+  const clean = Array.from(new Set(aliases.map(a => a.trim()).filter(Boolean)))
+  await setDoc(doc(db, 'schoolAliases', schoolCode), { schoolCode, aliases: clean, updatedAt: now })
+}
+
+export async function deleteSchoolAliasDoc(schoolCode: string): Promise<void> {
+  await deleteDoc(doc(db, 'schoolAliases', schoolCode))
+}

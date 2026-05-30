@@ -322,7 +322,7 @@ function buildCalcResponse(school: School, calcResult: CalcResult, rate: Exchang
 
 export async function POST(req: NextRequest) {
   try {
-    const { messages, schoolsData, rateData, promotionsData, mode, directCalc } = await req.json()
+    const { messages, schoolsData, rateData, promotionsData, mode, directCalc, aliasData } = await req.json()
     const schools = (schoolsData as School[]) ?? []
     const promoEntries = (promotionsData as Array<Record<string, unknown>>) ?? []
     // mode: 'regular'(일반 연수) | 'camp_family'(캠프·가족·주니어) — 챗봇 토글로 결정.
@@ -574,7 +574,7 @@ export async function POST(req: NextRequest) {
     const lastUserMsg = [...(messages as Array<{ role: string; content: string }>)]
       .reverse().find(m => m.role === 'user')?.content ?? ''
     if (chatMode === 'regular' && lastUserMsg.trim()) {
-      const p = parseQuoteIntent(lastUserMsg, schoolsWithPromos as School[])
+      const p = parseQuoteIntent(lastUserMsg, schoolsWithPromos as School[], aliasData as Record<string, string[]> | undefined)
       // 학원이 auto로 확정된 경우만 코드가 주도(choices/none이면 아래에서 분기)
       if (p.school.kind === 'auto') {
         const sid = p.school.pick.id

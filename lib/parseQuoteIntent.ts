@@ -187,13 +187,26 @@ export function parseStartDate(text: string): { date: string; unset: boolean } {
 function pad(s: string): string { return s.padStart(2, '0') }
 
 // ── 학원 매칭 (이름 + 캠퍼스) ────────────────────────────────────────────────
-export function matchSchools(text: string, schools: School[]): Resolution {
+// 외부(Firestore) 별칭을 코드 기본 별칭과 병합. route에서 주입.
+export type AliasOverride = Record<string, string[]>
+function mergedAliases(extra?: AliasOverride): Record<string, string[]> {
+  if (!extra) return SCHOOL_ALIASES
+  const out: Record<string, string[]> = {}
+  const codes = new Set([...Object.keys(SCHOOL_ALIASES), ...Object.keys(extra)])
+  for (const code of codes) {
+    out[code] = Array.from(new Set([...(SCHOOL_ALIASES[code] ?? []), ...(extra[code] ?? [])]))
+  }
+  return out
+}
+
+export function matchSchools(text: string, schools: School[], extraAliases?: AliasOverride): Resolution {
   const nText = normalize(text)
+  const ALIASES = mergedAliases(extraAliases)
   // 1) 별칭 우선: 정규화된 입력에 학원 별칭이 포함되면 그 학원을 강하게 가산.
   //    (점수제에 매몰되지 않게 — 별칭이 맞으면 사실상 확정)
   const aliasHit: Record<string, number> = {}
   const tokens = nText.length > 0 ? text.toLowerCase().split(/\s+/).map(normalize).filter(Boolean) : []
-  for (const [code, aliases] of Object.entries(SCHOOL_ALIASES)) {
+  for (const [code, aliases] of Object.entries(ALIASES)) {
     for (const a of aliases) {
       const na = normalize(a)
       if (!na) continue
@@ -243,8 +256,8 @@ export interface ParseResult {
 }
 
 // 메인 파서: 학원을 먼저 잡고, 학원이 확정되면 그 학원 안에서 코스/기숙을 잡는다.
-export function parseQuoteIntent(text: string, schools: School[]): ParseResult {
-  const school = matchSchools(text, schools)
+export function parseQuoteIntent(text: string, schools: School[], extraAliases?: AliasOverride): ParseResult {
+  const school = matchSchools(text, schools, extraAliases)
   const weeks = parseWeeks(text)
   const { date, unset } = parseStartDate(text)
   const result: ParseResult = { school, weeks, startDate: date, dateUnset: unset }

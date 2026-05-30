@@ -3,7 +3,7 @@ import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 import { signOut } from 'firebase/auth'
 import { auth } from '@/lib/firebase'
-import { Building2, MessageSquare, Settings, LogOut, ChevronRight, Users, Menu, X, Tag, Pencil, FileJson, AlertTriangle } from 'lucide-react'
+import { Building2, MessageSquare, Settings, LogOut, ChevronRight, Users, Menu, X, Tag, Pencil, FileJson, AlertTriangle, Languages } from 'lucide-react'
 import type { AppUser } from '@/types'
 import { useState } from 'react'
 
@@ -23,6 +23,7 @@ export default function Sidebar({ appUser }: Props) {
     { href: '/admin/data-health', icon: AlertTriangle,   label: '데이터 확인 필요', show: isAdmin },
     { href: '/admin/edit-data',   icon: Pencil,          label: '데이터 수정',     show: isAdmin },
     { href: '/admin/json-tool',   icon: FileJson,        label: 'JSON 파서',       show: isAdmin },
+    { href: '/admin/aliases',     icon: Languages,       label: '학원 별칭',       show: isAdmin },
     { href: '/settings',          icon: Settings,        label: '설정',            show: isAdmin },
     { href: '/admin/users',       icon: Users,           label: '사용자',          show: isMaster },
   ].filter(i => i.show)
