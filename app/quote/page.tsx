@@ -597,6 +597,10 @@ export default function QuotePage() {
   // 챗봇 모드: 'regular'(일반 연수) | 'camp_family'(캠프·가족·주니어).
   // 모드 변경 시 채팅 이력 리셋 — 이전 모드에서 정해진 학원이 새 모드에 없을 수 있고, LLM 컨텍스트가 꼬이지 않게.
   const [mode, setMode] = useState<SchoolMode>('regular')
+  // [토큰 절감] 대화에서 학원이 특정되면 그 학원 id를 기억. 이후 메시지는 해당 학원(+동일 이름
+  // 다른 캠퍼스)만 LLM에 보내 프롬프트 토큰을 줄인다(전체 81개 → 1~2개). 사용자가 새 학원명을
+  // 말하거나 초기화하면 해제. rate limit(429) 방지의 핵심.
+  const [activeSchoolId, setActiveSchoolId] = useState<string | null>(null)
   const bottomRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
@@ -713,7 +717,27 @@ export default function QuotePage() {
       }
 
       // 현재 모드에 해당하는 학원만 LLM에 전달. 모드가 다른 학원은 안 보이게 해서 헷갈림 방지.
-      const filteredSchools = schools.filter(s => inferSchoolMode(s) === mode)
+      const modeSchools = schools.filter(s => inferSchoolMode(s) === mode)
+      // [토큰 절감] 사용자가 이번 메시지에서 '다른 학원/처음부터' 등 학원 전환 의사를 보이면 활성학원 해제.
+      const wantsReset = /다른\s*학원|처음부터|초기화|학원\s*바꾸|reset/i.test(text)
+      // 활성 학원이 정해져 있고, 사용자가 명시적으로 다른 학원명을 말하지 않았다면 그 학원(+동일 이름
+      // 다른 캠퍼스)만 전달. 전체(81개·46k토큰) 대신 1~2개(~1k토큰)만 보내 429를 막는다.
+      let filteredSchools = modeSchools
+      if (activeSchoolId && !wantsReset) {
+        const active = schools.find(s => s.id === activeSchoolId)
+        if (active) {
+          // 사용자가 활성 학원이 아닌 '다른 학원 이름'을 직접 거론하면 좁히지 않음(전환 허용).
+          const mentionsOther = modeSchools.some(s =>
+            s.id !== activeSchoolId &&
+            s.name.replace(/\s/g, '').length > 1 &&
+            text.replace(/\s/g, '').includes(s.name.replace(/\s/g, '').slice(0, 3))
+          )
+          if (!mentionsOther) {
+            const baseName = active.name.split('(')[0].trim()
+            filteredSchools = modeSchools.filter(s => s.id === activeSchoolId || s.name.split('(')[0].trim() === baseName)
+          }
+        }
+      }
       const res = await fetch('/api/quote', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -726,6 +750,12 @@ export default function QuotePage() {
         }),
       })
       const data = await res.json()
+
+      // [토큰 절감] 응답에서 학원이 특정되면 활성 학원으로 기억 → 이후 메시지는 그 학원만 전달.
+      const respSchoolId = (data.confirmCard?.schoolId as string | undefined)
+        ?? (data.schoolId as string | undefined)
+        ?? (data.schoolData?.id as string | undefined)
+      if (respSchoolId) setActiveSchoolId(respSchoolId)
 
       if (data.action === 'result') {
         const resultMsg: AssistantResultMessage = {
@@ -808,7 +838,7 @@ export default function QuotePage() {
     if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(input) }
   }
 
-  const reset = () => setMessages([INITIAL_MSG])
+  const reset = () => { setMessages([INITIAL_MSG]); setActiveSchoolId(null) }
 
   const copyLastResult = async () => {
     const last = [...messages].reverse().find(m => m.role === 'assistant' && m.type === 'result')
