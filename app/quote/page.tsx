@@ -211,12 +211,15 @@ function EditableConfirmCard({ card, schools, mode, onCalculate }: {
   }) => void
 }) {
   const [schoolId, setSchoolId] = useState<string>(card.schoolId ?? '')
-  const [weeks, setWeeks] = useState<number>(card.totalWeeks ?? 4)
-  const [courseId, setCourseId] = useState<string>(card.courses[0]?.courseId ?? '')
-  const [dormId, setDormId] = useState<string>(card.dormitories[0]?.dormitoryId ?? '')
+  // 코스/기숙은 "항목 + 주수" 줄의 배열. 방이동(1인실 2주+2인실 2주)·코스변경을 여러 줄로 입력.
+  const [courseRows, setCourseRows] = useState<Array<{ courseId: string; weeks: number }>>(
+    card.courses.length > 0 ? card.courses : [{ courseId: '', weeks: card.totalWeeks ?? 4 }]
+  )
+  const [dormRows, setDormRows] = useState<Array<{ dormitoryId: string; weeks: number }>>(
+    card.dormitories.length > 0 ? card.dormitories : [{ dormitoryId: '', weeks: card.totalWeeks ?? 4 }]
+  )
   const [startDate, setStartDate] = useState<string>(card.startDate ?? '')
 
-  // 같은 이름의 다른 캠퍼스까지 학원 후보로 (EV / EV 라메르 등)
   const baseName = (schools.find(s => s.id === (card.schoolId || schoolId))?.name ?? card.schoolName).split('(')[0].trim()
   const schoolOpts = schools.filter(s => s.id === card.schoolId || s.name.split('(')[0].trim() === baseName)
   const school = schools.find(s => s.id === schoolId)
@@ -224,74 +227,105 @@ function EditableConfirmCard({ card, schools, mode, onCalculate }: {
   const courseOpts = school?.courses ?? []
   const dormOpts = school?.dormitories ?? []
 
-  // 학원이 바뀌면 코스/기숙 선택 초기화 (다른 학원의 id는 무효)
   const onSchoolChange = (id: string) => {
     setSchoolId(id)
-    setCourseId(''); setDormId('')
+    setCourseRows([{ courseId: '', weeks: 4 }])
+    setDormRows([{ dormitoryId: '', weeks: 4 }])
   }
 
-  // 계산 가능 조건: 학원 + (패키지 학원이면 통과 / 일반이면 코스 선택) + 주수
-  const ready = !!schoolId && !!weeks && (hasPackages || !!courseId)
+  // 코스 줄 조작
+  const setCourse = (i: number, key: 'courseId' | 'weeks', v: string | number) =>
+    setCourseRows(rows => rows.map((r, idx) => idx === i ? { ...r, [key]: v } : r))
+  const addCourse = () => setCourseRows(rows => [...rows, { courseId: '', weeks: 4 }])
+  const delCourse = (i: number) => setCourseRows(rows => rows.length > 1 ? rows.filter((_, idx) => idx !== i) : rows)
+  // 기숙 줄 조작
+  const setDorm = (i: number, key: 'dormitoryId' | 'weeks', v: string | number) =>
+    setDormRows(rows => rows.map((r, idx) => idx === i ? { ...r, [key]: v } : r))
+  const addDorm = () => setDormRows(rows => [...rows, { dormitoryId: '', weeks: 4 }])
+  const delDorm = (i: number) => setDormRows(rows => rows.length > 1 ? rows.filter((_, idx) => idx !== i) : rows)
+
+  // 계산 가능: 학원 + (패키지면 통과 / 일반이면 코스 1줄 이상 선택됨)
+  const validCourses = courseRows.filter(r => r.courseId && r.weeks > 0)
+  const validDorms = dormRows.filter(r => r.dormitoryId && r.weeks > 0)
+  const ready = !!schoolId && (hasPackages || validCourses.length > 0)
+  const totalWeeks = validCourses.reduce((s, r) => s + r.weeks, 0) || (card.totalWeeks ?? 4)
 
   const fire = () => {
     if (!ready) return
     onCalculate({
       schoolId,
       startDate, enrollmentDate: startDate,
-      courses: hasPackages ? undefined : (courseId ? [{ courseId, weeks }] : []),
-      dormitories: hasPackages ? undefined : (dormId ? [{ dormitoryId: dormId, weeks }] : []),
-      packages: hasPackages ? (card.packages ?? []).map(p => ({ ...p, weeks })) : undefined,
+      courses: hasPackages ? undefined : validCourses,
+      dormitories: hasPackages ? undefined : validDorms,
+      packages: hasPackages ? (card.packages ?? []).map(p => ({ ...p, weeks: totalWeeks })) : undefined,
     })
   }
 
-  const rowLabel = "text-gray-500 w-16 shrink-0 text-sm"
-  const sel = "border border-gray-300 rounded-md px-2 py-1.5 text-sm bg-white max-w-[62vw] md:max-w-md"
+  const rowLabel = "text-gray-500 w-16 shrink-0 text-sm pt-1.5"
+  const sel = "border border-gray-300 rounded-md px-2 py-1.5 text-sm bg-white flex-1 min-w-0"
+  const wsel = "border border-gray-300 rounded-md px-1.5 py-1.5 text-sm bg-white shrink-0"
+  const WEEKS = [1,2,3,4,5,6,7,8,9,10,11,12,16,20,24]
   return (
     <div className="bg-amber-50 border border-amber-300 rounded-2xl rounded-tl-sm px-4 py-3 shadow-sm space-y-2">
       <p className="text-sm text-amber-900 font-medium">견적 내용을 확인하고, 바꿀 항목은 직접 고르세요.</p>
-      <div className="bg-white border border-amber-200 rounded-lg p-3 space-y-2">
-        {/* 학원 (후보 여럿이면 드롭다운, 하나면 텍스트) */}
-        <div className="flex items-center"><span className={rowLabel}>학원</span>
+      <div className="bg-white border border-amber-200 rounded-lg p-3 space-y-2.5">
+        {/* 학원 */}
+        <div className="flex items-start"><span className={rowLabel}>학원</span>
           {schoolOpts.length > 1 ? (
             <select value={schoolId} onChange={e => onSchoolChange(e.target.value)} className={sel}>
               {schoolOpts.map(s => <option key={s.id} value={s.id}>{s.name}</option>)}
             </select>
-          ) : <span className="font-medium text-sm">{school?.name ?? card.schoolName}</span>}
+          ) : <span className="font-medium text-sm pt-1.5">{school?.name ?? card.schoolName}</span>}
         </div>
 
-        {/* 주수 */}
-        <div className="flex items-center"><span className={rowLabel}>기간</span>
-          <select value={weeks} onChange={e => setWeeks(Number(e.target.value))} className={sel}>
-            {[1,2,3,4,5,6,7,8,9,10,11,12,16,20,24].map(w => <option key={w} value={w}>{w}주</option>)}
-          </select>
-        </div>
-
-        {/* 코스 (일반 학원) */}
+        {/* 코스 (여러 줄 — 코스변경 지원) */}
         {!hasPackages && (
-          <div className="flex items-center"><span className={rowLabel}>코스</span>
-            <select value={courseId} onChange={e => setCourseId(e.target.value)} className={sel}>
-              <option value="">선택하세요</option>
-              {courseOpts.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
-            </select>
+          <div className="flex items-start"><span className={rowLabel}>코스</span>
+            <div className="flex-1 min-w-0 space-y-1.5">
+              {courseRows.map((r, i) => (
+                <div key={i} className="flex items-center gap-1.5">
+                  <select value={r.courseId} onChange={e => setCourse(i, 'courseId', e.target.value)} className={sel}>
+                    <option value="">선택하세요</option>
+                    {courseOpts.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
+                  </select>
+                  <select value={r.weeks} onChange={e => setCourse(i, 'weeks', Number(e.target.value))} className={wsel}>
+                    {WEEKS.map(w => <option key={w} value={w}>{w}주</option>)}
+                  </select>
+                  {courseRows.length > 1 && <button onClick={() => delCourse(i)} className="text-gray-400 hover:text-red-500 text-lg leading-none px-1">×</button>}
+                </div>
+              ))}
+              <button onClick={addCourse} className="text-xs text-amber-700 hover:text-amber-900">+ 기간 나눠 추가</button>
+            </div>
           </div>
         )}
 
-        {/* 기숙사 (일반 학원, 선택) */}
+        {/* 기숙사 (여러 줄 — 방이동 지원) */}
         {!hasPackages && dormOpts.length > 0 && (
-          <div className="flex items-center"><span className={rowLabel}>기숙사</span>
-            <select value={dormId} onChange={e => setDormId(e.target.value)} className={sel}>
-              <option value="">통학 (기숙사 없음)</option>
-              {dormOpts.map(d => <option key={d.id} value={d.id}>{d.name}</option>)}
-            </select>
+          <div className="flex items-start"><span className={rowLabel}>기숙사</span>
+            <div className="flex-1 min-w-0 space-y-1.5">
+              {dormRows.map((r, i) => (
+                <div key={i} className="flex items-center gap-1.5">
+                  <select value={r.dormitoryId} onChange={e => setDorm(i, 'dormitoryId', e.target.value)} className={sel}>
+                    <option value="">통학 (기숙사 없음)</option>
+                    {dormOpts.map(d => <option key={d.id} value={d.id}>{d.name}</option>)}
+                  </select>
+                  <select value={r.weeks} onChange={e => setDorm(i, 'weeks', Number(e.target.value))} className={wsel}>
+                    {WEEKS.map(w => <option key={w} value={w}>{w}주</option>)}
+                  </select>
+                  {dormRows.length > 1 && <button onClick={() => delDorm(i)} className="text-gray-400 hover:text-red-500 text-lg leading-none px-1">×</button>}
+                </div>
+              ))}
+              <button onClick={addDorm} className="text-xs text-amber-700 hover:text-amber-900">+ 방 바꿔 추가</button>
+            </div>
           </div>
         )}
 
         {hasPackages && (
-          <div className="flex items-center"><span className={rowLabel}>패키지</span><span className="font-medium text-sm">{card.packageLabels?.join(', ')}</span></div>
+          <div className="flex items-center"><span className="text-gray-500 w-16 shrink-0 text-sm">패키지</span><span className="font-medium text-sm">{card.packageLabels?.join(', ')}</span></div>
         )}
 
         {/* 시작일 */}
-        <div className="flex items-center"><span className={rowLabel}>시작일</span>
+        <div className="flex items-center"><span className="text-gray-500 w-16 shrink-0 text-sm">시작일</span>
           <div className="flex items-center gap-2">
             <input type="date" value={startDate} onChange={e => setStartDate(e.target.value)} className="border border-gray-300 rounded-md px-2 py-1.5 text-sm bg-white" />
             {startDate
@@ -299,6 +333,11 @@ function EditableConfirmCard({ card, schools, mode, onCalculate }: {
               : <span className="text-xs text-gray-400 italic">미정 (기본 견적)</span>}
           </div>
         </div>
+
+        {/* 총 주수 안내 (코스 줄 합) */}
+        {!hasPackages && validCourses.length > 1 && (
+          <p className="text-xs text-gray-400">총 {totalWeeks}주 (코스 기간 합산)</p>
+        )}
       </div>
 
       <button onClick={fire} disabled={!ready}
