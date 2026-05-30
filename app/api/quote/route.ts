@@ -262,6 +262,17 @@ type CalcInputItem = {
   message?: string
 }
 
+// 프론트가 확인 카드 확정값을 그대로 보내는 LLM-우회 계산 payload
+type DirectCalcPayload = {
+  schoolId: string
+  startDate?: string
+  enrollmentDate?: string
+  courses?: CourseItem[]
+  dormitories?: DormItem[]
+  packages?: PackageInput[]
+  specialNote?: string
+}
+
 function runCalc(school: School, item: CalcInputItem, rate: ExchangeRate): CalcResult {
   return calculateQuote({
     school,
@@ -276,9 +287,41 @@ function runCalc(school: School, item: CalcInputItem, rate: ExchangeRate): CalcR
   }, rate)
 }
 
+// 계산 결과 → result 응답 빌드 (LLM 경로의 calculate 분기와 LLM-우회 directCalc가 공유).
+// 순수 계산/포맷만 수행하며 LLM을 전혀 호출하지 않는다.
+function buildCalcResponse(school: School, calcResult: CalcResult, rate: ExchangeRate, startDate: string, enrollmentDate: string, specialNote = '') {
+  const filteredLocalFees = (calcResult.localFees ?? []).filter(lf => {
+    const t = lf.trigger ?? 'always'
+    if (t === 'optional') return false
+    if (t === 'always') return true
+    if (t === 'per_week' || t === 'per_4weeks') return true
+    if (t === 'over_weeks') return calcResult.totalWeeks > (lf.triggerWeeks ?? 4)
+    return true
+  })
+  return {
+    action: 'result' as const,
+    message: buildQuoteMessage(school, calcResult, calcResult.totalWeeks, specialNote) + `\n\n_ver: ${CODE_VERSION}_`,
+    evidenceMessage: buildEvidenceMessage(school, calcResult, rate),
+    discountEvidence: buildDiscountEvidence(school, calcResult),
+    localFees: filteredLocalFees,
+    localFeePhp: calcResult.localFeePhp,
+    localFeeKrwEstimate: calcResult.localFeeKrwEstimate,
+    weeksForFees: calcResult.totalWeeks,
+    startDate,
+    enrollmentDate: enrollmentDate || startDate,
+    totalWeeks: calcResult.totalWeeks,
+    surchargeItems: calcResult.surchargeItems.map(s => ({ label: s.label, weeks: s.weeks })),
+    calcResult,
+    schoolData: school,
+    schoolId: school.id,
+    specialNote,
+    _version: CODE_VERSION,
+  }
+}
+
 export async function POST(req: NextRequest) {
   try {
-    const { messages, schoolsData, rateData, promotionsData, mode } = await req.json()
+    const { messages, schoolsData, rateData, promotionsData, mode, directCalc } = await req.json()
     const schools = (schoolsData as School[]) ?? []
     const promoEntries = (promotionsData as Array<Record<string, unknown>>) ?? []
     // mode: 'regular'(일반 연수) | 'camp_family'(캠프·가족·주니어) — 챗봇 토글로 결정.
@@ -379,6 +422,35 @@ export async function POST(req: NextRequest) {
     const rate = rateData as ExchangeRate
 
     if (!process.env.ANTHROPIC_API_KEY) return NextResponse.json({ action: 'answer', message: 'API 키 미설정' }, { status: 500 })
+
+    // ── [LLM 우회] 계산 직행 ───────────────────────────────────────────────
+    // 사용자가 확인 카드에서 학원·코스·기숙·주수·시작일을 모두 확정하고 [계산하기]를 누르면,
+    // 프론트가 그 확정값을 directCalc로 보낸다. 이 경우 자연어 해석이 필요 없으므로
+    // LLM(callClaude)과 전체 학원요약(schoolsSummary) 구성을 전부 건너뛰고 calcEngine만 돌린다.
+    // → 계산 단계 LLM 토큰 = 0 (rate limit 방지), 계산값이 LLM 손을 타지 않음.
+    const dc = directCalc as DirectCalcPayload | undefined
+    if (dc && dc.schoolId) {
+      const school = schoolsWithPromos.find(s => s.id === dc.schoolId)
+      if (!school) {
+        return NextResponse.json({
+          action: 'need_info', type: 'select',
+          question: '학원을 찾을 수 없습니다. 다시 선택해주세요.',
+          suggestions: schoolsWithPromos.map(s => s.name),
+          allowFreeText: false, _version: CODE_VERSION,
+        })
+      }
+      const startDate = dc.startDate ?? ''
+      const enrollmentDate = dc.enrollmentDate ?? startDate
+      const calcResult = runCalc(school, {
+        schoolId: dc.schoolId,
+        startDate, enrollmentDate,
+        courses: dc.courses ?? [],
+        dormitories: dc.dormitories ?? [],
+        packages: dc.packages ?? [],
+      }, rate)
+      return NextResponse.json(buildCalcResponse(school, calcResult, rate, startDate, enrollmentDate, dc.specialNote ?? ''))
+    }
+    // ───────────────────────────────────────────────────────────────────────
 
     const allText = (messages as {role:string; content:string}[])
       .map(m => m.content).join(' ').toLowerCase()

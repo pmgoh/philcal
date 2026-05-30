@@ -666,7 +666,12 @@ export default function QuotePage() {
     }
   }
 
-  const sendMessage = async (text: string) => {
+  const sendMessage = async (text: string, directCalc?: {
+    schoolId: string; startDate?: string; enrollmentDate?: string
+    courses?: { courseId: string; weeks: number }[]
+    dormitories?: { dormitoryId: string; weeks: number }[]
+    packages?: { packageId: string; weeks: number; columnLabel: string }[]
+  }) => {
     if (!text.trim() || loading) return
     const userMsg: UserMessage = { role: 'user', type: 'user', content: text.trim() }
     setMessages(prev => [...prev, userMsg])
@@ -674,6 +679,39 @@ export default function QuotePage() {
     setLoading(true)
 
     try {
+      // [LLM 우회] 확인 카드에서 확정값이 directCalc로 오면 계산 직행.
+      // 학원 데이터(schoolsData) 전체를 보낼 필요가 없으므로 해당 학원 1개만 전달 → 토큰 0.
+      if (directCalc) {
+        const oneSchool = schools.filter(s => s.id === directCalc.schoolId)
+        const res = await fetch('/api/quote', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            messages: [], schoolsData: oneSchool, promotionsData: promotions,
+            rateData: rate, mode, directCalc,
+          }),
+        })
+        const data = await res.json()
+        if (data.action === 'result') {
+          const resultMsg: AssistantResultMessage = {
+            role: 'assistant', type: 'result', content: data.message,
+            evidenceMessage: data.evidenceMessage, discountEvidence: data.discountEvidence,
+            regulationWarning: data.regulationWarning, localFees: data.localFees ?? [],
+            localFeePhp: data.localFeePhp ?? 0, localFeeKrwEstimate: data.localFeeKrwEstimate ?? 0,
+            startDate: data.startDate, enrollmentDate: data.enrollmentDate, totalWeeks: data.totalWeeks,
+            surchargeItems: data.surchargeItems ?? [], calcResult: data.calcResult,
+            school: data.schoolData ?? (data.calcResult ? schools.find(s => s.id === data.schoolId) : undefined),
+          }
+          setMessages(prev => [...prev, resultMsg])
+        } else if (data.action === 'need_info') {
+          setMessages(prev => [...prev, { role: 'assistant', type: 'need_info', content: data.question ?? '', suggestions: data.suggestions, allowFreeText: data.allowFreeText, isDateQuestion: data.isDateQuestion } as AssistantNeedInfoMessage])
+        } else {
+          setMessages(prev => [...prev, { role: 'assistant', type: 'answer', content: data.message ?? '오류' } as AssistantAnswerMessage])
+        }
+        setLoading(false)
+        return
+      }
+
       // 현재 모드에 해당하는 학원만 LLM에 전달. 모드가 다른 학원은 안 보이게 해서 헷갈림 방지.
       const filteredSchools = schools.filter(s => inferSchoolMode(s) === mode)
       const res = await fetch('/api/quote', {
@@ -1015,7 +1053,14 @@ export default function QuotePage() {
                         </div>
                         <div className="flex gap-2 pt-1">
                           <button
-                            onClick={() => sendMessage('계산해주세요')}
+                            onClick={() => sendMessage('계산해주세요', {
+                              schoolId: c.schoolId,
+                              startDate: c.startDate,
+                              enrollmentDate: c.enrollmentDate,
+                              courses: c.courses,
+                              dormitories: c.dormitories,
+                              packages: c.packages,
+                            })}
                             className="flex-1 bg-amber-600 hover:bg-amber-700 text-white text-sm font-medium py-2 rounded-lg transition-colors">
                             계산하기
                           </button>
