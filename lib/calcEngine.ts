@@ -144,10 +144,31 @@ export function calculateQuote(input: QuoteInput, rate: ExchangeRate): CalcResul
     }
 
     const w = Math.max(1, Math.round(Number(pi.weeks) || 1))
-    const row = pkg.priceMatrix.find(r => r.weeks === w)
+    // priceMatrix가 객체형({columns,rows})으로 들어오는 경우 배열형([{weeks,prices}])으로 정규화
+    const rawPm = (pkg as { priceMatrix?: unknown }).priceMatrix
+    let matrix = pkg.priceMatrix as Array<{ weeks: number; prices: Array<{ label: string; amount: number }> }>
+    if (!Array.isArray(rawPm) && rawPm && typeof rawPm === 'object') {
+      const obj = rawPm as { columns?: string[]; rows?: Array<{ label?: string; prices?: number[] }> }
+      const colList = obj.columns ?? []
+      const rows = obj.rows ?? []
+      const weekOf = (c: string) => { const m = String(c).match(/(\d+)\s*(?:w|W|주)/); return m ? parseInt(m[1], 10) : null }
+      const weekCols = colList.map(weekOf)
+      if (weekCols.length > 0 && weekCols.every(x => x !== null)) {
+        matrix = (weekCols as number[]).map((wk, ci) => ({
+          weeks: wk,
+          prices: rows.map(r => ({ label: r.label ?? '기본', amount: (r.prices ?? [])[ci] ?? 0 })),
+        }))
+      } else {
+        matrix = rows.map(r => ({
+          weeks: weekOf(r.label ?? '') ?? 4,
+          prices: colList.map((c, ci) => ({ label: c, amount: (r.prices ?? [])[ci] ?? 0 })),
+        }))
+      }
+    }
+    const row = matrix.find(r => r.weeks === w)
     if (!row) {
       // 가장 가까운 주수 찾기
-      const sorted = [...pkg.priceMatrix].sort((a, b) => Math.abs(a.weeks - w) - Math.abs(b.weeks - w))
+      const sorted = [...matrix].sort((a, b) => Math.abs(a.weeks - w) - Math.abs(b.weeks - w))
       warnings.push(`⚠️ "${pkg.label}"에 ${w}주 가격이 없습니다. 가장 가까운 ${sorted[0]?.weeks}주를 참고하세요.`)
       continue
     }

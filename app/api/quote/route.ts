@@ -428,11 +428,30 @@ export async function POST(req: NextRequest) {
           campus: (d as unknown as { campus?: string }).campus,
           p: (d as unknown as Record<string,number>).price4Weeks, cur: d.currency }))
 
-      const packages = (s.packages ?? []).map(p => ({
-        id: p.id, label: p.label, season: p.season ?? '',
-        cols: p.columns ?? [],
-        weeks: (p.priceMatrix ?? []).map(r => r.weeks),
-      }))
+      const packages = (s.packages ?? []).map(p => {
+        // priceMatrix는 배열형 [{weeks, prices}] 또는 객체형 {columns, rows} 두 가지가 섞여 있음.
+        // 객체형이면 columns(주차)에서 weeks를 추출, 배열형이면 기존대로 r.weeks 사용.
+        const pm = (p as { priceMatrix?: unknown }).priceMatrix
+        let weeks: number[] = []
+        let cols = (p.columns ?? []) as string[]
+        if (Array.isArray(pm)) {
+          weeks = pm.map(r => (r as { weeks: number }).weeks)
+        } else if (pm && typeof pm === 'object') {
+          const obj = pm as { columns?: string[]; rows?: Array<{ label?: string }> }
+          const colList = obj.columns ?? []
+          const weekCols = colList.map(c => {
+            const m = String(c).match(/(\d+)\s*(?:w|W|주)/)
+            return m ? parseInt(m[1], 10) : null
+          })
+          if (weekCols.length > 0 && weekCols.every(w => w !== null)) {
+            weeks = weekCols as number[]
+            cols = (obj.rows ?? []).map(r => r.label ?? '기본')
+          } else {
+            cols = colList
+          }
+        }
+        return { id: p.id, label: p.label, season: p.season ?? '', cols, weeks }
+      })
 
       const additionalCharges = ((s as unknown as { additionalCharges?: Array<Record<string,unknown>> }).additionalCharges ?? [])
         .map(ac => ({

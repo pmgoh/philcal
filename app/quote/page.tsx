@@ -424,15 +424,42 @@ function EvidenceCard({ text, school }: { text: string; school?: School }) {
           {(school.packages ?? []).length > 0 && (
             <div>
               <p className="text-xs text-gray-500 mb-1 font-medium">패키지</p>
-              {school.packages.map(p => (
+              {school.packages.map(p => {
+                // priceMatrix 객체형({columns,rows}) → 배열형([{weeks,prices}]) 정규화
+                const rawPm = (p as { priceMatrix?: unknown }).priceMatrix
+                let cols = (p.columns ?? []) as string[]
+                let matrix: Array<{ weeks: number; prices: Array<{ label: string; amount: number }> }> = []
+                const weekOf = (c: string) => { const m = String(c).match(/(\d+)\s*(?:w|W|주)/); return m ? parseInt(m[1],10) : null }
+                if (Array.isArray(rawPm)) {
+                  matrix = rawPm as typeof matrix
+                } else if (rawPm && typeof rawPm === 'object') {
+                  const obj = rawPm as { columns?: string[]; rows?: Array<{ label?: string; prices?: number[] }> }
+                  const colList = obj.columns ?? []
+                  const rows = obj.rows ?? []
+                  const weekCols = colList.map(weekOf)
+                  if (weekCols.length > 0 && weekCols.every(w => w !== null)) {
+                    cols = rows.map(r => r.label ?? '기본')
+                    matrix = (weekCols as number[]).map((wk, ci) => ({
+                      weeks: wk,
+                      prices: rows.map(r => ({ label: r.label ?? '기본', amount: (r.prices ?? [])[ci] ?? 0 })),
+                    }))
+                  } else {
+                    cols = colList
+                    matrix = rows.map(r => ({
+                      weeks: weekOf(r.label ?? '') ?? 4,
+                      prices: colList.map((c, ci) => ({ label: c, amount: (r.prices ?? [])[ci] ?? 0 })),
+                    }))
+                  }
+                }
+                return (
                 <div key={p.id} className="mb-2">
                   <p className="text-xs font-medium text-gray-700">{p.label} <span className="text-gray-400">({p.season})</span></p>
                   <table className="text-xs w-full border-collapse mt-1">
                     <thead><tr className="bg-gray-50">
                       <th className="text-left px-2 py-1 border border-gray-100">주수</th>
-                      {p.columns.map(col => <th key={col} className="text-right px-2 py-1 border border-gray-100">{col}</th>)}
+                      {cols.map(col => <th key={col} className="text-right px-2 py-1 border border-gray-100">{col}</th>)}
                     </tr></thead>
-                    <tbody>{(p.priceMatrix ?? []).map(row => (
+                    <tbody>{matrix.map(row => (
                       <tr key={row.weeks} className="hover:bg-gray-50">
                         <td className="px-2 py-1 border border-gray-100 font-medium">{row.weeks}주</td>
                         {(row.prices ?? []).map(cell => (
@@ -444,7 +471,7 @@ function EvidenceCard({ text, school }: { text: string; school?: School }) {
                     ))}</tbody>
                   </table>
                 </div>
-              ))}
+              )})}
             </div>
           )}
         </div>
