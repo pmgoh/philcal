@@ -94,6 +94,8 @@ function normalizeSchool(raw: Record<string, unknown>): Omit<School, 'createdAt'
   return {
     id: (raw.id as string) || uuid(),
     name: (raw.name as string) ?? '',
+    schoolCode: (raw.schoolCode as string) ?? (raw.code as string) ?? undefined,  // 프로모션 매칭 키 — 누락 시 미연결 발생
+    campus: (raw.campus as string) ?? undefined,
     region: (raw.region as School['region']) ?? '기타',
     schoolType: (raw.schoolType as School['schoolType']) ?? 'general',
     programTags: (raw.programTags as School['programTags']) ?? [],
