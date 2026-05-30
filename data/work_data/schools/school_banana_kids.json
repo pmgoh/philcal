@@ -1,0 +1,231 @@
+{
+  "id": "banana_kids",
+  "schoolCode": "BANANA_KIDS",
+  "name": "BANANA KIDS",
+  "campus": "본원 (내부숙소)",
+  "region": "세부",
+  "schoolType": "general",
+  "minWeeks": 4,
+  "allowShortTerm": false,
+  "programTags": ["가족연수", "주니어"],
+  "registrationFee": {
+    "amount": 100000,
+    "currency": "KRW",
+    "note": "등록금 인당 100,000원 (입실 인원 전원)"
+  },
+  "courses": [
+    {
+      "id": "bk_kinder",
+      "name": "킨더",
+      "price4Weeks": 1200000,
+      "currency": "KRW",
+      "note": "1인 4주 기준"
+    },
+    {
+      "id": "bk_junior",
+      "name": "주니어",
+      "price4Weeks": 1500000,
+      "currency": "KRW",
+      "note": "1인 4주 기준"
+    },
+    {
+      "id": "bk_sparta",
+      "name": "스파르타",
+      "price4Weeks": 1800000,
+      "currency": "KRW",
+      "note": "1인 4주 기준"
+    },
+    {
+      "id": "bk_guardian",
+      "name": "가디언 (보호자)",
+      "price4Weeks": 900000,
+      "currency": "KRW",
+      "note": "1인 4주 기준. 보호자 수업."
+    }
+  ],
+  "dormitories": [
+    {
+      "id": "bk_inner_2p",
+      "name": "내부 기숙사 2인실",
+      "price4Weeks": 1250000,
+      "currency": "KRW",
+      "note": "1인 4주 기준. 한 방 총액 250만원."
+    },
+    {
+      "id": "bk_inner_3p",
+      "name": "내부 기숙사 3인실",
+      "price4Weeks": 1150000,
+      "currency": "KRW",
+      "note": "1인 4주 기준. 한 방 총액 345만원."
+    },
+    {
+      "id": "bk_inner_4p",
+      "name": "내부 기숙사 4인실",
+      "price4Weeks": 1050000,
+      "currency": "KRW",
+      "note": "1인 4주 기준. 한 방 총액 420만원."
+    }
+  ],
+  "packages": [
+    {
+      "id": "bk_mercure_summer",
+      "label": "머큐어(구.벨몬트) 호텔 여름 성수기",
+      "season": "성수기",
+      "currency": "KRW",
+      "columns": ["4주 연수"],
+      "priceMatrix": [
+        {
+          "weeks": 4,
+          "prices": [
+            { "label": "수업비 - 킨더 (1인 4주)", "amount": 1200000 },
+            { "label": "수업비 - 주니어 (1인 4주)", "amount": 1500000 },
+            { "label": "수업비 - 스파르타 (1인 4주)", "amount": 1800000 },
+            { "label": "호텔비 - 2인", "amount": 2800000 },
+            { "label": "호텔비 - 3인 (엑스트라 베드 추가)", "amount": 3200000 }
+          ]
+        }
+      ],
+      "additionalRules": [],
+      "includes": "신청 자녀 4주 수업\n연수기간 4주 숙소 (체크인 토요일 오후 3시 / 체크아웃 토요일 오전 11시)\n학생 중식만 제공\n주 3회 청소\n수업 등록 학생 어학원 왕복 셔틀\n주 2회 쇼핑몰 픽.드랍\n공항 픽/드랍 제공",
+      "excludes": "등록금 인당 100,000원 (입실 인원 전원)\n항공 / 보험 / 기타 개인비용\n저녁 도시락 유료 배달 서비스\n세탁 서비스 (인근 빨래방 유료 이용)\n추가 숙박 및 제공 물품은 머큐어(구.벨몬트) 규정 참고\n현지납부 비용",
+      "schedules": [
+        { "startDate": "2026-07-27", "endDate": "2026-08-21", "season": "성수기", "weeks": 4 }
+      ],
+      "note": "머큐어(구.벨몬트) 호텔 이용. 수업비+호텔비 조합. 가디언 수업 없음(킨더/주니어/스파르타만).\n환불 규정: 등록 취소 시 예약금은 환불 불가. 프로그램 시작 4주 전 취소 시 전액 환불(예약금 제외). 3주 전 70% 환불. 2주 전 50% 환불. 1주 전 전액 환불 불가."
+    },
+    {
+      "id": "bk_intl_school_inner",
+      "label": "국제학교 입학 준비반 (내부숙소)",
+      "season": "연중",
+      "currency": "KRW",
+      "columns": ["4주", "8주", "12주"],
+      "priceMatrix": [
+        {
+          "weeks": 4,
+          "prices": [
+            { "label": "2인 / 내부 4주", "amount": 3655000 },
+            { "label": "3인 / 내부 4주", "amount": 5990000 },
+            { "label": "4인 / 내부 4주", "amount": 8160000 }
+          ]
+        },
+        {
+          "weeks": 8,
+          "prices": [
+            { "label": "2인 / 내부 8주", "amount": 7110000 },
+            { "label": "3인 / 내부 8주", "amount": 11680000 },
+            { "label": "4인 / 내부 8주", "amount": 15920000 }
+          ]
+        },
+        {
+          "weeks": 12,
+          "prices": [
+            { "label": "2인 / 내부 12주", "amount": 10565000 },
+            { "label": "3인 / 내부 12주", "amount": 17370000 },
+            { "label": "4인 / 내부 12주", "amount": 23680000 }
+          ]
+        }
+      ],
+      "additionalRules": [
+        {
+          "id": "agent_service",
+          "condition": "수속 대행 서비스 (12주 코스 시 무료)",
+          "addAmount": 500000,
+          "currency": "KRW"
+        }
+      ],
+      "includes": "[내부] 학비, 숙소, 식사, 공항 픽/드랍 각 1회, 쇼핑몰 픽드랍 주 2회, 하우스키핑 서비스 (주 3회 청소 / 월 2회 침구 교체)",
+      "excludes": "[내부] 등록금(인당 10만원), 전기세, 비자연장비, 교재비, SSP, SSP ID-CARD, 항공금, 여행자보험, 현지 납부비용, 수속 대행 서비스",
+      "note": "BK Academy 산하 국제학교 입학 준비반. 내부숙소 옵션.\n수속 대행 서비스: 현지 학교투어 1회, 입학원서 접수, 입학테스트 및 등록 동행 1회, 입학 전 준비사항 안내 (한국어 서류 번역, 공증, 아포스티유 비용 별도)\n12주 코스 시 수속 대행 무료.\n독채 옵션은 별도 학원 BANANA_KIDS_INTL_SCHOOL_DOKCHAE에서 관리."
+    }
+  ],
+  "surcharges": [],
+  "localFees": [
+    {
+      "id": "bk_ssp",
+      "name": "SSP",
+      "amount": 8000,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "note": "1인당(학생만). 필리핀의 합법적인 어학원에서 공부하는 모든 학생이 받아야 하는 허가증 (가디언 수업 포함)"
+    },
+    {
+      "id": "bk_ssp_ecard",
+      "name": "SSP E-카드",
+      "amount": 4500,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "note": "1인당(학생만)"
+    },
+    {
+      "id": "bk_idcard",
+      "name": "ID카드",
+      "amount": 300,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "note": "1인당. 학원 출입시 ID카드 착용 필수"
+    },
+    {
+      "id": "bk_visa",
+      "name": "비자연장비(30일이상)",
+      "amount": 4700,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "trigger": "30일 초과 체류 시",
+      "triggerWeeks": 5
+    },
+    {
+      "id": "bk_airport",
+      "name": "공항 픽드랍",
+      "amount": 1500,
+      "currency": "PHP",
+      "chargeUnit": "per_visit",
+      "note": "1회. 도착일 픽업/샌딩 서비스 외 (가족 4인 기준)"
+    },
+    {
+      "id": "bk_textbook",
+      "name": "교재비",
+      "amount": 500,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "note": "1권당. 학생별로 사용 교재 권 수 상이"
+    },
+    {
+      "id": "bk_deposit",
+      "name": "기숙사 보증금",
+      "amount": 3000,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "note": "1인당. 퇴실 시 비용 정산 후 잔여 보증금 환불"
+    },
+    {
+      "id": "bk_utility",
+      "name": "공동관리비",
+      "amount": 500,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "note": "1인당. 퇴실 시 정산"
+    },
+    {
+      "id": "bk_electric",
+      "name": "전기료",
+      "amount": 16,
+      "currency": "PHP",
+      "chargeUnit": "per_usage",
+      "note": "1KW당. 사용량에 따라 퇴실 시 정산"
+    },
+    {
+      "id": "bk_extra_night",
+      "name": "추가인원 1박",
+      "amount": 2000,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "note": "1인당. 식사 제공"
+    }
+  ],
+  "refundPolicy": "",
+  "dormitoryRules": "체크인 토요일 오후 3시 / 체크아웃 토요일 오전 11시\n숙소 청소 주 3회 / 시트 교체 월 2회\n월~금: 자녀 1일 3식 / 보호자 1일 2식(조식,석식)\n주말 및 공휴일: 2식(조식,석식)",
+  "generalNotes": "세부 바나나키즈 어학원. 가족연수/주니어 전문.\n\n내부숙소 가족캠프: 수업비(킨더/주니어/스파르타/가디언) + 기숙사비(2인실/3인실/4인실) 조합.\n머큐어호텔 성수기: 수업비 + 호텔비 조합 (2026년 7월 27일~8월 21일, 4주 1기수).\n국제학교 입학 준비반 내부: 합산 패키지 (독채는 별도 학원 BANANA_KIDS_INTL_SCHOOL_DOKCHAE).\n\n등록 일정: 4주 단위, 상반기 7기수 + 하반기 7기수 (독채형/내부숙소 공통).\n\n포함 내역(내부숙소 가족캠프): 신청 자녀 4주 수업, 체크인/아웃, 숙소 청소, 식사, 공항 픽업1회/샌딩1회.\n불포함(내부숙소 가족캠프): 등록금 인당 10만원, 항공/보험/기타 개인비용, 현지납부비용.",
+  "isActive": true,
+  "createdAt": "2026-05-29",
+  "updatedAt": "2026-05-29"
+}

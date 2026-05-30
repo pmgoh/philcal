@@ -1,0 +1,30 @@
+{
+  "id": "clark_we_commute",
+  "schoolCode": "CLARK_WE_COMMUTE",
+  "name": "Clark WE Academy 통학 프로그램",
+  "campus": "클락 본원 (통학)",
+  "region": "클락",
+  "schoolType": "commute",
+  "minWeeks": 4,
+  "allowShortTerm": false,
+  "programTags": ["ESL", "통학"],
+  "registrationFee": { "amount": 100000, "currency": "KRW", "note": "등록금 1인당 10만원" },
+  "courses": [
+    { "id": "cwe_com_phil", "name": "필리핀 1:1 수업 (통학)", "classDetails": "1:1 수업 45분/타임. 1일 최소 2타임~최대 10타임.", "price4Weeks": 8000, "currency": "PHP", "note": "1시간/4주 기준 가격. 예: 매일 6시간 4주 = 48,000페소. 1일 4시간 이상 수강 시 점심식사 무료." },
+    { "id": "cwe_com_native", "name": "원어민 1:1 수업 (통학)", "classDetails": "1:1 수업 45분/타임.", "price4Weeks": 16000, "currency": "PHP", "note": "1시간/4주 기준 가격. 원어민 수업 선택가능. 그룹수업 선택 불가." }
+  ],
+  "dormitories": [],
+  "surcharges": [],
+  "promotions": null,
+  "localFees": [
+    { "id": "cwe_com_ssp", "name": "SSP", "amount": 6800, "currency": "PHP", "chargeUnit": "per_person", "trigger": "enrollment" },
+    { "id": "cwe_com_ssp_ecard", "name": "SSP E CARD", "amount": 3500, "currency": "PHP", "chargeUnit": "per_person", "trigger": "enrollment" },
+    { "id": "cwe_com_id", "name": "학생증", "amount": 300, "currency": "PHP", "chargeUnit": "per_person", "trigger": "enrollment" }
+  ],
+  "packages": [],
+  "additionalCharges": [],
+  "generalNotes": "Clark WE Academy 통학 프로그램. 클락 소재.\n\n외부 거주 학생이 학원으로 등원하여 수업.\n기본 4주 단위 신청. 단기는 별도 문의.\n수업: 오전 8시~오후 5시 05분, 최대 10타임 (1타임=45분).\n1일 최소 2타임 이상 등록.\n1:1 수업만 가능. 그룹수업 불가.\n원어민 수업 선택 가능.\n통학 차량 미운영.\n1일 4시간 이상 수강 시 점심식사 무료.\n레벨테스트: 월요일 기숙학생과 함께 (신청자 한정).\n영어유치원 통학프로그램 별도 문의.\n\n현지비: SSP 6,800P + SSP E CARD 3,500P + 학생증 300P + 교재비 별도.\n등록금: 1인당 10만원.",
+  "isActive": true,
+  "createdAt": "2026-05-30",
+  "updatedAt": "2026-05-30"
+}

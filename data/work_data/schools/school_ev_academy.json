@@ -1,0 +1,298 @@
+{
+  "id": "ev_academy",
+  "schoolCode": "EV",
+  "name": "EV Academy",
+  "campus": "본원",
+  "region": "세부",
+  "schoolType": "general",
+  "minWeeks": 1,
+  "allowShortTerm": true,
+  "shortTermDataStatus": "confirmed",
+  "programTags": [
+    "ESL",
+    "IELTS",
+    "TOEIC",
+    "비즈니스",
+    "스파르타"
+  ],
+  "registrationFee": {
+    "amount": 100000,
+    "currency": "KRW",
+    "note": "입학금 10만원. 학비표 합산가에 포함되어 있음."
+  },
+  "courses": [
+    {
+      "id": "ev_s_intensive",
+      "name": "[Sparta] Intensive ESL",
+      "price4Weeks": 1140000,
+      "currency": "KRW",
+      "note": "스파르타 Intensive ESL"
+    },
+    {
+      "id": "ev_s_ielts_guarantee",
+      "name": "[Sparta] IELTS Guarantee",
+      "price4Weeks": 1420000,
+      "currency": "KRW",
+      "note": "스파르타 IELTS Guarantee (Academic module). 12주 이상."
+    },
+    {
+      "id": "ev_s_specific",
+      "name": "[Sparta] Specific Courses (IELTS/TOEIC/Business/Digital English)",
+      "price4Weeks": 1260000,
+      "currency": "KRW",
+      "note": "스파르타 Specific Courses"
+    },
+    {
+      "id": "ev_s_ps6",
+      "name": "[Sparta] Power Speaking 6",
+      "price4Weeks": 1330000,
+      "currency": "KRW",
+      "note": "스파르타 Power Speaking 6"
+    },
+    {
+      "id": "ev_s_ps8",
+      "name": "[Sparta] Power Speaking 8",
+      "price4Weeks": 1560000,
+      "currency": "KRW",
+      "note": "스파르타 Power Speaking 8"
+    },
+    {
+      "id": "ev_ss_classic",
+      "name": "[Semi] ESL Classic",
+      "price4Weeks": 1080000,
+      "currency": "KRW",
+      "note": "세미스파르타 ESL Classic"
+    },
+    {
+      "id": "ev_ss_specific",
+      "name": "[Semi] Specific Courses (TOEIC/Business/Digital English)",
+      "price4Weeks": 1200000,
+      "currency": "KRW",
+      "note": "세미스파르타 Specific Courses"
+    },
+    {
+      "id": "ev_ss_ps6",
+      "name": "[Semi] Power Speaking 6",
+      "price4Weeks": 1270000,
+      "currency": "KRW",
+      "note": "세미스파르타 Power Speaking 6"
+    },
+    {
+      "id": "ev_ss_ps8",
+      "name": "[Semi] Power Speaking 8",
+      "price4Weeks": 1500000,
+      "currency": "KRW",
+      "note": "세미스파르타 Power Speaking 8"
+    }
+  ],
+  "dormitories": [
+    {
+      "id": "ev_single",
+      "name": "1인실 (Single)",
+      "price4Weeks": 1560000,
+      "currency": "KRW",
+      "note": "식사 3식, 하우스키핑 포함"
+    },
+    {
+      "id": "ev_double",
+      "name": "2인실 (Double)",
+      "price4Weeks": 1180000,
+      "currency": "KRW",
+      "note": "식사 3식, 하우스키핑 포함"
+    },
+    {
+      "id": "ev_triple",
+      "name": "3인실 (Triple)",
+      "price4Weeks": 1080000,
+      "currency": "KRW",
+      "note": "식사 3식, 하우스키핑 포함"
+    },
+    {
+      "id": "ev_quad",
+      "name": "4인실 (Quadruple)",
+      "price4Weeks": 1030000,
+      "currency": "KRW",
+      "note": "식사 3식, 하우스키핑 포함"
+    },
+    {
+      "id": "ev_condo_single",
+      "name": "콘도 1인실 (Condominium Single)",
+      "price4Weeks": 1710000,
+      "currency": "KRW",
+      "note": "Avida Riala. 세미스파르타 코스만 가능. 식사 3식, 하우스키핑 포함."
+    },
+    {
+      "id": "ev_condo_double",
+      "name": "콘도 2인실 (Condominium Double)",
+      "price4Weeks": 1280000,
+      "currency": "KRW",
+      "note": "Avida Riala. 세미스파르타 코스만 가능. 식사 3식, 하우스키핑 포함."
+    }
+  ],
+  "packages": [],
+  "surcharges": [
+    {
+      "id": "ev_peak",
+      "name": "성수기 서차지",
+      "amount": 40,
+      "currency": "USD",
+      "unit": "per_week",
+      "periods": [
+        {
+          "start": "2026-07-05",
+          "end": "2026-08-29"
+        },
+        {
+          "start": "2027-07-04",
+          "end": "2027-08-28"
+        }
+      ]
+    }
+  ],
+  "localFees": [
+    {
+      "id": "ev_ssp",
+      "name": "SSP",
+      "amount": 7800,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "note": "SSP는 수업 기간 종료까지 유효. 연장 시 재발급 필요."
+    },
+    {
+      "id": "ev_ssp_ecard",
+      "name": "SSP E-Card",
+      "amount": 4500,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "note": "1년 유효."
+    },
+    {
+      "id": "ev_acr_icard",
+      "name": "ACR I-Card",
+      "amount": 4000,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "triggerWeeks": 9
+    },
+    {
+      "id": "ev_idcard",
+      "name": "ID Card",
+      "amount": 500,
+      "currency": "PHP",
+      "chargeUnit": "per_person"
+    },
+    {
+      "id": "ev_electricity",
+      "name": "전기세",
+      "amount": 500,
+      "currency": "PHP",
+      "chargeUnit": "per_week",
+      "note": "내부기숙사 기준 주당 500페소. 15kw 초과 시 1kw당 20페소 추가 청구. 콘도/통학은 별도 기준."
+    },
+    {
+      "id": "ev_operation",
+      "name": "운영비 (Operation fee)",
+      "amount": 500,
+      "currency": "PHP",
+      "chargeUnit": "per_week",
+      "note": "내부기숙사 기준 주당 500페소. 콘도는 주당 1,000페소."
+    },
+    {
+      "id": "ev_water",
+      "name": "수도세",
+      "amount": 300,
+      "currency": "PHP",
+      "chargeUnit": "per_week",
+      "note": "내부기숙사 기준 주당 300페소."
+    },
+    {
+      "id": "ev_deposit_4w",
+      "name": "보증금",
+      "amount": 3000,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "note": "1~3주 2,000페소, 4~8주 3,000페소, 9주+ 5,000페소. 퇴실 시 잔여금 환불."
+    },
+    {
+      "id": "ev_pickup",
+      "name": "픽업비",
+      "amount": 1200,
+      "currency": "PHP",
+      "chargeUnit": "per_person"
+    },
+    {
+      "id": "ev_visa_1",
+      "name": "1차 비자연장",
+      "amount": 5130,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "triggerWeeks": 5
+    },
+    {
+      "id": "ev_visa_2",
+      "name": "2차 비자연장 (누적)",
+      "amount": 11530,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "triggerWeeks": 9,
+      "note": "9주차 비자 누적 총액. 개별 2차분은 6,400페소."
+    },
+    {
+      "id": "ev_visa_3",
+      "name": "3차 비자연장 (누적)",
+      "amount": 15960,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "triggerWeeks": 13,
+      "note": "13주차 비자 누적 총액."
+    },
+    {
+      "id": "ev_visa_4",
+      "name": "4차 비자연장 (누적)",
+      "amount": 20390,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "triggerWeeks": 17,
+      "note": "17주차 비자 누적 총액."
+    },
+    {
+      "id": "ev_visa_5",
+      "name": "5차 비자연장 (누적)",
+      "amount": 24820,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "triggerWeeks": 21,
+      "note": "21주차 비자 누적 총액."
+    }
+  ],
+  "additionalCharges": [
+    {
+      "id": "ev_aircon_extra",
+      "label": "전기 추가 (15kw 초과)",
+      "amount": 20,
+      "unit": "1kw당",
+      "currency": "PHP",
+      "note": "주당 15kw 초과분에 대해 1kw당 20페소 추가."
+    }
+  ],
+  "refundPolicy": "",
+  "dormitoryRules": "체크아웃: 마지막 주 토요일 12시까지. 체크인: 토요일 또는 일요일.",
+  "generalNotes": "EV Academy. 세부 소재. 스파르타/세미스파르타 2개 트랙 운영.\n\n[가격 구조]\n학비표 합산가 = 입학금(10만) + 코스비 + 기숙사비. 모든 가격은 입학금 포함.\n기숙사비에 숙소, 식사(3식), 하우스키핑 포함.\n\n[단기 비율] 1주=40%, 2주=65%, 3주=85% of 4주 가격 (코스·기숙사 동일 적용).\n\n[콘도 기숙사] Avida Riala 콘도는 세미스파르타 코스만 가능. 스파르타 코스 + 콘도 조합 불가.\n\n[IELTS Guarantee] 스파르타 전용. 12주 이상 등록 필수. 내부기숙사(8주 이상분)만 가능.\n\n[성수기 서차지] $40/주.\n2026: 7/5~8/29, 2027: 7/4~8/28.\n\n[현지비용 - 기숙사 타입별 차이]\n내부기숙사: 전기세 500P/주, 운영비 500P/주, 수도세 300P/주.\n콘도(외부): 전기세 500P/주, 운영비 1,000P/주, 수도세 300P/주.\n통학(Walk-in): 전기세·운영비·수도세 각 300P/주 + 식비 2,500P/주.\n\n현지비용 기간별 총액 (내부기숙사, 59 Visa 기준):\n1주 17,300 / 2주 18,600 / 3주 19,900 / 4주 22,200 / 8주 27,400 / 12주 45,000 / 16주 54,630 / 20주 64,260 / 24주 73,890.\n\n현지비용 기간별 총액 (콘도, 59 Visa 기준):\n1주 17,800 / 4주 24,200 / 8주 31,400 / 12주 51,000 / 16주 62,630 / 20주 74,260 / 24주 85,890.\n\n현지비용 기간별 총액 (통학, 59 Visa 기준):\n1주 18,200 / 4주 29,400 / 8주 43,000 / 12주 69,000 / 16주 87,030 / 20주 105,060 / 24주 123,090.\n\n[EV Talk Online] 별도 온라인 과정. USD 기준. 견적계산기 대상 외.",
+  "isActive": true,
+  "createdAt": "2026-05-29",
+  "updatedAt": "2026-05-30",
+  "courseShortTermRates": {
+    "mode": "percent",
+    "week1": 40,
+    "week2": 65,
+    "week3": 85,
+    "week4Included": false
+  },
+  "dormShortTermRates": {
+    "mode": "percent",
+    "week1": 40,
+    "week2": 65,
+    "week3": 85,
+    "week4Included": false
+  }
+}

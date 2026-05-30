@@ -1,0 +1,338 @@
+{
+  "id": "ibreeze",
+  "schoolCode": "IBREEZE",
+  "name": "I.BREEZE International Language Center",
+  "campus": "본원",
+  "region": "세부",
+  "schoolType": "general",
+  "minWeeks": 1,
+  "allowShortTerm": true,
+  "shortTermDataStatus": "confirmed",
+  "programTags": [
+    "ESL",
+    "IELTS",
+    "TOEIC",
+    "비즈니스",
+    "주니어"
+  ],
+  "registrationFee": {
+    "amount": 100000,
+    "currency": "KRW",
+    "note": "등록비 10만원. 픽업비 2만원 별도."
+  },
+  "courses": [
+    {
+      "id": "ib_intensive_beginner",
+      "name": "Intensive Beginner",
+      "price4Weeks": 1050000,
+      "currency": "KRW"
+    },
+    {
+      "id": "ib_power_esl",
+      "name": "Power ESL",
+      "price4Weeks": 1050000,
+      "currency": "KRW"
+    },
+    {
+      "id": "ib_light_esl",
+      "name": "Light ESL",
+      "price4Weeks": 900000,
+      "currency": "KRW"
+    },
+    {
+      "id": "ib_intensive_speaking",
+      "name": "Intensive Speaking",
+      "price4Weeks": 850000,
+      "currency": "KRW"
+    },
+    {
+      "id": "ib_ielts_starter",
+      "name": "IELTS Starter",
+      "price4Weeks": 1050000,
+      "currency": "KRW"
+    },
+    {
+      "id": "ib_ielts_target",
+      "name": "IELTS Target",
+      "price4Weeks": 1150000,
+      "currency": "KRW"
+    },
+    {
+      "id": "ib_toeic_target",
+      "name": "TOEIC Target",
+      "price4Weeks": 1050000,
+      "currency": "KRW"
+    },
+    {
+      "id": "ib_business",
+      "name": "General Business & BEC",
+      "price4Weeks": 1100000,
+      "currency": "KRW",
+      "note": "장기 할인 내장: 16주 4,000,000 / 24주 6,000,000 (정비례 대비 각 40만/60만 할인)."
+    },
+    {
+      "id": "ib_junior",
+      "name": "Junior ESL & YLE",
+      "price4Weeks": 1500000,
+      "currency": "KRW",
+      "note": "4주만 등록 가능."
+    }
+  ],
+  "dormitories": [
+    {
+      "id": "ib_main_1p",
+      "name": "IB1 Main 1인실",
+      "price4Weeks": 1400000,
+      "currency": "KRW"
+    },
+    {
+      "id": "ib_main_2p",
+      "name": "IB1 Main 2인실",
+      "price4Weeks": 1020000,
+      "currency": "KRW"
+    },
+    {
+      "id": "ib_main_3p",
+      "name": "IB1 Main 3인실",
+      "price4Weeks": 870000,
+      "currency": "KRW"
+    },
+    {
+      "id": "ib_main_4p",
+      "name": "IB1 Main 4인실",
+      "price4Weeks": 800000,
+      "currency": "KRW"
+    },
+    {
+      "id": "ib_prime_1p",
+      "name": "IB2 Prime 1인실",
+      "price4Weeks": 1600000,
+      "currency": "KRW"
+    },
+    {
+      "id": "ib_prime_2p",
+      "name": "IB2 Prime 2인실",
+      "price4Weeks": 1100000,
+      "currency": "KRW"
+    },
+    {
+      "id": "ib_prime_4p",
+      "name": "IB2 Prime 4인실",
+      "price4Weeks": 850000,
+      "currency": "KRW"
+    },
+    {
+      "id": "ib_condo_1p",
+      "name": "콘도 1인실",
+      "price4Weeks": 1900000,
+      "currency": "KRW"
+    },
+    {
+      "id": "ib_condo_2p_family",
+      "name": "콘도 2인실 (Family)",
+      "price4Weeks": 1400000,
+      "currency": "KRW",
+      "note": "가족연수용."
+    },
+    {
+      "id": "ib_condo_3p_family",
+      "name": "콘도 3인실 (Family)",
+      "price4Weeks": 1200000,
+      "currency": "KRW",
+      "note": "가족연수용."
+    },
+    {
+      "id": "ib_condo_4p_family",
+      "name": "콘도 4인실 (Family)",
+      "price4Weeks": 1100000,
+      "currency": "KRW",
+      "note": "가족연수용."
+    }
+  ],
+  "packages": [],
+  "surcharges": [],
+  "localFees": [
+    {
+      "id": "ib_ssp",
+      "name": "SSP",
+      "amount": 7800,
+      "currency": "PHP",
+      "chargeUnit": "per_person"
+    },
+    {
+      "id": "ib_ssp_icard",
+      "name": "SSP I-Card",
+      "amount": 4500,
+      "currency": "PHP",
+      "chargeUnit": "per_person"
+    },
+    {
+      "id": "ib_acr_icard",
+      "name": "ACR I-Card",
+      "amount": 4000,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "triggerWeeks": 9
+    },
+    {
+      "id": "ib_maintenance",
+      "name": "Maintenance (시설관리비)",
+      "amount": 4000,
+      "currency": "PHP",
+      "chargeUnit": "per_4weeks",
+      "note": "4주당 4,000페소."
+    },
+    {
+      "id": "ib_water",
+      "name": "수도세",
+      "amount": 1000,
+      "currency": "PHP",
+      "chargeUnit": "per_4weeks",
+      "note": "4주당 1,000페소 (주당 250페소)."
+    },
+    {
+      "id": "ib_electricity",
+      "name": "전기세",
+      "amount": 2000,
+      "currency": "PHP",
+      "chargeUnit": "per_4weeks",
+      "note": "4주당 2,000페소 기본. 주당 20kw 초과 시 1kw당 23페소 추가. 콘도는 주당 1,000페소."
+    },
+    {
+      "id": "ib_idcard",
+      "name": "ID Card",
+      "amount": 400,
+      "currency": "PHP",
+      "chargeUnit": "per_person"
+    },
+    {
+      "id": "ib_deposit",
+      "name": "보증금",
+      "amount": 3000,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "note": "4주 3,000페소, 8주+ 5,000페소."
+    },
+    {
+      "id": "ib_pickup",
+      "name": "픽업비",
+      "amount": 20000,
+      "currency": "KRW",
+      "chargeUnit": "per_person"
+    },
+    {
+      "id": "ib_textbook",
+      "name": "교재비",
+      "amount": 2500,
+      "currency": "PHP",
+      "chargeUnit": "per_4weeks",
+      "note": "4주 평균 1,500~3,000페소. 교재별 상이."
+    },
+    {
+      "id": "ib_visa_1",
+      "name": "1차 비자연장",
+      "amount": 5140,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "triggerWeeks": 5
+    },
+    {
+      "id": "ib_visa_2",
+      "name": "2차 비자연장",
+      "amount": 6410,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "triggerWeeks": 9
+    },
+    {
+      "id": "ib_visa_3",
+      "name": "3차 비자연장",
+      "amount": 4440,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "triggerWeeks": 13
+    },
+    {
+      "id": "ib_visa_4",
+      "name": "4차 비자연장",
+      "amount": 5040,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "triggerWeeks": 17
+    },
+    {
+      "id": "ib_visa_5",
+      "name": "5차 비자연장",
+      "amount": 4440,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "triggerWeeks": 21
+    }
+  ],
+  "additionalCharges": [
+    {
+      "id": "ib_add_11",
+      "label": "추가 1:1 (4주)",
+      "amount": 150,
+      "currency": "USD"
+    },
+    {
+      "id": "ib_add_group",
+      "label": "추가 그룹 (4주)",
+      "amount": 70,
+      "currency": "USD"
+    },
+    {
+      "id": "ib_add_special",
+      "label": "추가 Special Class (4주)",
+      "amount": 100,
+      "currency": "USD"
+    },
+    {
+      "id": "ib_course_change",
+      "label": "코스 변경 수수료",
+      "amount": 100,
+      "currency": "USD"
+    },
+    {
+      "id": "ib_guardian_fee",
+      "label": "보호자 수수료",
+      "amount": 100,
+      "currency": "USD"
+    },
+    {
+      "id": "ib_condo_elec",
+      "label": "콘도 전기세 (주당)",
+      "amount": 1000,
+      "currency": "PHP",
+      "note": "콘도 입주 시 주당 1,000페소."
+    },
+    {
+      "id": "ib_safety_box",
+      "label": "Safety Box",
+      "amount": 100,
+      "currency": "PHP",
+      "note": "보증금 500페소 + 주당 100페소."
+    }
+  ],
+  "refundPolicy": "",
+  "dormitoryRules": "",
+  "generalNotes": "I.BREEZE International Language Center. 세부 소재. 2026년 1월 학비 기준.\n\n[코스] 대부분 정비례. General Business & BEC만 16주/24주에 장기 할인 내장 (16w: 400만, 24w: 600만).\nJunior ESL & YLE: 4주만 등록 가능.\n\n[기숙사] IB1 Main / IB2 Prime / Condo 3종.\n콘도 2~4인실은 Family용.\n콘도 전기세는 주당 1,000페소 별도 (기숙사와 다름).\n\n[현지비용 기간별 총액 (교재비 제외)]\n4주: 22,700PHP / 8주: 36,840PHP / 12주: 54,250PHP / 16주: 65,690PHP / 20주: 77,730PHP / 24주: 89,170PHP.\n\n[교재비] 4주 평균 1,500~3,000페소.\n[전기세] 기숙사: 주당 20kw 초과 시 1kw당 23페소. 콘도: 주당 1,000페소.\n[24주 초과] SSP 추가 발급, ECC 2,000페소, CRTV 1,910페소 필요.",
+  "isActive": true,
+  "createdAt": "2026-05-29",
+  "updatedAt": "2026-05-30",
+  "courseShortTermRates": {
+    "mode": "percent",
+    "week1": 40,
+    "week2": 60,
+    "week3": 80,
+    "week4Included": false
+  },
+  "dormShortTermRates": {
+    "mode": "percent",
+    "week1": 40,
+    "week2": 60,
+    "week3": 80,
+    "week4Included": false
+  }
+}

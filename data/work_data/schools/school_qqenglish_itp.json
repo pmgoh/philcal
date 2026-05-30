@@ -1,0 +1,188 @@
+{
+  "id": "qqenglish_itp",
+  "schoolCode": "QQENGLISH_ITP",
+  "name": "QQ English IT Park",
+  "campus": "IT Park",
+  "region": "세부",
+  "schoolType": "general",
+  "minWeeks": 2,
+  "allowShortTerm": false,
+  "programTags": ["ESL", "비즈니스", "통학형"],
+  "registrationFee": {
+    "amount": 150,
+    "currency": "USD",
+    "note": "등록금 $150"
+  },
+  "courses": [
+    {
+      "id": "qq_itp_1on1_4h",
+      "name": "1:1 4시간",
+      "price4Weeks": 784,
+      "currency": "USD",
+      "note": "1:1 수업 4시간"
+    },
+    {
+      "id": "qq_itp_1on1_4h_group_2h",
+      "name": "1:1 4시간 + 그룹 2시간",
+      "price4Weeks": 884,
+      "currency": "USD",
+      "note": "1:1 수업 4시간 + 그룹수업 2시간"
+    },
+    {
+      "id": "qq_itp_1on1_6h",
+      "name": "1:1 6시간",
+      "price4Weeks": 1078,
+      "currency": "USD",
+      "note": "1:1 수업 6시간"
+    },
+    {
+      "id": "qq_itp_1on1_6h_group_2h",
+      "name": "1:1 6시간 + 그룹 2시간",
+      "price4Weeks": 1178,
+      "currency": "USD",
+      "note": "1:1 수업 6시간 + 그룹수업 2시간"
+    },
+    {
+      "id": "qq_itp_1on1_8h",
+      "name": "1:1 8시간",
+      "price4Weeks": 1437,
+      "currency": "USD",
+      "note": "1:1 수업 8시간"
+    }
+  ],
+  "dormitories": [
+    {
+      "id": "qq_itp_commute",
+      "name": "통학 (숙소 없음)",
+      "price4Weeks": 0,
+      "currency": "USD",
+      "note": "숙소 미포함. 수업료만 적용."
+    },
+    {
+      "id": "qq_itp_capsule",
+      "name": "캡슐 기숙사 (성인만)",
+      "price4Weeks": 351,
+      "currency": "USD",
+      "note": "캡슐 호텔 타입. 성인만 이용 가능. 캡슐 기숙사 이용 시 전기세 100페소/일 별도."
+    },
+    {
+      "id": "qq_itp_hotel",
+      "name": "호텔 (외부 호텔)",
+      "price4Weeks": 1350,
+      "currency": "USD",
+      "note": "Mactan Savoy Hotel 기준. 1박당 $50 최대 2인 가능. IT Park 캠퍼스 기준 외부 호텔 이용."
+    }
+  ],
+  "surcharges": [
+    {
+      "id": "qq_itp_peak_surcharge",
+      "label": "피크시즌 추가비 (6,7,8월)",
+      "startDate": "2026-06-01",
+      "endDate": "2026-08-31",
+      "amountPerWeek": 37.5,
+      "currency": "USD",
+      "applyTo": "courses",
+      "note": "피크시즌(6,7,8월) 수업료 추가. 모든 코스 동일하게 4주당 $150 추가 (주당 $37.50). 기숙사/식사는 레귤러와 동일."
+    }
+  ],
+  "promotions": null,
+  "localFees": [
+    {
+      "id": "qq_itp_ssp",
+      "name": "SSP",
+      "amount": 10440,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "trigger": "enrollment",
+      "note": "SSP 발급비"
+    },
+    {
+      "id": "qq_itp_visa_ext",
+      "name": "VISA Extension Fee",
+      "amount": 4460,
+      "currency": "PHP",
+      "chargeUnit": "per_month",
+      "trigger": "monthly",
+      "triggerWeeks": 5,
+      "note": "비자연장비. 월별 상이(Vary)."
+    },
+    {
+      "id": "qq_itp_icard",
+      "name": "I-Card (ACR I-Card)",
+      "amount": 3200,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "trigger": "stay_over_59days",
+      "triggerWeeks": 9,
+      "note": "59일(약 8주) 이상 체류 시 발급 필요"
+    },
+    {
+      "id": "qq_itp_student_id",
+      "name": "Student ID",
+      "amount": 300,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "trigger": "enrollment",
+      "note": "학생증 발급비"
+    },
+    {
+      "id": "qq_itp_electricity_capsule",
+      "name": "전기세 (캡슐 기숙사 이용 시)",
+      "amount": 100,
+      "currency": "PHP",
+      "chargeUnit": "per_day",
+      "trigger": "capsule_dorm",
+      "note": "캡슐 기숙사 이용 시 전기세 100페소/일"
+    },
+    {
+      "id": "qq_itp_ecc_standard",
+      "name": "ECC 표준 처리",
+      "amount": 2000,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "trigger": "6months_plus",
+      "triggerWeeks": 25,
+      "note": "6개월 이상 머물 경우. 표준 처리 기간 약 1주일."
+    },
+    {
+      "id": "qq_itp_ecc_urgent",
+      "name": "ECC 긴급 처리",
+      "amount": 3000,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "trigger": "6months_plus",
+      "triggerWeeks": 25,
+      "note": "6개월 이상 머물 경우. 긴급 처리(영업일 기준 1~2일). ECC 절차는 학생 본인이 직접 진행."
+    }
+  ],
+  "packages": [],
+  "additionalCharges": [
+    {
+      "id": "qq_itp_meal",
+      "name": "식사 (하루 3끼 주말 포함)",
+      "price4Weeks": 260,
+      "currency": "USD",
+      "note": "식사 옵션. 선택 사항."
+    },
+    {
+      "id": "qq_itp_holiday_class",
+      "name": "공휴일 수업 (필수/공휴일당)",
+      "pricePerUnit": 35,
+      "currency": "USD",
+      "note": "공휴일 수업. 필수 참여. 공휴일 1일당 $35."
+    },
+    {
+      "id": "qq_itp_airport_pickup",
+      "name": "공항 픽업",
+      "pricePerUnit": 30,
+      "currency": "USD",
+      "note": "개인 및 가족(가족일 경우 최대 3인까지) $30."
+    }
+  ],
+  "refundPolicy": "",
+  "dormitoryRules": "",
+  "generalNotes": "QQ English IT Park 캠퍼스. 세부 시티 IT Park 소재. 통학형 어학원.\n\n수업료 계산 규칙:\n- 2주~4주: 가격표 그대로 적용.\n- 5주~7주: 4주 요금을 4로 나눈 후 해당 주차를 곱해 계산.\n- 8주 이상: 주차에 관계없이 동일한 수업료 적용 (8주 가격표 기준 주당 단가).\n\n피크시즌(6,7,8월): 별도 가격표 적용. 레귤러 대비 모든 코스 균일 $150/4주 추가 (주당 $37.50).\n\n캡슐 기숙사: IT Park 캠퍼스 전용. 성인만 이용 가능. 전기세 100페소/일 별도.\n호텔: Mactan Savoy Hotel 기준 $1,350/4주. 1박당 $50 최대 2인.\n\n공항 픽업 $30 (개인 및 가족 최대 3인).",
+  "isActive": true,
+  "createdAt": "2026-05-29",
+  "updatedAt": "2026-05-29"
+}

@@ -1,0 +1,331 @@
+{
+  "id": "hana",
+  "schoolCode": "HANA",
+  "name": "HANA ACADEMY (하나 어학원)",
+  "campus": "클락 캠퍼스",
+  "region": "클락",
+  "schoolType": "general",
+  "programTags": ["성인일반", "가족연수", "주니어", "IELTS", "TOEIC", "시니어", "골프"],
+  "minWeeks": 1,
+  "allowShortTerm": true,
+  "registrationFee": {
+    "amount": 0,
+    "currency": "KRW",
+    "note": "⚠️ 본사 확인 필요 — 자료에 등록비 명시 없음."
+  },
+  "courses": [
+    {
+      "id": "light_esl",
+      "name": "Light ESL (성인)",
+      "target": "성인일반",
+      "price4Weeks": 940000,
+      "currency": "KRW",
+      "note": "필리핀1:1 4타임 + 원어민그룹 1타임 + 필리핀그룹 1타임. 4주 94만원."
+    },
+    {
+      "id": "general_esl",
+      "name": "General ESL (성인)",
+      "target": "성인일반",
+      "price4Weeks": 1110000,
+      "currency": "KRW",
+      "note": "필리핀1:1 5타임 + 원어민그룹 1타임 + 필리핀그룹 1타임. 4주 111만원."
+    },
+    {
+      "id": "native_esl",
+      "name": "Native ESL (성인)",
+      "target": "성인일반",
+      "price4Weeks": 1280000,
+      "currency": "KRW",
+      "note": "필리핀1:1 2타임 + 원어민1:1 2타임 + 원어민그룹 1타임 + 필리핀그룹 1타임. 4주 128만원."
+    },
+    {
+      "id": "native_only",
+      "name": "Native Only (성인)",
+      "target": "성인일반",
+      "price4Weeks": 1530000,
+      "currency": "KRW",
+      "note": "원어민1:1 4타임. 4주 153만원."
+    },
+    {
+      "id": "toeic_ielts",
+      "name": "TOEIC / IELTS (성인)",
+      "target": "성인일반",
+      "price4Weeks": 1200000,
+      "currency": "KRW",
+      "note": "필리핀1:1 3타임 + 원어민1:1 1타임 + ESL필리핀그룹 1타임 + ESL원어민그룹 1타임 + 주1회 모의고사. 4주 120만원."
+    },
+    {
+      "id": "guardian",
+      "name": "가디언 코스 (부모님)",
+      "target": "가족연수",
+      "price4Weeks": 650000,
+      "currency": "KRW",
+      "note": "필리핀1:1 3타임 + 원어민그룹 1타임. 4주 65만원."
+    },
+    {
+      "id": "guardian_light",
+      "name": "가디언 라이트 (부모님)",
+      "target": "가족연수",
+      "price4Weeks": 400000,
+      "currency": "KRW",
+      "note": "필리핀1:1 2타임. 4주 40만원."
+    },
+    {
+      "id": "junior_a",
+      "name": "Junior Course A (Activity)",
+      "target": "주니어",
+      "price4Weeks": 1300000,
+      "currency": "KRW",
+      "note": "필리핀1:1 4타임 + 원어민1:1 2타임 + Activity classes 2타임. 4주 130만원."
+    },
+    {
+      "id": "junior_b",
+      "name": "Junior Course B (Academic)",
+      "target": "주니어",
+      "price4Weeks": 1400000,
+      "currency": "KRW",
+      "note": "필리핀1:1 6타임 + 원어민1:1 1타임 + 필리핀그룹 1타임. 4주 140만원."
+    },
+    {
+      "id": "junior_c",
+      "name": "Junior Course C (Intensive)",
+      "target": "주니어",
+      "price4Weeks": 1500000,
+      "currency": "KRW",
+      "note": "필리핀1:1 8타임. 4주 150만원."
+    },
+    {
+      "id": "kinder_half",
+      "name": "유치원 (반일반)",
+      "target": "주니어",
+      "price4Weeks": 700000,
+      "currency": "KRW",
+      "note": "8:30 AM ~ 12:30 PM (Group). Nursery(만3,4세), Kinder(만5,6세). 4주 70만원."
+    },
+    {
+      "id": "kinder_full",
+      "name": "유치원 (종일반)",
+      "target": "주니어",
+      "price4Weeks": 1300000,
+      "currency": "KRW",
+      "note": "8:30 AM ~ 12:35 PM (Group) + 1:30 PM ~ 4:45 PM (Group). Nursery(만3,4세), Kinder(만5,6세). 4주 130만원."
+    },
+    {
+      "id": "golf_leisure",
+      "name": "골프 레져",
+      "target": "성인일반",
+      "price4Weeks": 800000,
+      "currency": "KRW",
+      "note": "AM:Golf, PM:Study. 필리핀1:1 3타임 + 원어민그룹 1타임. 무제한 연습 (EG GOLF, 6am-10pm). 4주 80만원."
+    },
+    {
+      "id": "golf_intensive",
+      "name": "골프 인텐시브",
+      "target": "성인일반",
+      "price4Weeks": 1200000,
+      "currency": "KRW",
+      "note": "AM:Golf, PM:Study. 필리핀1:1 3타임 + 원어민그룹 1타임. 개인 레슨 16회/4주, 무제한 연습 (EG GOLF, 6am-10pm). 4주 120만원."
+    },
+    {
+      "id": "senior_single",
+      "name": "시니어 코스 (1인)",
+      "target": "시니어",
+      "price4Weeks": 1200000,
+      "currency": "KRW",
+      "note": "필리핀1:1 3타임 + 원어민그룹 1타임. 현지비용 포함 (Deposit 제외). 4주 120만원."
+    },
+    {
+      "id": "senior_pair",
+      "name": "시니어 코스 (2인 동반)",
+      "target": "시니어",
+      "price4Weeks": 2400000,
+      "currency": "KRW",
+      "note": "필리핀1:1 3타임 + 원어민그룹 1타임 (2인 합산). 4주 240만원 (2인 합산)."
+    }
+  ],
+  "dormitories": [
+    {
+      "id": "single",
+      "name": "1인실",
+      "roomType": "1인실",
+      "target": "성인일반",
+      "price4Weeks": 900000,
+      "currency": "KRW",
+      "note": "1인실 4주 90만원."
+    },
+    {
+      "id": "double",
+      "name": "2인실",
+      "roomType": "2인실",
+      "target": "성인일반",
+      "price4Weeks": 750000,
+      "currency": "KRW",
+      "note": "2인실 4주 75만원."
+    },
+    {
+      "id": "triple",
+      "name": "3인실",
+      "roomType": "3인실",
+      "target": "가족연수",
+      "price4Weeks": 650000,
+      "currency": "KRW",
+      "note": "3인실 4주 65만원. 주니어/가디언 코스 전용."
+    },
+    {
+      "id": "family_room",
+      "name": "패밀리룸 (큰 방)",
+      "roomType": "3인실이상",
+      "target": "가족연수",
+      "price4Weeks": 0,
+      "currency": "KRW",
+      "note": "패밀리룸(큰 방)은 3인 이상 사용가능. 3인실:인당 75만원, 4인실:인당 65만원, 5인실:인당 60만원. 비수기(3,4,5,8,10,11월)는 2인실 가능, 90만원/1인."
+    },
+    {
+      "id": "senior_single_dorm",
+      "name": "1인실 (시니어)",
+      "roomType": "1인실",
+      "target": "시니어",
+      "price4Weeks": 900000,
+      "currency": "KRW",
+      "note": "시니어 코스 1인 전용 1인실. 4주 90만원."
+    },
+    {
+      "id": "senior_pair_dorm",
+      "name": "2인실 (시니어 2인 동반)",
+      "roomType": "2인실",
+      "target": "시니어",
+      "price4Weeks": 1200000,
+      "currency": "KRW",
+      "note": "시니어 코스 2인 동반 전용 2인실. 4주 120만원 (방당)."
+    }
+  ],
+  "surcharges": [],
+  "packages": [
+    {
+      "id": "early_study_intl_prep",
+      "name": "조기유학 - 국제학교 준비반 (영어,수학,과학,사회)",
+      "programType": "junior",
+      "includesLocalFees": false,
+      "note": "수업료 4주 240만원. 2인실 기숙사. 자료 합산표: 4주 480만원, 8주 960만원 등.",
+      "includes": "국제학교 준비반 수업 (영어, 수학, 과학, 사회)",
+      "excludes": "현지비용 별도",
+      "priceMatrix": {
+        "columns": ["2인실"],
+        "rows": [
+          { "weeks": 4, "prices": [4800000] },
+          { "weeks": 8, "prices": [9600000] }
+        ]
+      },
+      "currency": "KRW"
+    },
+    {
+      "id": "early_study_boarding",
+      "name": "조기유학 - 숙식, 국제학교 통학, 방과 후 수업, 주말관리, 성적관리",
+      "programType": "junior",
+      "includesLocalFees": false,
+      "note": "수업료 4주 200만원. 2인실 기숙사.",
+      "includes": "숙식, 국제학교 통학, 방과 후 수업, 주말관리, 성적관리",
+      "excludes": "현지비용 별도",
+      "priceMatrix": {
+        "columns": ["2인실"],
+        "rows": [
+          { "weeks": 4, "prices": [4000000] },
+          { "weeks": 8, "prices": [8000000] }
+        ]
+      },
+      "currency": "KRW"
+    },
+    {
+      "id": "early_study_homeschool",
+      "name": "조기유학 - 학력 인정 사립학교 홈스쿨링+ESL",
+      "programType": "junior",
+      "includesLocalFees": false,
+      "note": "수업료 4주 235만원. 2인실 기숙사.",
+      "includes": "학력 인정 사립학교 홈스쿨링 + ESL 수업",
+      "excludes": "현지비용 별도",
+      "priceMatrix": {
+        "columns": ["2인실"],
+        "rows": [
+          { "weeks": 4, "prices": [4700000] },
+          { "weeks": 8, "prices": [9400000] }
+        ]
+      },
+      "currency": "KRW"
+    },
+    {
+      "id": "hana_junior_camp_low",
+      "name": "하나 주니어 캠프 (비수기 3-6월, 9-12월)",
+      "programType": "camp",
+      "includesLocalFees": false,
+      "note": "비수기 (3-6월, 9-12월). 수업료 250만원 + 기숙사 2인실 65만원.",
+      "includes": "주니어 캠프 수업",
+      "excludes": "현지비용 별도",
+      "priceMatrix": {
+        "columns": ["2인실"],
+        "rows": [
+          { "weeks": 4, "prices": [2500000] }
+        ]
+      },
+      "currency": "KRW"
+    },
+    {
+      "id": "hana_junior_camp_high",
+      "name": "하나 주니어 캠프 (성수기 1,2,7,8월)",
+      "programType": "camp",
+      "includesLocalFees": false,
+      "note": "성수기 (1,2,7,8월). 수업료 380만원 + 기숙사 2인실 65만원.",
+      "includes": "주니어 캠프 수업",
+      "excludes": "현지비용 별도",
+      "priceMatrix": {
+        "columns": ["2인실"],
+        "rows": [
+          { "weeks": 4, "prices": [3800000] }
+        ]
+      },
+      "currency": "KRW"
+    }
+  ],
+  "promotions": null,
+  "localFees": [
+    { "id": "ssp", "name": "SSP (공부허가증)", "amount": 7500, "currency": "PHP", "trigger": "always", "chargeUnit": "per_person", "note": "7,500페소. 신청하신 공부 기간만큼, 최대 24주까지." },
+    { "id": "ssp_ecard", "name": "SSP E-CARD", "amount": 4000, "currency": "PHP", "trigger": "always", "chargeUnit": "per_person", "note": "4,000페소. 1년간 유효." },
+    { "id": "acr_icard", "name": "ACR ICARD (외국인 신분증)", "amount": 4000, "currency": "PHP", "trigger": "over_weeks", "triggerWeeks": 9, "chargeUnit": "per_person", "note": "4,000페소. 9주 이상 공부하는 분에게 발급, 1년간 유효." },
+    { "id": "visa_1", "name": "비자연장 1차 (30th day)", "amount": 4630, "currency": "PHP", "trigger": "over_weeks", "triggerWeeks": 4, "chargeUnit": "per_person", "note": "입국일로부터 8주까지" },
+    { "id": "visa_2", "name": "비자연장 2차 (59th day)", "amount": 5900, "currency": "PHP", "trigger": "over_weeks", "triggerWeeks": 8, "chargeUnit": "per_person", "note": "입국일로부터 12주까지" },
+    { "id": "visa_3", "name": "비자연장 3차 (89th day)", "amount": 4130, "currency": "PHP", "trigger": "over_weeks", "triggerWeeks": 12, "chargeUnit": "per_person", "note": "입국일로부터 16주까지" },
+    { "id": "visa_4", "name": "비자연장 4차 (119th day)", "amount": 4130, "currency": "PHP", "trigger": "over_weeks", "triggerWeeks": 16, "chargeUnit": "per_person", "note": "입국일로부터 20주까지" },
+    { "id": "visa_5", "name": "비자연장 5차 (149th day)", "amount": 4130, "currency": "PHP", "trigger": "over_weeks", "triggerWeeks": 20, "chargeUnit": "per_person", "note": "입국일로부터 24주까지" },
+    { "id": "id_card", "name": "학생증", "amount": 200, "currency": "PHP", "trigger": "always", "chargeUnit": "per_person", "note": "200페소." },
+    { "id": "electricity", "name": "전기세", "amount": 0, "currency": "PHP", "trigger": "per_4weeks", "chargeUnit": "flat", "note": "1인실 80kw/4주 미만이면 1,800peso/방/4주. 2,3,4,5인실 80kw/4주 미만이면 2,400peso/방/4주. 사용량 80kw 초과시 22peso/1kw/방." },
+    { "id": "management", "name": "관리비 (수도세, 청소, 빨래, 경비, 식수, 공용전기, 수영장관리, 시설유지보수)", "amount": 0, "currency": "PHP", "trigger": "per_4weeks", "chargeUnit": "flat", "note": "1인실: 3,000peso/4주/인당, 2인실: 2,500peso/4주/인당, 3인실: 2,000peso/4주/인당. 가족: 2인가족 4,500/방당, 3인가족 5,500/방당, 4인가족 6,500/방당." },
+    { "id": "deposit", "name": "기숙사 보증금", "amount": 0, "currency": "PHP", "trigger": "always", "chargeUnit": "flat", "note": "4,000페소/인당, 5,000페소/방당. 졸업시 교재비, 전기세 초과금, 시설 파손시 수리비 제외 후 반환." },
+    { "id": "pickup", "name": "공항 픽업비", "amount": 0, "currency": "PHP", "trigger": "always", "chargeUnit": "flat", "note": "클락공항 픽업: 1,000peso(개인), 1,500peso(2~4인 가족). 마닐라공항 픽업: 5,500peso(개인), 6,500peso(2~4인 가족)." },
+    { "id": "textbook", "name": "교재비", "amount": 0, "currency": "PHP", "trigger": "always", "chargeUnit": "per_person", "note": "권당 300~400페소." }
+  ],
+  "additionalCharges": [
+    {
+      "id": "additional_1on1_filipino",
+      "label": "추가 1:1 수업 (필리핀 티쳐)",
+      "amount": 0,
+      "unit": "4주당",
+      "currency": "PHP",
+      "category": "옵션",
+      "note": "7,000peso/4주."
+    },
+    {
+      "id": "additional_1on1_native",
+      "label": "추가 1:1 수업 (원어민 티쳐)",
+      "amount": 0,
+      "unit": "4주당",
+      "currency": "PHP",
+      "category": "옵션",
+      "note": "14,000peso/4주."
+    }
+  ],
+  "refundPolicy": "",
+  "dormitoryRules": "* 패밀리룸(큰 방)은 3인 이상 사용가능\n  - 3인실: 인당 75만원\n  - 4인실: 인당 65만원\n  - 5인실: 인당 60만원\n  - 비수기(3,4,5,8,10,11월)는 2인실 가능, 90만원/1인",
+  "generalNotes": "▶학원 개요◀\n* HANA ACADEMY 클락 캠퍼스\n* 원어민(미국) 수업 포함 다양한 코스\n* 골프 코스 (EG GOLF 이용, 6am-10pm)\n\n▶시니어 코스 특이사항◀\n* 시니어 코스 (1인): 현지비용 포함 (Deposit 제외). 수업료 120만원에 현지비 포함.\n* 시니어 코스 (2인 동반): 수업료 240만원 + 기숙사 2인실 120만원 (2인 합산).\n\n▶조기유학◀\n* 국제학교 준비반 (영어,수학,과학,사회): 4주 480만원 (2인실 기준)\n* 숙식+국제학교 통학+방과후+주말관리+성적관리: 4주 400만원\n* 학력 인정 사립학교 홈스쿨링+ESL: 4주 470만원\n\n▶주니어 캠프◀\n* 비수기 (3-6월, 9-12월): 수업료 250만원 + 2인실 65만원\n* 성수기 (1,2,7,8월): 수업료 380만원 + 2인실 65만원\n\n▶단기 비율◀\n* 자료에 1주/2주/3주 가격 명시 (수업료+기숙사 합산표):\n  - General ESL 1인실 예시: 1주 1,306,500 / 2주 804,000 / 3주 1,708,500 / 4주 2,010,000\n  - 비율 참고: 1주≈65%, 2주≈40%(2주분), 3주≈85%(3주분)\n* 시스템 자동 단기 비율 적용 시 자료 합산표와 차이 발생 가능 → 운영자가 자료 합산표 기준으로 수동 견적 필요\n\n▶현지비용 참고◀\n* 전기세, 관리비, 보증금, 픽업비는 인실/인원수에 따라 단가 다름 → localFees amount=0으로 두고 note에 상세 기재\n* 시니어 코스 (1인)는 현지비용 포함 (Deposit 제외)",
+  "isActive": true,
+  "createdAt": "2026-05-30",
+  "updatedAt": "2026-05-30"
+}

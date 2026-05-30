@@ -1,0 +1,52 @@
+{
+  "id": "lslc",
+  "schoolCode": "LSLC",
+  "name": "LSLC (La Salle Language Center)",
+  "campus": "본원",
+  "region": "기타",
+  "schoolType": "general",
+  "minWeeks": 1,
+  "allowShortTerm": true,
+  "programTags": ["ESL", "IELTS", "TOEIC", "TOEFL", "TESOL", "비즈니스", "가족"],
+  "registrationFee": { "amount": 100000, "currency": "KRW", "note": "등록금 100,000원 (1회, 환불 불가)" },
+  "courses": [
+    { "id": "lslc_esl_regular", "name": "ESL Regular (6 hrs)", "classDetails": "6시간", "price4Weeks": 910000, "currency": "KRW" },
+    { "id": "lslc_esl_intensive", "name": "ESL Intensive (7 hrs)", "classDetails": "7시간", "price4Weeks": 960000, "currency": "KRW" },
+    { "id": "lslc_test", "name": "TOEIC / TOEFL / IELTS / TESOL / BUSINESS", "classDetails": "시험대비/비즈니스", "price4Weeks": 1000000, "currency": "KRW" },
+    { "id": "lslc_ielts_guarantee", "name": "IELTS Guarantee (LIG)", "classDetails": "IELTS 보장반", "price4Weeks": 1200000, "currency": "KRW", "note": "12주 전용. Single 6,900천원 / Twin 6,450천원 / Triple 6,150천원 (합산가, 12주 총액). 4주 환산 수업료 120만원." },
+    { "id": "lslc_family_kids", "name": "Family Program - Kids", "classDetails": "가족 주니어", "price4Weeks": 1050000, "currency": "KRW" },
+    { "id": "lslc_family_parents", "name": "Family Program - Parents", "classDetails": "가족 보호자", "price4Weeks": 540000, "currency": "KRW" }
+  ],
+  "dormitories": [
+    { "id": "lslc_single", "name": "Single", "price4Weeks": 1100000, "currency": "KRW" },
+    { "id": "lslc_twin", "name": "Twin", "price4Weeks": 950000, "currency": "KRW" },
+    { "id": "lslc_triple", "name": "Triple", "price4Weeks": 850000, "currency": "KRW" }
+  ],
+  "surcharges": [],
+  "promotions": null,
+  "localFees": [
+    { "id": "lslc_ssp", "name": "S.S.P", "amount": 7800, "currency": "PHP", "chargeUnit": "per_person", "trigger": "enrollment", "note": "6개월 유효" },
+    { "id": "lslc_icard", "name": "I-CARD", "amount": 4500, "currency": "PHP", "chargeUnit": "per_person", "trigger": "enrollment", "note": "6개월 유효" },
+    { "id": "lslc_id", "name": "ID Fee", "amount": 200, "currency": "PHP", "chargeUnit": "per_person", "trigger": "enrollment" },
+    { "id": "lslc_textbook", "name": "Text Book", "amount": 200, "currency": "PHP", "chargeUnit": "per_book", "trigger": "enrollment", "note": "₱200~₱400/book" },
+    { "id": "lslc_electricity", "name": "Electricity Fee", "amount": 100, "currency": "PHP", "chargeUnit": "per_month_min", "trigger": "enrollment", "note": "₱100~₱1,500/month" },
+    { "id": "lslc_water", "name": "Water Fee", "amount": 200, "currency": "PHP", "chargeUnit": "per_week", "trigger": "enrollment" },
+    { "id": "lslc_visa_1", "name": "Visa 1st Extension", "amount": 4360, "currency": "PHP", "chargeUnit": "cumulative", "trigger": "stay_over", "triggerWeeks": 5 },
+    { "id": "lslc_visa_2", "name": "Visa 2nd Extension", "amount": 9990, "currency": "PHP", "chargeUnit": "cumulative", "trigger": "stay_over", "triggerWeeks": 9 },
+    { "id": "lslc_visa_3", "name": "Visa 3rd Extension", "amount": 10690, "currency": "PHP", "chargeUnit": "cumulative", "trigger": "stay_over", "triggerWeeks": 13 },
+    { "id": "lslc_visa_4", "name": "Visa 4th Extension", "amount": 14350, "currency": "PHP", "chargeUnit": "cumulative", "trigger": "stay_over", "triggerWeeks": 17 },
+    { "id": "lslc_visa_5", "name": "Visa 5th Extension", "amount": 15850, "currency": "PHP", "chargeUnit": "cumulative", "trigger": "stay_over", "triggerWeeks": 21 },
+    { "id": "lslc_deposit", "name": "Dorm Deposit", "amount": 2500, "currency": "PHP", "chargeUnit": "per_person", "trigger": "enrollment", "note": "$50 또는 ₱2,500" }
+  ],
+  "packages": [],
+  "additionalCharges": [
+    { "id": "lslc_pickup", "name": "Airport Pick-Up", "amount": 30000, "currency": "KRW", "note": "편도, 환불 불가" },
+    { "id": "lslc_add_class", "name": "Additional Class (1:1, 4주)", "amount": 180000, "currency": "KRW" }
+  ],
+  "refundPolicy": "",
+  "dormitoryRules": "",
+  "generalNotes": "LSLC (La Salle Language Center). 바콜로드 소재. La Salle University 내.\n\n등록금: 100,000원. 공항 픽업: 30,000원 (편도).\n\n단기 가격표 있음 (1주/2주/3주 합산가 PDF 명시):\n- ESL Regular 1주: Total(Single) 820천원, Total(Twin) 760천원, Total(Triple) 720천원\n- Tuition 1주: 360천원 (Regular) / 390천원 (Intensive) / 400천원 (Test)\n- 비례 아님 (1주 Tuition 360 ≠ 4주 910÷4=227.5). 자료 명시 그대로.\n\nIELTS Guarantee (LIG): 12주 전용. 합산가(수업료+기숙사) Single 6,900천원 / Twin 6,450천원 / Triple 6,150천원.\n\n보험: 출국 전 필수 가입.\n\n2026년 연수비용 기준.",
+  "isActive": true,
+  "createdAt": "2026-05-29",
+  "updatedAt": "2026-05-29"
+}

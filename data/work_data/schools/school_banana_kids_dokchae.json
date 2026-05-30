@@ -1,0 +1,79 @@
+{
+  "id": "banana_kids_dokchae",
+  "schoolCode": "BANANA_KIDS_DOKCHAE",
+  "name": "BANANA KIDS 독채형 가족캠프",
+  "campus": "독채",
+  "region": "세부",
+  "schoolType": "general",
+  "minWeeks": 4,
+  "allowShortTerm": false,
+  "programTags": ["가족연수", "주니어"],
+  "registrationFee": {
+    "amount": 100000,
+    "currency": "KRW",
+    "note": "입학금 (입실 인원 당 100,000원) — 패키지에 포함"
+  },
+  "courses": [],
+  "dormitories": [],
+  "packages": [
+    {
+      "id": "bk_dokchae_family",
+      "label": "독채형 가족캠프",
+      "season": "성수기/비수기",
+      "currency": "KRW",
+      "columns": [
+        "성수기 부모님+아이 수업",
+        "비수기 아이만 수업",
+        "비수기 부모님+아이 수업"
+      ],
+      "priceMatrix": [
+        {
+          "weeks": 4,
+          "prices": [
+            { "label": "2인 / 성수기 부모님+아이", "amount": 7400000 },
+            { "label": "2인 / 비수기 아이만", "amount": 4500000 },
+            { "label": "2인 / 비수기 부모님+아이", "amount": 5400000 },
+            { "label": "3인 / 성수기 부모님+아이", "amount": 9900000 },
+            { "label": "3인 / 비수기 아이만", "amount": 6800000 },
+            { "label": "3인 / 비수기 부모님+아이", "amount": 7700000 },
+            { "label": "4인 / 성수기 부모님+아이", "amount": 12400000 },
+            { "label": "4인 / 비수기 아이만", "amount": 8400000 },
+            { "label": "4인 / 비수기 부모님+아이", "amount": 9300000 },
+            { "label": "5인 / 성수기 부모님+아이", "amount": 14500000 },
+            { "label": "5인 / 비수기 아이만", "amount": 9800000 },
+            { "label": "5인 / 비수기 부모님+아이", "amount": 11700000 }
+          ]
+        }
+      ],
+      "additionalRules": [],
+      "includes": "입학금 (입실 인원 당 100,000원)\n자녀/보호자 수업 (자녀:7타임/ 보호자: 3타임)\n독채 숙소 (체크인 토요일 오후 3시/ 체크아웃 토요일 오전 11시)\n공항 픽업 1회/샌딩 1회 서비스 (공항 ↔ 어학원 숙소)\n숙소 청소 및 세탁 (월~금 1일 1회)\n식사 3식 제공 (월~금), 식사 2식 제공 (주말 및 공휴일)\n수업 등록 학생 어학원 왕복 셔틀\nSSP/E-카드/ID카드/관리비/교재비/재료비\n전기세(4주 기준/ 400kwh 초과시 1kW 16페소 초과 징수)\n수도세/ 와이파이",
+      "excludes": "왕복 항공권\n개인 여행자 보험\n기타 개인 비용\n숙소 보증금 (인당 3,000페소)",
+      "includesLocalFees": true,
+      "schedules": [
+        { "startDate": "2026-01-05", "endDate": "2026-01-31", "season": "비수기", "weeks": 4 },
+        { "startDate": "2026-02-02", "endDate": "2026-02-28", "season": "비수기", "weeks": 4 },
+        { "startDate": "2026-03-09", "endDate": "2026-04-04", "season": "비수기", "weeks": 4 },
+        { "startDate": "2026-04-06", "endDate": "2026-05-02", "season": "비수기", "weeks": 4 },
+        { "startDate": "2026-05-04", "endDate": "2026-05-30", "season": "비수기", "weeks": 4 },
+        { "startDate": "2026-06-01", "endDate": "2026-06-07", "season": "비수기", "weeks": 4 },
+        { "startDate": "2026-06-29", "endDate": "2026-07-25", "season": "성수기", "weeks": 4 },
+        { "startDate": "2026-07-27", "endDate": "2026-08-22", "season": "성수기", "weeks": 4 },
+        { "startDate": "2026-08-31", "endDate": "2026-09-26", "season": "비수기", "weeks": 4 },
+        { "startDate": "2026-09-28", "endDate": "2026-10-24", "season": "비수기", "weeks": 4 },
+        { "startDate": "2026-10-26", "endDate": "2026-11-21", "season": "비수기", "weeks": 4 },
+        { "startDate": "2026-11-23", "endDate": "2026-12-19", "season": "비수기", "weeks": 4 },
+        { "startDate": "2027-01-04", "endDate": "2027-01-29", "season": "성수기", "weeks": 4 },
+        { "startDate": "2027-02-01", "endDate": "2027-02-26", "season": "성수기", "weeks": 4 }
+      ],
+      "note": "4주 단위 패키지. 성수기/비수기 시즌에 따라 가격 다름. 비수기에는 '아이만 수업' 옵션 있음."
+    }
+  ],
+  "surcharges": [],
+  "localFees": [],
+  "refundPolicy": "",
+  "dormitoryRules": "",
+  "generalNotes": "독채형 가족캠프. 현지납부비용이 패키지에 포함됨. 세부 바나나키즈 어학원 독채 숙소 이용.\n등록 일정은 독채형/내부숙소 공통 (4주 단위).",
+  "isActive": true,
+  "createdAt": "2026-05-29",
+  "updatedAt": "2026-05-29"
+}

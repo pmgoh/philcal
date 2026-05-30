@@ -1,0 +1,67 @@
+{
+  "id": "gitc",
+  "schoolCode": "GITC",
+  "name": "GITC (Green International Technical College)",
+  "campus": "Iloilo Campus",
+  "region": "기타",
+  "schoolType": "general",
+  "minWeeks": 1,
+  "allowShortTerm": true,
+  "programTags": ["ESL", "IELTS", "TOEIC", "TESOL", "가족", "골프"],
+  "registrationFee": { "amount": 0, "currency": "KRW", "note": "합산표에 포함" },
+  "courses": [],
+  "dormitories": [],
+  "surcharges": [],
+  "promotions": null,
+  "localFees": [
+    { "id": "gitc_pickup", "name": "Pick up (Kalibo Airport)", "amount": 5000, "currency": "PHP", "chargeUnit": "per_trip", "trigger": "enrollment", "note": "1/n (인원수 나누기)" },
+    { "id": "gitc_facility", "name": "Facility fee", "amount": 2000, "currency": "PHP", "chargeUnit": "per_4weeks", "trigger": "enrollment", "note": "1인/4주" },
+    { "id": "gitc_electricity", "name": "Electricity/Water", "amount": 0, "currency": "PHP", "chargeUnit": "per_usage", "trigger": "enrollment", "note": "사용량만큼. 대략 3,000~5,000페소/1개월/1명" },
+    { "id": "gitc_ssp", "name": "SSP", "amount": 7000, "currency": "PHP", "chargeUnit": "per_person", "trigger": "enrollment", "note": "6개월 유효" },
+    { "id": "gitc_ssp_icard", "name": "SSP I-CARD", "amount": 4000, "currency": "PHP", "chargeUnit": "per_person", "trigger": "enrollment" },
+    { "id": "gitc_acr_icard", "name": "ACRI-CARD", "amount": 4000, "currency": "PHP", "chargeUnit": "per_person", "trigger": "stay_over_59days", "triggerWeeks": 9 },
+    { "id": "gitc_id", "name": "ID", "amount": 500, "currency": "PHP", "chargeUnit": "per_person", "trigger": "enrollment", "note": "GITC 파트너 할인 제공" },
+    { "id": "gitc_textbook", "name": "Textbook", "amount": 500, "currency": "PHP", "chargeUnit": "per_book", "trigger": "enrollment" },
+    { "id": "gitc_deposit", "name": "Deposit", "amount": 2000, "currency": "PHP", "chargeUnit": "per_person", "trigger": "enrollment", "note": "환불 가능" },
+    { "id": "gitc_visa_2", "name": "Visa 2차 (~59일)", "amount": 4140, "currency": "PHP", "chargeUnit": "cumulative", "trigger": "stay_over", "triggerWeeks": 5 },
+    { "id": "gitc_visa_3", "name": "Visa 3차 (~89일)", "amount": 5410, "currency": "PHP", "chargeUnit": "cumulative", "trigger": "stay_over", "triggerWeeks": 9, "note": "I-card fee 50 USD + 1,000P 또는 total 4,000P 필요" },
+    { "id": "gitc_visa_4", "name": "Visa 4차 (~119일)", "amount": 3440, "currency": "PHP", "chargeUnit": "cumulative", "trigger": "stay_over", "triggerWeeks": 13 },
+    { "id": "gitc_visa_5", "name": "Visa 5차 (~149일)", "amount": 3440, "currency": "PHP", "chargeUnit": "cumulative", "trigger": "stay_over", "triggerWeeks": 17 },
+    { "id": "gitc_visa_6", "name": "Visa 6차 (~179일)", "amount": 3440, "currency": "PHP", "chargeUnit": "cumulative", "trigger": "stay_over", "triggerWeeks": 21 },
+    { "id": "gitc_visa_7", "name": "Visa 7차 (~209일)", "amount": 4850, "currency": "PHP", "chargeUnit": "cumulative", "trigger": "stay_over", "triggerWeeks": 25 },
+    { "id": "gitc_visa_8", "name": "Visa 8차 (239일~)", "amount": 3440, "currency": "PHP", "chargeUnit": "cumulative", "trigger": "stay_over", "triggerWeeks": 29 }
+  ],
+  "packages": [
+    {
+      "id": "gitc_peak_family",
+      "name": "성수기 가족 영어캠프 (All in One Package)",
+      "programType": "family",
+      "includesLocalFees": false,
+      "note": "현지비 별도 (항공료/공증비및입국료/개인액티비티/SSP/SSP-Card/ACR/VISA연장비/전기세/수도세/픽업). 포함: 숙식/수업(부모 1:1(2)+G(1), 자녀 Regular 1:1(4)+G(3))/임무수행(주1회 4시간)/생생현장생존영어. Kalibo/ILOILO공항 픽업 무료 아님 (불포함 명시).",
+      "includes": "숙식, 수업 (부모 1:1(2)+G(1), 자녀 Regular 1:1(4)+G(3)), 임무수행 (주1회 4시간 - 강사와함께), 생생 현장 생존영어 (only GITC)",
+      "excludes": "항공료, 공증비및입국료 (부모님이 아닌 다른분과 함께 올 경우), 개인액티비티비용, SSP, SSP-Card, ACR, VISA연장비, 전기세, 수도세, 픽업 (Kalibo/ILOILO공항 - 무료 아님)",
+      "priceMatrix": {
+        "columns": ["1주", "2주", "4주"],
+        "rows": [
+          { "label": "부모1/자녀1 - Injap Hotel", "prices": [1250000, 2220000, null] },
+          { "label": "부모1/자녀1 - Condo", "prices": [null, null, 2950000] },
+          { "label": "부모1/자녀2 - Injap Hotel", "prices": [1800000, 3200000, null] },
+          { "label": "부모1/자녀2 - Condo", "prices": [1800000, 3200000, 4300000] },
+          { "label": "부모1/자녀3 - Condo", "prices": [2450000, 4200000, 5700000] },
+          { "label": "부모2/자녀1 - Injap Hotel", "prices": [1600000, 2850000, null] },
+          { "label": "부모2/자녀1 - Condo", "prices": [1600000, 2850000, 3800000] }
+        ]
+      },
+      "currency": "KRW"
+    }
+  ],
+  "additionalCharges": [
+    { "id": "gitc_tesol", "name": "TESOL (현지비)", "amount": 12000, "currency": "PHP", "note": "4주 기준. 합산표의 TESOL 열 참조." }
+  ],
+  "refundPolicy": "",
+  "dormitoryRules": "",
+  "generalNotes": "GITC (Green International Technical College). 일로일로 소재.\n\n일반 연수 가격은 합산표 (Tuition + Accommodation + Meals). 단위 만원/4주.\n\n콘도 3종: One Spatial / Avida SMDC / Mega World.\n방타입: Single A / Single B (추천, 2Room 콘도 각각의 룸 Single Room 이용, 공동 주방/화장실) / Twin / Triple (Family 3pax).\nFamily 2인: Single Room (Studio type 1room 활용).\n3인 이상 (가족 등): 2 Room Condo 이용.\n\n합산표 가격 (만원/4주):\n[ESL Basic] Single A: One Spatial 170 / Avida 180 / Mega 195. Single B One Spatial: 155. Twin One Spatial: 145 / Avida 150 / Mega 158. Triple One Spatial: 143 / Avida 160 / Mega 180.\n[ESL Regular] Single A: 190/200/215. Twin: 165/170/178. Triple: 163/180/200.\n[Power Speaking] Single A: 205/215/230. Twin: 180/185/193. Triple: 178/195/215.\n[IELTS/TOEIC Pre~] Single A: 190/200/215. Twin: 165/170/178. Triple: 163/180/200.\n[IELTS/TOEIC Guarantee] Single A: 205/215/230. Twin: 180/185/193. Triple: 178/195/215.\n[TESOL] 12,000 Peso (별도).\n\nSingle B는 One Spatial만 가능 (Avida/Mega는 해당 사항 없음 - 각각의 룸 사이즈가 차이가 큼).\n\n골프: GITC학생 20% 할인 (카트 2인사용기준) 주중 2,830페소(약72,000원) / 주말 3,230(약82,000원). 정상가 Green fee 주중 2,100 / 주말 2,600. 캐디 600. 카트 900(2인용). 골프보험료 100.",
+  "isActive": true,
+  "createdAt": "2026-05-29",
+  "updatedAt": "2026-05-29"
+}

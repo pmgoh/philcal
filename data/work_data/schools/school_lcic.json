@@ -1,0 +1,52 @@
+{
+  "id": "lcic",
+  "schoolCode": "LCIC",
+  "name": "LCIC (Lapulapu-Cebu International College)",
+  "campus": "본원",
+  "region": "세부",
+  "schoolType": "general",
+  "minWeeks": 4,
+  "allowShortTerm": false,
+  "programTags": [
+    "대학생어학연수"
+  ],
+  "registrationFee": {
+    "amount": 200,
+    "currency": "USD"
+  },
+  "courses": [],
+  "dormitories": [],
+  "packages": [
+    {
+      "id": "lcic_short",
+      "name": "단기/장기 어학연수",
+      "includesLocalFees": true,
+      "priceMatrix": {
+        "columns": [
+          "4W",
+          "14W",
+          "18W"
+        ],
+        "rows": [
+          {
+            "label": "어학연수 (USD)",
+            "prices": [
+              2080,
+              7280,
+              9360
+            ]
+          }
+        ]
+      },
+      "currency": "USD",
+      "note": "세금 포함. 학비+숙박비+식비+수도전기세+비자+ACR I-Card+SSP 포함. 입학금 $200 별도. 교재비 별도."
+    }
+  ],
+  "surcharges": [],
+  "localFees": [],
+  "additionalCharges": [],
+  "generalNotes": "LCIC (Lapulapu-Cebu International College). 세부 소재. 대학생 어학연수 전문.\n\n대상: 일반 대학, 전문 대학, 대학원 재학생. 고3 대학 입학 확정자, 당해년 졸업생 참여 가능.\n학점 이수 과정 (각 이수 과정에 학점 부여).\n\n가격 (USD, 세금 포함):\n단기 4주: $2,080 / 장기 14주: $7,280 / 장기 18주: $9,360.\n입학금 $200 별도. 왕복항공권, 교재비 별도.\n\n포함: 학비, 숙박비, 식비, 수도/전기세, 비자, ACR I-Card, SSP 등록비.\n입학금은 어학연수 기간에 상관없이 한 번만 지불.\n환불 등으로 인해 수수료는 변동 가능.",
+  "isActive": true,
+  "createdAt": "2026-05-29",
+  "updatedAt": "2026-05-29"
+}

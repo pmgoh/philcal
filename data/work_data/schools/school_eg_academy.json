@@ -1,0 +1,434 @@
+{
+  "id": "eg_academy",
+  "schoolCode": "EG_ACADEMY",
+  "name": "EG Academy (EG 어학원)",
+  "campus": "클락 캠퍼스 (Lot 3 Friendship Highway Brgy. Cut-Cut, Angeles City 2009)",
+  "region": "클락",
+  "schoolType": "general",
+  "programTags": [
+    "성인일반",
+    "가족연수",
+    "주니어",
+    "IELTS",
+    "TOEIC",
+    "TOEFL",
+    "비즈니스",
+    "골프"
+  ],
+  "minWeeks": 1,
+  "allowShortTerm": true,
+  "registrationFee": {
+    "amount": 100000,
+    "currency": "KRW",
+    "note": "등록비 10만원 불포함 (별도)."
+  },
+  "courses": [
+    {
+      "id": "esl4",
+      "name": "ESL 4",
+      "target": "성인일반",
+      "price4Weeks": 950000,
+      "currency": "KRW",
+      "note": "4주 95만원."
+    },
+    {
+      "id": "esl6",
+      "name": "ESL 6",
+      "target": "성인일반",
+      "price4Weeks": 1270000,
+      "currency": "KRW",
+      "note": "4주 127만원."
+    },
+    {
+      "id": "esl_native_plus",
+      "name": "ESL Native Plus",
+      "target": "성인일반",
+      "price4Weeks": 1370000,
+      "currency": "KRW",
+      "note": "4주 137만원."
+    },
+    {
+      "id": "esl_native_complete",
+      "name": "ESL Native Complete",
+      "target": "성인일반",
+      "price4Weeks": 1520000,
+      "currency": "KRW",
+      "note": "4주 152만원."
+    },
+    {
+      "id": "pre_ielts",
+      "name": "Pre-IELTS",
+      "target": "성인일반",
+      "price4Weeks": 1220000,
+      "currency": "KRW",
+      "note": "4주 122만원."
+    },
+    {
+      "id": "ielts_native",
+      "name": "IELTS + NATIVE",
+      "target": "성인일반",
+      "price4Weeks": 1320000,
+      "currency": "KRW",
+      "note": "4주 132만원."
+    },
+    {
+      "id": "ielts_guarantee",
+      "name": "IELTS Score Guarantee",
+      "target": "성인일반",
+      "price4Weeks": 1370000,
+      "currency": "KRW",
+      "note": "12주 전용 보장반. 자료에 12주 합산만 표기 (1인실 7,110,000 / 2인실 6,510,000 / 4인실 5,910,000). 4주 단가는 12주÷3 기준 참고용."
+    },
+    {
+      "id": "toeic_native",
+      "name": "TOEIC + Native",
+      "target": "성인일반",
+      "price4Weeks": 1320000,
+      "currency": "KRW",
+      "note": "4주 132만원. TOEFL+Native, Business+Native 동일 가격."
+    },
+    {
+      "id": "toefl_native",
+      "name": "TOEFL + Native",
+      "target": "성인일반",
+      "price4Weeks": 1320000,
+      "currency": "KRW",
+      "note": "4주 132만원."
+    },
+    {
+      "id": "business_native",
+      "name": "Business + Native",
+      "target": "성인일반",
+      "price4Weeks": 1320000,
+      "currency": "KRW",
+      "note": "4주 132만원."
+    },
+    {
+      "id": "golf_esl",
+      "name": "GOLF + ESL",
+      "target": "성인일반",
+      "price4Weeks": 1350000,
+      "currency": "KRW",
+      "note": "4주 135만원."
+    },
+    {
+      "id": "golf_special",
+      "name": "GOLF SPECIAL",
+      "target": "성인일반",
+      "price4Weeks": 1950000,
+      "currency": "KRW",
+      "note": "4주 195만원."
+    },
+    {
+      "id": "junior_esl",
+      "name": "JUNIOR ESL",
+      "target": "주니어",
+      "price4Weeks": 1280000,
+      "currency": "KRW",
+      "note": "4주 128만원."
+    },
+    {
+      "id": "junior_native",
+      "name": "JUNIOR NATIVE",
+      "target": "주니어",
+      "price4Weeks": 1480000,
+      "currency": "KRW",
+      "note": "4주 148만원."
+    },
+    {
+      "id": "junior_ielts",
+      "name": "JUNIOR IELTS",
+      "target": "주니어",
+      "price4Weeks": 1400000,
+      "currency": "KRW",
+      "note": "4주 140만원."
+    },
+    {
+      "id": "guardian_esl",
+      "name": "GUARDIAN ESL",
+      "target": "가족연수",
+      "price4Weeks": 780000,
+      "currency": "KRW",
+      "note": "4주 78만원. 보호자 전용."
+    }
+  ],
+  "dormitories": [
+    {
+      "id": "single",
+      "name": "1인실",
+      "roomType": "1인실",
+      "target": "성인일반",
+      "price4Weeks": 1000000,
+      "currency": "KRW",
+      "note": "4주 100만원."
+    },
+    {
+      "id": "double",
+      "name": "2인실",
+      "roomType": "2인실",
+      "target": "성인일반",
+      "price4Weeks": 800000,
+      "currency": "KRW",
+      "note": "4주 80만원."
+    },
+    {
+      "id": "quad",
+      "name": "4인실",
+      "roomType": "4인실",
+      "target": "성인일반",
+      "price4Weeks": 600000,
+      "currency": "KRW",
+      "note": "4주 60만원."
+    },
+    {
+      "id": "junior_double",
+      "name": "2인실 (주니어)",
+      "roomType": "2인실",
+      "target": "주니어",
+      "price4Weeks": 800000,
+      "currency": "KRW",
+      "note": "4주 80만원."
+    },
+    {
+      "id": "junior_triple",
+      "name": "3인실 (주니어)",
+      "roomType": "3인실",
+      "target": "주니어",
+      "price4Weeks": 700000,
+      "currency": "KRW",
+      "note": "4주 70만원."
+    },
+    {
+      "id": "junior_quad",
+      "name": "4인실 (주니어)",
+      "roomType": "4인실",
+      "target": "주니어",
+      "price4Weeks": 600000,
+      "currency": "KRW",
+      "note": "4주 60만원."
+    },
+    {
+      "id": "special_4p",
+      "name": "특별실 4인",
+      "roomType": "4인실",
+      "target": "주니어",
+      "price4Weeks": 1100000,
+      "currency": "KRW",
+      "note": "4주 110만원. 주니어/가디언 전용 특별실."
+    },
+    {
+      "id": "special_5p",
+      "name": "특별실 5인",
+      "roomType": "5인실",
+      "target": "주니어",
+      "price4Weeks": 950000,
+      "currency": "KRW",
+      "note": "4주 95만원. 주니어/가디언 전용 특별실."
+    },
+    {
+      "id": "special_6p",
+      "name": "특별실 6인",
+      "roomType": "6인실",
+      "target": "주니어",
+      "price4Weeks": 800000,
+      "currency": "KRW",
+      "note": "4주 80만원. 주니어/가디언 전용 특별실."
+    }
+  ],
+  "surcharges": [],
+  "packages": [],
+  "promotions": null,
+  "localFees": [
+    {
+      "id": "deposit",
+      "name": "보증금 (DEPOSIT)",
+      "amount": 5000,
+      "currency": "PHP",
+      "trigger": "always",
+      "chargeUnit": "flat",
+      "note": "5,000페소. 가족은 10,000페소. 전기세/교재비 제외 후 반환."
+    },
+    {
+      "id": "ssp",
+      "name": "SSP",
+      "amount": 7800,
+      "currency": "PHP",
+      "trigger": "always",
+      "chargeUnit": "per_person",
+      "note": "7,800페소. 등록 기간에 따라 유효, 최대 6개월."
+    },
+    {
+      "id": "ssp_ecard",
+      "name": "SSP E-CARD",
+      "amount": 4000,
+      "currency": "PHP",
+      "trigger": "always",
+      "chargeUnit": "per_person",
+      "note": "4,000페소. 1년간 유효."
+    },
+    {
+      "id": "acr_icard",
+      "name": "ACR I-CARD",
+      "amount": 4500,
+      "currency": "PHP",
+      "trigger": "over_weeks",
+      "triggerWeeks": 8,
+      "chargeUnit": "per_person",
+      "note": "4,500페소. 8주(59일) 이상 체류시. 1년간 유효."
+    },
+    {
+      "id": "utility",
+      "name": "UTILITY FEE",
+      "amount": 500,
+      "currency": "PHP",
+      "trigger": "per_week",
+      "chargeUnit": "per_person",
+      "note": "주당 500페소. 세탁, 청소, 수도, 공용 전기 등."
+    },
+    {
+      "id": "id_card",
+      "name": "SCHOOL ID CARD",
+      "amount": 200,
+      "currency": "PHP",
+      "trigger": "always",
+      "chargeUnit": "per_person",
+      "note": "200페소."
+    },
+    {
+      "id": "electricity",
+      "name": "전기세 (ELECTRICITY)",
+      "amount": 0,
+      "currency": "PHP",
+      "trigger": "per_week",
+      "chargeUnit": "flat",
+      "note": "22페소/1kw 사용량 기준. 정액 아님."
+    },
+    {
+      "id": "pickup_clark_adult",
+      "name": "클락공항 픽업 (성인)",
+      "amount": 1000,
+      "currency": "PHP",
+      "trigger": "always",
+      "chargeUnit": "per_person",
+      "note": "클락/마발라캇 공항 1,000페소."
+    },
+    {
+      "id": "pickup_clark_family",
+      "name": "클락공항 픽업 (가족)",
+      "amount": 1500,
+      "currency": "PHP",
+      "trigger": "always",
+      "chargeUnit": "flat",
+      "note": "1,500페소 (가족 1팀, 4인까지). 4인 초과시 1인당 200페소 추가."
+    },
+    {
+      "id": "pickup_manila_adult",
+      "name": "마닐라공항 픽업 (성인)",
+      "amount": 5000,
+      "currency": "PHP",
+      "trigger": "always",
+      "chargeUnit": "per_person",
+      "note": "5,000페소."
+    },
+    {
+      "id": "pickup_manila_family",
+      "name": "마닐라공항 픽업 (가족)",
+      "amount": 6000,
+      "currency": "PHP",
+      "trigger": "always",
+      "chargeUnit": "flat",
+      "note": "6,000페소 (가족)."
+    },
+    {
+      "id": "visa_1",
+      "name": "비자연장 1차",
+      "amount": 4830,
+      "currency": "PHP",
+      "trigger": "over_weeks",
+      "triggerWeeks": 4,
+      "chargeUnit": "per_person",
+      "note": "8주 등록시."
+    },
+    {
+      "id": "visa_2",
+      "name": "비자연장 2차",
+      "amount": 6000,
+      "currency": "PHP",
+      "trigger": "over_weeks",
+      "triggerWeeks": 8,
+      "chargeUnit": "per_person",
+      "note": "12주 등록시. 최신 현지비 PDF 기준 6,000페소."
+    },
+    {
+      "id": "visa_3",
+      "name": "비자연장 3차",
+      "amount": 4530,
+      "currency": "PHP",
+      "trigger": "over_weeks",
+      "triggerWeeks": 12,
+      "chargeUnit": "per_person",
+      "note": "16주 등록시."
+    },
+    {
+      "id": "visa_4",
+      "name": "비자연장 4차",
+      "amount": 4530,
+      "currency": "PHP",
+      "trigger": "over_weeks",
+      "triggerWeeks": 16,
+      "chargeUnit": "per_person",
+      "note": "20주 등록시."
+    },
+    {
+      "id": "visa_5",
+      "name": "비자연장 5차",
+      "amount": 4530,
+      "currency": "PHP",
+      "trigger": "over_weeks",
+      "triggerWeeks": 20,
+      "chargeUnit": "per_person",
+      "note": "24주 등록시."
+    },
+    {
+      "id": "ecc",
+      "name": "ECC CLEARANCE",
+      "amount": 2000,
+      "currency": "PHP",
+      "trigger": "over_weeks",
+      "triggerWeeks": 20,
+      "chargeUnit": "per_person",
+      "note": "24주 등록시 2,000페소."
+    },
+    {
+      "id": "textbook",
+      "name": "교재비 (TEXTBOOK)",
+      "amount": 0,
+      "currency": "PHP",
+      "trigger": "always",
+      "chargeUnit": "per_person",
+      "note": "⚠️ 본사 확인 필요 — 자료에 교재비 금액 미명시. 보증금에서 차감."
+    }
+  ],
+  "additionalCharges": [],
+  "refundPolicy": "",
+  "dormitoryRules": "* 성인: 1인실/2인실/4인실\n* 주니어/가디언: 2인실/3인실/4인실/특별실4인/특별실5인/특별실6인\n* 특별실은 주니어·가디언 전용",
+  "generalNotes": "▶학원 개요◀\n* EG GRANMA ACADEMY INC. 클락 앙헬레스 시티\n* 등록비 10만원 별도\n* 단기 비율: 1주 40%, 2주 65%, 3주 85% (수업료+기숙사 합산 기준)\n\n▶IELTS Score Guarantee 보장반◀\n* 12주 전용. 자료에 12주 합산만 표기.\n* 1인실 7,110,000 / 2인실 6,510,000 / 4인실 5,910,000 (12주 합산)\n* 수업료 1,370,000/4주 기준 12주 = 4,110,000\n* 기숙사 차액: 1인실 3,000,000(12주) / 2인실 2,400,000 / 4인실 1,800,000 → 일반 기숙사 단가와 일치\n\n▶TOEIC+Native / TOEFL+Native / Business+Native◀\n* 3개 코스 동일 수업료 132만원/4주\n\n▶현지비용 참고◀\n* 최신 현지비 PDF: 2025년 9월 1일 등록자부터 적용\n* 학비표 PDF 현지비 표와 최신 현지비 PDF 차이:\n  - 비자 2차: 학비표 10,830(누적) vs 최신 6,000(단건) → 최신 PDF 기준 단건 적용\n  - 20w UTILITY: 학비표 8,000 vs 최신 10,000 → 최신 PDF 기준(500/주×20=10,000)\n  - 20w TOTAL: 학비표 50,390 vs 최신 52,390 → 최신 PDF 기준\n  - 24w TOTAL: 학비표 60,920 vs 최신 58,920 → 최신 PDF 기준\n* 전기세: 22페소/1kw 사용량 기준 (정액 아님)\n* 교재비: 금액 미명시, 보증금에서 차감\n* 비자연장 금액은 국적에 따라 다를 수 있음 (필리핀 정부 협정)",
+  "isActive": true,
+  "createdAt": "2026-05-30",
+  "updatedAt": "2026-05-30",
+  "courseShortTermRates": {
+    "mode": "percent",
+    "week1": 40,
+    "week2": 65,
+    "week3": 85,
+    "week4Included": false
+  },
+  "dormShortTermRates": {
+    "mode": "percent",
+    "week1": 40,
+    "week2": 65,
+    "week3": 85,
+    "week4Included": false
+  },
+  "shortTermDataStatus": "confirmed"
+}

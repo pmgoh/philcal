@@ -1,0 +1,250 @@
+{
+  "id": "eedu_main",
+  "schoolCode": "EEDU_MAIN",
+  "name": "A&J e-Edu 메인 캠퍼스",
+  "campus": "Main Campus",
+  "region": "바기오",
+  "schoolType": "general",
+  "minWeeks": 1,
+  "allowShortTerm": true,
+  "programTags": [
+    "ESL",
+    "IELTS",
+    "TOEIC",
+    "TOEFL",
+    "워킹홀리데이",
+    "네이티브"
+  ],
+  "registrationFee": {
+    "amount": 100000,
+    "currency": "KRW",
+    "note": "등록금 ₩100,000. 보장반(IELTS/TOEIC)은 등록금 ₩200,000."
+  },
+  "courses": [
+    {
+      "id": "eedu_m_power_esl",
+      "name": "Power ESL",
+      "classDetails": "1:1 5H",
+      "price4Weeks": 900000,
+      "currency": "KRW"
+    },
+    {
+      "id": "eedu_m_intensive_esl",
+      "name": "Intensive ESL",
+      "classDetails": "1:1 6H",
+      "price4Weeks": 1000000,
+      "currency": "KRW"
+    },
+    {
+      "id": "eedu_m_crazy_esl",
+      "name": "Crazy ESL / Native ESL",
+      "classDetails": "Crazy ESL 1:1 8H / Native ESL 1:1 6H",
+      "price4Weeks": 1200000,
+      "currency": "KRW"
+    },
+    {
+      "id": "eedu_m_toeic_toefl_ielts",
+      "name": "TOEIC / TOEFL / IELTS",
+      "classDetails": "1:1 6H",
+      "price4Weeks": 1050000,
+      "currency": "KRW"
+    },
+    {
+      "id": "eedu_m_ielts_guarantee",
+      "name": "IELTS Guarantee (보장반)",
+      "classDetails": "1:1 6H",
+      "price4Weeks": 1050000,
+      "currency": "KRW",
+      "note": "등록금 ₩200,000. 12주: 학비 315만원, 20주: 525만원, 24주: 630만원 (합산가 아닌 학비 총액)."
+    },
+    {
+      "id": "eedu_m_toeic_guarantee",
+      "name": "TOEIC Guarantee (보장반)",
+      "classDetails": "1:1 6H",
+      "price4Weeks": 1050000,
+      "currency": "KRW",
+      "note": "등록금 ₩200,000. 12주: 315만원, 16주: 420만원 (학비 총액)."
+    },
+    {
+      "id": "eedu_m_working_holiday",
+      "name": "Working Holiday",
+      "classDetails": "1:1 6H",
+      "price4Weeks": 1000000,
+      "currency": "KRW",
+      "note": "8주 200만원, 12주 300만원 (학비 총액). 등록금 8주 ₩100,000, 12주 ₩200,000."
+    }
+  ],
+  "dormitories": [
+    {
+      "id": "eedu_m_1_room",
+      "name": "1인실",
+      "price4Weeks": 1000000,
+      "currency": "KRW"
+    },
+    {
+      "id": "eedu_m_2_room",
+      "name": "2인실",
+      "price4Weeks": 800000,
+      "currency": "KRW"
+    },
+    {
+      "id": "eedu_m_3to4_room",
+      "name": "3~4인실",
+      "price4Weeks": 700000,
+      "currency": "KRW"
+    }
+  ],
+  "surcharges": [
+    {
+      "id": "eedu_m_peak",
+      "label": "성수기 추가 요금",
+      "startDate": "2026-06-29",
+      "endDate": "2026-08-22",
+      "amountPerWeek": 50000,
+      "currency": "KRW",
+      "applyTo": "courses",
+      "note": "바기오 서차지. 2026.6.29~8.22, 주당 50,000원."
+    }
+  ],
+  "longTermDiscount": [],
+  "promotions": null,
+  "localFees": [
+    {
+      "id": "eedu_m_ssp",
+      "name": "SSP",
+      "amount": 7800,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "trigger": "enrollment"
+    },
+    {
+      "id": "eedu_m_visa_8",
+      "name": "비자연장비 8주",
+      "amount": 4940,
+      "currency": "PHP",
+      "chargeUnit": "cumulative",
+      "trigger": "stay_over",
+      "triggerWeeks": 5
+    },
+    {
+      "id": "eedu_m_visa_12",
+      "name": "비자연장비 12주",
+      "amount": 11150,
+      "currency": "PHP",
+      "chargeUnit": "cumulative",
+      "trigger": "stay_over",
+      "triggerWeeks": 9
+    },
+    {
+      "id": "eedu_m_visa_16",
+      "name": "비자연장비 16주",
+      "amount": 15390,
+      "currency": "PHP",
+      "chargeUnit": "cumulative",
+      "trigger": "stay_over",
+      "triggerWeeks": 13
+    },
+    {
+      "id": "eedu_m_visa_20",
+      "name": "비자연장비 20주",
+      "amount": 19630,
+      "currency": "PHP",
+      "chargeUnit": "cumulative",
+      "trigger": "stay_over",
+      "triggerWeeks": 17
+    },
+    {
+      "id": "eedu_m_visa_24",
+      "name": "비자연장비 24주",
+      "amount": 23870,
+      "currency": "PHP",
+      "chargeUnit": "cumulative",
+      "trigger": "stay_over",
+      "triggerWeeks": 21
+    },
+    {
+      "id": "eedu_m_ecard",
+      "name": "E-CARD",
+      "amount": 4500,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "trigger": "enrollment"
+    },
+    {
+      "id": "eedu_m_icard",
+      "name": "I-CARD",
+      "amount": 4000,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "trigger": "stay_over_59days",
+      "triggerWeeks": 9
+    },
+    {
+      "id": "eedu_m_utility",
+      "name": "UTILITY (전기세/물세)",
+      "amount": 2500,
+      "currency": "PHP",
+      "chargeUnit": "per_4weeks",
+      "trigger": "enrollment"
+    },
+    {
+      "id": "eedu_m_id",
+      "name": "Academy ID Card",
+      "amount": 200,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "trigger": "enrollment"
+    },
+    {
+      "id": "eedu_m_pickup",
+      "name": "Pick Up Fee",
+      "amount": 3000,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "trigger": "enrollment",
+      "note": "클락/마닐라 동일"
+    },
+    {
+      "id": "eedu_m_deposit",
+      "name": "Deposit",
+      "amount": 3000,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "trigger": "enrollment",
+      "note": "졸업시 전액환불 (시설 이상없을 시)"
+    },
+    {
+      "id": "eedu_m_textbook",
+      "name": "교재비",
+      "amount": 1000,
+      "currency": "PHP",
+      "chargeUnit": "per_4weeks",
+      "trigger": "enrollment"
+    }
+  ],
+  "packages": [],
+  "additionalCharges": [],
+  "refundPolicy": "",
+  "dormitoryRules": "",
+  "generalNotes": "A&J e-Edu 메인 캠퍼스. 바기오 Camp 7 소재.\n\n등록금: 일반 ₩100,000 / 보장반 ₩200,000.\n모든 코스 50분 수업 + 10분 휴식.\n\n합산 역검산 기준:\n- Power ESL 1인실 4주: 등록금 10만 + 학비 90만 + 기숙사 100만 = 200만원 ✓\n- Intensive ESL 2인실 4주: 10+100+80 = 190만원 ✓\n- Crazy ESL 3~4인실 4주: 10+120+70 = 200만원 ✓\n\n성수기: 2026.6.29~8.22, 주당 5만원.\n\n프로모션: 출국일 기준 시기별 차등 할인 (별도 프로모션 파일 관리).\n가족연수 프로모션은 개인 아닌 가족 전체금액 기준 적용.",
+  "isActive": true,
+  "createdAt": "2026-05-29",
+  "updatedAt": "2026-05-30",
+  "courseShortTermRates": {
+    "mode": "percent",
+    "week1": 40,
+    "week2": 65,
+    "week3": 90,
+    "week4Included": false,
+    "note": "성수기 4주 미만 등록 불가할 수 있음"
+  },
+  "dormShortTermRates": {
+    "mode": "percent",
+    "week1": 40,
+    "week2": 65,
+    "week3": 90,
+    "week4Included": false,
+    "note": "성수기 4주 미만 등록 불가할 수 있음"
+  },
+  "shortTermDataStatus": "confirmed"
+}

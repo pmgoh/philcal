@@ -1,0 +1,26 @@
+{
+  "id": "cns_monol_camp",
+  "schoolCode": "CNS_MONOL_CAMP",
+  "name": "CNS-MONOL 주니어 여름캠프",
+  "campus": "CNS-MONOL 모놀 캠퍼스",
+  "region": "바기오",
+  "schoolType": "camp",
+  "minWeeks": 4,
+  "allowShortTerm": false,
+  "programTags": ["주니어캠프", "여름캠프"],
+  "registrationFee": { "amount": 0, "currency": "KRW", "note": "패키지에 포함" },
+  "courses": [], "dormitories": [], "surcharges": [], "promotions": null, "localFees": [],
+  "packages": [
+    { "id": "cns_monol_6w_general", "name": "6주 캠프 - 일반반", "programType": "junior", "includesLocalFees": true, "period": "2026-07-18 ~ 2026-08-28 (인천 출도착)", "note": "초등3~고등3학년. 선착순 마감. CNS-MONOL 모놀 캠퍼스.", "includes": "입학금, 영어 수업료, 숙식비(기숙사비, 3식, 청소, 빨래, 전기세, 수도세), 교재비, 주말학습비, 비자연장비, SSP발급비, 부모미동행공증비, 필리핀 입국수수료, 여행자 보험, 왕복픽업비", "excludes": "왕복 항공료 (6주 인천 출도착: 아시아나 항공), 개인 용돈 (6주 $300), 수학 수업료 (선택, 6주 30만원)", "priceMatrix": { "columns": ["캠프 비용"], "rows": [{ "weeks": 6, "prices": [5800000] }] }, "currency": "KRW" },
+    { "id": "cns_monol_6w_advanced", "name": "6주 캠프 - 고급반", "programType": "junior", "includesLocalFees": true, "period": "2026-07-18 ~ 2026-08-28 (인천 출도착)", "note": "초등3~고등3학년.", "includes": "입학금, 영어 수업료, 숙식비(기숙사비, 3식, 청소, 빨래, 전기세, 수도세), 교재비, 주말학습비, 비자연장비, SSP발급비, 부모미동행공증비, 필리핀 입국수수료, 여행자 보험, 왕복픽업비", "excludes": "왕복 항공료, 개인 용돈 (6주 $300), 수학 수업료 (선택, 6주 30만원)", "priceMatrix": { "columns": ["캠프 비용"], "rows": [{ "weeks": 6, "prices": [6200000] }] }, "currency": "KRW" },
+    { "id": "cns_monol_4w_general_incheon", "name": "4주 캠프 - 일반반 (인천)", "programType": "junior", "includesLocalFees": true, "period": "2026-08-01 ~ 2026-08-28 (인천 출도착)", "note": "초등3~고등3학년.", "includes": "입학금, 영어 수업료, 숙식비(기숙사비, 3식, 청소, 빨래, 전기세, 수도세), 교재비, 주말학습비, 비자연장비, SSP발급비, 부모미동행공증비, 필리핀 입국수수료, 여행자 보험, 왕복픽업비", "excludes": "왕복 항공료 (4주 인천 출도착: 아시아나 항공), 개인 용돈 (4주 $200), 수학 수업료 (선택, 4주 20만원)", "priceMatrix": { "columns": ["캠프 비용"], "rows": [{ "weeks": 4, "prices": [4300000] }] }, "currency": "KRW" },
+    { "id": "cns_monol_4w_advanced_incheon", "name": "4주 캠프 - 고급반 (인천)", "programType": "junior", "includesLocalFees": true, "period": "2026-08-01 ~ 2026-08-28 (인천 출도착)", "note": "초등3~고등3학년.", "includes": "입학금, 영어 수업료, 숙식비, 교재비, 주말학습비, 비자연장비, SSP발급비, 부모미동행공증비, 필리핀 입국수수료, 여행자 보험, 왕복픽업비", "excludes": "왕복 항공료, 개인 용돈 (4주 $200), 수학 수업료 (선택, 4주 20만원)", "priceMatrix": { "columns": ["캠프 비용"], "rows": [{ "weeks": 4, "prices": [4600000] }] }, "currency": "KRW" },
+    { "id": "cns_monol_4w_general_busan", "name": "4주 캠프 - 일반반 (부산)", "programType": "junior", "includesLocalFees": true, "period": "2026-08-01 ~ 2026-08-28 (부산 출도착)", "note": "초등3~고등3학년. 부산 출도착: 진에어 항공.", "includes": "입학금, 영어 수업료, 숙식비, 교재비, 주말학습비, 비자연장비, SSP발급비, 부모미동행공증비, 필리핀 입국수수료, 여행자 보험, 왕복픽업비", "excludes": "왕복 항공료 (부산 출도착: 진에어 항공), 개인 용돈 (4주 $200), 수학 수업료 (선택, 4주 20만원)", "priceMatrix": { "columns": ["캠프 비용"], "rows": [{ "weeks": 4, "prices": [4300000] }] }, "currency": "KRW" },
+    { "id": "cns_monol_4w_advanced_busan", "name": "4주 캠프 - 고급반 (부산)", "programType": "junior", "includesLocalFees": true, "period": "2026-08-01 ~ 2026-08-28 (부산 출도착)", "note": "초등3~고등3학년.", "includes": "입학금, 영어 수업료, 숙식비, 교재비, 주말학습비, 비자연장비, SSP발급비, 부모미동행공증비, 필리핀 입국수수료, 여행자 보험, 왕복픽업비", "excludes": "왕복 항공료 (부산 출도착: 진에어 항공), 개인 용돈 (4주 $200), 수학 수업료 (선택, 4주 20만원)", "priceMatrix": { "columns": ["캠프 비용"], "rows": [{ "weeks": 4, "prices": [4600000] }] }, "currency": "KRW" }
+  ],
+  "additionalCharges": [],
+  "generalNotes": "CNS-MONOL 주니어 여름캠프. 바기오 모놀 캠퍼스.\n초등3~고등3학년. 선착순.\n현지비용 모두 포함.\n미포함: 왕복 항공료, 개인 용돈, 수학 수업료(선택).",
+  "isActive": true,
+  "createdAt": "2026-05-29",
+  "updatedAt": "2026-05-29"
+}

@@ -1,0 +1,207 @@
+{
+  "id": "glant",
+  "schoolCode": "GLANT",
+  "name": "GLANT English Academy",
+  "campus": "본원",
+  "region": "세부",
+  "schoolType": "general",
+  "minWeeks": 1,
+  "allowShortTerm": true,
+  "shortTermDataStatus": "confirmed",
+  "programTags": [
+    "ESL",
+    "IELTS",
+    "원어민",
+    "가족연수"
+  ],
+  "registrationFee": {
+    "amount": 100000,
+    "currency": "KRW",
+    "note": "입학금 10만원 (등록 시 사전납부). 공항픽업 3만원 별도."
+  },
+  "courses": [
+    {
+      "id": "glant_regular",
+      "name": "Regular",
+      "price4Weeks": 990000,
+      "currency": "KRW",
+      "note": "LT 1:1 4h + LT SG 1h + NT G 1h = 6h/day. 레벨별 다수 1:1 수업."
+    },
+    {
+      "id": "glant_intensive",
+      "name": "Intensive",
+      "price4Weeks": 1180000,
+      "currency": "KRW",
+      "note": "LT 1:1 5h + LT SG 1h + NT G 1h = 7h/day. 최다 1:1 수업."
+    },
+    {
+      "id": "glant_premium",
+      "name": "Premium",
+      "price4Weeks": 1470000,
+      "currency": "KRW",
+      "note": "LT 1:1 4h + NT 1:1 1h + LT SG 1h + NT G 1h = 7h/day. 원어민 1:1 포함."
+    },
+    {
+      "id": "glant_mini",
+      "name": "Mini",
+      "price4Weeks": 760000,
+      "currency": "KRW",
+      "note": "LT 1:1 4h = 4h/day. 보호자 또는 짧은 일정 선호자용."
+    },
+    {
+      "id": "glant_ielts",
+      "name": "IELTS",
+      "price4Weeks": 1110000,
+      "currency": "KRW",
+      "note": "LT 1:1 4h + LT SG 1h + NT G 1h = 6h/day. IELTS 수험영어."
+    }
+  ],
+  "dormitories": [
+    {
+      "id": "glant_1p",
+      "name": "1인실",
+      "price4Weeks": 960000,
+      "currency": "KRW",
+      "note": "평일 3끼, 주말 2끼 식사 포함."
+    },
+    {
+      "id": "glant_2p",
+      "name": "2인실",
+      "price4Weeks": 800000,
+      "currency": "KRW",
+      "note": "평일 3끼, 주말 2끼 식사 포함."
+    },
+    {
+      "id": "glant_3p",
+      "name": "3인실",
+      "price4Weeks": 700000,
+      "currency": "KRW",
+      "note": "평일 3끼, 주말 2끼 식사 포함."
+    }
+  ],
+  "dormShortTermRates": {
+    "mode": "percent",
+    "week1": 25,
+    "week2": 50,
+    "week3": 75,
+    "week4Included": false
+  },
+  "packages": [],
+  "surcharges": [],
+  "localFees": [
+    {
+      "id": "glant_ssp_ecard",
+      "name": "SSP + E-Card",
+      "amount": 12000,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "note": "SSP와 E-Card 합산."
+    },
+    {
+      "id": "glant_visa_1",
+      "name": "1차 비자연장",
+      "amount": 4700,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "triggerWeeks": 5,
+      "note": "30일 이상 체류 시."
+    },
+    {
+      "id": "glant_management",
+      "name": "관리비 (기숙)",
+      "amount": 2000,
+      "currency": "PHP",
+      "chargeUnit": "per_4weeks",
+      "note": "4주 기준. 공용전기, 수도세, 기타 관리비. 기숙사 입주자만."
+    },
+    {
+      "id": "glant_deposit",
+      "name": "보증금",
+      "amount": 2000,
+      "currency": "PHP",
+      "chargeUnit": "per_4weeks",
+      "note": "4주 기준. 전기세 차감 후 환불."
+    },
+    {
+      "id": "glant_idcard",
+      "name": "ID Card",
+      "amount": 200,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "note": "분실 시 200페소 재발급."
+    },
+    {
+      "id": "glant_textbook",
+      "name": "교재비",
+      "amount": 350,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "note": "교재별 200~500페소. 평균 350페소."
+    },
+    {
+      "id": "glant_laundry",
+      "name": "세탁비 (기숙)",
+      "amount": 33,
+      "currency": "PHP",
+      "chargeUnit": "per_kg",
+      "note": "kg당 33페소. 최소 3kg. 기숙사 입주자."
+    },
+    {
+      "id": "glant_pickup",
+      "name": "공항픽업",
+      "amount": 30000,
+      "currency": "KRW",
+      "chargeUnit": "per_person",
+      "note": "3만원."
+    }
+  ],
+  "additionalCharges": [
+    {
+      "id": "glant_add_nt11",
+      "label": "미국인 1:1 추가 (4주)",
+      "amount": 480000,
+      "currency": "KRW"
+    },
+    {
+      "id": "glant_add_lt11",
+      "label": "필리핀 1:1 추가 (4주)",
+      "amount": 190000,
+      "currency": "KRW"
+    },
+    {
+      "id": "glant_electricity",
+      "label": "전기세",
+      "amount": 20,
+      "unit": "1kw당",
+      "currency": "PHP",
+      "note": "보증금에서 차감. 초과 시 추가 납부. 개별 미터기 설치."
+    },
+    {
+      "id": "glant_walkin_lunch",
+      "label": "통학 점심 식대 (4주)",
+      "amount": 4000,
+      "currency": "PHP",
+      "note": "통학생 점심. 1끼 200페소 × 20회."
+    },
+    {
+      "id": "glant_walkin_shuttle",
+      "label": "통학 차량비 (4주)",
+      "amount": 2000,
+      "currency": "PHP",
+      "note": "알리시아 무료. 미도리/IT파크 내 가능. 1인 추가 시 1,000페소 추가."
+    }
+  ],
+  "refundPolicy": "입학 1주 전 취소: 입학금 제외 100% 환불.\n입학 1주 전~입학 전 취소: 입금액의 80% 환불.\n연수기간 25% 이내 취소: 수업한 주 제외한 연수비용 중 50% 환불.\n연수기간 25% 이후 취소: 환불 없음.",
+  "dormitoryRules": "",
+  "generalNotes": "GLANT English Academy. 세부 소재. 2026년 2월 23일 이후 시작자부터 적용.\n\n[강사] LT=필리핀 선생, NT=원어민(미국/영국인). SG=소그룹(6인 이하), G=그룹(8~10인).\n\n[단기 가격]\n기숙사: 1~3주는 주당 가격 적용 (1인실 26만/주, 2인실 22만/주, 3인실 19만/주). 2주/3주는 × 합산.\n코스: 합산표 기준. 정비례 아닌 별도 단가.\n\n[통학(stayout) 가능] 수업만 등록 가능. 통학 시 현지비용: 점심 식대 4,000페소/4주 + 통학차량비 2,000페소/4주(알리시아 무료).\n\n[합산표 총액 검산]\nRegular+1인실 4w: 99만+96만=195만 ✓\nIntensive+2인실 4w: 118만+80만=198만 ✓\nIELTS+3인실 4w: 111만+70만+입학금10만=191만? → 합산표에 입학금 미포함(별도).\n\n학비 및 입학금은 연수시작 4주 전까지 전액 납부.",
+  "isActive": true,
+  "createdAt": "2026-05-29",
+  "updatedAt": "2026-05-30",
+  "courseShortTermRates": {
+    "mode": "percent",
+    "week1": 25,
+    "week2": 50,
+    "week3": 75,
+    "week4Included": false
+  }
+}

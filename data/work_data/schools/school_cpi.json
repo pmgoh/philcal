@@ -1,0 +1,292 @@
+{
+  "id": "cpi",
+  "schoolCode": "CPI",
+  "name": "CPI (Cebu Pelis Institute)",
+  "campus": "본원",
+  "region": "세부",
+  "schoolType": "general",
+  "minWeeks": 1,
+  "allowShortTerm": true,
+  "programTags": [
+    "ESL",
+    "IELTS",
+    "토익",
+    "토플",
+    "주니어",
+    "가족연수"
+  ],
+  "registrationFee": {
+    "amount": 100000,
+    "currency": "KRW",
+    "note": "등록금 10만원"
+  },
+  "courses": [
+    {
+      "id": "cpi_ge",
+      "name": "GE (General English)",
+      "price4Weeks": 970000,
+      "currency": "KRW"
+    },
+    {
+      "id": "cpi_test_prep",
+      "name": "TOEIC/IELTS/TOEFL/ESP Prep",
+      "price4Weeks": 1020000,
+      "currency": "KRW"
+    },
+    {
+      "id": "cpi_intensive_ge",
+      "name": "Intensive GE",
+      "price4Weeks": 1070000,
+      "currency": "KRW"
+    },
+    {
+      "id": "cpi_test_general",
+      "name": "TOEIC/TOEFL/IELTS/ESP General",
+      "price4Weeks": 1070000,
+      "currency": "KRW"
+    },
+    {
+      "id": "cpi_test_intensive",
+      "name": "TOEIC/IELTS/TOEFL Intensive",
+      "price4Weeks": 1120000,
+      "currency": "KRW"
+    },
+    {
+      "id": "cpi_test_guaranteed",
+      "name": "TOEIC/IELTS/TOEFL Guaranteed",
+      "price4Weeks": 1170000,
+      "currency": "KRW"
+    },
+    {
+      "id": "cpi_diet",
+      "name": "DIET PROGRAM (보호자)",
+      "price4Weeks": 850000,
+      "currency": "KRW"
+    },
+    {
+      "id": "cpi_junior",
+      "name": "주니어 프로그램",
+      "price4Weeks": 1430000,
+      "currency": "KRW"
+    }
+  ],
+  "dormitories": [
+    {
+      "id": "cpi_a_single",
+      "name": "Room A Deluxe Single (6)",
+      "price4Weeks": 1430000,
+      "currency": "KRW"
+    },
+    {
+      "id": "cpi_a_double",
+      "name": "Room A Deluxe Double (20)",
+      "price4Weeks": 1080000,
+      "currency": "KRW"
+    },
+    {
+      "id": "cpi_a_triple",
+      "name": "Room A Deluxe Triple (34)",
+      "price4Weeks": 910000,
+      "currency": "KRW"
+    },
+    {
+      "id": "cpi_a_quad",
+      "name": "Room A Deluxe Quad (6)",
+      "price4Weeks": 810000,
+      "currency": "KRW"
+    },
+    {
+      "id": "cpi_b_single",
+      "name": "Room B Superior Single (2)",
+      "price4Weeks": 1530000,
+      "currency": "KRW"
+    },
+    {
+      "id": "cpi_b_double_a",
+      "name": "Room B Superior Double A (2)",
+      "price4Weeks": 1230000,
+      "currency": "KRW"
+    },
+    {
+      "id": "cpi_b_double_b",
+      "name": "Room B Superior Double B (3)",
+      "price4Weeks": 1180000,
+      "currency": "KRW"
+    },
+    {
+      "id": "cpi_b_triple",
+      "name": "Room B Superior Triple (5)",
+      "price4Weeks": 1010000,
+      "currency": "KRW"
+    },
+    {
+      "id": "cpi_b_quad_family",
+      "name": "Room B Superior Quad (5) Family only",
+      "price4Weeks": 910000,
+      "currency": "KRW"
+    },
+    {
+      "id": "cpi_b_hexa",
+      "name": "Room B Superior Hexa (2)",
+      "price4Weeks": 810000,
+      "currency": "KRW"
+    }
+  ],
+  "packages": [
+    {
+      "id": "cpi_junior_camp_summer_2026",
+      "label": "2026 여름 주니어캠프",
+      "season": "성수기",
+      "currency": "KRW",
+      "columns": [
+        "4주"
+      ],
+      "priceMatrix": [
+        {
+          "weeks": 4,
+          "prices": [
+            {
+              "label": "4주 과정",
+              "amount": 4600000
+            }
+          ]
+        }
+      ],
+      "includes": "수업료, 왕복 항공권, SSP, 교재비, 부모 미동반 공증, 숙박 및 식사, 여행자 보험, 입국 수수료, 주말 액티비티, 픽업&샌딩, 단체복",
+      "excludes": "개인 용돈 (4주 150$ 신권으로 준비)",
+      "includesLocalFees": true,
+      "note": "계약금 50만원 / 잔금 410만원.\n취소 시 환불: 계약금 환불 불가.\n왕복 항공권 개인 구매 시 390만원."
+    }
+  ],
+  "surcharges": [],
+  "localFees": [
+    {
+      "id": "cpi_ssp",
+      "name": "SSP",
+      "amount": 7800,
+      "currency": "PHP",
+      "chargeUnit": "per_person"
+    },
+    {
+      "id": "cpi_ssp_acr",
+      "name": "SSP ACR I-CARD (학생비자)",
+      "amount": 4500,
+      "currency": "PHP",
+      "chargeUnit": "per_person"
+    },
+    {
+      "id": "cpi_tourist_acr",
+      "name": "Tourist ACR I-CARD (59일이상)",
+      "amount": 4500,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "triggerWeeks": 9
+    },
+    {
+      "id": "cpi_deposit",
+      "name": "Deposit",
+      "amount": 3000,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "note": "마지막 주 환불"
+    },
+    {
+      "id": "cpi_electric_base",
+      "name": "기본전기세 (4주)",
+      "amount": 2000,
+      "currency": "PHP",
+      "chargeUnit": "per_4weeks"
+    },
+    {
+      "id": "cpi_water",
+      "name": "기본수도세 (4주)",
+      "amount": 1500,
+      "currency": "PHP",
+      "chargeUnit": "per_4weeks"
+    },
+    {
+      "id": "cpi_material",
+      "name": "Material fee (4주)",
+      "amount": 1000,
+      "currency": "PHP",
+      "chargeUnit": "per_4weeks"
+    },
+    {
+      "id": "cpi_maintenance",
+      "name": "관리비 (4주)",
+      "amount": 1000,
+      "currency": "PHP",
+      "chargeUnit": "per_4weeks"
+    },
+    {
+      "id": "cpi_id",
+      "name": "School ID Card",
+      "amount": 350,
+      "currency": "PHP",
+      "chargeUnit": "per_person"
+    },
+    {
+      "id": "cpi_textbook",
+      "name": "책값/권당",
+      "amount": 400,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "note": "평균 P400"
+    },
+    {
+      "id": "cpi_pickup",
+      "name": "Pick-up",
+      "amount": 1000,
+      "currency": "PHP",
+      "chargeUnit": "per_visit",
+      "note": "주말 1,000 / 평일 1,500"
+    },
+    {
+      "id": "cpi_visa_1",
+      "name": "비자연장 1차 (8주)",
+      "amount": 5140,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "triggerWeeks": 5
+    },
+    {
+      "id": "cpi_visa_2",
+      "name": "비자연장 2차 (12주)",
+      "amount": 6410,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "triggerWeeks": 9
+    },
+    {
+      "id": "cpi_visa_3",
+      "name": "비자연장 3차 (16주)",
+      "amount": 4440,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "triggerWeeks": 13
+    },
+    {
+      "id": "cpi_visa_4",
+      "name": "비자연장 4차 (20주)",
+      "amount": 4440,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "triggerWeeks": 17
+    },
+    {
+      "id": "cpi_visa_5",
+      "name": "비자연장 5차 (24주)",
+      "amount": 4440,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "triggerWeeks": 21
+    }
+  ],
+  "refundPolicy": "남은 기간 12주 이상: 50% 환불. 8주~12주 미만: 40% 환불. 4주~8주 미만: 30% 환불. 4주 미만: 환불 없음.\n현지 납부 현지납부금 환불 없음. 할인 받은 경우 할인금액 상쇄 후 환불(유학원).",
+  "dormitoryRules": "304 Suite Room(1): 1박2일 P5,000 — 포함내역: 식사-1인, 공공요금, 시강, 편의시설 사용 / 1인 추가 시 명당 P2,000 / 최대 4인.\n추가 숙식: 1인실 P2,000, 2인실 P1,800, 3인실 P1,500, 4인실 P1,200.\n전기세: 1인실 P20/kw, 2인실 P15/kw, 3인실 P10/kw, 4인실 P8/kw, 6~8인실 방 P4 거실 P2.\n보증금 P3,000.",
+  "generalNotes": "CPI (Cebu Pelis Institute).\n\n숙소 2종류: Room A (Deluxe), Room B (Superior).\n코스 변경: ORIENTATION 시작 전 환불/변경 가능, 이후 환불 없이 변경 가능.\n수업 추가: 1:1 ESL P7,000, ACADEMIC P7,500. 1:4 ESL P3,000, ACADEMIC P4,000.\n\n단기 코스: Rapid Progress 30 (1주 575,000원), Rapid Progress 60 (2주 795,000원).\n\n주말 픽업: P1,000, 평일 픽업: P1,500, 평일 샌딩: P1,000. 무료 샌딩 서비스 이용/샌딩 시간은 차량 스케줄에 따라 배정.",
+  "isActive": true,
+  "createdAt": "2026-05-29",
+  "updatedAt": "2026-05-30",
+  "shortTermDataStatus": "unconfirmed"
+}

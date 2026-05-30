@@ -1,0 +1,301 @@
+{
+  "id": "cia",
+  "schoolCode": "CIA",
+  "name": "CIA (Cebu International Academy)",
+  "campus": "본원",
+  "region": "세부",
+  "schoolType": "general",
+  "minWeeks": 1,
+  "allowShortTerm": true,
+  "programTags": [
+    "ESL",
+    "IELTS",
+    "토익",
+    "비즈니스",
+    "워킹홀리데이"
+  ],
+  "courseShortTermRates": {
+    "mode": "percent",
+    "week1": 40,
+    "week2": 60,
+    "week3": 80,
+    "week4Included": false
+  },
+  "registrationFee": {
+    "amount": 100000,
+    "currency": "KRW",
+    "note": "등록금 10만원"
+  },
+  "courses": [
+    {
+      "id": "cia_esl_regular",
+      "name": "ESL Regular",
+      "price4Weeks": 900000,
+      "currency": "KRW"
+    },
+    {
+      "id": "cia_esl_intensive",
+      "name": "ESL Intensive",
+      "price4Weeks": 1000000,
+      "currency": "KRW"
+    },
+    {
+      "id": "cia_esl_power_intensive",
+      "name": "ESL Power Intensive",
+      "price4Weeks": 1100000,
+      "currency": "KRW"
+    },
+    {
+      "id": "cia_working_holiday",
+      "name": "Working Holiday",
+      "price4Weeks": 950000,
+      "currency": "KRW"
+    },
+    {
+      "id": "cia_certified_university",
+      "name": "Certified University",
+      "price4Weeks": 1000000,
+      "currency": "KRW"
+    },
+    {
+      "id": "cia_callan_method",
+      "name": "Callan Method",
+      "price4Weeks": 1050000,
+      "currency": "KRW"
+    },
+    {
+      "id": "cia_toeic",
+      "name": "TOEIC (Pre/Regular/Guarantee)",
+      "price4Weeks": 1000000,
+      "currency": "KRW"
+    },
+    {
+      "id": "cia_ielts",
+      "name": "IELTS (Pre/Regular/Guarantee)",
+      "price4Weeks": 1150000,
+      "currency": "KRW"
+    },
+    {
+      "id": "cia_business",
+      "name": "Business Course",
+      "price4Weeks": 1050000,
+      "currency": "KRW"
+    }
+  ],
+  "dormitories": [
+    {
+      "id": "cia_premium_single",
+      "name": "Premium Single",
+      "price4Weeks": 1900000,
+      "currency": "KRW"
+    },
+    {
+      "id": "cia_standard_single",
+      "name": "Standard Single",
+      "price4Weeks": 1700000,
+      "currency": "KRW"
+    },
+    {
+      "id": "cia_twin",
+      "name": "Twin",
+      "price4Weeks": 1250000,
+      "currency": "KRW"
+    },
+    {
+      "id": "cia_triple",
+      "name": "Triple",
+      "price4Weeks": 1050000,
+      "currency": "KRW"
+    },
+    {
+      "id": "cia_quad",
+      "name": "Quad",
+      "price4Weeks": 900000,
+      "currency": "KRW"
+    },
+    {
+      "id": "cia_suite_single",
+      "name": "Suite Single",
+      "price4Weeks": 2900000,
+      "currency": "KRW"
+    },
+    {
+      "id": "cia_suite_twin",
+      "name": "Suite Twin",
+      "price4Weeks": 1700000,
+      "currency": "KRW"
+    },
+    {
+      "id": "cia_suite_triple",
+      "name": "Suite Triple",
+      "price4Weeks": 1400000,
+      "currency": "KRW"
+    },
+    {
+      "id": "cia_suite_quad",
+      "name": "Suite Quad",
+      "price4Weeks": 1200000,
+      "currency": "KRW"
+    },
+    {
+      "id": "cia_pinnacle_single",
+      "name": "Pinnacle Single",
+      "price4Weeks": 1900000,
+      "currency": "KRW"
+    }
+  ],
+  "packages": [],
+  "surcharges": [
+    {
+      "id": "cia_summer_surcharge_2026",
+      "name": "여름 성수기 서차지 2026",
+      "amountPerWeek": 50000,
+      "currency": "KRW",
+      "startDate": "2026-06-14",
+      "endDate": "2026-08-08",
+      "note": "서차지 포함 비용에서 학비&기숙사 10% 유학원 할인 가능."
+    },
+    {
+      "id": "cia_winter_surcharge_2027",
+      "name": "겨울 성수기 서차지 2027",
+      "amountPerWeek": 50000,
+      "currency": "KRW",
+      "startDate": "2027-01-17",
+      "endDate": "2027-02-13"
+    }
+  ],
+  "localFees": [
+    {
+      "id": "cia_pickup",
+      "name": "공항 픽업/샌딩",
+      "amount": 1000,
+      "currency": "PHP",
+      "chargeUnit": "per_visit",
+      "note": "주말(토,일) 1,000P / 평일(월~금) 1,500P"
+    },
+    {
+      "id": "cia_ssp",
+      "name": "SSP",
+      "amount": 8000,
+      "currency": "PHP",
+      "chargeUnit": "per_person"
+    },
+    {
+      "id": "cia_ssp_ecard",
+      "name": "SSP E-CARD",
+      "amount": 4500,
+      "currency": "PHP",
+      "chargeUnit": "per_person"
+    },
+    {
+      "id": "cia_icard",
+      "name": "I-CARD",
+      "amount": 4500,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "trigger": "8주 초과",
+      "triggerWeeks": 9
+    },
+    {
+      "id": "cia_deposit",
+      "name": "보증금",
+      "amount": 2500,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "note": "퇴실시 환불"
+    },
+    {
+      "id": "cia_misc",
+      "name": "종합관리비",
+      "amount": 1000,
+      "currency": "PHP",
+      "chargeUnit": "per_week",
+      "note": "4주당 4,000P"
+    },
+    {
+      "id": "cia_electric",
+      "name": "전기세",
+      "amount": 500,
+      "currency": "PHP",
+      "chargeUnit": "per_week",
+      "note": "4주당 2,000P"
+    },
+    {
+      "id": "cia_water",
+      "name": "수도세",
+      "amount": 250,
+      "currency": "PHP",
+      "chargeUnit": "per_week",
+      "note": "4주당 1,000P"
+    },
+    {
+      "id": "cia_textbook",
+      "name": "교재비",
+      "amount": 2000,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "note": "코스에 따라 상이"
+    },
+    {
+      "id": "cia_photo",
+      "name": "ID CARD / 사진비",
+      "amount": 200,
+      "currency": "PHP",
+      "chargeUnit": "per_person"
+    },
+    {
+      "id": "cia_visa_1",
+      "name": "비자연장 1차 (8주)",
+      "amount": 5130,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "triggerWeeks": 5
+    },
+    {
+      "id": "cia_visa_2",
+      "name": "비자연장 2차 (12주)",
+      "amount": 11540,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "triggerWeeks": 9
+    },
+    {
+      "id": "cia_visa_3",
+      "name": "비자연장 3차 (16주)",
+      "amount": 16080,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "triggerWeeks": 13
+    },
+    {
+      "id": "cia_visa_4",
+      "name": "비자연장 4차 (20주)",
+      "amount": 20620,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "triggerWeeks": 17
+    },
+    {
+      "id": "cia_visa_5",
+      "name": "비자연장 5차 (24주)",
+      "amount": 25160,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "triggerWeeks": 21
+    }
+  ],
+  "refundPolicy": "",
+  "dormitoryRules": "",
+  "generalNotes": "CIA (Cebu International Academy) 2026.\n\n단기 등록: 3주 80%, 2주 60%, 1주 40%.\n\n서차지 기간:\n여름 2026: 6/14~8/8 (8주), 2027: 6/13~8/7 (8주)\n겨울 2027: 1/17~2/13 (4주), 2028: 1/16~2/12 (4주)\n\n현지비용은 현지 사정에 따라 예고 없이 변경 가능.\n교재는 코스 변경 등에 따라 추가 구입 필요 가능.",
+  "isActive": true,
+  "createdAt": "2026-05-29",
+  "updatedAt": "2026-05-30",
+  "dormShortTermRates": {
+    "mode": "percent",
+    "week1": 40,
+    "week2": 60,
+    "week3": 80,
+    "week4Included": false
+  },
+  "shortTermDataStatus": "confirmed"
+}

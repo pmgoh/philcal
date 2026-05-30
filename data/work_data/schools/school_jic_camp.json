@@ -1,0 +1,128 @@
+{
+  "id": "jic_camp",
+  "schoolCode": "JIC_CAMP",
+  "name": "JIC 주니어 여름 캠프",
+  "campus": "MCO 캠퍼스 (캠프 전용)",
+  "region": "바기오",
+  "schoolType": "camp",
+  "minWeeks": 3,
+  "allowShortTerm": false,
+  "programTags": ["주니어캠프", "여름캠프"],
+  "registrationFee": { "amount": 0, "currency": "KRW", "note": "패키지에 포함" },
+  "courses": [],
+  "dormitories": [],
+  "surcharges": [],
+  "promotions": null,
+  "localFees": [],
+  "packages": [
+    {
+      "id": "jic_camp_6w_esl",
+      "name": "6주 캠프 - ESL",
+      "programType": "junior",
+      "includesLocalFees": true,
+      "period": "2026-07-12 ~ 2026-08-22",
+      "note": "초등학교 3학년 ~ 고등학교 3학년. 4인실. 현지비용 포함.",
+      "includes": "입학금, 수업료, 교재비, 학생카드 & 수료증, 액티비티 참가비, 숙식비 (기숙사비, 식사, 간식, 외식비, 청소 & 빨래, 전기 & 수도세), SSP 발급비, 비자 연장비, 해외여행자보험, 부모 미동반 공증비 & 필리핀 부모 미동반 입국세, 공항 수수료, 픽업 & 샌딩비",
+      "excludes": "왕복 항공료, 개인 용돈 (6주 $200), 수학 과외비 (선택, 6주 30만원)",
+      "priceMatrix": {
+        "columns": ["캠프 비용"],
+        "rows": [
+          { "weeks": 6, "prices": [5700000] }
+        ]
+      },
+      "currency": "KRW"
+    },
+    {
+      "id": "jic_camp_6w_exam",
+      "name": "6주 캠프 - 시험준비반",
+      "programType": "junior",
+      "includesLocalFees": true,
+      "period": "2026-07-12 ~ 2026-08-22",
+      "note": "초등학교 3학년 ~ 고등학교 3학년. 4인실. 현지비용 포함.",
+      "includes": "입학금, 수업료, 교재비, 학생카드 & 수료증, 액티비티 참가비, 숙식비 (기숙사비, 식사, 간식, 외식비, 청소 & 빨래, 전기 & 수도세), SSP 발급비, 비자 연장비, 해외여행자보험, 부모 미동반 공증비 & 필리핀 부모 미동반 입국세, 공항 수수료, 픽업 & 샌딩비",
+      "excludes": "왕복 항공료, 개인 용돈 (6주 $200), 수학 과외비 (선택, 6주 30만원)",
+      "priceMatrix": {
+        "columns": ["캠프 비용"],
+        "rows": [
+          { "weeks": 6, "prices": [6100000] }
+        ]
+      },
+      "currency": "KRW"
+    },
+    {
+      "id": "jic_camp_4w_esl",
+      "name": "4주 캠프 - ESL",
+      "programType": "junior",
+      "includesLocalFees": true,
+      "period": "2026-07-26 ~ 2026-08-22",
+      "note": "초등학교 3학년 ~ 고등학교 3학년. 4인실. 현지비용 포함.",
+      "includes": "입학금, 수업료, 교재비, 학생카드 & 수료증, 액티비티 참가비, 숙식비 (기숙사비, 식사, 간식, 외식비, 청소 & 빨래, 전기 & 수도세), SSP 발급비, 비자 연장비, 해외여행자보험, 부모 미동반 공증비 & 필리핀 부모 미동반 입국세, 공항 수수료, 픽업 & 샌딩비",
+      "excludes": "왕복 항공료, 개인 용돈 (4주 $150), 수학 과외비 (선택, 4주 20만원)",
+      "priceMatrix": {
+        "columns": ["캠프 비용"],
+        "rows": [
+          { "weeks": 4, "prices": [4300000] }
+        ]
+      },
+      "currency": "KRW"
+    },
+    {
+      "id": "jic_camp_4w_exam",
+      "name": "4주 캠프 - 시험준비반",
+      "programType": "junior",
+      "includesLocalFees": true,
+      "period": "2026-07-26 ~ 2026-08-22",
+      "note": "초등학교 3학년 ~ 고등학교 3학년. 4인실. 현지비용 포함.",
+      "includes": "입학금, 수업료, 교재비, 학생카드 & 수료증, 액티비티 참가비, 숙식비 (기숙사비, 식사, 간식, 외식비, 청소 & 빨래, 전기 & 수도세), SSP 발급비, 비자 연장비, 해외여행자보험, 부모 미동반 공증비 & 필리핀 부모 미동반 입국세, 공항 수수료, 픽업 & 샌딩비",
+      "excludes": "왕복 항공료, 개인 용돈 (4주 $150), 수학 과외비 (선택, 4주 20만원)",
+      "priceMatrix": {
+        "columns": ["캠프 비용"],
+        "rows": [
+          { "weeks": 4, "prices": [4600000] }
+        ]
+      },
+      "currency": "KRW"
+    },
+    {
+      "id": "jic_camp_3w_esl",
+      "name": "3주 캠프 - ESL",
+      "programType": "junior",
+      "includesLocalFees": true,
+      "period": "2026-07-26 ~ 2026-08-15",
+      "note": "초등학교 3학년 ~ 고등학교 3학년. 4인실. 현지비용 포함.",
+      "includes": "입학금, 수업료, 교재비, 학생카드 & 수료증, 액티비티 참가비, 숙식비 (기숙사비, 식사, 간식, 외식비, 청소 & 빨래, 전기 & 수도세), SSP 발급비, 비자 연장비, 해외여행자보험, 부모 미동반 공증비 & 필리핀 부모 미동반 입국세, 공항 수수료, 픽업 & 샌딩비",
+      "excludes": "왕복 항공료, 개인 용돈 (3주 $100), 수학 과외비 (선택, 3주 15만원)",
+      "priceMatrix": {
+        "columns": ["캠프 비용"],
+        "rows": [
+          { "weeks": 3, "prices": [3500000] }
+        ]
+      },
+      "currency": "KRW"
+    },
+    {
+      "id": "jic_camp_3w_exam",
+      "name": "3주 캠프 - 시험준비반",
+      "programType": "junior",
+      "includesLocalFees": true,
+      "period": "2026-07-26 ~ 2026-08-15",
+      "note": "초등학교 3학년 ~ 고등학교 3학년. 4인실. 현지비용 포함.",
+      "includes": "입학금, 수업료, 교재비, 학생카드 & 수료증, 액티비티 참가비, 숙식비 (기숙사비, 식사, 간식, 외식비, 청소 & 빨래, 전기 & 수도세), SSP 발급비, 비자 연장비, 해외여행자보험, 부모 미동반 공증비 & 필리핀 부모 미동반 입국세, 공항 수수료, 픽업 & 샌딩비",
+      "excludes": "왕복 항공료, 개인 용돈 (3주 $100), 수학 과외비 (선택, 3주 15만원)",
+      "priceMatrix": {
+        "columns": ["캠프 비용"],
+        "rows": [
+          { "weeks": 3, "prices": [3800000] }
+        ]
+      },
+      "currency": "KRW"
+    }
+  ],
+  "additionalCharges": [],
+  "refundPolicy": "",
+  "dormitoryRules": "",
+  "generalNotes": "JIC 주니어 여름 캠프. 바기오 MCO 캠퍼스.\n\n대상: 초등학교 3학년 ~ 고등학교 3학년.\n기숙사: 4인실.\n모든 패키지 현지비용 포함 (입학금/수업료/교재비/학생카드/액티비티/숙식비/SSP/비자연장/해외여행자보험/공증비/입국세/픽업&샌딩).\n\n미포함: 왕복 항공료, 개인 용돈, 수학 과외비(선택).\n\n준비 서류: 여권 원본(출국일 기준 6개월 이상 유효) + 여권사본 1부, 영문주민등록등본 1부 또는 영문 가족관계증명서, 캠프동의서, 자녀 만15세 미만 시 부모님 여권 사본 추가.",
+  "isActive": true,
+  "createdAt": "2026-05-29",
+  "updatedAt": "2026-05-29"
+}

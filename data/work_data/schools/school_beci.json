@@ -1,0 +1,407 @@
+{
+  "id": "beci",
+  "schoolCode": "BECI",
+  "name": "BECI 어학원",
+  "campus": "EOP / 스파르타 / 시티",
+  "region": "바기오",
+  "schoolType": "general",
+  "minWeeks": 1,
+  "allowShortTerm": true,
+  "programTags": [
+    "ESL",
+    "스파르타",
+    "IELTS",
+    "TOEIC",
+    "워킹홀리데이",
+    "네이티브"
+  ],
+  "registrationFee": {
+    "amount": 0,
+    "currency": "KRW",
+    "note": "등록금 별도 명시 없음"
+  },
+  "courses": [
+    {
+      "id": "beci_lite_esl_eop",
+      "name": "Lite ESL (EOP캠퍼스)",
+      "campus": "EOP",
+      "classDetails": "1:1 2H + 그룹 2H + 옵션 2H",
+      "price4Weeks": 700000,
+      "currency": "KRW"
+    },
+    {
+      "id": "beci_speed_esl_eop",
+      "name": "Speed ESL (EOP캠퍼스)",
+      "campus": "EOP",
+      "classDetails": "1:1 4H + 그룹 2H + 옵션 2H",
+      "price4Weeks": 900000,
+      "currency": "KRW"
+    },
+    {
+      "id": "beci_sparta_esl_eop",
+      "name": "Sparta ESL (EOP캠퍼스)",
+      "campus": "EOP",
+      "classDetails": "1:1 5H + 그룹 2H + 의무수업 2H",
+      "price4Weeks": 1000000,
+      "currency": "KRW"
+    },
+    {
+      "id": "beci_working_holiday_eop",
+      "name": "Working Holiday (EOP캠퍼스)",
+      "campus": "EOP",
+      "classDetails": "1:1 4H + 그룹 2H + 실습 1H + 옵션 2H",
+      "price4Weeks": 1000000,
+      "currency": "KRW"
+    },
+    {
+      "id": "beci_24esl_sparta",
+      "name": "24 ESL (스파르타캠퍼스)",
+      "campus": "스파르타",
+      "classDetails": "1:1 5H + 그룹 2H + 의무자습&테스트 3H",
+      "price4Weeks": 1100000,
+      "currency": "KRW"
+    },
+    {
+      "id": "beci_toeic_sparta",
+      "name": "TOEIC (스파르타캠퍼스)",
+      "campus": "스파르타",
+      "classDetails": "1:1 4H + 그룹 2H + 의무자습&테스트 3H",
+      "price4Weeks": 1000000,
+      "currency": "KRW"
+    },
+    {
+      "id": "beci_ielts_sparta",
+      "name": "IELTS (스파르타캠퍼스)",
+      "campus": "스파르타",
+      "classDetails": "1:1 4H + 그룹 2H + 의무자습&테스트 3H",
+      "price4Weeks": 1100000,
+      "currency": "KRW"
+    },
+    {
+      "id": "beci_ielts_guarantee_sparta",
+      "name": "IELTS 보장반 (스파르타캠퍼스, 12주 이상)",
+      "campus": "스파르타",
+      "classDetails": "1:1 5H + 그룹 2H + 의무자습&테스트 3H",
+      "price4Weeks": 1300000,
+      "currency": "KRW",
+      "note": "12주 이상 등록 필수"
+    },
+    {
+      "id": "beci_lite_esl_city",
+      "name": "Lite ESL (시티캠퍼스)",
+      "campus": "시티",
+      "classDetails": "1:1 2H + 그룹 2H + 옵션 2H",
+      "price4Weeks": 700000,
+      "currency": "KRW"
+    },
+    {
+      "id": "beci_native_esl_city",
+      "name": "Native ESL (시티캠퍼스)",
+      "campus": "시티",
+      "classDetails": "1:1 4H(필리핀T 3H+네이티브 1H) + 그룹 2H(필리핀T 1H+네이티브 1H) + 옵션 2H",
+      "price4Weeks": 1000000,
+      "currency": "KRW"
+    },
+    {
+      "id": "beci_unlimited_esl_city",
+      "name": "Unlimited ESL (시티캠퍼스)",
+      "campus": "시티",
+      "classDetails": "1:1 하루 최대 8H + 옵션 2H. ESL/IELTS/TOEIC/Business English 등 희망 과목 수강 가능",
+      "price4Weeks": 1100000,
+      "currency": "KRW"
+    }
+  ],
+  "dormitories": [
+    {
+      "id": "beci_master1_eop",
+      "name": "마스터 1인실 (EOP)",
+      "campus": "EOP",
+      "price4Weeks": 1400000,
+      "currency": "KRW"
+    },
+    {
+      "id": "beci_regular1_eop",
+      "name": "레귤러 1인실 (EOP)",
+      "campus": "EOP",
+      "price4Weeks": 1200000,
+      "currency": "KRW"
+    },
+    {
+      "id": "beci_2_eop",
+      "name": "2인실 (EOP)",
+      "campus": "EOP",
+      "price4Weeks": 900000,
+      "currency": "KRW"
+    },
+    {
+      "id": "beci_3_eop",
+      "name": "3인실 (EOP)",
+      "campus": "EOP",
+      "price4Weeks": 700000,
+      "currency": "KRW"
+    },
+    {
+      "id": "beci_4_eop",
+      "name": "4인실(여자) (EOP)",
+      "campus": "EOP",
+      "price4Weeks": 600000,
+      "currency": "KRW"
+    },
+    {
+      "id": "beci_3plus1_sparta",
+      "name": "3+1인실 (스파르타)",
+      "campus": "스파르타",
+      "price4Weeks": 900000,
+      "currency": "KRW"
+    },
+    {
+      "id": "beci_4_sparta",
+      "name": "4인실 (스파르타)",
+      "campus": "스파르타",
+      "price4Weeks": 800000,
+      "currency": "KRW"
+    },
+    {
+      "id": "beci_studio1_city",
+      "name": "스튜디오 1인실 (시티)",
+      "campus": "시티",
+      "price4Weeks": 1700000,
+      "currency": "KRW"
+    },
+    {
+      "id": "beci_studio2_city",
+      "name": "스튜디오 2인실 (시티)",
+      "campus": "시티",
+      "price4Weeks": 1100000,
+      "currency": "KRW"
+    },
+    {
+      "id": "beci_studio4_city",
+      "name": "스튜디오 4인실 (시티)",
+      "campus": "시티",
+      "price4Weeks": 850000,
+      "currency": "KRW"
+    },
+    {
+      "id": "beci_semimaster1_city",
+      "name": "세미마스터 1인실 (시티)",
+      "campus": "시티",
+      "price4Weeks": 1500000,
+      "currency": "KRW"
+    },
+    {
+      "id": "beci_semi1_city",
+      "name": "세미 1인실 (시티)",
+      "campus": "시티",
+      "price4Weeks": 1200000,
+      "currency": "KRW"
+    }
+  ],
+  "surcharges": [
+    {
+      "id": "beci_peak",
+      "label": "성수기 추가 요금",
+      "startDate": "2026-06-29",
+      "endDate": "2026-08-22",
+      "amountPerWeek": 50000,
+      "currency": "KRW",
+      "applyTo": "courses",
+      "note": "바기오 서차지. 2026.6.29~8.22 (총 8주), 주당 50,000원."
+    }
+  ],
+  "longTermDiscount": [
+    {
+      "weeks": 8,
+      "discount": 50000,
+      "currency": "KRW"
+    },
+    {
+      "weeks": 12,
+      "discount": 100000,
+      "currency": "KRW"
+    },
+    {
+      "weeks": 16,
+      "discount": 200000,
+      "currency": "KRW"
+    },
+    {
+      "weeks": 20,
+      "discount": 300000,
+      "currency": "KRW"
+    },
+    {
+      "weeks": 24,
+      "discount": 400000,
+      "currency": "KRW"
+    }
+  ],
+  "promotions": null,
+  "localFees": [
+    {
+      "id": "beci_ssp",
+      "name": "SSP",
+      "amount": 7800,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "trigger": "enrollment"
+    },
+    {
+      "id": "beci_ssp_ecard",
+      "name": "SSP E-CARD",
+      "amount": 4500,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "trigger": "enrollment"
+    },
+    {
+      "id": "beci_visa_1",
+      "name": "비자연장비 5~8주",
+      "amount": 4940,
+      "currency": "PHP",
+      "chargeUnit": "cumulative",
+      "trigger": "stay_over",
+      "triggerWeeks": 5
+    },
+    {
+      "id": "beci_visa_2",
+      "name": "비자연장비 ~12주",
+      "amount": 11150,
+      "currency": "PHP",
+      "chargeUnit": "cumulative",
+      "trigger": "stay_over",
+      "triggerWeeks": 9
+    },
+    {
+      "id": "beci_visa_3",
+      "name": "비자연장비 ~16주",
+      "amount": 15390,
+      "currency": "PHP",
+      "chargeUnit": "cumulative",
+      "trigger": "stay_over",
+      "triggerWeeks": 13
+    },
+    {
+      "id": "beci_visa_4",
+      "name": "비자연장비 ~20주",
+      "amount": 19630,
+      "currency": "PHP",
+      "chargeUnit": "cumulative",
+      "trigger": "stay_over",
+      "triggerWeeks": 17
+    },
+    {
+      "id": "beci_visa_5",
+      "name": "비자연장비 ~24주",
+      "amount": 23870,
+      "currency": "PHP",
+      "chargeUnit": "cumulative",
+      "trigger": "stay_over",
+      "triggerWeeks": 21
+    },
+    {
+      "id": "beci_student_id",
+      "name": "학생증",
+      "amount": 200,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "trigger": "enrollment"
+    },
+    {
+      "id": "beci_deposit",
+      "name": "보증금 (환불가능)",
+      "amount": 3000,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "trigger": "enrollment"
+    },
+    {
+      "id": "beci_laundry",
+      "name": "세탁비",
+      "amount": 1500,
+      "currency": "PHP",
+      "chargeUnit": "per_4weeks",
+      "trigger": "enrollment",
+      "note": "매주 월~목 진행 (세탁, 건조, 폴딩 포함)"
+    },
+    {
+      "id": "beci_utility",
+      "name": "수도/전기세",
+      "amount": 3000,
+      "currency": "PHP",
+      "chargeUnit": "per_4weeks",
+      "trigger": "enrollment"
+    },
+    {
+      "id": "beci_maintenance",
+      "name": "관리비",
+      "amount": 1000,
+      "currency": "PHP",
+      "chargeUnit": "per_4weeks",
+      "trigger": "enrollment"
+    }
+  ],
+  "packages": [],
+  "additionalCharges": [
+    {
+      "id": "beci_textbook",
+      "name": "교재비 (4주당, 코스별 상이)",
+      "currency": "PHP",
+      "note": "Lite ESL, BizSpeak: ₱1,000 / Speed ESL, Working Holiday, Native ESL: ₱1,500 / 24 ESL, IELTS, TOEIC, Sparta ESL: ₱2,000"
+    },
+    {
+      "id": "beci_add_1on1",
+      "name": "추가 1:1 수업 (4주당)",
+      "amount": 8000,
+      "currency": "PHP",
+      "note": "ESL코스 학생에 한함"
+    },
+    {
+      "id": "beci_add_group",
+      "name": "추가 그룹수업 (4주당)",
+      "amount": 4000,
+      "currency": "PHP",
+      "note": "ESL코스 학생에 한함"
+    },
+    {
+      "id": "beci_pickup_clark",
+      "name": "BESA 단체 픽업 (클락)",
+      "amount": 2500,
+      "currency": "PHP"
+    },
+    {
+      "id": "beci_pickup_manila",
+      "name": "BESA 단체 픽업 (마닐라)",
+      "amount": 3000,
+      "currency": "PHP"
+    },
+    {
+      "id": "beci_sending_clark",
+      "name": "BESA 단체 샌딩 (→클락공항)",
+      "amount": 1500,
+      "currency": "PHP",
+      "note": "픽업주 금요일 7:00PM, 토요일 5:00AM"
+    }
+  ],
+  "refundPolicy": "",
+  "dormitoryRules": "기숙사 체크인(입실) 토요일 오후 3시부터, 체크아웃(퇴실) 토요일 오후 12시까지.",
+  "generalNotes": "BECI 어학원. 바기오 소재. EOP/스파르타/시티 3개 캠퍼스.\n\n단기: 1주 40% / 2주 60% / 3주 80%.\n장기할인: 8주 5만 / 12주 10만 / 16주 20만 / 20주 30만 / 24주 40만.\n성수기: 2026.6.29~8.22, 주당 5만원.\n\n시티캠퍼스 Native ESL: 1:1 4H(필리핀T 3H+네이티브 1H) + 그룹 2H(필리핀T 1H+네이티브 1H) + 나이트 옵션 2H.\n2025.12.22 현지비용표 기준.",
+  "isActive": true,
+  "createdAt": "2026-05-29",
+  "updatedAt": "2026-05-30",
+  "courseShortTermRates": {
+    "mode": "percent",
+    "week1": 40,
+    "week2": 60,
+    "week3": 80,
+    "week4Included": false
+  },
+  "dormShortTermRates": {
+    "mode": "percent",
+    "week1": 40,
+    "week2": 60,
+    "week3": 80,
+    "week4Included": false
+  },
+  "shortTermDataStatus": "confirmed"
+}

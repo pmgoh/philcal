@@ -1,0 +1,249 @@
+{
+  "id": "igem_city",
+  "schoolCode": "IGEM_CITY",
+  "name": "i.GEM 시티점",
+  "campus": "시티",
+  "region": "세부",
+  "schoolType": "family",
+  "minWeeks": 1,
+  "allowShortTerm": true,
+  "shortTermDataStatus": "confirmed",
+  "programTags": [
+    "주니어",
+    "킨더",
+    "가족연수"
+  ],
+  "registrationFee": {
+    "amount": 0,
+    "currency": "KRW",
+    "note": "패키지에 포함."
+  },
+  "courses": [],
+  "dormitories": [],
+  "packages": [
+    {
+      "id": "igem_c_dayan2",
+      "name": "주니어/킨더 + 다이안 레지던스 2인",
+      "includesLocalFees": true,
+      "priceMatrix": {
+        "columns": [
+          "1W",
+          "2W",
+          "3W",
+          "4W",
+          "5W",
+          "6W",
+          "7W",
+          "8W"
+        ],
+        "rows": [
+          {
+            "label": "다이안 2인",
+            "prices": [
+              747500,
+              1495000,
+              2242500,
+              2990000,
+              3737500,
+              4485000,
+              5232500,
+              5980000
+            ]
+          }
+        ]
+      },
+      "currency": "KRW",
+      "note": "주니어 또는 킨더 코스. 주니어 4w 990,000 / 킨더 4w 990,000 (26년 기준)."
+    },
+    {
+      "id": "igem_c_dayan3",
+      "name": "주니어/킨더 + 다이안 레지던스 3인",
+      "includesLocalFees": true,
+      "priceMatrix": {
+        "columns": [
+          "1W",
+          "2W",
+          "3W",
+          "4W",
+          "5W",
+          "6W",
+          "7W",
+          "8W"
+        ],
+        "rows": [
+          {
+            "label": "다이안 3인",
+            "prices": [
+              997500,
+              1995000,
+              2992500,
+              3990000,
+              4987500,
+              5985000,
+              6982500,
+              7980000
+            ]
+          }
+        ]
+      },
+      "currency": "KRW"
+    },
+    {
+      "id": "igem_c_dayan4",
+      "name": "주니어/킨더 + 다이안 레지던스 4인",
+      "includesLocalFees": true,
+      "priceMatrix": {
+        "columns": [
+          "1W",
+          "2W",
+          "3W",
+          "4W",
+          "5W",
+          "6W",
+          "7W",
+          "8W"
+        ],
+        "rows": [
+          {
+            "label": "다이안 4인",
+            "prices": [
+              1472500,
+              2945000,
+              4417500,
+              5890000,
+              7362500,
+              8835000,
+              10307500,
+              11780000
+            ]
+          }
+        ]
+      },
+      "currency": "KRW"
+    },
+    {
+      "id": "igem_c_byhotel2",
+      "name": "주니어/킨더 + 바이호텔 2인",
+      "includesLocalFees": true,
+      "priceMatrix": {
+        "columns": [
+          "1W",
+          "2W",
+          "3W",
+          "4W",
+          "5W",
+          "6W",
+          "7W",
+          "8W"
+        ],
+        "rows": [
+          {
+            "label": "바이호텔 2인",
+            "prices": [
+              997500,
+              1995000,
+              2992500,
+              3990000,
+              4987500,
+              5985000,
+              6982500,
+              7980000
+            ]
+          }
+        ]
+      },
+      "currency": "KRW"
+    },
+    {
+      "id": "igem_c_byhotel3",
+      "name": "주니어/킨더 + 바이호텔 3인",
+      "includesLocalFees": true,
+      "priceMatrix": {
+        "columns": [
+          "1W",
+          "2W",
+          "3W",
+          "4W",
+          "5W",
+          "6W",
+          "7W",
+          "8W"
+        ],
+        "rows": [
+          {
+            "label": "바이호텔 3인",
+            "prices": [
+              1347500,
+              2695000,
+              4042500,
+              5390000,
+              6737500,
+              8085000,
+              9432500,
+              10780000
+            ]
+          }
+        ]
+      },
+      "currency": "KRW"
+    },
+    {
+      "id": "igem_c_byhotel4",
+      "name": "주니어/킨더 + 바이호텔 4인",
+      "includesLocalFees": true,
+      "priceMatrix": {
+        "columns": [
+          "1W",
+          "2W",
+          "3W",
+          "4W",
+          "5W",
+          "6W",
+          "7W",
+          "8W"
+        ],
+        "rows": [
+          {
+            "label": "바이호텔 4인",
+            "prices": [
+              1672500,
+              3345000,
+              5017500,
+              6690000,
+              8362500,
+              10035000,
+              11707500,
+              13380000
+            ]
+          }
+        ]
+      },
+      "currency": "KRW"
+    }
+  ],
+  "surcharges": [],
+  "localFees": [],
+  "additionalCharges": [],
+  "refundPolicy": "",
+  "dormitoryRules": "",
+  "generalNotes": "i.GEM 시티점. 세부 소재. 가족연수/주니어/킨더 전문.\n\n[가격 구조] 모든 가격은 코스+숙소+현지비용 포함 패키지.\n주니어/킨더 코스 단독 가격: 26년 기준 4주 990,000원 (1주 366,300).\n27년 1-2월 성수기: 주니어 4w 1,500,000 / 킨더 4w 1,400,000.\n\n[숙소]\n다이안 레지던스: 2인/3인/4인실.\n바이호텔: 2인/3인/4인실.\n\n[시즌] 26년 학비표 기준. 27년 1-2월은 시티점 주니어/킨더 가격 인상 (막탄점은 동일).",
+  "isActive": true,
+  "createdAt": "2026-05-29",
+  "updatedAt": "2026-05-30",
+  "courseShortTermRates": {
+    "mode": "percent",
+    "week1": 37,
+    "week2": 64,
+    "week3": 84,
+    "week4Included": false,
+    "note": "수업료 기준 37/64/84. 자료상 '학비'는 N분의1(정비례)로 분리 안내될 수 있음 - 운영자 확인"
+  },
+  "dormShortTermRates": {
+    "mode": "percent",
+    "week1": 37,
+    "week2": 64,
+    "week3": 84,
+    "week4Included": false,
+    "note": "수업료 기준 37/64/84. 자료상 '학비'는 N분의1(정비례)로 분리 안내될 수 있음 - 운영자 확인"
+  }
+}

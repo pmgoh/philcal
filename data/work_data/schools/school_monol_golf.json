@@ -1,0 +1,31 @@
+{
+  "id": "monol_golf",
+  "schoolCode": "MONOL_GOLF",
+  "name": "Monol 골프 프로그램",
+  "campus": "본원 (골프)",
+  "region": "바기오",
+  "schoolType": "camp",
+  "minWeeks": 4,
+  "allowShortTerm": false,
+  "programTags": ["시니어", "골프"],
+  "registrationFee": { "amount": 0, "currency": "KRW", "note": "패키지에 포함" },
+  "courses": [], "dormitories": [], "surcharges": [], "promotions": null, "localFees": [],
+  "packages": [
+    {
+      "id": "monol_golf_4w",
+      "name": "골프 프로그램 (4주)",
+      "programType": "senior",
+      "includesLocalFees": true,
+      "note": "한국인 티칭프로와 함께하는 골프 레슨. 스텐다드 1인실 사용. 항공료와 여행자 보험을 제외한 모든 현지비용 포함(픽업, 샌딩 등).",
+      "includes": "스크린 골프 스튜디오 1대1 레슨 주1회 + 야외 연습장 그룹레슨 주2회 + 실전 필드레슨 4주에 2회, 여행영어·골프영어 실전 영어 수업 2타임, 스텐다드 1인실 사용, 항공료와 여행자 보험을 제외한 모든 현지비용 포함 (픽업, 샌딩 등)",
+      "excludes": "왕복 항공료, 여행자 보험",
+      "priceMatrix": { "columns": ["골프 프로그램 비용"], "rows": [{ "weeks": 4, "prices": [3200000] }] },
+      "currency": "KRW"
+    }
+  ],
+  "additionalCharges": [],
+  "generalNotes": "Monol 골프 프로그램. 바기오 소재.\n320만원/4주. 스텐다드 1인실.\n항공료/여행자보험 제외 모든 현지비용 포함.",
+  "isActive": true,
+  "createdAt": "2026-05-29",
+  "updatedAt": "2026-05-29"
+}

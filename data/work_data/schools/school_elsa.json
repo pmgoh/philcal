@@ -1,0 +1,295 @@
+{
+  "id": "elsa",
+  "schoolCode": "ELSA",
+  "name": "ELSA (Interactive Learning School)",
+  "campus": "본원",
+  "region": "세부",
+  "schoolType": "general",
+  "minWeeks": 1,
+  "allowShortTerm": true,
+  "programTags": [
+    "ESL",
+    "골프",
+    "주니어",
+    "가족연수",
+    "킨더",
+    "파블로"
+  ],
+  "registrationFee": {
+    "amount": 100000,
+    "currency": "KRW",
+    "note": "입학금 10만원 (1인). 픽업비 2만원 (1인) 별도."
+  },
+  "courses": [
+    {
+      "id": "elsa_guardian_noclass",
+      "name": "Guardian No Class",
+      "price4Weeks": 0,
+      "currency": "KRW",
+      "note": "수업 없음. 기숙사비만."
+    },
+    {
+      "id": "elsa_guardian_relax",
+      "name": "Guardian Relax",
+      "price4Weeks": 650000,
+      "currency": "KRW",
+      "note": "1:1 2회"
+    },
+    {
+      "id": "elsa_guardian_basic",
+      "name": "Guardian Basic ESL",
+      "price4Weeks": 850000,
+      "currency": "KRW",
+      "note": "1:1 2회 + 그룹 2회"
+    },
+    {
+      "id": "elsa_golf_esl",
+      "name": "Golf ESL",
+      "price4Weeks": 1950000,
+      "currency": "KRW",
+      "note": "일일 3타임 그룹수업 + 주 2회 필드 라운드 + 골프 연습장 무료 이용"
+    },
+    {
+      "id": "elsa_super_basic",
+      "name": "Super Basic ESL",
+      "price4Weeks": 1050000,
+      "currency": "KRW",
+      "note": "1:1 5회"
+    },
+    {
+      "id": "elsa_super_intensive",
+      "name": "Super Intensive ESL",
+      "price4Weeks": 1250000,
+      "currency": "KRW",
+      "note": "1:1 5회(4회) + 그룹 3회"
+    },
+    {
+      "id": "elsa_junior_schooling",
+      "name": "Junior Schooling",
+      "price4Weeks": 1450000,
+      "currency": "KRW",
+      "note": "All-Day: 1:1 2타임 + 스쿨링 8타임 / Half-Day: 1:1 5타임 + 스쿨링 4타임"
+    },
+    {
+      "id": "elsa_junior_esl",
+      "name": "Junior ESL",
+      "price4Weeks": 1450000,
+      "currency": "KRW",
+      "note": "1:1 4회 + 그룹 3회. 주니어 2주 이하 연수는 ESL 수업으로 대체."
+    },
+    {
+      "id": "elsa_kindergarten",
+      "name": "Kindergarten",
+      "price4Weeks": 1550000,
+      "currency": "KRW",
+      "note": "1:1 3회(4회) + 그룹 4회"
+    },
+    {
+      "id": "elsa_nursery",
+      "name": "Nursery Program",
+      "price4Weeks": 620000,
+      "currency": "KRW",
+      "note": "일일 4회 그룹수업. 보모 동반 필수, 보모 비용 별도."
+    },
+    {
+      "id": "elsa_pablo_junior_prep",
+      "name": "파블로 주니어 & 준비반 (단기 1~3개월)",
+      "price4Weeks": 4000000,
+      "currency": "KRW",
+      "note": "비동반 단기연수. 자녀 2인 1실 기준. 1~3개월 단기 등록."
+    },
+    {
+      "id": "elsa_pablo_1y",
+      "name": "파블로 프로젝트 (1년 / 조건부 2년)",
+      "price4Weeks": 4000000,
+      "currency": "KRW",
+      "note": "2인 1실 기준. 1년 or 조건부 2년 프로젝트."
+    },
+    {
+      "id": "elsa_pablo_top",
+      "name": "최상위 프로젝트 - 대학원 입학 보장 20개월",
+      "price4Weeks": 4500000,
+      "currency": "KRW",
+      "note": "세부 12개월 + 마닐라 8개월. 의대/로스쿨/MBA/항공대 + 대학교 사후관리. 세부 및 마닐라 병행, 2인 1실 기준."
+    },
+    {
+      "id": "elsa_pablo_gpa",
+      "name": "1년 GPA 소생 프로젝트",
+      "price4Weeks": 4200000,
+      "currency": "KRW",
+      "note": "개별 문의 상담 후 입학 진행."
+    }
+  ],
+  "dormitories": [
+    {
+      "id": "elsa_2p",
+      "name": "2인실",
+      "price4Weeks": 1000000,
+      "currency": "KRW",
+      "note": "기숙사 (A, B, C) 비용 동일"
+    },
+    {
+      "id": "elsa_3p",
+      "name": "3인실",
+      "price4Weeks": 950000,
+      "currency": "KRW"
+    },
+    {
+      "id": "elsa_4p",
+      "name": "4인실",
+      "price4Weeks": 900000,
+      "currency": "KRW"
+    },
+    {
+      "id": "elsa_5p",
+      "name": "5인실",
+      "price4Weeks": 850000,
+      "currency": "KRW"
+    },
+    {
+      "id": "elsa_1p",
+      "name": "1인실",
+      "price4Weeks": 1500000,
+      "currency": "KRW",
+      "note": "1인실 비용은 2인실 + 50만원 추가"
+    }
+  ],
+  "packages": [],
+  "surcharges": [],
+  "localFees": [
+    {
+      "id": "elsa_ssp",
+      "name": "SSP (ESL)",
+      "amount": 7800,
+      "currency": "PHP",
+      "chargeUnit": "per_person"
+    },
+    {
+      "id": "elsa_acr_ecard",
+      "name": "ACR E-Card",
+      "amount": 4500,
+      "currency": "PHP",
+      "chargeUnit": "per_person"
+    },
+    {
+      "id": "elsa_facility",
+      "name": "시설 이용료",
+      "amount": 1500,
+      "currency": "PHP",
+      "chargeUnit": "per_week",
+      "note": "주 1인당. 전기, 수도 및 유지보수 비용."
+    },
+    {
+      "id": "elsa_aircon",
+      "name": "에어컨 사용료",
+      "amount": 25,
+      "currency": "PHP",
+      "chargeUnit": "per_usage",
+      "note": "KW당 25페소. 4주 단위 후불. 사용시간*1.8kw*25페소."
+    },
+    {
+      "id": "elsa_textbook",
+      "name": "교재비",
+      "amount": 2500,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "note": "ESL 주니어 교재 약 2,500페소. 코스 및 개별 상이."
+    },
+    {
+      "id": "elsa_deposit",
+      "name": "보증금",
+      "amount": 5000,
+      "currency": "PHP",
+      "chargeUnit": "per_family",
+      "note": "퇴실 시 수령. 가족연수의 경우 가족당 금액."
+    },
+    {
+      "id": "elsa_kinder_kit",
+      "name": "킨더 키트",
+      "amount": 1000,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "note": "유치원 2주 이하 연수만 해당. 3주 이상은 무료."
+    },
+    {
+      "id": "elsa_pickup",
+      "name": "공항 픽업비",
+      "amount": 1000,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "note": "가족 단위 첫 입교 시에만 가능"
+    },
+    {
+      "id": "elsa_babysitter",
+      "name": "베이비 시터",
+      "amount": 16000,
+      "currency": "PHP",
+      "chargeUnit": "per_4weeks",
+      "note": "보모 서비스 (08:00~17:00 / 월~토). 4주 단위만 신청 가능."
+    },
+    {
+      "id": "elsa_stay",
+      "name": "체류 비용",
+      "amount": 2000,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "note": "1인 1박. 연수 기간 외 체류 및 가족 방문 시."
+    },
+    {
+      "id": "elsa_visa_1",
+      "name": "1st VISA",
+      "amount": 5140,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "triggerWeeks": 5
+    },
+    {
+      "id": "elsa_visa_2",
+      "name": "2nd VISA",
+      "amount": 6400,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "triggerWeeks": 9
+    },
+    {
+      "id": "elsa_acr_icard",
+      "name": "ACR I-CARD",
+      "amount": 4000,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "triggerWeeks": 9,
+      "note": "외국인 등록증. 2차 연장 시 납부."
+    },
+    {
+      "id": "elsa_visa_3",
+      "name": "3rd VISA",
+      "amount": 4440,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "triggerWeeks": 13
+    }
+  ],
+  "refundPolicy": "",
+  "dormitoryRules": "",
+  "generalNotes": "ELSA Interactive Learning School. 세부 소재. 26년 6월자 학생부터 적용 (브로셔 기준).\n\n입학금 10만원(1인) + 픽업비 2만원(1인). 기숙사 (A, B, C) 비용 동일. 1인실 비용은 50만원 추가.\n주니어 2주 이하 연수는 ESL 수업으로 대체.\n\n기간별 현지비용 총액(SSP+E-Card+시설이용료, 보증금/에어컨/교재 제외):\n1주 13,800 / 2주 15,300 / 3주 16,800 / 4주 18,300 / 8주 29,440 / 12주 45,840 / 16주 56,280.\n\n수업 추가(26년 6월 기준): 1:1 추가 1주 1,800P / 4주 6,500P. 그룹 추가 1주 500P / 4주 2,000P.\n기타: 기숙사 변경 4,000P/회, 추가 청소 500P/회, 베이비시터 16,000P/4주, 긴급 보모서비스 400P/시간, 관리자 동행 서비스 5,000P/10시간.\n\n[파블로 프로젝트 (PABLO Global-ELSA)]\n월 학비 기준 (4주 단가). 기숙사 포함 정액제이므로 기숙사 별도 선택 불필요 (dormitories=[] 처리).\n미포함 내역: 항공권, 등록금, 보험, 공인시험, 용돈, 주말 액티비티, 입국세, 파블로 컨설팅비용 등.\n별도 컨설팅: PABLO 퍼스널 브랜드 컨설팅 $10,000 / 대학원 입학 보장 컨설팅 $18,000.\n아이비리그급 대학원 보장은 개별 문의.",
+  "isActive": true,
+  "createdAt": "2026-05-29",
+  "updatedAt": "2026-05-30",
+  "courseShortTermRates": {
+    "mode": "percent",
+    "week1": 25,
+    "week2": 50,
+    "week3": 75,
+    "week4Included": false,
+    "note": "자료 'N분의1' = 정비례"
+  },
+  "dormShortTermRates": {
+    "mode": "percent",
+    "week1": 25,
+    "week2": 50,
+    "week3": 75,
+    "week4Included": false,
+    "note": "자료 'N분의1' = 정비례"
+  },
+  "shortTermDataStatus": "confirmed"
+}

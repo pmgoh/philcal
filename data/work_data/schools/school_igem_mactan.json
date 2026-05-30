@@ -1,0 +1,600 @@
+{
+  "id": "igem_mactan",
+  "schoolCode": "IGEM_MACTAN",
+  "name": "i.GEM 막탄점",
+  "campus": "막탄",
+  "region": "세부",
+  "schoolType": "family",
+  "minWeeks": 1,
+  "allowShortTerm": true,
+  "shortTermDataStatus": "confirmed",
+  "programTags": [
+    "ESL",
+    "주니어",
+    "킨더",
+    "가족연수",
+    "널서리"
+  ],
+  "registrationFee": {
+    "amount": 0,
+    "currency": "KRW",
+    "note": "패키지에 포함."
+  },
+  "courses": [
+    {
+      "id": "igem_m_regular_a",
+      "name": "레귤러A (막탄 통학)",
+      "price4Weeks": 1390000,
+      "currency": "KRW",
+      "note": "막탄점 통학형. 기숙사 없음."
+    },
+    {
+      "id": "igem_m_regular_b",
+      "name": "레귤러B (막탄 통학)",
+      "price4Weeks": 1690000,
+      "currency": "KRW",
+      "note": "막탄점 통학형. 기숙사 없음."
+    },
+    {
+      "id": "igem_m_nursery",
+      "name": "널서리 (막탄 통학)",
+      "price4Weeks": 850000,
+      "currency": "KRW",
+      "note": "막탄점 통학형 널서리. 기숙사 없음."
+    }
+  ],
+  "dormitories": [],
+  "packages": [
+    {
+      "id": "igem_m_bangkal_std_2p",
+      "name": "[성수기] 방칼 스탠다드 2인",
+      "includesLocalFees": false,
+      "priceMatrix": {
+        "columns": [
+          "1W",
+          "2W",
+          "3W",
+          "4W",
+          "5W",
+          "6W",
+          "7W",
+          "8W"
+        ],
+        "rows": [
+          {
+            "label": "방칼 스탠다드 2인",
+            "prices": [
+              551300,
+              953600,
+              1251600,
+              1490000,
+              1862500,
+              2235000,
+              2607500,
+              2980000
+            ]
+          }
+        ]
+      },
+      "currency": "KRW"
+    },
+    {
+      "id": "igem_m_dkdk_std_2p",
+      "name": "[성수기] 두근두근 스탠다드 2인",
+      "includesLocalFees": false,
+      "priceMatrix": {
+        "columns": [
+          "1W",
+          "2W",
+          "3W",
+          "4W",
+          "5W",
+          "6W",
+          "7W",
+          "8W"
+        ],
+        "rows": [
+          {
+            "label": "두근두근 스탠다드 2인",
+            "prices": [
+              625300,
+              1081600,
+              1419600,
+              1690000,
+              2112500,
+              2535000,
+              2957500,
+              3380000
+            ]
+          }
+        ]
+      },
+      "currency": "KRW"
+    },
+    {
+      "id": "igem_m_dkdk_pool_2p",
+      "name": "[성수기] 두근두근 풀액세스 2인",
+      "includesLocalFees": false,
+      "priceMatrix": {
+        "columns": [
+          "1W",
+          "2W",
+          "3W",
+          "4W",
+          "5W",
+          "6W",
+          "7W",
+          "8W"
+        ],
+        "rows": [
+          {
+            "label": "두근두근 풀액세스 2인",
+            "prices": [
+              662300,
+              1145600,
+              1503600,
+              1790000,
+              2237500,
+              2685000,
+              3132500,
+              3580000
+            ]
+          }
+        ]
+      },
+      "currency": "KRW"
+    },
+    {
+      "id": "igem_m_dkdk_2br_4p",
+      "name": "[성수기] 두근두근 2BR 4인",
+      "includesLocalFees": false,
+      "priceMatrix": {
+        "columns": [
+          "1W",
+          "2W",
+          "3W",
+          "4W",
+          "5W",
+          "6W",
+          "7W",
+          "8W"
+        ],
+        "rows": [
+          {
+            "label": "두근두근 2BR 4인",
+            "prices": [
+              551300,
+              953600,
+              1251600,
+              1490000,
+              1862500,
+              2235000,
+              2607500,
+              2980000
+            ]
+          }
+        ]
+      },
+      "currency": "KRW"
+    },
+    {
+      "id": "igem_m_bangkal_std_2p_low",
+      "name": "[비수기] 방칼 스탠다드 2인",
+      "includesLocalFees": false,
+      "priceMatrix": {
+        "columns": [
+          "1W",
+          "2W",
+          "3W",
+          "4W",
+          "5W",
+          "6W",
+          "7W",
+          "8W"
+        ],
+        "rows": [
+          {
+            "label": "[비수기] 방칼 스탠다드 2인",
+            "prices": [
+              366300,
+              633600,
+              831600,
+              990000,
+              1237500,
+              1485000,
+              1732500,
+              1980000
+            ]
+          }
+        ]
+      },
+      "currency": "KRW"
+    },
+    {
+      "id": "igem_m_dkdk_std_2p_low",
+      "name": "[비수기] 두근두근 스탠다드 2인",
+      "includesLocalFees": false,
+      "priceMatrix": {
+        "columns": [
+          "1W",
+          "2W",
+          "3W",
+          "4W",
+          "5W",
+          "6W",
+          "7W",
+          "8W"
+        ],
+        "rows": [
+          {
+            "label": "[비수기] 두근두근 스탠다드 2인",
+            "prices": [
+              407000,
+              704000,
+              924000,
+              1100000,
+              1375000,
+              1650000,
+              1925000,
+              2200000
+            ]
+          }
+        ]
+      },
+      "currency": "KRW"
+    },
+    {
+      "id": "igem_m_dkdk_pool_2p_low",
+      "name": "[비수기] 두근두근 풀액세스 2인",
+      "includesLocalFees": false,
+      "priceMatrix": {
+        "columns": [
+          "1W",
+          "2W",
+          "3W",
+          "4W",
+          "5W",
+          "6W",
+          "7W",
+          "8W"
+        ],
+        "rows": [
+          {
+            "label": "[비수기] 두근두근 풀액세스 2인",
+            "prices": [
+              440300,
+              761600,
+              999600,
+              1190000,
+              1487500,
+              1785000,
+              2082500,
+              2380000
+            ]
+          }
+        ]
+      },
+      "currency": "KRW"
+    },
+    {
+      "id": "igem_m_dkdk_2br_4p_low",
+      "name": "[비수기] 두근두근 2BR 4인",
+      "includesLocalFees": false,
+      "priceMatrix": {
+        "columns": [
+          "1W",
+          "2W",
+          "3W",
+          "4W",
+          "5W",
+          "6W",
+          "7W",
+          "8W"
+        ],
+        "rows": [
+          {
+            "label": "[비수기] 두근두근 2BR 4인",
+            "prices": [
+              362600,
+              627200,
+              823200,
+              980000,
+              1225000,
+              1470000,
+              1715000,
+              1960000
+            ]
+          }
+        ]
+      },
+      "currency": "KRW"
+    },
+    {
+      "id": "igem_m_bangkal_std_3p",
+      "name": "[성수기] 방칼 스탠다드 3인",
+      "includesLocalFees": false,
+      "priceMatrix": {
+        "columns": [
+          "1W",
+          "2W",
+          "3W",
+          "4W",
+          "5W",
+          "6W",
+          "7W",
+          "8W"
+        ],
+        "rows": [
+          {
+            "label": "[성수기] 방칼 스탠다드 3인",
+            "prices": [
+              440300,
+              761600,
+              999600,
+              1190000,
+              1487500,
+              1785000,
+              2082500,
+              2380000
+            ]
+          }
+        ]
+      },
+      "currency": "KRW"
+    },
+    {
+      "id": "igem_m_bangkal_std_4p",
+      "name": "[성수기] 방칼 스탠다드 4인",
+      "includesLocalFees": false,
+      "priceMatrix": {
+        "columns": [
+          "1W",
+          "2W",
+          "3W",
+          "4W",
+          "5W",
+          "6W",
+          "7W",
+          "8W"
+        ],
+        "rows": [
+          {
+            "label": "[성수기] 방칼 스탠다드 4인",
+            "prices": [
+              403300,
+              697600,
+              915600,
+              1090000,
+              1362500,
+              1635000,
+              1907500,
+              2180000
+            ]
+          }
+        ]
+      },
+      "currency": "KRW"
+    },
+    {
+      "id": "igem_m_bangkal_std_5p",
+      "name": "[성수기] 방칼 스탠다드 5인",
+      "includesLocalFees": false,
+      "priceMatrix": {
+        "columns": [
+          "1W",
+          "2W",
+          "3W",
+          "4W",
+          "5W",
+          "6W",
+          "7W",
+          "8W"
+        ],
+        "rows": [
+          {
+            "label": "[성수기] 방칼 스탠다드 5인",
+            "prices": [
+              366300,
+              633600,
+              831600,
+              990000,
+              1237500,
+              1485000,
+              1732500,
+              1980000
+            ]
+          }
+        ]
+      },
+      "currency": "KRW"
+    },
+    {
+      "id": "igem_m_bangkal_std_6p",
+      "name": "[성수기] 방칼 스탠다드 6인",
+      "includesLocalFees": false,
+      "priceMatrix": {
+        "columns": [
+          "1W",
+          "2W",
+          "3W",
+          "4W",
+          "5W",
+          "6W",
+          "7W",
+          "8W"
+        ],
+        "rows": [
+          {
+            "label": "[성수기] 방칼 스탠다드 6인",
+            "prices": [
+              329300,
+              569600,
+              747600,
+              890000,
+              1112500,
+              1335000,
+              1557500,
+              1780000
+            ]
+          }
+        ]
+      },
+      "currency": "KRW"
+    },
+    {
+      "id": "igem_m_bangkal_std_3p_low",
+      "name": "[비수기] 방칼 스탠다드 3인",
+      "includesLocalFees": false,
+      "priceMatrix": {
+        "columns": [
+          "1W",
+          "2W",
+          "3W",
+          "4W",
+          "5W",
+          "6W",
+          "7W",
+          "8W"
+        ],
+        "rows": [
+          {
+            "label": "[비수기] 방칼 스탠다드 3인",
+            "prices": [
+              292300,
+              505600,
+              663600,
+              790000,
+              987500,
+              1185000,
+              1382500,
+              1580000
+            ]
+          }
+        ]
+      },
+      "currency": "KRW"
+    },
+    {
+      "id": "igem_m_bangkal_std_4p_low",
+      "name": "[비수기] 방칼 스탠다드 4인",
+      "includesLocalFees": false,
+      "priceMatrix": {
+        "columns": [
+          "1W",
+          "2W",
+          "3W",
+          "4W",
+          "5W",
+          "6W",
+          "7W",
+          "8W"
+        ],
+        "rows": [
+          {
+            "label": "[비수기] 방칼 스탠다드 4인",
+            "prices": [
+              255300,
+              441600,
+              579600,
+              690000,
+              862500,
+              1035000,
+              1207500,
+              1380000
+            ]
+          }
+        ]
+      },
+      "currency": "KRW"
+    },
+    {
+      "id": "igem_m_bangkal_std_5p_low",
+      "name": "[비수기] 방칼 스탠다드 5인",
+      "includesLocalFees": false,
+      "priceMatrix": {
+        "columns": [
+          "1W",
+          "2W",
+          "3W",
+          "4W",
+          "5W",
+          "6W",
+          "7W",
+          "8W"
+        ],
+        "rows": [
+          {
+            "label": "[비수기] 방칼 스탠다드 5인",
+            "prices": [
+              218300,
+              377600,
+              495600,
+              590000,
+              737500,
+              885000,
+              1032500,
+              1180000
+            ]
+          }
+        ]
+      },
+      "currency": "KRW"
+    },
+    {
+      "id": "igem_m_bangkal_std_6p_low",
+      "name": "[비수기] 방칼 스탠다드 6인",
+      "includesLocalFees": false,
+      "priceMatrix": {
+        "columns": [
+          "1W",
+          "2W",
+          "3W",
+          "4W",
+          "5W",
+          "6W",
+          "7W",
+          "8W"
+        ],
+        "rows": [
+          {
+            "label": "[비수기] 방칼 스탠다드 6인",
+            "prices": [
+              181300,
+              313600,
+              411600,
+              490000,
+              612500,
+              735000,
+              857500,
+              980000
+            ]
+          }
+        ]
+      },
+      "currency": "KRW"
+    }
+  ],
+  "surcharges": [],
+  "localFees": [],
+  "additionalCharges": [],
+  "refundPolicy": "",
+  "dormitoryRules": "",
+  "generalNotes": "i.GEM 막탄점. 세부 막탄 소재. 가족연수/주니어/킨더/널서리.\n\n[코스] 레귤러A (통학) / 레귤러B (통학) / 널서리 (통학) — 숙소 미포함.\n기숙형은 packages로 제공 (코스+숙소 합산 패키지).\n\n[숙소 종류]\n방칼 스탠다드: 2~6인\n두근두근 스탠다드: 2~4인\n두근두근 풀액세스: 2~4인\n두근두근 2BR: 4~6인\n\n[시즌] 성수기/비수기 가격 별도. 비수기 가격은 [비수기] 표기.\n\n[현지비용] 패키지 미포함. 별도 납부.\n\n[27년 1-2월] 시티점 주니어/킨더 가격 인상. 막탄점은 동일.",
+  "isActive": true,
+  "createdAt": "2026-05-29",
+  "updatedAt": "2026-05-30",
+  "courseShortTermRates": {
+    "mode": "percent",
+    "week1": 37,
+    "week2": 64,
+    "week3": 84,
+    "week4Included": false
+  },
+  "dormShortTermRates": {
+    "mode": "percent",
+    "week1": 37,
+    "week2": 64,
+    "week3": 84,
+    "week4Included": false
+  }
+}

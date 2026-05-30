@@ -1,0 +1,77 @@
+{
+  "id": "cij_junior",
+  "schoolCode": "CIJ_JUNIOR",
+  "name": "CIJ 주니어캠프",
+  "campus": "릴로안 + 프리미엄(Weber Hotel)",
+  "region": "세부",
+  "schoolType": "general",
+  "minWeeks": 4,
+  "allowShortTerm": false,
+  "programTags": ["주니어캠프"],
+  "registrationFee": {
+    "amount": 0,
+    "currency": "KRW",
+    "note": "캠프비에 포함"
+  },
+  "courses": [],
+  "dormitories": [],
+  "packages": [
+    {
+      "id": "cij_junior_camp_summer_2026",
+      "label": "2026 여름 주니어캠프 (Power Intensive)",
+      "season": "성수기",
+      "currency": "KRW",
+      "columns": ["스파르타(경규반)", "세미스파르타(입문반)"],
+      "priceMatrix": [
+        {
+          "weeks": 4,
+          "prices": [
+            { "label": "4주 스파르타", "amount": 3950000 },
+            { "label": "4주 세미스파르타", "amount": 4100000 }
+          ]
+        },
+        {
+          "weeks": 6,
+          "prices": [
+            { "label": "6주 스파르타", "amount": 5450000 },
+            { "label": "6주 세미스파르타", "amount": 5650000 }
+          ]
+        },
+        {
+          "weeks": 8,
+          "prices": [
+            { "label": "8주 스파르타", "amount": 6750000 },
+            { "label": "8주 세미스파르타", "amount": 7000000 }
+          ]
+        }
+      ],
+      "additionalRules": [
+        {
+          "id": "cij_camp_agency_fee",
+          "condition": "수속료",
+          "addAmount": 1000000,
+          "currency": "KRW",
+          "note": "수속료 100만원 별도 (항공, 공증, 보험, 수속관련비용 등)"
+        }
+      ],
+      "includes": "수업료, 기숙사비, 교재, 야외활동비(액티비티), SSP발급비, 보험료, 비동반소아입국세, 공항세, 서류 공증비, 비자연장비, 티셔츠, 가방, 아이디카드, 수료증발급, 픽업/샌딩비",
+      "excludes": "수속료 100만원(항공료,공증서류비,보험 및 수속료 등), 개인용돈100불/4주, 간식비 100불/4주, 수학교재, 국제전화비용, 코로나관련비용(마스크/1일1개, 셀프 자가검사키트/주, 개인방역용품)",
+      "includesLocalFees": true,
+      "schedules": [
+        { "startDate": "2026-07-23", "endDate": "2026-08-19", "season": "성수기", "weeks": 4, "note": "4주 1차" },
+        { "startDate": "2026-07-26", "endDate": "2026-08-22", "season": "성수기", "weeks": 4, "note": "4주 2차 (세미스파르타 전용 일정)" },
+        { "startDate": "2026-07-16", "endDate": "2026-08-26", "season": "성수기", "weeks": 6 },
+        { "startDate": "2026-07-02", "endDate": "2026-08-26", "season": "성수기", "weeks": 8 }
+      ],
+      "note": "모집대상: 초등학교 2학년 ~ 중학교 3학년.\n캠프장소: 릴로안 CIJ캠퍼스(초6~중3) / Weber Hotel 프리미엄(초2~초6).\n기숙형태: 릴로안 학생 4~5명 배정 / 프리미엄 학생 3~4명+필리핀강사 1명.\n항공은 대한민국 국적기 이용(5인 미만 시 UM으로 진행).\n※ 8주 입문반 등록자의 경우 4주는 정규반 4주는 입문반으로 진행.\n수속료는 환불 불가."
+    }
+  ],
+  "surcharges": [],
+  "localFees": [],
+  "refundPolicy": "수속료는 환불 불가.",
+  "dormitoryRules": "",
+  "generalNotes": "CIJ 주니어캠프. 현지비 포함 패키지.\n일반 연수 및 가족연수는 별도 학원 CIJ에서 관리.",
+  "isActive": true,
+  "createdAt": "2026-05-29",
+  "updatedAt": "2026-05-29"
+}

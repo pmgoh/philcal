@@ -1,0 +1,455 @@
+{
+  "id": "smeag_capital",
+  "schoolCode": "SMEAG_CAPITAL",
+  "name": "SMEAG Capital Campus",
+  "campus": "Capital",
+  "region": "세부",
+  "schoolType": "general",
+  "minWeeks": 1,
+  "allowShortTerm": true,
+  "shortTermDataStatus": "confirmed",
+  "programTags": [
+    "ESL",
+    "IELTS",
+    "TOEFL",
+    "TOEIC",
+    "비즈니스",
+    "가족연수"
+  ],
+  "registrationFee": {
+    "amount": 100000,
+    "currency": "KRW"
+  },
+  "courses": [],
+  "dormitories": [],
+  "packages": [
+    {
+      "id": "smeag_cap_esl_1p",
+      "name": "ESL 1인실",
+      "includesLocalFees": false,
+      "priceMatrix": {
+        "columns": [
+          "4W",
+          "8W",
+          "12W",
+          "16W",
+          "20W",
+          "24W"
+        ],
+        "rows": [
+          {
+            "label": "ESL 1인실",
+            "prices": [
+              1190000,
+              2380000,
+              3570000,
+              4760000,
+              5950000,
+              7140000
+            ]
+          }
+        ]
+      },
+      "currency": "KRW",
+      "note": "입학금 10만원 별도. Cambridge ESL (KET/PET/FCE/CAE/CPE)."
+    },
+    {
+      "id": "smeag_cap_esl_2p",
+      "name": "ESL 2인실",
+      "includesLocalFees": false,
+      "priceMatrix": {
+        "columns": [
+          "4W",
+          "8W",
+          "12W",
+          "16W",
+          "20W",
+          "24W"
+        ],
+        "rows": [
+          {
+            "label": "ESL 2인실",
+            "prices": [
+              1020000,
+              2040000,
+              3060000,
+              4080000,
+              5100000,
+              6120000
+            ]
+          }
+        ]
+      },
+      "currency": "KRW"
+    },
+    {
+      "id": "smeag_cap_esl_3p",
+      "name": "ESL 3인실",
+      "includesLocalFees": false,
+      "priceMatrix": {
+        "columns": [
+          "4W",
+          "8W",
+          "12W",
+          "16W",
+          "20W",
+          "24W"
+        ],
+        "rows": [
+          {
+            "label": "ESL 3인실",
+            "prices": [
+              890000,
+              1780000,
+              2670000,
+              3560000,
+              4450000,
+              5340000
+            ]
+          }
+        ]
+      },
+      "currency": "KRW"
+    },
+    {
+      "id": "smeag_cap_esl_4p",
+      "name": "ESL 4인실",
+      "includesLocalFees": false,
+      "priceMatrix": {
+        "columns": [
+          "4W",
+          "8W",
+          "12W",
+          "16W",
+          "20W",
+          "24W"
+        ],
+        "rows": [
+          {
+            "label": "ESL 4인실",
+            "prices": [
+              790000,
+              1580000,
+              2370000,
+              3160000,
+              3950000,
+              4740000
+            ]
+          }
+        ]
+      },
+      "currency": "KRW"
+    },
+    {
+      "id": "smeag_cap_esl_5p",
+      "name": "ESL 5인실",
+      "includesLocalFees": false,
+      "priceMatrix": {
+        "columns": [
+          "4W",
+          "8W",
+          "12W",
+          "16W",
+          "20W",
+          "24W"
+        ],
+        "rows": [
+          {
+            "label": "ESL 5인실",
+            "prices": [
+              730000,
+              1460000,
+              2190000,
+              2920000,
+              3650000,
+              4380000
+            ]
+          }
+        ]
+      },
+      "currency": "KRW"
+    },
+    {
+      "id": "smeag_cap_ielts",
+      "name": "IELTS/TOEFL",
+      "includesLocalFees": false,
+      "priceMatrix": {
+        "columns": [
+          "4W",
+          "8W",
+          "12W",
+          "16W",
+          "20W",
+          "24W"
+        ],
+        "rows": [
+          {
+            "label": "IELTS/TOEFL",
+            "prices": [
+              1250000,
+              2500000,
+              3750000,
+              5000000,
+              6250000,
+              7500000
+            ]
+          }
+        ]
+      },
+      "currency": "KRW",
+      "note": "인실 무관 단일 가격."
+    },
+    {
+      "id": "smeag_cap_toeic",
+      "name": "TOEIC/BIZ",
+      "includesLocalFees": false,
+      "priceMatrix": {
+        "columns": [
+          "4W",
+          "8W",
+          "12W",
+          "16W",
+          "20W",
+          "24W"
+        ],
+        "rows": [
+          {
+            "label": "TOEIC/BIZ",
+            "prices": [
+              1140000,
+              2280000,
+              3420000,
+              4560000,
+              5700000,
+              6840000
+            ]
+          }
+        ]
+      },
+      "currency": "KRW"
+    },
+    {
+      "id": "smeag_cap_family_child",
+      "name": "Family (Child/Busybee)",
+      "includesLocalFees": false,
+      "priceMatrix": {
+        "columns": [
+          "4W",
+          "8W",
+          "12W",
+          "16W",
+          "20W",
+          "24W"
+        ],
+        "rows": [
+          {
+            "label": "Busybee(2~4세)",
+            "prices": [
+              840000,
+              1680000,
+              2520000,
+              3360000,
+              4200000,
+              5040000
+            ]
+          },
+          {
+            "label": "Beginner/Inter",
+            "prices": [
+              1140000,
+              2280000,
+              3420000,
+              4560000,
+              5700000,
+              6840000
+            ]
+          },
+          {
+            "label": "Advanced(Flyers)",
+            "prices": [
+              1540000,
+              3080000,
+              4620000,
+              6160000,
+              7700000,
+              9240000
+            ]
+          }
+        ]
+      },
+      "currency": "KRW"
+    },
+    {
+      "id": "smeag_cap_family_parent",
+      "name": "Family (Parents)",
+      "includesLocalFees": false,
+      "priceMatrix": {
+        "columns": [
+          "4W",
+          "8W",
+          "12W",
+          "16W",
+          "20W",
+          "24W"
+        ],
+        "rows": [
+          {
+            "label": "Parents",
+            "prices": [
+              840000,
+              1680000,
+              2520000,
+              3360000,
+              4200000,
+              5040000
+            ]
+          }
+        ]
+      },
+      "currency": "KRW"
+    },
+    {
+      "id": "smeag_cap_esl2_2p",
+      "name": "ESL2/Speaking Master 2인실",
+      "includesLocalFees": false,
+      "priceMatrix": {
+        "columns": [
+          "4W",
+          "8W",
+          "12W",
+          "16W",
+          "20W",
+          "24W"
+        ],
+        "rows": [
+          {
+            "label": "ESL2 2인실",
+            "prices": [
+              1140000,
+              2280000,
+              3420000,
+              4560000,
+              5700000,
+              6840000
+            ]
+          }
+        ]
+      },
+      "currency": "KRW"
+    }
+  ],
+  "surcharges": [],
+  "localFees": [
+    {
+      "id": "smeag_cap_ssp",
+      "name": "SSP",
+      "amount": 7800,
+      "currency": "PHP",
+      "chargeUnit": "per_person"
+    },
+    {
+      "id": "smeag_cap_ssp_icard",
+      "name": "SSP I-Card",
+      "amount": 4300,
+      "currency": "PHP",
+      "chargeUnit": "per_person"
+    },
+    {
+      "id": "smeag_cap_visa_icard",
+      "name": "VISA I-Card",
+      "amount": 4300,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "triggerWeeks": 9
+    },
+    {
+      "id": "smeag_cap_deposit",
+      "name": "보증금",
+      "amount": 3000,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "note": "Room P2,500 + Key P300 + E-Money P200."
+    },
+    {
+      "id": "smeag_cap_maintenance",
+      "name": "관리비",
+      "amount": 2000,
+      "currency": "PHP",
+      "chargeUnit": "per_4weeks"
+    },
+    {
+      "id": "smeag_cap_elec_water",
+      "name": "전기·수도",
+      "amount": 2400,
+      "currency": "PHP",
+      "chargeUnit": "per_4weeks",
+      "note": "초과 시 추가."
+    },
+    {
+      "id": "smeag_cap_pickup",
+      "name": "픽업비",
+      "amount": 1200,
+      "currency": "PHP",
+      "chargeUnit": "per_person"
+    },
+    {
+      "id": "smeag_cap_visa_1",
+      "name": "1차 비자연장",
+      "amount": 5130,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "triggerWeeks": 5
+    },
+    {
+      "id": "smeag_cap_visa_2",
+      "name": "2차 비자연장 (누적)",
+      "amount": 11530,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "triggerWeeks": 9
+    },
+    {
+      "id": "smeag_cap_visa_3",
+      "name": "3차 비자연장 (누적)",
+      "amount": 15960,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "triggerWeeks": 13
+    },
+    {
+      "id": "smeag_cap_visa_4",
+      "name": "4차 비자연장 (누적)",
+      "amount": 20390,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "triggerWeeks": 17
+    },
+    {
+      "id": "smeag_cap_visa_5",
+      "name": "5차 비자연장 (누적)",
+      "amount": 24820,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "triggerWeeks": 21
+    }
+  ],
+  "additionalCharges": [],
+  "generalNotes": "SMEAG Capital Campus. 세부 소재. 2025년 학비표 기준.\n\n합산표 형태 (코스+기숙사+입학금 포함 Gross price). 입학금 10만원 포함.\n현지비용 별도.\n\n현지비용 총액: 4주 20,700PHP / 8주 30,230PHP / 12주 45,330PHP / 16주 54,160PHP / 20주 62,990PHP / 24주 71,820PHP.",
+  "isActive": true,
+  "createdAt": "2026-05-29",
+  "updatedAt": "2026-05-30",
+  "courseShortTermRates": {
+    "mode": "percent",
+    "week1": 45,
+    "week2": 65,
+    "week3": 85,
+    "week4Included": false
+  },
+  "dormShortTermRates": {
+    "mode": "percent",
+    "week1": 45,
+    "week2": 65,
+    "week3": 85,
+    "week4Included": false
+  }
+}

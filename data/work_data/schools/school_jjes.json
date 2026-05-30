@@ -1,0 +1,596 @@
+{
+  "id": "jjes",
+  "schoolCode": "JJES",
+  "name": "JJES (Jung Jun English School)",
+  "campus": "본원",
+  "region": "세부",
+  "schoolType": "family",
+  "minWeeks": 2,
+  "allowShortTerm": true,
+  "shortTermDataStatus": "confirmed",
+  "programTags": [
+    "주니어",
+    "가족연수",
+    "캠프",
+    "TOEFL",
+    "IELTS",
+    "SAT",
+    "국제학교"
+  ],
+  "registrationFee": {
+    "amount": 0,
+    "currency": "KRW",
+    "note": "프로그램별 상이. 가족캠프 비수기: 등록금 면제(1차연수비 100만원에 포함). 성수기/영수캠프/최상위: 등록금 20만원 별도."
+  },
+  "courses": [],
+  "dormitories": [],
+  "packages": [
+    {
+      "id": "jjes_fam_dorm_low_2p",
+      "name": "[비수기 기숙] 2인 (보호자1+아이1)",
+      "includesLocalFees": false,
+      "priceMatrix": {
+        "columns": [
+          "2W",
+          "4W",
+          "8W"
+        ],
+        "rows": [
+          {
+            "label": "보호자1+아이1",
+            "prices": [
+              2200000,
+              3100000,
+              6200000
+            ]
+          }
+        ]
+      },
+      "currency": "KRW",
+      "note": "ESL 1:1 5H + MIE 1:1 1H + ETC 그룹 2H + SDL 2H. 등록금 면제. 1차연수비 100만원(환불불가). 공항픽드롭 포함."
+    },
+    {
+      "id": "jjes_fam_dorm_low_3p_21",
+      "name": "[비수기 기숙] 3인 (보호자2+아이1)",
+      "includesLocalFees": false,
+      "priceMatrix": {
+        "columns": [
+          "2W",
+          "4W",
+          "8W"
+        ],
+        "rows": [
+          {
+            "label": "보호자2+아이1",
+            "prices": [
+              2800000,
+              4000000,
+              8000000
+            ]
+          }
+        ]
+      },
+      "currency": "KRW"
+    },
+    {
+      "id": "jjes_fam_dorm_low_3p_12",
+      "name": "[비수기 기숙] 3인 (보호자1+아이2)",
+      "includesLocalFees": false,
+      "priceMatrix": {
+        "columns": [
+          "2W",
+          "4W",
+          "8W"
+        ],
+        "rows": [
+          {
+            "label": "보호자1+아이2",
+            "prices": [
+              3400000,
+              4800000,
+              9600000
+            ]
+          }
+        ]
+      },
+      "currency": "KRW"
+    },
+    {
+      "id": "jjes_fam_dorm_low_4p_22",
+      "name": "[비수기 기숙] 4인 (보호자2+아이2)",
+      "includesLocalFees": false,
+      "priceMatrix": {
+        "columns": [
+          "2W",
+          "4W",
+          "8W"
+        ],
+        "rows": [
+          {
+            "label": "보호자2+아이2",
+            "prices": [
+              3850000,
+              5500000,
+              11000000
+            ]
+          }
+        ]
+      },
+      "currency": "KRW"
+    },
+    {
+      "id": "jjes_fam_dorm_low_4p_13",
+      "name": "[비수기 기숙] 4인 (보호자1+아이3)",
+      "includesLocalFees": false,
+      "priceMatrix": {
+        "columns": [
+          "2W",
+          "4W",
+          "8W"
+        ],
+        "rows": [
+          {
+            "label": "보호자1+아이3",
+            "prices": [
+              4450000,
+              6300000,
+              12600000
+            ]
+          }
+        ]
+      },
+      "currency": "KRW"
+    },
+    {
+      "id": "jjes_fam_dorm_high_2p",
+      "name": "[성수기 기숙] 2인 (보호자1+아이1)",
+      "includesLocalFees": false,
+      "priceMatrix": {
+        "columns": [
+          "2W",
+          "3W",
+          "4W"
+        ],
+        "rows": [
+          {
+            "label": "보호자1+아이1",
+            "prices": [
+              3400000,
+              4600000,
+              5400000
+            ]
+          }
+        ]
+      },
+      "currency": "KRW",
+      "note": "ESL 1:1 3H + MIE 1:2 1H + ETC 그룹 2H + SDL 2H. 등록금 포함(1차연수비 150만원). 공항픽드롭 미포함."
+    },
+    {
+      "id": "jjes_fam_dorm_high_3p_21",
+      "name": "[성수기 기숙] 3인 (보호자2+아이1)",
+      "includesLocalFees": false,
+      "priceMatrix": {
+        "columns": [
+          "2W",
+          "3W",
+          "4W"
+        ],
+        "rows": [
+          {
+            "label": "보호자2+아이1",
+            "prices": [
+              4200000,
+              5600000,
+              6600000
+            ]
+          }
+        ]
+      },
+      "currency": "KRW"
+    },
+    {
+      "id": "jjes_fam_dorm_high_3p_12",
+      "name": "[성수기 기숙] 3인 (보호자1+아이2)",
+      "includesLocalFees": false,
+      "priceMatrix": {
+        "columns": [
+          "2W",
+          "3W",
+          "4W"
+        ],
+        "rows": [
+          {
+            "label": "보호자1+아이2",
+            "prices": [
+              5000000,
+              6700000,
+              7900000
+            ]
+          }
+        ]
+      },
+      "currency": "KRW"
+    },
+    {
+      "id": "jjes_fam_dorm_high_4p_22",
+      "name": "[성수기 기숙] 4인 (보호자2+아이2)",
+      "includesLocalFees": false,
+      "priceMatrix": {
+        "columns": [
+          "2W",
+          "3W",
+          "4W"
+        ],
+        "rows": [
+          {
+            "label": "보호자2+아이2",
+            "prices": [
+              5800000,
+              7700000,
+              9100000
+            ]
+          }
+        ]
+      },
+      "currency": "KRW"
+    },
+    {
+      "id": "jjes_fam_dorm_high_4p_13",
+      "name": "[성수기 기숙] 4인 (보호자1+아이3)",
+      "includesLocalFees": false,
+      "priceMatrix": {
+        "columns": [
+          "2W",
+          "3W",
+          "4W"
+        ],
+        "rows": [
+          {
+            "label": "보호자1+아이3",
+            "prices": [
+              6500000,
+              8500000,
+              9900000
+            ]
+          }
+        ]
+      },
+      "currency": "KRW"
+    },
+    {
+      "id": "jjes_fam_walk_3h",
+      "name": "[통학] 3H 베이직",
+      "includesLocalFees": false,
+      "priceMatrix": {
+        "columns": [
+          "2W",
+          "3W",
+          "4W"
+        ],
+        "rows": [
+          {
+            "label": "3H 베이직",
+            "prices": [
+              800000,
+              1000000,
+              1200000
+            ]
+          }
+        ]
+      },
+      "currency": "KRW",
+      "note": "ESL 1:1 3H. 등록금 20만원 별도."
+    },
+    {
+      "id": "jjes_fam_walk_6h",
+      "name": "[통학] 6H 스탠다드",
+      "includesLocalFees": false,
+      "priceMatrix": {
+        "columns": [
+          "2W",
+          "3W",
+          "4W"
+        ],
+        "rows": [
+          {
+            "label": "6H 스탠다드",
+            "prices": [
+              1200000,
+              1500000,
+              1800000
+            ]
+          }
+        ]
+      },
+      "currency": "KRW",
+      "note": "ESL 1:1 3H + 1:2~1:4 3H."
+    },
+    {
+      "id": "jjes_fam_walk_8h",
+      "name": "[통학] 8H 프리미엄",
+      "includesLocalFees": false,
+      "priceMatrix": {
+        "columns": [
+          "2W",
+          "3W",
+          "4W"
+        ],
+        "rows": [
+          {
+            "label": "8H 프리미엄",
+            "prices": [
+              1500000,
+              1800000,
+              2100000
+            ]
+          }
+        ]
+      },
+      "currency": "KRW",
+      "note": "ESL 1:1 3H + 1:2~1:4 3H + ETC 소그룹 2H."
+    },
+    {
+      "id": "jjes_fam_walk_9h",
+      "name": "[통학] 9H PRE-영수",
+      "includesLocalFees": false,
+      "priceMatrix": {
+        "columns": [
+          "2W",
+          "3W",
+          "4W"
+        ],
+        "rows": [
+          {
+            "label": "9H PRE-영수",
+            "prices": [
+              2000000,
+              2300000,
+              2800000
+            ]
+          }
+        ]
+      },
+      "currency": "KRW",
+      "note": "ESL 6H + VOCA 1H + 내신교과 2H. 8세~. 월~토. 6~8월/12~2월."
+    },
+    {
+      "id": "jjes_eng_math_camp",
+      "name": "영어수학캠프 (11H)",
+      "includesLocalFees": false,
+      "priceMatrix": {
+        "columns": [
+          "3W",
+          "4W",
+          "6W",
+          "8W",
+          "10W",
+          "12W"
+        ],
+        "rows": [
+          {
+            "label": "영어수학캠프",
+            "prices": [
+              4000000,
+              4500000,
+              6000000,
+              7500000,
+              9000000,
+              10500000
+            ]
+          }
+        ]
+      },
+      "currency": "KRW",
+      "note": "예비 초1~. 영어9H+수학2H. 6/7/8월 & 12/1/2월. 등록금 20만원 별도. 기초서류비·숙식·수업료·교재·교복·토요체크데이·일요액티비티 포함."
+    },
+    {
+      "id": "jjes_top_toefl",
+      "name": "최상위캠프 TOEFL (14H)",
+      "includesLocalFees": false,
+      "priceMatrix": {
+        "columns": [
+          "정가",
+          "조기등록"
+        ],
+        "rows": [
+          {
+            "label": "TOEFL",
+            "prices": [
+              6000000,
+              5800000
+            ]
+          }
+        ]
+      },
+      "currency": "KRW",
+      "note": "중등~고등. Advanced Level. 소수정예. 기초서류비+연수비+일요액티비티 포함. 등록금 20만원 별도."
+    },
+    {
+      "id": "jjes_top_ielts",
+      "name": "최상위캠프 IELTS (14H)",
+      "includesLocalFees": false,
+      "priceMatrix": {
+        "columns": [
+          "정가",
+          "조기등록"
+        ],
+        "rows": [
+          {
+            "label": "IELTS",
+            "prices": [
+              6500000,
+              6300000
+            ]
+          }
+        ]
+      },
+      "currency": "KRW"
+    },
+    {
+      "id": "jjes_top_gpa",
+      "name": "최상위캠프 내신GPA (14H)",
+      "includesLocalFees": false,
+      "priceMatrix": {
+        "columns": [
+          "정가",
+          "조기등록"
+        ],
+        "rows": [
+          {
+            "label": "내신GPA",
+            "prices": [
+              6500000,
+              6300000
+            ]
+          }
+        ]
+      },
+      "currency": "KRW"
+    },
+    {
+      "id": "jjes_top_sat",
+      "name": "최상위캠프 SAT (14H)",
+      "includesLocalFees": false,
+      "priceMatrix": {
+        "columns": [
+          "정가",
+          "조기등록"
+        ],
+        "rows": [
+          {
+            "label": "SAT",
+            "prices": [
+              7000000,
+              6800000
+            ]
+          }
+        ]
+      },
+      "currency": "KRW"
+    },
+    {
+      "id": "jjes_intl_prep_walk",
+      "name": "국제학교 입시준비반 (통학)",
+      "includesLocalFees": false,
+      "priceMatrix": {
+        "columns": [
+          "4W"
+        ],
+        "rows": [
+          {
+            "label": "입시준비반(통학)",
+            "prices": [
+              1800000
+            ]
+          }
+        ]
+      },
+      "currency": "KRW",
+      "note": "8H (ESL 7H + MIE 1H). 수업·교재·교복·점심·셔틀 포함. 등록금 20만원 별도. 입시 추가수업 2H 40만원(옵션)."
+    },
+    {
+      "id": "jjes_intl_prep_dorm",
+      "name": "국제학교 입시준비반 (기숙)",
+      "includesLocalFees": false,
+      "priceMatrix": {
+        "columns": [
+          "4W"
+        ],
+        "rows": [
+          {
+            "label": "입시준비반(기숙)",
+            "prices": [
+              2500000
+            ]
+          }
+        ]
+      },
+      "currency": "KRW",
+      "note": "숙식·수업·교재·교복 포함. 등록금 20만원 별도."
+    },
+    {
+      "id": "jjes_intl_homestay",
+      "name": "국제학교 홈스테이 (기숙)",
+      "includesLocalFees": false,
+      "priceMatrix": {
+        "columns": [
+          "월"
+        ],
+        "rows": [
+          {
+            "label": "홈스테이(기숙)",
+            "prices": [
+              2500000
+            ]
+          }
+        ]
+      },
+      "currency": "KRW",
+      "note": "국제학교 재학생. 숙식·학교픽드롭·점심 포함. 국제학교 관련비용 별도. 방과후 수업 2H 40만원(옵션)."
+    }
+  ],
+  "surcharges": [],
+  "localFees": [
+    {
+      "id": "jjes_ssp",
+      "name": "SSP",
+      "amount": 12500,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "note": "학교 입학 전(학원 발급) P12,500. 학교 입학 후(학교 발급) 비용 상이."
+    },
+    {
+      "id": "jjes_visa_1",
+      "name": "1차 비자연장 (~8주)",
+      "amount": 5130,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "triggerWeeks": 5
+    },
+    {
+      "id": "jjes_visa_2",
+      "name": "2차 비자연장 (~12주)",
+      "amount": 6410,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "triggerWeeks": 9
+    },
+    {
+      "id": "jjes_acr_icard",
+      "name": "ACR I-Card",
+      "amount": 5000,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "triggerWeeks": 9
+    },
+    {
+      "id": "jjes_deposit",
+      "name": "보증금",
+      "amount": 40000,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "note": "연수 종료 후 변제반환. 용돈 P40,000 학교 준비물 및 매점 이용."
+    }
+  ],
+  "additionalCharges": [
+    {
+      "id": "jjes_intl_option",
+      "label": "입시 추가수업 (4주, 2H)",
+      "amount": 400000,
+      "currency": "KRW",
+      "note": "국제학교 교과목 선행, Interview 등."
+    },
+    {
+      "id": "jjes_homestay_option",
+      "label": "방과후 관리/수업 (월, 2H)",
+      "amount": 400000,
+      "currency": "KRW"
+    }
+  ],
+  "refundPolicy": "1차연수비 환불 불가. 비수기: 1차연수비 100만원. 성수기: 1차연수비 150만원.",
+  "dormitoryRules": "",
+  "generalNotes": "JJES (Jung Jun English School). 세부 소재. 2006년~ 주니어 전문어학원.\n\n[프로그램 유형]\n1. 가족캠프 기숙형 (비수기: 3~6월/8~12월, 성수기: 6~8월/12~2월)\n2. 가족캠프 통학형 (3H/6H/8H/9H PRE-영수)\n3. 영어수학캠프 (11H, 초등~고등, 6~8/12~2월)\n4. 최상위캠프 (TOEFL/IELTS/GPA/SAT, 중등~고등)\n5. 국제학교 입시준비반 (통학/기숙)\n6. 국제학교 홈스테이\n\n[비수기 vs 성수기 차이]\n비수기 기숙: ESL 1:1 5H + MIE 1:1 1H. 등록금 면제. 공항픽드롭 포함.\n성수기 기숙: ESL 1:1 3H + MIE 1:2 1H. 등록금 포함(1차연수비 150만원). 공항픽드롭 미포함.\n\n[현지비용] SSP P12,500, 비자연장, ACR I-Card, 보증금/용돈 P40,000.\n\n[조기등록 할인] 최상위캠프: 조기등록 -10만 + 프로모션 -10만 = 총 -20만.\n형제자매 할인: 각 10만원.\n국제학교 입시: 6개월 선납 20만 할인 / 12개월 선납 50만 할인.",
+  "isActive": true,
+  "createdAt": "2026-05-29",
+  "updatedAt": "2026-05-29"
+}

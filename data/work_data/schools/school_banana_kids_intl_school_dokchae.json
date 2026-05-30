@@ -1,0 +1,73 @@
+{
+  "id": "banana_kids_intl_school_dokchae",
+  "schoolCode": "BANANA_KIDS_INTL_SCHOOL_DOKCHAE",
+  "name": "BANANA KIDS 국제학교 입학 준비반 (독채)",
+  "campus": "독채 / BK ACADEMY",
+  "region": "세부",
+  "schoolType": "general",
+  "minWeeks": 4,
+  "allowShortTerm": false,
+  "programTags": ["가족연수", "주니어"],
+  "registrationFee": {
+    "amount": 100000,
+    "currency": "KRW",
+    "note": "등록금 인당 10만원 (패키지에 포함됨)"
+  },
+  "courses": [],
+  "dormitories": [],
+  "packages": [
+    {
+      "id": "bk_intl_school_dokchae",
+      "label": "국제학교 입학 준비반 (독채)",
+      "season": "연중",
+      "currency": "KRW",
+      "columns": ["4주", "8주", "12주"],
+      "priceMatrix": [
+        {
+          "weeks": 4,
+          "prices": [
+            { "label": "2인 / 독채 4주", "amount": 4500000 },
+            { "label": "3인 / 독채 4주", "amount": 6800000 },
+            { "label": "4인 / 독채 4주", "amount": 8400000 }
+          ]
+        },
+        {
+          "weeks": 8,
+          "prices": [
+            { "label": "2인 / 독채 8주", "amount": 8800000 },
+            { "label": "3인 / 독채 8주", "amount": 13300000 },
+            { "label": "4인 / 독채 8주", "amount": 16400000 }
+          ]
+        },
+        {
+          "weeks": 12,
+          "prices": [
+            { "label": "2인 / 독채 12주", "amount": 13100000 },
+            { "label": "3인 / 독채 12주", "amount": 19800000 },
+            { "label": "4인 / 독채 12주", "amount": 24400000 }
+          ]
+        }
+      ],
+      "additionalRules": [
+        {
+          "id": "agent_service",
+          "condition": "수속 대행 서비스 (12주시 무료)",
+          "addAmount": 500000,
+          "currency": "KRW"
+        }
+      ],
+      "includes": "학비, 숙소, 식사, 공항 픽/드랍 각 1회, 쇼핑몰 픽드랍 주2회, 하우스키핑 서비스 (주 5회 청소 / 빨래 서비스 제공), 등록비, 전기세, SSP, SSP ID-CARD, 현지 납부비용, 비자연장비 (8주이상 등록시 무료)",
+      "excludes": "항공금, 여행자보험, 기타 개인비용, 숙소 보증금(인당 3,000페소), 전기세(400kw 초과시), 수속 대행 서비스",
+      "includesLocalFees": true,
+      "note": "BK Academy 산하 국제학교 입학 준비반 - 독채 전용.\n수속 대행 서비스: 현지 학교투어 1회, 입학원서 접수, 입학테스트 및 등록 동행 1회, 입학 전 준비사항 안내 (한국어 서류 번역, 공증, 아포스티유 비용 별도)\n12주 코스 시 수속 대행 무료.\n\n내부 옵션은 별도 학원 BANANA_KIDS에서 관리."
+    }
+  ],
+  "surcharges": [],
+  "localFees": [],
+  "refundPolicy": "",
+  "dormitoryRules": "",
+  "generalNotes": "BK Academy 산하 국제학교 입학 준비반 - 독채 전용.\n현지납부비용이 패키지에 포함됨 (등록금/전기세/SSP/SSP ID-CARD/현지납부비용/비자연장비 8주 이상 무료).",
+  "isActive": true,
+  "createdAt": "2026-05-29",
+  "updatedAt": "2026-05-29"
+}

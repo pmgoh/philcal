@@ -1,0 +1,105 @@
+{
+  "id": "pj_alabang_peak",
+  "schoolCode": "PJ_ALABANG_PEAK",
+  "name": "PJ피자어학원 - 알라방 성수기",
+  "campus": "알라방 (성수기)",
+  "region": "알라방",
+  "schoolType": "camp",
+  "minWeeks": 2,
+  "allowShortTerm": false,
+  "programTags": ["주니어캠프", "가족연수", "성수기"],
+  "registrationFee": { "amount": 0, "currency": "KRW", "note": "패키지에 포함" },
+  "courses": [],
+  "dormitories": [],
+  "surcharges": [],
+  "promotions": null,
+  "localFees": [],
+  "packages": [
+    {
+      "id": "pj_alabang_peak_junior",
+      "name": "알라방 주니어 캠프",
+      "programType": "junior",
+      "includesLocalFees": true,
+      "note": "알라방 저택 숙소 부대시설 일체 이용 / 호텔 숙소 동시 이용. 현지비용(등록비·ID·SSP 등) 포함.",
+      "includes": "알라방 저택 숙소 부대시설 일체 이용 / 호텔 숙소 동시 이용, 매일 3식 제공 (식단에 맞춘 식사), 매주 액티비티 (4주 기준 호핑투어 1회 포함), 학원 수업 프로그램 + 저녁공부 + 영어활동 & 선택 수업 무료, 24시간 한국인 선생님 밀착 관리 & 밴드 사진 업로드, 일요일 활동, 티셔츠 제공 & 부모 미동반 서류 공증 대행, 인천공항 인솔 픽업 & 샌딩·학원 차량 셔틀 서비스 이용, 등록비·ID발급·SSP 발급 비용 등 현지 비용, 매일 하우스키핑 + 빨래, After care - 온라인영어 무료 수업 (캠프 후 4주)",
+      "excludes": "왕복 항공권 & 여행자보험 (의료 비용), 입국세 3,620페소, 개인비용 (레슨·외식·쇼핑·골프·마사지 등)",
+      "priceMatrix": {
+        "columns": ["주니어 캠프 (1인)"],
+        "rows": [
+          { "weeks": 4, "prices": [4300000] },
+          { "weeks": 6, "prices": [6000000] },
+          { "weeks": 8, "prices": [7700000] },
+          { "weeks": 12, "prices": [10700000] },
+          { "weeks": 16, "prices": [13900000] }
+        ]
+      },
+      "currency": "KRW"
+    },
+    {
+      "id": "pj_alabang_peak_family",
+      "name": "알라방 가족 연수",
+      "programType": "family",
+      "includesLocalFees": true,
+      "note": "아주미 부띠끄 호텔 3성급 어메니티 & 부대시설 이용. 현지비용(등록비·ID·SSP 등) 포함. USD 단가.",
+      "includes": "아주미 부띠끄 호텔 3성급 어메니티 & 부대시설 이용, 중식 + 석식 제공 (호텔 조식 별도), 정규 학원 수업 프로그램 + 저녁공부 & 금요활동, 공항 픽업 & 샌딩·학원 차량 셔틀 서비스 이용, 등록비·ID발급·SSP 발급 비용 등 현지 비용, 관리비·전기세·물세·인터넷 비용, 매일 하우스키핑, 매주 떠나는 액티비티",
+      "excludes": "왕복 항공권 & 여행자보험 (의료 비용), 한국 수업 & 저녁 한국 수업·영어활동 (일요일 활동 등 성수기), 개인비용 (레슨·외식·쇼핑·골프·마사지 등) + 부모님 수업, 비자 연장 비용, 빨래",
+      "priceMatrix": {
+        "columns": ["2인 가족 (보호자1+아이1)", "3인 가족 (보호자1+아이2)", "4인 가족 (보호자1+아이3)"],
+        "rows": [
+          { "weeks": 2, "prices": [500, 750, 1000] },
+          { "weeks": 3, "prices": [650, 900, 1130] },
+          { "weeks": 4, "prices": [750, 990, 1270] },
+          { "weeks": 6, "prices": [1060, 1400, 1790] },
+          { "weeks": 8, "prices": [1330, 1780, 2320] },
+          { "weeks": 12, "prices": [1830, 2370, 3230] }
+        ]
+      },
+      "currency": "USD"
+    },
+    {
+      "id": "pj_alabang_peak_junior_cebu",
+      "name": "세부 주니어 영어캠프 (부모님 미동반)",
+      "programType": "junior",
+      "includesLocalFees": true,
+      "note": "뉴타운 레지던스 숙소. 부모님 미동반. 현지비용 포함.",
+      "includes": "NEW TOWN / 레지던스 (하루 3식 + 야식·간식 제공) + 어메니티 (3~4인실), 학원 수업 1:1 수업 4시간 + 그룹수업/어휘학습/수학수업 & 저녁공부 관리, 입학 & 수료 레벨테스트 결과지 컨설팅 제공, 금요 영어 활동 + 위 무료 선택 수업, 매주 떠나는 신나는 액티비티, 뉴타운 비치 및 수영장 무료 이용, 공항 인솔 픽업 & 드랍, 매일 하우스키핑 / 주 3회 빨래 & 건조 진행, 등록비·ID발급·SSP 발급 비용 등 현지 비용, 부모 미동반 서류 공증 비용, 영어캠프 단체 티셔츠, 제휴 업체 할인 혜택 제공, After care - 온라인영어 무료 수업 (캠프 참여 기간 만큼·최대 4주)",
+      "excludes": "왕복 항공권, 여행자 보험, 개인 활동 비용, 입국세 ($70), 추가 액티비티 & 레슨 등",
+      "priceMatrix": {
+        "columns": ["뉴타운 레지던스"],
+        "rows": [
+          { "weeks": 4, "prices": [4100000] },
+          { "weeks": 6, "prices": [5700000] },
+          { "weeks": 8, "prices": [7000000] },
+          { "weeks": 12, "prices": [9900000] }
+        ]
+      },
+      "currency": "KRW"
+    },
+    {
+      "id": "pj_alabang_peak_junior_alabang",
+      "name": "알라방 주니어 영어캠프 (부모님 미동반)",
+      "programType": "junior",
+      "includesLocalFees": true,
+      "note": "알라방 저택/호텔 숙소. 부모님 미동반. 현지비용 포함.",
+      "includes": "알라방 저택 / 호텔 숙소 (하루 3식 + 야식·간식 제공) + 어메니티 (3~6인실), 학원 수업 1:1 수업 4시간 + 그룹수업/어휘학습/수학수업 & 저녁공부 관리, 입학 & 수료 레벨테스트 결과지 컨설팅 제공, 금요 영어 활동 + 위 무료 선택 수업, 매주 떠나는 신나는 액티비티, 빌리지 부대시설 및 수영장 무료 이용, 공항 인솔 픽업 & 드랍, 매일 하우스키핑 / 주 3회 빨래 & 건조 진행, 등록비·ID발급·SSP 발급 비용 등 현지 비용, 부모 미동반 서류 공증 비용, 영어캠프 단체 티셔츠, 제휴 업체 할인 혜택 제공, After care - 온라인영어 무료 수업 (캠프 참여 기간 만큼·최대 4주)",
+      "excludes": "왕복 항공권, 여행자 보험, 개인 활동 비용, 추가 액티비티 & 레슨 등",
+      "priceMatrix": {
+        "columns": ["알라방 저택/호텔"],
+        "rows": [
+          { "weeks": 4, "prices": [4300000] },
+          { "weeks": 6, "prices": [6000000] },
+          { "weeks": 8, "prices": [7700000] },
+          { "weeks": 12, "prices": [10700000] }
+        ]
+      },
+      "currency": "KRW"
+    }
+  ],
+  "additionalCharges": [],
+  "refundPolicy": "",
+  "dormitoryRules": "",
+  "generalNotes": "PJ피자어학원 알라방 성수기 프로그램.\n\n알라방 가족연수: USD 단가. 아주미 부띠끄 호텔 3성급.\n알라방 주니어캠프: 만원 단가. 저택/호텔 숙소.\n세부 주니어캠프(미동반): 만원 단가. 뉴타운 레지던스.\n\n모든 패키지 현지비용 포함.",
+  "isActive": true,
+  "createdAt": "2026-05-29",
+  "updatedAt": "2026-05-29"
+}

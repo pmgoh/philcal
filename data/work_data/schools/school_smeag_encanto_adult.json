@@ -1,0 +1,280 @@
+{
+  "id": "smeag_encanto_adult",
+  "schoolCode": "SMEAG_ENCANTO_ADULT",
+  "name": "SMEAG Encanto Resort 성인연수",
+  "campus": "Encanto",
+  "region": "세부",
+  "schoolType": "general",
+  "minWeeks": 1,
+  "allowShortTerm": true,
+  "shortTermDataStatus": "confirmed",
+  "programTags": [
+    "ESL",
+    "성인"
+  ],
+  "registrationFee": {
+    "amount": 100000,
+    "currency": "KRW"
+  },
+  "courses": [],
+  "dormitories": [],
+  "packages": [
+    {
+      "id": "smeag_enc_esl_2p",
+      "name": "ESL 2인실 (Cambridge)",
+      "includesLocalFees": false,
+      "priceMatrix": {
+        "columns": [
+          "1W",
+          "2W",
+          "3W",
+          "4W",
+          "8W",
+          "12W",
+          "16W",
+          "20W",
+          "24W"
+        ],
+        "rows": [
+          {
+            "label": "ESL 2인실",
+            "prices": [
+              459000,
+              663000,
+              867000,
+              1020000,
+              2040000,
+              3060000,
+              4080000,
+              5100000,
+              6120000
+            ]
+          }
+        ]
+      },
+      "currency": "KRW",
+      "note": "Encanto resort fee 포함. 입학금 10만원 별도. Gross price 기준."
+    },
+    {
+      "id": "smeag_enc_esl_3p",
+      "name": "ESL 3인실 (Cambridge)",
+      "includesLocalFees": false,
+      "priceMatrix": {
+        "columns": [
+          "1W",
+          "2W",
+          "3W",
+          "4W",
+          "8W",
+          "12W",
+          "16W",
+          "20W",
+          "24W"
+        ],
+        "rows": [
+          {
+            "label": "ESL 3인실",
+            "prices": [
+              400500,
+              578500,
+              756500,
+              890000,
+              1780000,
+              2670000,
+              3560000,
+              4450000,
+              5340000
+            ]
+          }
+        ]
+      },
+      "currency": "KRW"
+    },
+    {
+      "id": "smeag_enc_esl2_2p",
+      "name": "ESL2/Speaking Master 2인실",
+      "includesLocalFees": false,
+      "priceMatrix": {
+        "columns": [
+          "1W",
+          "2W",
+          "3W",
+          "4W",
+          "8W",
+          "12W",
+          "16W",
+          "20W",
+          "24W"
+        ],
+        "rows": [
+          {
+            "label": "ESL2 2인실",
+            "prices": [
+              513000,
+              741000,
+              969000,
+              1140000,
+              2280000,
+              3420000,
+              4560000,
+              5700000,
+              6840000
+            ]
+          }
+        ]
+      },
+      "currency": "KRW"
+    },
+    {
+      "id": "smeag_enc_esl2_3p",
+      "name": "ESL2/Speaking Master 3인실",
+      "includesLocalFees": false,
+      "priceMatrix": {
+        "columns": [
+          "1W",
+          "2W",
+          "3W",
+          "4W",
+          "8W",
+          "12W",
+          "16W",
+          "20W",
+          "24W"
+        ],
+        "rows": [
+          {
+            "label": "ESL2 3인실",
+            "prices": [
+              400500,
+              578500,
+              756500,
+              890000,
+              1780000,
+              2670000,
+              3560000,
+              4450000,
+              5340000
+            ]
+          }
+        ]
+      },
+      "currency": "KRW"
+    }
+  ],
+  "surcharges": [],
+  "localFees": [
+    {
+      "id": "smeag_enca_ssp",
+      "name": "SSP",
+      "amount": 7800,
+      "currency": "PHP",
+      "chargeUnit": "per_person"
+    },
+    {
+      "id": "smeag_enca_ssp_icard",
+      "name": "SSP I-Card",
+      "amount": 4300,
+      "currency": "PHP",
+      "chargeUnit": "per_person"
+    },
+    {
+      "id": "smeag_enca_visa_icard",
+      "name": "VISA I-Card",
+      "amount": 4300,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "triggerWeeks": 9
+    },
+    {
+      "id": "smeag_enca_deposit",
+      "name": "보증금",
+      "amount": 3000,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "note": "Room P2,500 + Key P300 + E-Money P200."
+    },
+    {
+      "id": "smeag_enca_maintenance",
+      "name": "관리비",
+      "amount": 2000,
+      "currency": "PHP",
+      "chargeUnit": "per_4weeks"
+    },
+    {
+      "id": "smeag_enca_elec_water",
+      "name": "전기·수도",
+      "amount": 2400,
+      "currency": "PHP",
+      "chargeUnit": "per_4weeks",
+      "note": "초과 시 추가."
+    },
+    {
+      "id": "smeag_enca_pickup",
+      "name": "픽업비",
+      "amount": 1200,
+      "currency": "PHP",
+      "chargeUnit": "per_person"
+    },
+    {
+      "id": "smeag_enca_visa_1",
+      "name": "1차 비자연장",
+      "amount": 5130,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "triggerWeeks": 5
+    },
+    {
+      "id": "smeag_enca_visa_2",
+      "name": "2차 비자연장 (누적)",
+      "amount": 11530,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "triggerWeeks": 9
+    },
+    {
+      "id": "smeag_enca_visa_3",
+      "name": "3차 비자연장 (누적)",
+      "amount": 15960,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "triggerWeeks": 13
+    },
+    {
+      "id": "smeag_enca_visa_4",
+      "name": "4차 비자연장 (누적)",
+      "amount": 20390,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "triggerWeeks": 17
+    },
+    {
+      "id": "smeag_enca_visa_5",
+      "name": "5차 비자연장 (누적)",
+      "amount": 24820,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "triggerWeeks": 21
+    }
+  ],
+  "additionalCharges": [],
+  "generalNotes": "SMEAG Encanto Resort 성인연수. 세부 막탄 소재. 2025년 학비표 기준.\n\n합산표 (Encanto resort fee + Course fee = Gross price). 입학금 10만원 별도.\nESL: Cambridge for Adult (KET/PET/FCE). ESL2: Speaking Master.\n2인실/3인실.\n\n현지비용 별도. 총액: 4w 20,700PHP / 8w 30,230PHP / 12w 45,330PHP / 16w 54,160PHP / 20w 62,990PHP / 24w 71,820PHP.",
+  "isActive": true,
+  "createdAt": "2026-05-29",
+  "updatedAt": "2026-05-30",
+  "courseShortTermRates": {
+    "mode": "percent",
+    "week1": 45,
+    "week2": 65,
+    "week3": 85,
+    "week4Included": false,
+    "note": "엔칸토 성인. 커미션 별도 규정(1주25/2주50/3주75)"
+  },
+  "dormShortTermRates": {
+    "mode": "percent",
+    "week1": 45,
+    "week2": 65,
+    "week3": 85,
+    "week4Included": false,
+    "note": "엔칸토 성인. 커미션 별도 규정(1주25/2주50/3주75)"
+  }
+}

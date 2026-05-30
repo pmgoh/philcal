@@ -1,0 +1,74 @@
+{
+  "id": "smeag_global",
+  "schoolCode": "SMEAG_GLOBAL",
+  "name": "SMEAG Global School (Tarlac 국제학교)",
+  "campus": "Tarlac",
+  "region": "기타",
+  "schoolType": "camp",
+  "minWeeks": 1,
+  "allowShortTerm": true,
+  "programTags": ["국제학교", "조기유학", "ESL", "IELTS"],
+  "registrationFee": { "amount": 0, "currency": "USD", "note": "패키지에 포함" },
+  "courses": [],
+  "dormitories": [],
+  "surcharges": [],
+  "promotions": null,
+  "localFees": [],
+  "packages": [
+    {
+      "id": "smeag_global_k12",
+      "name": "Regular Course (K-12) - 40주",
+      "programType": "early_study",
+      "includesLocalFees": true,
+      "note": "40주 기준 (DEPED에 의해 40~44주 변경 가능). Admission Fee $500 포함.",
+      "includes": "Admission Fee ($500), Tuition fee, Dormitory/Meals ($200/week = $8,000/40weeks), Intensive English ($52/week = $2,080/40weeks), Management ($10/week = $400/40weeks), Activity ($20/week weekly + $35/week monthly), Electricity/Water ($15/week = $600/40weeks), Class Material ($10/week = $400/40weeks), SSP/I-CARD ($240), VISA/ECC ($1,200), School Uniform ($200)",
+      "excludes": "",
+      "priceMatrix": {
+        "columns": ["40주 Total Fee"],
+        "rows": [
+          { "label": "Grade 1 ~ Grade 6 (Tuition $6,920)", "weeks": 40, "prices": [22740] },
+          { "label": "Grade 7 ~ Grade 8 (Tuition $7,340)", "weeks": 40, "prices": [23160] },
+          { "label": "Grade 9 ~ Grade 10 (Tuition $7,340)", "weeks": 40, "prices": [23160] },
+          { "label": "Grade 11 ~ Grade 12 (Tuition $8,180)", "weeks": 40, "prices": [24000] }
+        ]
+      },
+      "currency": "USD"
+    },
+    {
+      "id": "smeag_global_esl",
+      "name": "ESL / IELTS Course (단기연수)",
+      "programType": "junior",
+      "includesLocalFees": true,
+      "note": "Admission Fee $100 포함. 모든 비용 포함 (ESL수업+Intensive English+기숙사/식사+Management+전기/수도+교재+VISA/ECC+SSP/I-CARD+Weekly/Monthly Activity).",
+      "includes": "Admission Fee ($100), ESL ($168/week), Intensive English ($52/week), Dormitory/Meals ($200/week), Management ($10/week), Electricity/Water ($15/week), Class Material ($10/week), VISA/ECC, SSP/I-CARD ($120), Weekly Activity ($20/week), Monthly Activity ($35/week)",
+      "excludes": "",
+      "priceMatrix": {
+        "columns": ["Total Fee (USD)"],
+        "rows": [
+          { "weeks": 1, "prices": [730] },
+          { "weeks": 2, "prices": [1240] },
+          { "weeks": 3, "prices": [1750] },
+          { "weeks": 4, "prices": [2260] },
+          { "weeks": 5, "prices": [2920] },
+          { "weeks": 6, "prices": [3460] },
+          { "weeks": 7, "prices": [4000] },
+          { "weeks": 8, "prices": [4540] },
+          { "weeks": 9, "prices": [5080] },
+          { "weeks": 10, "prices": [5620] },
+          { "weeks": 11, "prices": [6160] },
+          { "weeks": 12, "prices": [6700] },
+          { "weeks": 13, "prices": [7240] },
+          { "weeks": 14, "prices": [7780] },
+          { "weeks": 15, "prices": [8320] },
+          { "weeks": 16, "prices": [8860] }
+        ]
+      },
+      "currency": "USD"
+    }
+  ],
+  "additionalCharges": [],
+  "generalNotes": "SMEAG Global School. Tarlac 소재 국제학교.\n\nK-12 Regular Course: 40주 기준. 학년별 Tuition 차등 ($6,920~$8,180).\nESL/IELTS Course: 1~16주 단기연수. 모든 비용 포함 (올인클루시브).\n\nESL 4주 검산: ESL $672 + Intensive English $208 + Dormitory $800 + Management $40 + Electricity $60 + Class Material $40 + VISA $0 + SSP $120 + Weekly $80 + Monthly $140 + Admission $100 = $2,260 ✓",
+  "isActive": true,
+  "createdAt": "2026-05-29",
+  "updatedAt": "2026-05-29"
+}

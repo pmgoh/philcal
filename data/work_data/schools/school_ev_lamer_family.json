@@ -1,0 +1,131 @@
+{
+  "id": "ev_lamer_family",
+  "schoolCode": "EV_LAMER_FAMILY",
+  "name": "EV Academy La Mer 가족연수",
+  "campus": "La Mer",
+  "region": "세부",
+  "schoolType": "family",
+  "minWeeks": 4,
+  "allowShortTerm": false,
+  "programTags": [
+    "가족연수"
+  ],
+  "registrationFee": {
+    "amount": 0,
+    "currency": "KRW",
+    "note": "패키지에 포함."
+  },
+  "courses": [],
+  "dormitories": [],
+  "packages": [
+    {
+      "id": "evlm_fam_2p_pool",
+      "name": "2인 가족 (Pool Access Double Room)",
+      "includes": "All Local fees (SSP, SSP E-Card, ID, 전기세, 운영비, 수도세, 픽업비, 교재), 식사, 청소서비스, School Activity (Zumba, Aqua Zumba, Yoga, Movie 등)",
+      "includesLocalFees": true,
+      "priceMatrix": {
+        "columns": [
+          "4W",
+          "6W",
+          "8W"
+        ],
+        "rows": [
+          {
+            "label": "2인 가족 (Pool Access)",
+            "prices": [
+              7200000,
+              10600000,
+              14000000
+            ]
+          }
+        ]
+      },
+      "currency": "KRW",
+      "note": "보호자+자녀 2인. Pool Access Double Room. 전기세 15kw 초과 시 1kw당 20페소 추가."
+    },
+    {
+      "id": "evlm_fam_2p_double",
+      "name": "2인 가족 (Double Room)",
+      "includes": "All Local fees (SSP, SSP E-Card, ID, 전기세, 운영비, 수도세, 픽업비, 교재), 식사, 청소서비스, School Activity",
+      "includesLocalFees": true,
+      "priceMatrix": {
+        "columns": [
+          "4W",
+          "6W",
+          "8W"
+        ],
+        "rows": [
+          {
+            "label": "2인 가족 (Double)",
+            "prices": [
+              6700000,
+              9850000,
+              13000000
+            ]
+          }
+        ]
+      },
+      "currency": "KRW",
+      "note": "보호자+자녀 2인. Double Room."
+    },
+    {
+      "id": "evlm_fam_3p_pool",
+      "name": "3인 가족 (Pool Access Triple Room)",
+      "includes": "All Local fees 포함, 식사, 청소서비스, School Activity",
+      "includesLocalFees": true,
+      "priceMatrix": {
+        "columns": [
+          "4W",
+          "6W",
+          "8W"
+        ],
+        "rows": [
+          {
+            "label": "3인 가족 (Pool Access)",
+            "prices": [
+              10500000,
+              15550000,
+              20600000
+            ]
+          }
+        ]
+      },
+      "currency": "KRW",
+      "note": "보호자+자녀 3인. Pool Access Triple Room."
+    },
+    {
+      "id": "evlm_fam_3p_triple",
+      "name": "3인 가족 (Triple Room)",
+      "includes": "All Local fees 포함, 식사, 청소서비스, School Activity",
+      "includesLocalFees": true,
+      "priceMatrix": {
+        "columns": [
+          "4W",
+          "6W",
+          "8W"
+        ],
+        "rows": [
+          {
+            "label": "3인 가족 (Triple)",
+            "prices": [
+              9750000,
+              14425000,
+              19100000
+            ]
+          }
+        ]
+      },
+      "currency": "KRW",
+      "note": "보호자+자녀 3인. Triple Room."
+    }
+  ],
+  "surcharges": [],
+  "localFees": [],
+  "additionalCharges": [],
+  "refundPolicy": "",
+  "dormitoryRules": "",
+  "generalNotes": "EV Academy La Mer 가족연수. 현지비용 포함 패키지.\n\n포함 내역: All Local fees (SSP, SSP E-Card, ID, 전기세, 운영비, 수도세, 픽업비, 교재), 식사, 청소서비스, School Activity.\n전기세 15kw/주 초과 시 1kw당 20페소 추가.\n\n4주/6주/8주 단위 등록.",
+  "isActive": true,
+  "createdAt": "2026-05-29",
+  "updatedAt": "2026-05-29"
+}

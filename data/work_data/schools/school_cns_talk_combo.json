@@ -1,0 +1,64 @@
+{
+  "id": "cns_talk_combo",
+  "schoolCode": "CNS_TALK_COMBO",
+  "name": "클락 TALK + 바기오 CNS 연계연수",
+  "campus": "클락 TALK → 바기오 CNS",
+  "region": "클락/바기오",
+  "schoolType": "camp",
+  "minWeeks": 4,
+  "allowShortTerm": false,
+  "programTags": ["시니어", "연계연수", "골프"],
+  "registrationFee": { "amount": 0, "currency": "KRW", "note": "패키지에 포함" },
+  "courses": [], "dormitories": [], "surcharges": [], "promotions": null, "localFees": [],
+  "packages": [
+    {
+      "id": "cns_talk_4w_1",
+      "name": "연계연수 4주 (2주+2주) - 1인실",
+      "programType": "senior",
+      "includesLocalFees": true,
+      "note": "클락 TALK 2주 + 바기오 CNS 2주. 정가 340만원 → 할인가 305만원. 2026.3.8 이후 매주 월요일 입학 가능.",
+      "includes": "입학금, 1대1 4타임 수업료, 기숙사비(청소, 빨래, 관리비), 평일 3식(휴일 조식만 제공), 현지비용 (SSP 발급비 2회, E card 발급비, 교재비 등)",
+      "excludes": "왕복 항공비, 공항 샌딩비, 여행자 보험",
+      "priceMatrix": { "columns": ["할인가"], "rows": [{ "weeks": 4, "prices": [3050000] }] },
+      "currency": "KRW"
+    },
+    {
+      "id": "cns_talk_4w_2",
+      "name": "연계연수 4주 (2주+2주) - 2인실",
+      "programType": "senior",
+      "includesLocalFees": true,
+      "note": "클락 TALK 2주 + 바기오 CNS 2주. 정가 305만원 → 할인가 270만원.",
+      "includes": "입학금, 1대1 4타임 수업료, 기숙사비(청소, 빨래, 관리비), 평일 3식(휴일 조식만 제공), 현지비용 (SSP 발급비 2회, E card 발급비, 교재비 등)",
+      "excludes": "왕복 항공비, 공항 샌딩비, 여행자 보험",
+      "priceMatrix": { "columns": ["할인가"], "rows": [{ "weeks": 4, "prices": [2700000] }] },
+      "currency": "KRW"
+    },
+    {
+      "id": "cns_talk_8w_1",
+      "name": "연계연수 8주 (4주+4주) - 1인실",
+      "programType": "senior",
+      "includesLocalFees": true,
+      "note": "클락 TALK 4주 + 바기오 CNS 4주. 정가 615만원 → 할인가 570만원.",
+      "includes": "입학금, 1대1 4타임 수업료, 기숙사비(청소, 빨래, 관리비), 평일 3식(휴일 조식만 제공), 현지비용 (SSP 발급비 2회, E card 발급비, 교재비 등)",
+      "excludes": "왕복 항공비, 공항 샌딩비, 여행자 보험",
+      "priceMatrix": { "columns": ["할인가"], "rows": [{ "weeks": 8, "prices": [5700000] }] },
+      "currency": "KRW"
+    },
+    {
+      "id": "cns_talk_8w_2",
+      "name": "연계연수 8주 (4주+4주) - 2인실",
+      "programType": "senior",
+      "includesLocalFees": true,
+      "note": "클락 TALK 4주 + 바기오 CNS 4주. 정가 545만원 → 할인가 500만원.",
+      "includes": "입학금, 1대1 4타임 수업료, 기숙사비(청소, 빨래, 관리비), 평일 3식(휴일 조식만 제공), 현지비용 (SSP 발급비 2회, E card 발급비, 교재비 등)",
+      "excludes": "왕복 항공비, 공항 샌딩비, 여행자 보험",
+      "priceMatrix": { "columns": ["할인가"], "rows": [{ "weeks": 8, "prices": [5000000] }] },
+      "currency": "KRW"
+    }
+  ],
+  "additionalCharges": [],
+  "generalNotes": "클락 TALK + 바기오 CNS 연계연수.\n\n두 도시를 한 번에 경험하는 시니어 맞춤 어학·골프 프로그램.\n모든 현지비용 어학원에서 감당. 2026.3.8 이후 매주 월요일 입학.\n\n포함: 입학금, 1대1 4타임 수업료, 기숙사비, 평일 3식, 현지비용(SSP 2회, E card, 교재비 등).\n불포함: 왕복 항공비, 공항 샌딩비, 여행자 보험.",
+  "isActive": true,
+  "createdAt": "2026-05-29",
+  "updatedAt": "2026-05-29"
+}

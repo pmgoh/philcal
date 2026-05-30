@@ -1,0 +1,82 @@
+{
+  "id": "cns_senior_camp",
+  "schoolCode": "CNS_SENIOR_CAMP",
+  "name": "CNS 시니어 캠프",
+  "campus": "본원 (캠프)",
+  "region": "바기오",
+  "schoolType": "camp",
+  "minWeeks": 4,
+  "allowShortTerm": false,
+  "programTags": [
+    "시니어캠프"
+  ],
+  "registrationFee": {
+    "amount": 0,
+    "currency": "KRW",
+    "note": "패키지에 포함"
+  },
+  "courses": [],
+  "dormitories": [],
+  "surcharges": [],
+  "promotions": null,
+  "localFees": [],
+  "packages": [
+    {
+      "id": "cns_camp_4to7",
+      "name": "CNS 시니어 캠프 (4기~7기)",
+      "programType": "senior",
+      "includesLocalFees": true,
+      "note": "기수별 4주 과정. 기숙사 2인 1실 기본. 1인실 변경 시 40만원 추가. 각 기수별 15명 선착순 마감.",
+      "includes": "입학금, 숙식비(숙소, 3식, 청소, 빨래, 전기 및 수도세), 영어 수업료, 주말 및 주중 여행경비, 여행자 보험, SSP 발급비, 교재비, 픽업/샌딩비",
+      "excludes": "왕복 항공료 (인천-클락 구간 아시아나 항공 이용)",
+      "priceMatrix": {
+        "columns": [
+          "캠프 참가비 (2인1실 기준)"
+        ],
+        "rows": [
+          {
+            "label": "4기: 2026.3.9~4.5",
+            "weeks": 4,
+            "prices": [
+              3800000
+            ]
+          },
+          {
+            "label": "5기: 2026.4.4~5.1",
+            "weeks": 4,
+            "prices": [
+              3800000
+            ]
+          },
+          {
+            "label": "6기: 2026.10.19~11.15",
+            "weeks": 4,
+            "prices": [
+              3800000
+            ]
+          },
+          {
+            "label": "7기: 2026.11.16~12.13",
+            "weeks": 4,
+            "prices": [
+              3800000
+            ]
+          }
+        ]
+      },
+      "currency": "KRW"
+    }
+  ],
+  "additionalCharges": [
+    {
+      "id": "cns_camp_single_upgrade",
+      "name": "1인실 변경 추가비용",
+      "pricePerUnit": 400000,
+      "currency": "KRW"
+    }
+  ],
+  "generalNotes": "CNS 시니어 캠프. 바기오 CNS 어학원 본원.\n\n4주 과정. 기수별 15명 선착순. 2인 1실 기본배정.\n1인실 변경 시 40만원 추가.\n현지비용 모두 포함 (SSP/교재비/여행경비/보험/픽업샌딩 등).\n미포함: 왕복 항공료만.",
+  "isActive": true,
+  "createdAt": "2026-05-29",
+  "updatedAt": "2026-05-30"
+}

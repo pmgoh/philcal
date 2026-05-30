@@ -56,6 +56,63 @@ function urgencyLevel(p: PromoEntry): number {
   return d
 }
 
+// ===== 학원별 표(검증용) 헬퍼 =====
+
+// 유학원 할인 표시: "10% (학비+기숙)" / "등록금 10만원" / "없음"
+function agencyDiscountLabel(p: PromoEntry): { value: string; type: string } {
+  const t = p.agencyDiscountType
+  const v = p.agencyDiscountValue
+  if (!t || t === 'none') return { value: '없음', type: '' }
+  if (t === 'percent') return { value: `${v}%`, type: (p.agencyDiscountRawText ?? '학비＋기숙 기준').slice(0, 30) }
+  if (t === 'reg_fee_only') return { value: '등록비 할인', type: (p.agencyDiscountRawText ?? '').slice(0, 30) }
+  if (t === 'amount') return { value: `${(v ?? 0).toLocaleString()}원`, type: (p.agencyDiscountRawText ?? '정액 할인').slice(0, 30) }
+  return { value: String(t), type: '' }
+}
+
+// 학원 할인 표시
+function schoolDiscountLabel(p: PromoEntry): { main: string; sub: string } {
+  const dt = p.discountType
+  const dv = p.discountValue
+  if (dt === 'amount_per_week' && dv) return { main: `4주당 ${(dv * 4).toLocaleString()}원`, sub: `주당 ${dv.toLocaleString()}원` }
+  if (dt === 'percent' && dv) return { main: `${dv}%`, sub: '' }
+  if (dt === 'amount' && dv) return { main: `${dv.toLocaleString()}원`, sub: '' }
+  if (dt === 'week_tiers') return { main: '주수별 정액', sub: '' }
+  return { main: '없음', sub: '' }
+}
+
+// 장기 할인(week_tiers) 표시 — 같은 학원의 장기등록 프로모션을 가져와 표시
+function longTermLabel(tiers?: Array<{ minWeeks: number; maxWeeks?: number; amount: number }>): string[] {
+  if (!tiers || tiers.length === 0) return []
+  return tiers.map(t => `${t.minWeeks}주 ${(t.amount / 10000)}만`)
+}
+
+// 계산 순서 토큰 생성
+function calcOrderTokens(p: PromoEntry, hasLongTerm: boolean): Array<{ label: string; kind: 'base' | 'minus' }> {
+  const toks: Array<{ label: string; kind: 'base' | 'minus' }> = [
+    { label: '등록비＋학비＋기숙＋서차지', kind: 'base' },
+  ]
+  const isSchoolPromo = p.discountType && p.discountType !== 'none' && (p.discountValue || (p.weekTiers && p.weekTiers.length))
+  if (isSchoolPromo && p.discountType !== 'week_tiers') toks.push({ label: '프로모션', kind: 'minus' })
+  if (hasLongTerm) toks.push({ label: '장기', kind: 'minus' })
+  const at = p.agencyDiscountType
+  if (at && at !== 'none') {
+    if (at === 'percent') toks.push({ label: `유학원 ${p.agencyDiscountValue}%`, kind: 'minus' })
+    else toks.push({ label: '유학원할인', kind: 'minus' })
+  }
+  toks.push({ label: '입학금할인', kind: 'minus' })
+  return toks
+}
+
+// D-day 배지 정보
+function ddayInfo(p: PromoEntry): { text: string; cls: string } {
+  if (p.alwaysApply) return { text: '상시', cls: 'always' }
+  const d = getDdays(p.endDate)
+  if (isNaN(d)) return { text: '기간없음', cls: 'always' }
+  if (d < 0) return { text: '만료', cls: 'expired' }
+  if (d <= 14) return { text: `D-${d}`, cls: 'soon' }
+  return { text: `D-${d}`, cls: 'ok' }
+}
+
 export default function PromotionsPage() {
   const [promos, setPromos] = useState<PromoEntry[]>([])
   const [schools, setSchools] = useState<School[]>([])
@@ -71,6 +128,9 @@ export default function PromotionsPage() {
   // 일괄 선택 상태
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set())
   const [selectMode, setSelectMode] = useState(false)
+
+  // 뷰 모드: 'list'(편집 리스트) | 'table'(학원별 표 검증용)
+  const [viewMode, setViewMode] = useState<'list' | 'table'>('list')
 
   const aliasIdx = buildAliasIndex(schoolAliases as unknown as AliasMap)
 
@@ -307,6 +367,17 @@ export default function PromotionsPage() {
           </div>
         </div>
 
+        <div className="inline-flex bg-gray-100 rounded-lg p-1 mb-4">
+          <button onClick={() => setViewMode('list')}
+            className={`text-sm px-4 py-1.5 rounded-md transition-colors ${viewMode === 'list' ? 'bg-blue-900 text-white font-semibold' : 'text-gray-500 hover:text-gray-700'}`}>
+            편집 리스트
+          </button>
+          <button onClick={() => setViewMode('table')}
+            className={`text-sm px-4 py-1.5 rounded-md transition-colors ${viewMode === 'table' ? 'bg-blue-900 text-white font-semibold' : 'text-gray-500 hover:text-gray-700'}`}>
+            학원별 표 (검증용)
+          </button>
+        </div>
+
         <div className="flex flex-col sm:flex-row gap-2 mb-4">
           <div className="relative flex-1">
             <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
@@ -351,6 +422,8 @@ export default function PromotionsPage() {
 
         {loading ? (
           <div className="text-center py-12 text-gray-400">불러오는 중...</div>
+        ) : viewMode === 'table' ? (
+          <PromoTableView promos={filtered} schools={schools} onEdit={(id) => { setViewMode('list'); setEditId(id) }} onDelete={async (id) => { if (confirm('이 프로모션을 삭제할까요?')) { await deletePromotion(id); load() } }} />
         ) : (
           <div className="space-y-2">
             {filtered.length === 0 && <div className="text-center py-12 text-gray-400">프로모션이 없습니다.</div>}
@@ -780,5 +853,169 @@ export default function PromotionsPage() {
         </div>
       )}
     </AdminLayout>
+  )
+}
+
+// ===== 학원별 표 (검증용) 뷰 =====
+function PromoTableView({ promos, schools, onEdit, onDelete }: {
+  promos: PromoEntry[]
+  schools: School[]
+  onEdit: (id: string) => void
+  onDelete: (id: string) => void
+}) {
+  // 학원코드(없으면 학원명) 기준으로 그룹핑
+  const groups = new Map<string, PromoEntry[]>()
+  for (const p of promos) {
+    const key = p.schoolCode || p.schoolName || '미지정'
+    if (!groups.has(key)) groups.set(key, [])
+    groups.get(key)!.push(p)
+  }
+
+  const saveImage = async (groupKey: string) => {
+    const el = document.getElementById(`promo-card-${groupKey}`)
+    if (!el) return
+    const h2c = (await import('html2canvas')).default
+    const canvas = await h2c(el, { scale: 2, backgroundColor: '#ffffff' })
+    const a = document.createElement('a')
+    a.href = canvas.toDataURL('image/png')
+    a.download = `프로모션_${groupKey}_${new Date().toISOString().split('T')[0]}.png`
+    a.click()
+  }
+
+  if (groups.size === 0) {
+    return <div className="text-center py-12 text-gray-400">표시할 프로모션이 없습니다.</div>
+  }
+
+  // 각 그룹의 장기등록 할인(week_tiers) 프로모션을 찾아 장기할인 열에 공통 표시
+  return (
+    <div className="space-y-4">
+      {[...groups.entries()].map(([groupKey, list]) => {
+        const longTermPromo = list.find(p => p.discountType === 'week_tiers')
+        const longTiers = longTermLabel(longTermPromo?.weekTiers)
+        // 장기등록 전용 프로모션은 별도 행에서 제외(장기할인 열로 흡수), 단 그 외 행에 표시
+        const rows = list.filter(p => p.discountType !== 'week_tiers')
+        const liveCount = rows.filter(p => !isExpired(p)).length
+        const expCount = rows.filter(p => isExpired(p)).length
+        // 정렬: 현행 먼저, 만료 나중
+        const sorted = [...rows].sort((a, b) => (isExpired(a) ? 1 : 0) - (isExpired(b) ? 1 : 0))
+
+        return (
+          <div key={groupKey} className="bg-white rounded-xl border border-gray-200 p-4">
+            <div className="flex items-center justify-between mb-3">
+              <span className="inline-flex items-center gap-2 bg-blue-900 text-white text-sm font-semibold px-4 py-1.5 rounded">
+                {groupKey}
+                <span className="bg-white/25 px-2 py-0.5 rounded-full text-xs">현행 {liveCount}{expCount > 0 ? ` · 만료 ${expCount}` : ''}</span>
+              </span>
+              <button onClick={() => saveImage(groupKey)}
+                className="text-xs px-3 py-1.5 border border-blue-900 text-blue-900 rounded-md font-medium hover:bg-blue-50">
+                📷 이 학원 이미지 저장
+              </button>
+            </div>
+
+            <div id={`promo-card-${groupKey}`} className="bg-white">
+              <table className="w-full text-xs border border-gray-200 rounded-lg overflow-hidden" style={{ borderCollapse: 'separate', borderSpacing: 0 }}>
+                <thead>
+                  <tr className="bg-blue-50 text-blue-900">
+                    <th className="px-2 py-2 border-b border-gray-200 text-center">프로모션</th>
+                    <th className="px-2 py-2 border-b border-gray-200 text-center">대상</th>
+                    <th className="px-2 py-2 border-b border-gray-200 text-center">프로모션 기간</th>
+                    <th className="px-2 py-2 border-b border-gray-200 text-center">조건</th>
+                    <th className="px-2 py-2 border-b border-gray-200 text-center">학원 할인</th>
+                    <th className="px-2 py-2 border-b border-gray-200 text-center">유학원 할인</th>
+                    <th className="px-2 py-2 border-b border-gray-200 text-center">장기 할인</th>
+                    <th className="px-2 py-2 border-b border-gray-200 text-center">계산 순서</th>
+                    <th className="px-2 py-2 border-b border-gray-200 text-center">업데이트</th>
+                    <th className="px-2 py-2 border-b border-gray-200 text-center">관리</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {(() => {
+                    return (
+                      <tr className="bg-amber-50/30">
+                        <td className="px-2 py-2.5 border-t border-gray-100 text-left align-middle">
+                          <span className="font-bold text-gray-500">기본</span>
+                          <span className="block text-[10px] text-gray-400 mt-0.5">할인 없음</span>
+                        </td>
+                        <td className="px-2 py-2.5 border-t border-gray-100 text-center align-middle">전체</td>
+                        <td className="px-2 py-2.5 border-t border-gray-100 text-center align-middle">
+                          <div className="text-gray-600">상시 적용</div>
+                          <span className="inline-block mt-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-blue-50 text-blue-700">상시</span>
+                        </td>
+                        <td className="px-2 py-2.5 border-t border-gray-100 text-left align-middle text-gray-600">별도 조건 없음</td>
+                        <td className="px-2 py-2.5 border-t border-gray-100 text-center align-middle"><span className="text-gray-300">없음</span></td>
+                        <td className="px-2 py-2.5 border-t border-gray-100 text-center align-middle text-gray-400">프로모션별</td>
+                        <td className="px-2 py-2.5 border-t border-gray-100 text-left align-middle">
+                          {longTiers.length > 0 ? <span className="text-gray-700">{longTiers.join(' · ')}</span> : <span className="text-gray-300">—</span>}
+                        </td>
+                        <td className="px-2 py-2.5 border-t border-gray-100 align-middle">
+                          <div className="flex flex-wrap gap-1 items-center">
+                            <span className="px-1.5 py-0.5 rounded text-[10px] font-medium bg-blue-50 text-blue-900">등록비＋학비＋기숙＋서차지</span>
+                            {longTiers.length > 0 && <><span className="text-gray-300 text-[10px] font-bold">−</span><span className="px-1.5 py-0.5 rounded text-[10px] font-medium bg-red-50 text-red-700">장기</span></>}
+                            <span className="text-gray-300 text-[10px] font-bold">−</span><span className="px-1.5 py-0.5 rounded text-[10px] font-medium bg-red-50 text-red-700">유학원할인</span>
+                            <span className="text-gray-300 text-[10px] font-bold">−</span><span className="px-1.5 py-0.5 rounded text-[10px] font-medium bg-red-50 text-red-700">입학금할인</span>
+                          </div>
+                        </td>
+                        <td className="px-2 py-2.5 border-t border-gray-100 text-center align-middle text-gray-300">—</td>
+                        <td className="px-2 py-2.5 border-t border-gray-100 text-center align-middle text-gray-300">—</td>
+                      </tr>
+                    )
+                  })()}
+                  {sorted.map((p, i) => {
+                    const expired = isExpired(p)
+                    const dd = ddayInfo(p)
+                    const ag = agencyDiscountLabel(p)
+                    const sd = schoolDiscountLabel(p)
+                    const toks = calcOrderTokens(p, longTiers.length > 0)
+                    const ddColor = dd.cls === 'soon' ? 'bg-red-50 text-red-700' : dd.cls === 'ok' ? 'bg-green-50 text-green-700' : dd.cls === 'expired' ? 'bg-gray-200 text-gray-500' : 'bg-blue-50 text-blue-700'
+                    return (
+                      <tr key={p.id} className={expired ? 'opacity-50 bg-gray-50' : (i % 2 ? 'bg-slate-50/40' : '')}>
+                        <td className="px-2 py-2.5 border-t border-gray-100 text-left align-middle">
+                          <span className="font-semibold text-blue-900">{p.promoName}</span>
+                        </td>
+                        <td className="px-2 py-2.5 border-t border-gray-100 text-center align-middle">{p.target ?? '전체'}</td>
+                        <td className="px-2 py-2.5 border-t border-gray-100 text-center align-middle">
+                          <div className="text-gray-600">{p.alwaysApply ? '상시 적용' : `${p.startDate ?? ''}${p.endDate ? ' ~ ' + p.endDate : ''}`}</div>
+                          <span className={`inline-block mt-1 px-2 py-0.5 rounded-full text-[10px] font-bold ${ddColor}`}>{dd.text}</span>
+                        </td>
+                        <td className="px-2 py-2.5 border-t border-gray-100 text-left align-middle text-gray-600 whitespace-pre-line">{p.condition || p.noteRaw || '별도 조건 없음'}</td>
+                        <td className="px-2 py-2.5 border-t border-gray-100 text-center align-middle">
+                          {sd.main === '없음' ? <span className="text-gray-300">없음</span> : <><span className="text-red-700 font-bold">{sd.main}</span>{sd.sub && <span className="block text-[10px] text-gray-400 mt-0.5">{sd.sub}</span>}</>}
+                        </td>
+                        <td className="px-2 py-2.5 border-t border-gray-100 text-center align-middle">
+                          {ag.value === '없음' ? <span className="text-gray-300">없음</span> : <><span className="text-indigo-800 font-bold">{ag.value}</span>{ag.type && <span className="block text-[10px] text-gray-400 mt-0.5">{ag.type}</span>}</>}
+                        </td>
+                        <td className="px-2 py-2.5 border-t border-gray-100 text-left align-middle">
+                          {longTiers.length > 0 ? <span className="text-gray-700">{longTiers.join(' · ')}</span> : <span className="text-gray-300">—</span>}
+                        </td>
+                        <td className="px-2 py-2.5 border-t border-gray-100 align-middle">
+                          <div className="flex flex-wrap gap-1 items-center">
+                            {toks.map((t, j) => (
+                              <span key={j} className="inline-flex items-center gap-1">
+                                {j > 0 && <span className="text-gray-300 text-[10px] font-bold">−</span>}
+                                <span className={`px-1.5 py-0.5 rounded text-[10px] font-medium ${t.kind === 'base' ? 'bg-blue-50 text-blue-900' : 'bg-red-50 text-red-700'}`}>{t.label}</span>
+                              </span>
+                            ))}
+                          </div>
+                        </td>
+                        <td className="px-2 py-2.5 border-t border-gray-100 text-center align-middle">
+                          <span className="text-green-700 font-semibold text-[11px]">{p.updatedAt ? p.updatedAt.split('T')[0].slice(5) : '—'}</span>
+                        </td>
+                        <td className="px-2 py-2.5 border-t border-gray-100 text-center align-middle">
+                          <div className="flex flex-col gap-1 items-center">
+                            <button onClick={() => onEdit(p.id)} className="text-[10px] text-blue-900 border border-blue-200 px-2 py-0.5 rounded">수정</button>
+                            <button onClick={() => onDelete(p.id)} className="text-[10px] text-red-600 border border-red-200 px-2 py-0.5 rounded">삭제</button>
+                          </div>
+                        </td>
+                      </tr>
+                    )
+                  })}
+                </tbody>
+              </table>
+            </div>
+            <p className="text-[11px] text-gray-400 mt-2">· 이 표를 학원에 전달해 확인받습니다 · 만료 프로모션은 흐리게 표시(보관) · 수정은 '수정' 버튼(편집 리스트로 이동)</p>
+          </div>
+        )
+      })}
+    </div>
   )
 }

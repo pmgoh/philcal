@@ -1,0 +1,560 @@
+{
+  "id": "ims",
+  "schoolCode": "IMS",
+  "name": "IMS Academy",
+  "campus": "본원",
+  "region": "세부",
+  "schoolType": "general",
+  "minWeeks": 1,
+  "allowShortTerm": true,
+  "shortTermDataStatus": "confirmed",
+  "programTags": [
+    "ESL",
+    "IELTS",
+    "TOEIC",
+    "비즈니스",
+    "주니어",
+    "가족연수",
+    "시니어",
+    "TESOL"
+  ],
+  "registrationFee": {
+    "amount": 100000,
+    "currency": "KRW",
+    "note": "입학금 10만원."
+  },
+  "courses": [
+    {
+      "id": "ims_premium_esl",
+      "name": "Premium ESL (4:4)",
+      "price4Weeks": 1000000,
+      "currency": "KRW"
+    },
+    {
+      "id": "ims_intensive_esl",
+      "name": "Intensive ESL (6:3)",
+      "price4Weeks": 1200000,
+      "currency": "KRW"
+    },
+    {
+      "id": "ims_essential4",
+      "name": "Essential ESL 4 (4:0)",
+      "price4Weeks": 700000,
+      "currency": "KRW"
+    },
+    {
+      "id": "ims_essential5",
+      "name": "Essential ESL 5 (5:0)",
+      "price4Weeks": 850000,
+      "currency": "KRW"
+    },
+    {
+      "id": "ims_essential6",
+      "name": "Essential ESL 6 (6:0)",
+      "price4Weeks": 1000000,
+      "currency": "KRW"
+    },
+    {
+      "id": "ims_senior",
+      "name": "Senior ESL (5:0/4:1)",
+      "price4Weeks": 800000,
+      "currency": "KRW"
+    },
+    {
+      "id": "ims_working_holiday",
+      "name": "Working Holiday (4:4)",
+      "price4Weeks": 1150000,
+      "currency": "KRW"
+    },
+    {
+      "id": "ims_business",
+      "name": "Business English (4:4)",
+      "price4Weeks": 1150000,
+      "currency": "KRW"
+    },
+    {
+      "id": "ims_power_speaking",
+      "name": "Power Speaking (4:4)",
+      "price4Weeks": 1150000,
+      "currency": "KRW"
+    },
+    {
+      "id": "ims_mommy_tesol",
+      "name": "Mommy TESOL (4:0)",
+      "price4Weeks": 850000,
+      "currency": "KRW"
+    },
+    {
+      "id": "ims_tesol_light",
+      "name": "TESOL Light (5:0)",
+      "price4Weeks": 900000,
+      "currency": "KRW"
+    },
+    {
+      "id": "ims_toeic_speaking",
+      "name": "TOEIC SPEAKING (4:4)",
+      "price4Weeks": 1150000,
+      "currency": "KRW"
+    },
+    {
+      "id": "ims_opic",
+      "name": "OPIC (4:4)",
+      "price4Weeks": 1150000,
+      "currency": "KRW"
+    },
+    {
+      "id": "ims_pre_toeic",
+      "name": "Pre-TOEIC (4:4)",
+      "price4Weeks": 1150000,
+      "currency": "KRW"
+    },
+    {
+      "id": "ims_toeic",
+      "name": "TOEIC (4:4)",
+      "price4Weeks": 1150000,
+      "currency": "KRW"
+    },
+    {
+      "id": "ims_toeic_guarantee",
+      "name": "TOEIC Guarantee (4:4)",
+      "price4Weeks": 1150000,
+      "currency": "KRW",
+      "note": "12주 3,650,000 / 16주 4,800,000 / 20주 5,950,000 / 24주 7,300,000. 장기 전용 가격."
+    },
+    {
+      "id": "ims_pre_ielts",
+      "name": "Pre-IELTS (4:4)",
+      "price4Weeks": 1150000,
+      "currency": "KRW"
+    },
+    {
+      "id": "ims_ielts",
+      "name": "IELTS (4:4)",
+      "price4Weeks": 1150000,
+      "currency": "KRW"
+    },
+    {
+      "id": "ims_ielts_guarantee",
+      "name": "IELTS Guarantee (4:4)",
+      "price4Weeks": 1150000,
+      "currency": "KRW",
+      "note": "12주 3,850,000 / 16주 5,000,000 / 20주 6,150,000 / 24주 7,700,000. 장기 전용 가격."
+    },
+    {
+      "id": "ims_junior6",
+      "name": "Junior ESL 6 (6:0)",
+      "price4Weeks": 1300000,
+      "currency": "KRW"
+    },
+    {
+      "id": "ims_junior8",
+      "name": "Junior ESL 8 (8:0)",
+      "price4Weeks": 1700000,
+      "currency": "KRW"
+    },
+    {
+      "id": "ims_junior9",
+      "name": "Junior ESL 9 (9:0)",
+      "price4Weeks": 1900000,
+      "currency": "KRW"
+    },
+    {
+      "id": "ims_parents",
+      "name": "Parents ESL (3:1)",
+      "price4Weeks": 800000,
+      "currency": "KRW"
+    }
+  ],
+  "courseShortTermRates": {
+    "ims_premium_esl": {
+      "1w": 300000,
+      "2w": 600000,
+      "3w": 800000
+    },
+    "ims_intensive_esl": {
+      "1w": 360000,
+      "2w": 720000,
+      "3w": 960000
+    },
+    "ims_essential4": {
+      "1w": 210000,
+      "2w": 420000,
+      "3w": 560000
+    },
+    "ims_essential5": {
+      "1w": 255000,
+      "2w": 510000,
+      "3w": 680000
+    },
+    "ims_essential6": {
+      "1w": 300000,
+      "2w": 600000,
+      "3w": 800000
+    },
+    "ims_senior": {
+      "1w": 240000,
+      "2w": 480000,
+      "3w": 640000
+    },
+    "ims_working_holiday": {
+      "1w": 345000,
+      "2w": 690000,
+      "3w": 920000
+    },
+    "ims_business": {
+      "1w": 345000,
+      "2w": 690000,
+      "3w": 920000
+    },
+    "ims_power_speaking": {
+      "1w": 345000,
+      "2w": 690000,
+      "3w": 920000
+    },
+    "ims_mommy_tesol": {
+      "1w": 255000,
+      "2w": 510000,
+      "3w": 680000
+    },
+    "ims_tesol_light": {
+      "1w": 270000,
+      "2w": 540000,
+      "3w": 720000
+    },
+    "ims_toeic_speaking": {
+      "1w": 345000,
+      "2w": 690000,
+      "3w": 920000
+    },
+    "ims_opic": {
+      "1w": 345000,
+      "2w": 690000,
+      "3w": 920000
+    },
+    "ims_pre_toeic": {
+      "1w": 345000,
+      "2w": 690000,
+      "3w": 920000
+    },
+    "ims_toeic": {
+      "1w": 345000,
+      "2w": 690000,
+      "3w": 920000
+    },
+    "ims_pre_ielts": {
+      "1w": 345000,
+      "2w": 690000,
+      "3w": 920000
+    },
+    "ims_ielts": {
+      "1w": 345000,
+      "2w": 690000,
+      "3w": 920000
+    },
+    "ims_junior6": {
+      "1w": 390000,
+      "2w": 780000,
+      "3w": 1040000
+    },
+    "ims_junior8": {
+      "1w": 510000,
+      "2w": 1020000,
+      "3w": 1360000
+    },
+    "ims_junior9": {
+      "1w": 570000,
+      "2w": 1140000,
+      "3w": 1520000
+    },
+    "ims_parents": {
+      "1w": 240000,
+      "2w": 480000,
+      "3w": 640000
+    }
+  },
+  "dormitories": [
+    {
+      "id": "ims_single",
+      "name": "1인실 (Single)",
+      "price4Weeks": 1200000,
+      "currency": "KRW"
+    },
+    {
+      "id": "ims_double",
+      "name": "2인실 (Double)",
+      "price4Weeks": 1000000,
+      "currency": "KRW"
+    },
+    {
+      "id": "ims_triple",
+      "name": "3인실 (Triple)",
+      "price4Weeks": 800000,
+      "currency": "KRW"
+    },
+    {
+      "id": "ims_quad",
+      "name": "4인실 (Quadruple)",
+      "price4Weeks": 700000,
+      "currency": "KRW"
+    }
+  ],
+  "dormShortTermRates": {
+    "ims_single": {
+      "1w": 360000,
+      "2w": 720000,
+      "3w": 960000
+    },
+    "ims_double": {
+      "1w": 300000,
+      "2w": 600000,
+      "3w": 800000
+    },
+    "ims_triple": {
+      "1w": 240000,
+      "2w": 480000,
+      "3w": 640000
+    },
+    "ims_quad": {
+      "1w": 210000,
+      "2w": 420000,
+      "3w": 560000
+    }
+  },
+  "packages": [
+    {
+      "id": "ims_guardian",
+      "name": "관리형유학 (기숙사 포함)",
+      "includes": "관리형유학 프로그램 + 기숙사",
+      "includesLocalFees": false,
+      "priceMatrix": {
+        "columns": [
+          "4W",
+          "8W",
+          "12W",
+          "16W",
+          "20W",
+          "24W"
+        ],
+        "rows": [
+          {
+            "label": "관리형유학",
+            "prices": [
+              2500000,
+              5000000,
+              7500000,
+              10000000,
+              12500000,
+              15000000
+            ]
+          }
+        ]
+      },
+      "currency": "KRW",
+      "note": "비수기만 운영 (non-peak season only). 기숙사 포함."
+    },
+    {
+      "id": "ims_guardian_service",
+      "name": "Guardian Service",
+      "includes": "가디언 서비스",
+      "includesLocalFees": false,
+      "priceMatrix": {
+        "columns": [
+          "4W",
+          "8W",
+          "12W",
+          "16W",
+          "20W",
+          "24W"
+        ],
+        "rows": [
+          {
+            "label": "Guardian Service",
+            "prices": [
+              600000,
+              1200000,
+              1800000,
+              2400000,
+              3000000,
+              3600000
+            ]
+          }
+        ]
+      },
+      "currency": "KRW",
+      "note": "비수기만 운영 (non-peak season only)."
+    }
+  ],
+  "surcharges": [],
+  "localFees": [
+    {
+      "id": "ims_ssp",
+      "name": "SSP",
+      "amount": 8000,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "note": "유효기간 6개월."
+    },
+    {
+      "id": "ims_ecard",
+      "name": "E-Card",
+      "amount": 4000,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "note": "연수기간만큼 유효."
+    },
+    {
+      "id": "ims_acr_icard",
+      "name": "ACR-I Card",
+      "amount": 3500,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "triggerWeeks": 9,
+      "note": "유효기간 1년."
+    },
+    {
+      "id": "ims_electricity",
+      "name": "전기요금",
+      "amount": 1680,
+      "currency": "PHP",
+      "chargeUnit": "per_4weeks",
+      "note": "4주 기본 100kw. 초과 시 1kw당 30페소."
+    },
+    {
+      "id": "ims_management",
+      "name": "공용관리비, 수도",
+      "amount": 1400,
+      "currency": "PHP",
+      "chargeUnit": "per_4weeks"
+    },
+    {
+      "id": "ims_aircon",
+      "name": "에어컨",
+      "amount": 800,
+      "currency": "PHP",
+      "chargeUnit": "per_4weeks"
+    },
+    {
+      "id": "ims_idcard",
+      "name": "학생 ID카드",
+      "amount": 200,
+      "currency": "PHP",
+      "chargeUnit": "per_person"
+    },
+    {
+      "id": "ims_deposit",
+      "name": "보증금 (키/기숙사)",
+      "amount": 3000,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "note": "시설훼손 없으면 100% 환불."
+    },
+    {
+      "id": "ims_textbook",
+      "name": "교재비",
+      "amount": 3000,
+      "currency": "PHP",
+      "chargeUnit": "per_4weeks",
+      "note": "레벨/코스별 상이. 예: G.ESL 교재 6권."
+    },
+    {
+      "id": "ims_pickup",
+      "name": "픽업비용",
+      "amount": 1000,
+      "currency": "PHP",
+      "chargeUnit": "per_person"
+    },
+    {
+      "id": "ims_sending",
+      "name": "샌딩비",
+      "amount": 1000,
+      "currency": "PHP",
+      "chargeUnit": "per_person"
+    },
+    {
+      "id": "ims_visa_1",
+      "name": "1차 비자연장",
+      "amount": 5050,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "triggerWeeks": 5
+    },
+    {
+      "id": "ims_visa_2",
+      "name": "2차 비자연장",
+      "amount": 6800,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "triggerWeeks": 9
+    },
+    {
+      "id": "ims_visa_3",
+      "name": "3차 비자연장",
+      "amount": 4250,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "triggerWeeks": 13
+    },
+    {
+      "id": "ims_visa_4",
+      "name": "4차 비자연장",
+      "amount": 4250,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "triggerWeeks": 17
+    },
+    {
+      "id": "ims_visa_5",
+      "name": "5차 비자연장",
+      "amount": 4250,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "triggerWeeks": 21
+    },
+    {
+      "id": "ims_visa_6",
+      "name": "6차 비자연장",
+      "amount": 5850,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "triggerWeeks": 25
+    }
+  ],
+  "additionalCharges": [],
+  "longTermDiscount": {
+    "condition": "장기 등록 시",
+    "discountTable": [
+      {
+        "weeksMin": 8,
+        "weeksMax": 11,
+        "discount": 50000
+      },
+      {
+        "weeksMin": 12,
+        "weeksMax": 15,
+        "discount": 100000
+      },
+      {
+        "weeksMin": 16,
+        "weeksMax": 19,
+        "discount": 200000
+      },
+      {
+        "weeksMin": 20,
+        "weeksMax": 23,
+        "discount": 300000
+      },
+      {
+        "weeksMin": 24,
+        "weeksMax": 27,
+        "discount": 400000
+      }
+    ],
+    "note": "Long term promotion."
+  },
+  "refundPolicy": "",
+  "dormitoryRules": "",
+  "generalNotes": "IMS Academy. 세부 소재. 2026년 학비 기준.\n\n[단기 비율] 1w=30%, 2w=60%, 3w=80% of 4주 가격 (코스·기숙사 동일).\n\n[Guarantee 코스] TOEIC/IELTS Guarantee는 12주부터 등록 가능. 별도 가격 체계.\n\n[관리형유학] 기숙사 포함 패키지. 비수기만 운영.\n[Guardian Service] 비수기만 운영.\n\n[장기할인] 8~11w: 5만 / 12~15w: 10만 / 16~19w: 20만 / 20~23w: 30만 / 24~27w: 40만.\n\n[현지비용 기간별 총액]\n4주: 23,080PHP / 8주: 32,010PHP / 12주: 46,190PHP / 16주: 54,320PHP / 20주: 62,450PHP / 24주: 70,580PHP / 28주: 97,310PHP.",
+  "isActive": true,
+  "createdAt": "2026-05-29",
+  "updatedAt": "2026-05-29"
+}

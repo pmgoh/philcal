@@ -1,0 +1,413 @@
+{
+  "id": "jungle",
+  "schoolCode": "JUNGLE",
+  "name": "정글 Academy",
+  "campus": "본원",
+  "region": "세부",
+  "schoolType": "family",
+  "minWeeks": 2,
+  "allowShortTerm": true,
+  "shortTermDataStatus": "confirmed",
+  "programTags": [
+    "가족연수",
+    "주니어",
+    "킨더",
+    "리조트"
+  ],
+  "registrationFee": {
+    "amount": 0,
+    "currency": "KRW",
+    "note": "숙소비에 등록비 포함."
+  },
+  "courses": [],
+  "dormitories": [],
+  "packages": [
+    {
+      "id": "jungle_fam_2p_4w",
+      "name": "[정글스테이] 2인 가족 (보호자1+학생1)",
+      "includesLocalFees": false,
+      "priceMatrix": {
+        "columns": [
+          "2W",
+          "4W"
+        ],
+        "rows": [
+          {
+            "label": "2인",
+            "prices": [
+              2100000,
+              3800000
+            ]
+          }
+        ]
+      },
+      "currency": "KRW",
+      "note": "주니어 인텐시브 180만/4주 기준. 포함: 청소(주3회), 세탁(주2회), 수도세/인터넷, 주중식사3회, 주말조식, 공항픽드롭."
+    },
+    {
+      "id": "jungle_fam_3p_12_4w",
+      "name": "[정글스테이] 3인 가족 (보호자1+학생2)",
+      "includesLocalFees": false,
+      "priceMatrix": {
+        "columns": [
+          "2W",
+          "4W"
+        ],
+        "rows": [
+          {
+            "label": "보호자1+학생2",
+            "prices": [
+              3200000,
+              5800000
+            ]
+          }
+        ]
+      },
+      "currency": "KRW"
+    },
+    {
+      "id": "jungle_fam_3p_21_4w",
+      "name": "[정글스테이] 3인 가족 (보호자2+학생1)",
+      "includesLocalFees": false,
+      "priceMatrix": {
+        "columns": [
+          "2W",
+          "4W"
+        ],
+        "rows": [
+          {
+            "label": "보호자2+학생1",
+            "prices": [
+              2600000,
+              4700000
+            ]
+          }
+        ]
+      },
+      "currency": "KRW",
+      "note": "보호자 2명 이상 등록 시 1명 성인수업 필수."
+    },
+    {
+      "id": "jungle_fam_4p_13_4w",
+      "name": "[정글스테이] 4인 가족 (보호자1+학생3)",
+      "includesLocalFees": false,
+      "priceMatrix": {
+        "columns": [
+          "2W",
+          "4W"
+        ],
+        "rows": [
+          {
+            "label": "보호자1+학생3",
+            "prices": [
+              4300000,
+              7800000
+            ]
+          }
+        ]
+      },
+      "currency": "KRW"
+    },
+    {
+      "id": "jungle_fam_4p_22_4w",
+      "name": "[정글스테이] 4인 가족 (보호자2+학생2)",
+      "includesLocalFees": false,
+      "priceMatrix": {
+        "columns": [
+          "2W",
+          "4W"
+        ],
+        "rows": [
+          {
+            "label": "보호자2+학생2",
+            "prices": [
+              3400000,
+              6700000
+            ]
+          }
+        ]
+      },
+      "currency": "KRW"
+    },
+    {
+      "id": "jungle_tamb_2p_studio",
+      "name": "[탐블리] 2인 가족 (보호자1+아동1) 스튜디오",
+      "includesLocalFees": false,
+      "priceMatrix": {
+        "columns": [
+          "2W",
+          "4W"
+        ],
+        "rows": [
+          {
+            "label": "2인 스튜디오",
+            "prices": [
+              3550000,
+              6700000
+            ]
+          }
+        ]
+      },
+      "currency": "KRW",
+      "note": "All inclusive: 청소(주3회), 베드시트교체(주1회), 전기/수도/인터넷, 탐블리 레스토랑 식사바우처(보호자20장), 주중 저녁도시락, 학생 주중 조식/중식, 공항픽드롭, 통학서비스. 비수기 9~11월 가족당 100만원 할인. 1,2월 4주 이상."
+    },
+    {
+      "id": "jungle_tamb_3p_12_studio",
+      "name": "[탐블리] 3인 가족 (보호자1+아동2) 스튜디오",
+      "includesLocalFees": false,
+      "priceMatrix": {
+        "columns": [
+          "2W",
+          "4W"
+        ],
+        "rows": [
+          {
+            "label": "보호자1+아동2 스튜디오",
+            "prices": [
+              4400000,
+              8400000
+            ]
+          }
+        ]
+      },
+      "currency": "KRW"
+    },
+    {
+      "id": "jungle_tamb_3p_21_studio",
+      "name": "[탐블리] 3인 가족 (보호자2+아동1) 스튜디오",
+      "includesLocalFees": false,
+      "priceMatrix": {
+        "columns": [
+          "2W",
+          "4W"
+        ],
+        "rows": [
+          {
+            "label": "보호자2+아동1 스튜디오",
+            "prices": [
+              4200000,
+              8000000
+            ]
+          }
+        ]
+      },
+      "currency": "KRW"
+    },
+    {
+      "id": "jungle_tamb_4p_13_1br",
+      "name": "[탐블리] 4인 가족 (보호자1+아동3) 1베드룸",
+      "includesLocalFees": false,
+      "priceMatrix": {
+        "columns": [
+          "2W",
+          "4W"
+        ],
+        "rows": [
+          {
+            "label": "보호자1+아동3 1BR",
+            "prices": [
+              5500000,
+              10600000
+            ]
+          }
+        ]
+      },
+      "currency": "KRW"
+    },
+    {
+      "id": "jungle_tamb_4p_22_1br",
+      "name": "[탐블리] 4인 가족 (보호자2+아동2) 1베드룸",
+      "includesLocalFees": false,
+      "priceMatrix": {
+        "columns": [
+          "2W",
+          "4W"
+        ],
+        "rows": [
+          {
+            "label": "보호자2+아동2 1BR",
+            "prices": [
+              5300000,
+              10200000
+            ]
+          }
+        ]
+      },
+      "currency": "KRW"
+    },
+    {
+      "id": "jungle_exp_int_2w",
+      "name": "[체험단] 정글 내부 2주 (8/24 시작)",
+      "includesLocalFees": false,
+      "priceMatrix": {
+        "columns": [
+          "2인",
+          "3인",
+          "4인"
+        ],
+        "rows": [
+          {
+            "label": "2주",
+            "prices": [
+              1400000,
+              1800000,
+              2300000
+            ]
+          }
+        ]
+      },
+      "currency": "KRW",
+      "note": "2주 연수. 8월 24일 시작."
+    },
+    {
+      "id": "jungle_exp_int_4w",
+      "name": "[체험단] 정글 내부 4주 (9~11월)",
+      "includesLocalFees": false,
+      "priceMatrix": {
+        "columns": [
+          "2인",
+          "3인",
+          "4인"
+        ],
+        "rows": [
+          {
+            "label": "4주",
+            "prices": [
+              2600000,
+              3400000,
+              4300000
+            ]
+          }
+        ]
+      },
+      "currency": "KRW",
+      "note": "9~11월 시작. 매달 5팀 한정."
+    },
+    {
+      "id": "jungle_exp_tamb",
+      "name": "[체험단] 탐블리 리조트 (9~12월, 2월)",
+      "includesLocalFees": false,
+      "priceMatrix": {
+        "columns": [
+          "2주 2인",
+          "2주 3인",
+          "3주 2인",
+          "3주 3인"
+        ],
+        "rows": [
+          {
+            "label": "9~12월 등록",
+            "prices": [
+              3550000,
+              4400000,
+              null,
+              null
+            ]
+          },
+          {
+            "label": "2월 등록",
+            "prices": [
+              null,
+              null,
+              5500000,
+              6900000
+            ]
+          }
+        ]
+      },
+      "currency": "KRW",
+      "note": "9~12월: 2주 금액으로 4주 참여 (+2주 FREE). 2월: 3주 금액으로 4주 참여 (+1주 FREE). 4인 가족 1BED ROOM 100만원 추가. 아동 1인 추가 100만원, 성인 1인 추가 30만원. 관리비 인당 10만원, SSP ICARD 12,000페소, 교재비 500페소/권, 스카우트비 3,000페소."
+    }
+  ],
+  "surcharges": [],
+  "localFees": [
+    {
+      "id": "jungle_ssp_icard",
+      "name": "SSP+ICARD",
+      "amount": 12000,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "note": "주니어 1인당."
+    },
+    {
+      "id": "jungle_textbook",
+      "name": "교재비",
+      "amount": 500,
+      "currency": "PHP",
+      "chargeUnit": "per_book",
+      "note": "4주 기준 주니어 4권, 킨더 2권."
+    },
+    {
+      "id": "jungle_electricity_js",
+      "name": "전기세 (정글스테이)",
+      "amount": 1000,
+      "currency": "PHP",
+      "chargeUnit": "per_room_per_week",
+      "note": "200kw 초과 시 1kw당 20페소."
+    },
+    {
+      "id": "jungle_management",
+      "name": "종합관리비",
+      "amount": 2000,
+      "currency": "PHP",
+      "chargeUnit": "per_person_per_4weeks"
+    },
+    {
+      "id": "jungle_scout",
+      "name": "스카우트비",
+      "amount": 3000,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "note": "26년 8/24부터 5,500→3,000페소."
+    },
+    {
+      "id": "jungle_visa_1",
+      "name": "1차 비자연장 (29일)",
+      "amount": 5000,
+      "currency": "PHP",
+      "chargeUnit": "per_person"
+    },
+    {
+      "id": "jungle_visa_2_1m",
+      "name": "2차 비자연장 (1개월)",
+      "amount": 10200,
+      "currency": "PHP",
+      "chargeUnit": "per_person"
+    },
+    {
+      "id": "jungle_visa_2_2m",
+      "name": "2차 비자연장 (2개월)",
+      "amount": 10800,
+      "currency": "PHP",
+      "chargeUnit": "per_person"
+    }
+  ],
+  "additionalCharges": [
+    {
+      "id": "jungle_room_upgrade_studio_1br",
+      "label": "룸 업그레이드 (스튜디오→1베드룸)",
+      "amount": 1000000,
+      "currency": "KRW",
+      "note": "탐블리 리조트."
+    },
+    {
+      "id": "jungle_room_upgrade_1br_2br",
+      "label": "룸 업그레이드 (1베드룸→2베드룸)",
+      "amount": 2500000,
+      "currency": "KRW",
+      "note": "탐블리 리조트."
+    },
+    {
+      "id": "jungle_ocean_view",
+      "label": "오션뷰 추가 (탐블리)",
+      "amount": 5000,
+      "currency": "PHP",
+      "chargeUnit": "per_4weeks",
+      "note": "한정."
+    }
+  ],
+  "generalNotes": "정글 Academy. 세부 소재. 가족연수 전문. 26년 3월~27년 2월 브로셔 기준.\n\n[정글스테이 (내부숙소)]\n수업료: 킨더/주니어베이직 150만/4주, 주니어인텐시브 180만/4주, 보호자수업 40만/4주.\n숙소비(4주): 2인 230만 / 3인 280만 / 4인 330만 / 5인 380만. 등록비 포함.\nFamily Package = 수업료 + 숙소비 합산.\n포함: 청소(주3회), 세탁(주2회), 수도세/인터넷, 주중식사3회, 주말조식, 공항픽드롭.\n불포함: 전기세, 왕복항공료, 여행자보험, 현지비용.\n\n[탐블리 리조트]\n4성급 Tambuli Resort 신축 레지던스. 스튜디오 3인/원베드룸 4인 정원.\nAll inclusive: 전기/수도/인터넷 포함, 식사바우처, 통학서비스.\n비수기 9~11월 가족당 100만원 할인. 1,2월 4주 이상 등록 가능.\n\n[체험단 2026 비수기]\n정글 내부: 8/24 2주 시작 + 9~11월 4주.\n탐블리: 9~12월 2주→4주(+2주FREE), 2월 3주→4주(+1주FREE). 매달 5팀 한정.",
+  "isActive": true,
+  "createdAt": "2026-05-29",
+  "updatedAt": "2026-05-29"
+}

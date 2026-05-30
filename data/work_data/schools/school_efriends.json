@@ -1,0 +1,144 @@
+{
+  "id": "efriends",
+  "schoolCode": "EFRIENDS",
+  "name": "E★Friends (이프렌즈)",
+  "campus": "알리시아 바닐라드 / IT파크 트리우드",
+  "region": "세부",
+  "schoolType": "general",
+  "minWeeks": 4,
+  "allowShortTerm": false,
+  "programTags": ["가족연수", "주니어캠프", "관리형"],
+  "registrationFee": {
+    "amount": 100000,
+    "currency": "KRW",
+    "note": "입학금 1인당 10만원 + 픽업비 가족당 3만원"
+  },
+  "courses": [],
+  "dormitories": [],
+  "packages": [
+    {
+      "id": "efriends_family_peak",
+      "label": "성수기 가족연수",
+      "season": "성수기",
+      "currency": "KRW",
+      "columns": ["알리시아 바닐라드", "IT파크 트리우드"],
+      "priceMatrix": [
+        {
+          "weeks": 4,
+          "prices": [
+            { "label": "2인(엄마+아이1) / 알리시아", "amount": 4350000 },
+            { "label": "3인(엄마+아이2) / 알리시아", "amount": 6850000 },
+            { "label": "4인(엄마+아이3) / 알리시아", "amount": 9350000 },
+            { "label": "2인(엄마+아이1) / IT파크", "amount": 4550000 },
+            { "label": "3인(엄마+아이2) / IT파크", "amount": 7050000 },
+            { "label": "4인(엄마+아이3) / IT파크", "amount": 9550000 }
+          ]
+        }
+      ],
+      "includes": "호텔 숙소(청소 주3회, 빨래 주2회), 월~토 아이 점심, 저녁 식사",
+      "excludes": "항공료, 엄마 수업 식사, 아이 일요일 3식, 현지비용(SSP, E-카드, 학생증, 비자비, 교재비, 전기세, 물세, 일요일 액티비티)",
+      "schedules": [
+        { "startDate": "2026-06-28", "endDate": "2026-07-25", "season": "성수기", "weeks": 4 },
+        { "startDate": "2026-07-26", "endDate": "2026-08-22", "season": "성수기", "weeks": 4 },
+        { "startDate": "2026-06-28", "endDate": "2026-08-22", "season": "성수기", "weeks": 8 }
+      ],
+      "note": "수업: 1:1 4타임+그룹 2타임+스페셜클래스+수학자습및숙제 2타임 = 총 9타임. 주1회 스포츠데이+토요일 필드트립."
+    },
+    {
+      "id": "efriends_junior_camp_peak",
+      "label": "성수기 주니어캠프 (관리형)",
+      "season": "성수기",
+      "currency": "KRW",
+      "columns": ["IT파크 트리우드"],
+      "priceMatrix": [
+        { "weeks": 4, "prices": [{ "label": "1인 주니어캠프", "amount": 4350000 }] }
+      ],
+      "includes": "호텔 숙소(청소, 빨래 주5회), 월~일 3식, 일요일 액티비티, 픽업비, SSP, 비자, 보험",
+      "excludes": "항공료, 공항세, 부모 비동반 서류, 용돈",
+      "includesLocalFees": true,
+      "note": "IT파크 트리우드 전용."
+    },
+    {
+      "id": "efriends_commute_camp_peak",
+      "label": "성수기 통학캠프 (숙소 별도)",
+      "season": "성수기",
+      "currency": "KRW",
+      "columns": ["IT파크 트리우드"],
+      "priceMatrix": [
+        { "weeks": 4, "prices": [{ "label": "1인 통학캠프", "amount": 2650000 }] }
+      ],
+      "includes": "캠프 스케줄 동일, 월~금 아이 점심/저녁 + 토요일 아이 점심",
+      "excludes": "숙소, 항공료, 아이 일요일 3식, 현지비용(SSP, E-카드, 학생증, 비자비, 교재비, 전기세, 물세, 일요일 액티비티)",
+      "note": "숙소는 별도 마련 필요."
+    },
+    {
+      "id": "efriends_family_offseason",
+      "label": "비수기 가족연수",
+      "season": "비수기",
+      "currency": "KRW",
+      "columns": ["알리시아 바닐라드", "IT파크 트리우드"],
+      "priceMatrix": [
+        {
+          "weeks": 4,
+          "prices": [
+            { "label": "2인실(엄마+아이1) / 알리시아", "amount": 2850000 },
+            { "label": "3인실(엄마+아이2) / 알리시아", "amount": 4950000 },
+            { "label": "4인실(엄마+아이3) / 알리시아", "amount": 6550000 },
+            { "label": "2인실(엄마+아이1) / IT파크", "amount": 3050000 },
+            { "label": "3인실(엄마+아이2) / IT파크", "amount": 5150000 },
+            { "label": "4인실(엄마+아이3) / IT파크", "amount": 6750000 }
+          ]
+        }
+      ],
+      "includes": "알리시아 호텔(청소 주3회, 빨래 주2회), 월~금 아이 점심, 저녁 식사",
+      "excludes": "항공료, 엄마 수업, 식사, 아이 토/일요일 3식, 현지비용(SSP 6800P, 학생증, 비자비, 교재비, 전기세)",
+      "note": "수업 7타임: 1:1 4타임+그룹 2타임+숙제 1타임.\n※ 9타임 선택시 아이당 20만원 추가.\n세부학교 입학시 수속 대행비 1인 50만원."
+    },
+    {
+      "id": "efriends_commute_offseason",
+      "label": "비수기 통학형",
+      "season": "비수기",
+      "currency": "KRW",
+      "columns": ["알리시아", "IT파크"],
+      "priceMatrix": [
+        {
+          "weeks": 4,
+          "prices": [
+            { "label": "1인 통학형 / 알리시아", "amount": 1600000 },
+            { "label": "1인 통학형 / IT파크", "amount": 1800000 }
+          ]
+        }
+      ],
+      "includes": "월~금 아이 점심, 저녁 식사",
+      "excludes": "수업 아이 식사 외 모두 불포함",
+      "note": "9타임: 1:1 4타임+그룹 2타임+숙제 1타임+스페셜클래스 1타임+수학자습 1타임."
+    },
+    {
+      "id": "efriends_managed_offseason",
+      "label": "비수기 관리형 (보호자 미동반)",
+      "season": "비수기",
+      "currency": "KRW",
+      "columns": ["바닐라드 타운"],
+      "priceMatrix": [
+        {
+          "weeks": 4,
+          "prices": [
+            { "label": "9타임 관리형 (바닐라드 타운)", "amount": 2500000 },
+            { "label": "9타임 관리형 (호텔 숙소시)", "amount": 2900000 }
+          ]
+        }
+      ],
+      "includes": "바닐라드 타운 숙소(청소, 빨래 주5회), 월~일 3식, 픽업비, SSP, 비자, 보험",
+      "excludes": "항공료, 공항세, 부모 비동반 서류, 용돈, 주말 액티비티",
+      "note": "호텔 숙소 선택시 +40만원."
+    }
+  ],
+  "surcharges": [],
+  "localFees": [],
+  "refundPolicy": "",
+  "dormitoryRules": "",
+  "generalNotes": "EG Academy (E★Friends). 세부 소재.\n\n숙소 2종류: 알리시아 바닐라드 / IT파크 트리우드.\n\n추가 비용:\n1:1 수업 1타임 4주 8,000P, 그룹 수업 1타임 4주 6,000P.\n미국 원어민 그룹 4주 10,000P.\n한국 수학 그룹 수업 주 4회 10,000P.\n엄마 점심 & 저녁 도시락 배달 1box 300P (일주일 단위로만 신청가능).",
+  "isActive": true,
+  "createdAt": "2026-05-29",
+  "updatedAt": "2026-05-29"
+}

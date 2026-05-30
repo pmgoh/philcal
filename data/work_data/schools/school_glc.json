@@ -1,0 +1,340 @@
+{
+  "id": "glc",
+  "schoolCode": "GLC",
+  "name": "GLC (Global Language Cebu)",
+  "campus": "본원",
+  "region": "세부",
+  "schoolType": "general",
+  "minWeeks": 1,
+  "allowShortTerm": true,
+  "shortTermDataStatus": "unconfirmed",
+  "programTags": [
+    "ESL",
+    "TOEIC",
+    "IELTS",
+    "비즈니스",
+    "스파르타"
+  ],
+  "registrationFee": {
+    "amount": 120000,
+    "currency": "KRW",
+    "note": "입학금 12만원."
+  },
+  "courses": [
+    {
+      "id": "glc_lps",
+      "name": "Lite Power Speaking (LPS)",
+      "price4Weeks": 600000,
+      "currency": "KRW",
+      "note": "1:1 3h + SG 1h + Optional. 오후 1시~6시 수업만 가능."
+    },
+    {
+      "id": "glc_gps",
+      "name": "Power Speaking (GPS)",
+      "price4Weeks": 800000,
+      "currency": "KRW",
+      "note": "1:1 4h + SG 2h + Optional."
+    },
+    {
+      "id": "glc_ips",
+      "name": "Intensive Power Speaking (IPS)",
+      "price4Weeks": 1000000,
+      "currency": "KRW",
+      "note": "1:1 5h + SG 2h + Optional."
+    },
+    {
+      "id": "glc_ups",
+      "name": "Ultra7 Power Speaking (UPS)",
+      "price4Weeks": 1400000,
+      "currency": "KRW",
+      "note": "1:1 7h + SG 1h + Optional."
+    },
+    {
+      "id": "glc_use",
+      "name": "Ultra Sparta ESL (USE)",
+      "price4Weeks": 1040000,
+      "currency": "KRW",
+      "note": "1:1 5h + 그룹 3h + 의무 단어시험 + 야간수업 2h + 야간자율학습 1h + 토요일 수업."
+    },
+    {
+      "id": "glc_gts",
+      "name": "General TOEIC (GTS)",
+      "price4Weeks": 896000,
+      "currency": "KRW",
+      "note": "1:1 4h + SG 2h + Optional."
+    },
+    {
+      "id": "glc_itc",
+      "name": "Intensive TOEIC (ITC)",
+      "price4Weeks": 1120000,
+      "currency": "KRW",
+      "note": "1:1 5h + SG 2h + Optional."
+    },
+    {
+      "id": "glc_utc",
+      "name": "Ultra8 TOEIC (UTC)",
+      "price4Weeks": 1600000,
+      "currency": "KRW",
+      "note": "1:1 8h + Optional."
+    },
+    {
+      "id": "glc_ust",
+      "name": "Ultra Sparta TOEIC (UST)",
+      "price4Weeks": 1320000,
+      "currency": "KRW",
+      "note": "1:1 5h + 그룹 3h + 의무 단어시험 + 야간수업 2h + 야간자율학습 1h + 토요일 모의시험."
+    },
+    {
+      "id": "glc_gis",
+      "name": "General IELTS (GIS)",
+      "price4Weeks": 896000,
+      "currency": "KRW",
+      "note": "1:1 4h + SG 2h + Optional."
+    },
+    {
+      "id": "glc_iis",
+      "name": "Intensive IELTS (IIS)",
+      "price4Weeks": 1120000,
+      "currency": "KRW",
+      "note": "1:1 5h + SG 2h + Optional."
+    },
+    {
+      "id": "glc_uis",
+      "name": "Ultra8 IELTS (UIS)",
+      "price4Weeks": 1600000,
+      "currency": "KRW",
+      "note": "1:1 8h + Optional."
+    },
+    {
+      "id": "glc_usi",
+      "name": "Ultra Sparta IELTS (USI)",
+      "price4Weeks": 1320000,
+      "currency": "KRW",
+      "note": "1:1 5h + 그룹 3h + 의무 단어시험 + 야간수업 2h + 야간자율학습 1h + 토요일 모의시험."
+    },
+    {
+      "id": "glc_bi",
+      "name": "Business (BI)",
+      "price4Weeks": 1120000,
+      "currency": "KRW",
+      "note": "1:1 4h + SG 2h + Optional."
+    },
+    {
+      "id": "glc_ubi",
+      "name": "Ultra7 Business (UBI)",
+      "price4Weeks": 1720000,
+      "currency": "KRW",
+      "note": "1:1 7h + SG 1h + Optional."
+    }
+  ],
+  "dormitories": [
+    {
+      "id": "glc_3p",
+      "name": "3인실 (Superior)",
+      "price4Weeks": 820000,
+      "currency": "KRW",
+      "note": "Superior Dormitory."
+    },
+    {
+      "id": "glc_2p",
+      "name": "2인실 (Superior)",
+      "price4Weeks": 1000000,
+      "currency": "KRW",
+      "note": "Superior Dormitory. 메인 기숙사."
+    },
+    {
+      "id": "glc_2p_annex",
+      "name": "2인실 (아넥스2)",
+      "price4Weeks": 920000,
+      "currency": "KRW",
+      "note": "아넥스2 기숙사."
+    },
+    {
+      "id": "glc_1p",
+      "name": "1인실 (메인)",
+      "price4Weeks": 1600000,
+      "currency": "KRW",
+      "note": "메인 기숙사."
+    },
+    {
+      "id": "glc_1p_annex",
+      "name": "1인실 (아넥스2)",
+      "price4Weeks": 1520000,
+      "currency": "KRW",
+      "note": "아넥스2 기숙사."
+    }
+  ],
+  "packages": [],
+  "surcharges": [
+    {
+      "id": "glc_shortterm",
+      "name": "단기 연수 추가비용 (1~3주)",
+      "amount": 100000,
+      "currency": "KRW",
+      "unit": "per_week",
+      "note": "1~3주 단기 연수 학생에게 주당 10만원 추가."
+    }
+  ],
+  "localFees": [
+    {
+      "id": "glc_ssp",
+      "name": "SSP",
+      "amount": 8000,
+      "currency": "PHP",
+      "chargeUnit": "per_person"
+    },
+    {
+      "id": "glc_ssp_ecard",
+      "name": "SSP E-Card",
+      "amount": 4500,
+      "currency": "PHP",
+      "chargeUnit": "per_person"
+    },
+    {
+      "id": "glc_acr_icard",
+      "name": "ACR-I Card",
+      "amount": 3500,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "triggerWeeks": 9,
+      "note": "59일/9주 이상 체류 시."
+    },
+    {
+      "id": "glc_water",
+      "name": "물세",
+      "amount": 500,
+      "currency": "PHP",
+      "chargeUnit": "per_week",
+      "note": "전기세는 별도 후불제 (20PHP/kw)."
+    },
+    {
+      "id": "glc_management",
+      "name": "시설 관리비 (Management Fee)",
+      "amount": 6000,
+      "currency": "PHP",
+      "chargeUnit": "per_4weeks",
+      "note": "ID, 세탁, 청소 등 포함. 단기: 1주 3,000 / 2주 4,000 / 3주 5,000페소."
+    },
+    {
+      "id": "glc_textbook_esl",
+      "name": "온라인 교재 (ESL)",
+      "amount": 3000,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "note": "1-8주 3,000 / 9-16주 5,000 / 17-24주 8,000 / +4주당 1,000페소."
+    },
+    {
+      "id": "glc_textbook_exam",
+      "name": "온라인 교재 (IELTS/TOEIC/Business)",
+      "amount": 5000,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "note": "1-4주 5,000 / 5-12주 7,500 / 13-24주 10,000 / 25-48주 15,000페소."
+    },
+    {
+      "id": "glc_pickup",
+      "name": "공항 픽업",
+      "amount": 1500,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "note": "일요일(새벽 포함) 픽업만. 픽업+샌딩 3,000페소. 평일/토요일은 픽업 2,500 / 픽업+샌딩 5,000페소."
+    },
+    {
+      "id": "glc_deposit",
+      "name": "보증금",
+      "amount": 2500,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "note": "체크아웃 시 환불. 전기세 차감."
+    },
+    {
+      "id": "glc_visa_1",
+      "name": "1차 비자연장 (5-8주)",
+      "amount": 4670,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "triggerWeeks": 5
+    },
+    {
+      "id": "glc_visa_2",
+      "name": "2차 비자연장 (9-12주, ACR-I 포함)",
+      "amount": 9740,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "triggerWeeks": 9,
+      "note": "ACR-I Card 포함."
+    },
+    {
+      "id": "glc_visa_3",
+      "name": "3차 비자연장 (13-16주)",
+      "amount": 3970,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "triggerWeeks": 13
+    },
+    {
+      "id": "glc_visa_4",
+      "name": "4차 비자연장 (17-20주)",
+      "amount": 3970,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "triggerWeeks": 17
+    },
+    {
+      "id": "glc_visa_5",
+      "name": "5차 비자연장 (21-24주)",
+      "amount": 3970,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "triggerWeeks": 21
+    }
+  ],
+  "additionalCharges": [
+    {
+      "id": "glc_electricity",
+      "label": "전기세",
+      "amount": 20,
+      "unit": "1kw당",
+      "currency": "PHP",
+      "note": "후불제. 객실 계량기 기준."
+    },
+    {
+      "id": "glc_add_11",
+      "label": "추가 1:1 수업 (주당)",
+      "amount": 3000,
+      "currency": "PHP",
+      "note": "성인만 가능. US$60/주."
+    },
+    {
+      "id": "glc_add_group",
+      "label": "추가 그룹 수업 (주당)",
+      "amount": 1500,
+      "currency": "PHP",
+      "note": "성인만 가능. US$30/주."
+    },
+    {
+      "id": "glc_extended_3p",
+      "label": "Extended Stay 3인실 (일당)",
+      "amount": 2000,
+      "currency": "PHP"
+    },
+    {
+      "id": "glc_extended_2p",
+      "label": "Extended Stay 2인실 (일당)",
+      "amount": 2250,
+      "currency": "PHP"
+    },
+    {
+      "id": "glc_extended_1p",
+      "label": "Extended Stay 1인실 (일당)",
+      "amount": 2500,
+      "currency": "PHP"
+    }
+  ],
+  "refundPolicy": "",
+  "dormitoryRules": "",
+  "generalNotes": "GLC (Global Language Cebu). 세부 소재.\n\n[가격 구조] 모든 코스/기숙사 주당 가격 체계. price4Weeks = 주당 × 4.\n단기(1~3주) 추가비용: 주당 10만원 (surcharges).\n\n[기숙사] Superior Dormitory. 메인/아넥스2 2개 건물. 1인실 가격 건물별 상이.\n\n[현지비용 기간별 총액 (비자 포함)]\n4주: 27,500PHP / 8주: 40,170PHP / 10주: 55,910PHP / 12주: 59,910PHP / 16주: 71,880PHP / 20주: 86,850PHP / 24주: 98,820PHP.\n\n[교재비] ESL과 IELTS/TOEIC/Business 별도 체계.\n[전기세] 후불제 20PHP/kw. 물세 500PHP/주.",
+  "isActive": true,
+  "createdAt": "2026-05-29",
+  "updatedAt": "2026-05-30"
+}

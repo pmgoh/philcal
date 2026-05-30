@@ -1,0 +1,164 @@
+{
+  "id": "philinter_commuter",
+  "schoolCode": "PHILINTER_COMMUTER",
+  "name": "Philinter Academy (통학형)",
+  "campus": "본원",
+  "region": "세부",
+  "schoolType": "general",
+  "minWeeks": 1,
+  "allowShortTerm": true,
+  "shortTermDataStatus": "confirmed",
+  "programTags": [
+    "ESL",
+    "IELTS",
+    "TOEIC",
+    "비즈니스",
+    "주니어"
+  ],
+  "registrationFee": {
+    "amount": 100,
+    "currency": "USD",
+    "note": "통학형 입학금 $100. (기숙형 $120과 다름)"
+  },
+  "courses": [
+    {
+      "id": "phic_intensive_esl",
+      "name": "Intensive ESL (통학)",
+      "price4Weeks": 1190,
+      "currency": "USD"
+    },
+    {
+      "id": "phic_general_esl",
+      "name": "General ESL (통학)",
+      "price4Weeks": 1060,
+      "currency": "USD"
+    },
+    {
+      "id": "phic_ips",
+      "name": "IPS (통학)",
+      "price4Weeks": 1330,
+      "currency": "USD"
+    },
+    {
+      "id": "phic_light_esl",
+      "name": "Light ESL (통학)",
+      "price4Weeks": 950,
+      "currency": "USD"
+    },
+    {
+      "id": "phic_ielts",
+      "name": "IELTS Intensive (통학)",
+      "price4Weeks": 1380,
+      "currency": "USD"
+    },
+    {
+      "id": "phic_toeic",
+      "name": "TOEIC Regular (통학)",
+      "price4Weeks": 1280,
+      "currency": "USD"
+    },
+    {
+      "id": "phic_basic_biz",
+      "name": "Basic Business (통학)",
+      "price4Weeks": 1330,
+      "currency": "USD"
+    },
+    {
+      "id": "phic_adv_biz",
+      "name": "Advanced Business (통학)",
+      "price4Weeks": 1380,
+      "currency": "USD"
+    },
+    {
+      "id": "phic_junior_esl",
+      "name": "Junior ESL (통학)",
+      "price4Weeks": 1500,
+      "currency": "USD"
+    },
+    {
+      "id": "phic_junior_ielts",
+      "name": "Junior IELTS (통학)",
+      "price4Weeks": 1670,
+      "currency": "USD"
+    }
+  ],
+  "dormitories": [],
+  "packages": [],
+  "surcharges": [],
+  "localFees": [
+    {
+      "id": "phic_ssp",
+      "name": "SSP",
+      "amount": 7800,
+      "currency": "PHP",
+      "chargeUnit": "per_person"
+    },
+    {
+      "id": "phic_ssp_acr",
+      "name": "SSP ACR I-Card",
+      "amount": 4500,
+      "currency": "PHP",
+      "chargeUnit": "per_person"
+    },
+    {
+      "id": "phic_idcard",
+      "name": "School ID Card",
+      "amount": 400,
+      "currency": "PHP",
+      "chargeUnit": "per_person"
+    },
+    {
+      "id": "phic_maintenance",
+      "name": "관리비/수도",
+      "amount": 550,
+      "currency": "PHP",
+      "chargeUnit": "per_week"
+    },
+    {
+      "id": "phic_visa_1",
+      "name": "1차 비자연장",
+      "amount": 5140,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "triggerWeeks": 5
+    }
+  ],
+  "additionalCharges": [
+    {
+      "id": "phic_add_11_esl",
+      "label": "추가 1:1 ESL 2H/day (4주)",
+      "amount": 440,
+      "currency": "USD"
+    },
+    {
+      "id": "phic_add_11_ielts",
+      "label": "추가 1:1 IELTS/Biz/TOEIC 2H/day (4주)",
+      "amount": 500,
+      "currency": "USD"
+    },
+    {
+      "id": "phic_meal",
+      "label": "식비 Lunch & Dinner (4주)",
+      "amount": 6500,
+      "currency": "PHP"
+    }
+  ],
+  "generalNotes": "Philinter Academy 통학형. 입학금 $100. 식비 별도 (6,500PHP/4주).\nIELTS Guarantee, TOEIC Guarantee, Focus Industry 수강 불가.\n단기: 1w=45%, 2w=65%, 3w=85%.",
+  "isActive": true,
+  "createdAt": "2026-05-29",
+  "updatedAt": "2026-05-30",
+  "courseShortTermRates": {
+    "mode": "percent",
+    "week1": 45,
+    "week2": 65,
+    "week3": 85,
+    "week4Included": false
+  },
+  "dormShortTermRates": {
+    "mode": "percent",
+    "week1": 45,
+    "week2": 65,
+    "week3": 85,
+    "week4Included": false
+  }
+}

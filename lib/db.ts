@@ -109,6 +109,7 @@ export type AgencyDiscountKind =
   | 'amount_per_4weeks'   // 4주당 N원
   | 'amount_per_week'     // 1주당 N원 (legacy 호환)
   | 'amount_flat'         // 1회성 정액
+  | 'amount'              // 정액 (데이터 호환: 등록금 N만원 할인 등)
   | 'reg_fee_only'        // 등록비만 할인
   | 'week_tiers'          // 주수 구간별 차등 정액
 

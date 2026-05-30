@@ -383,6 +383,10 @@ export function findSchoolForPromo(
   if (targetCode) {
     const byCode = schools.find(s => getSchoolCode(s) === targetCode)
     if (byCode) return byCode
+    // [캠퍼스 보호] 프로모션이 schoolCode를 명시했는데 그 코드의 학원이 후보에 없다면,
+    // 이름 부분일치로 다른 캠퍼스(예: EV용 프로모션이 EV_LAMER에 붙음)에 잘못 매칭되는 걸 막는다.
+    // 단, promo의 schoolCode가 promo.schoolName에서 추론된 게 아니라 명시값일 때만 엄격 적용.
+    if ((promo as { schoolCode?: string }).schoolCode) return null
   }
 
   if (!promo.schoolName) return null

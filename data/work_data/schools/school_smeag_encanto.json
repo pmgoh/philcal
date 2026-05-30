@@ -1,0 +1,240 @@
+{
+  "id": "smeag_encanto",
+  "schoolCode": "SMEAG_ENCANTO",
+  "name": "SMEAG Encanto Resort 가족캠프",
+  "campus": "Encanto",
+  "region": "세부",
+  "schoolType": "family",
+  "minWeeks": 4,
+  "allowShortTerm": false,
+  "programTags": [
+    "가족연수",
+    "리조트"
+  ],
+  "registrationFee": {
+    "amount": 0,
+    "currency": "KRW",
+    "note": "패키지에 포함."
+  },
+  "courses": [],
+  "dormitories": [],
+  "packages": [
+    {
+      "id": "smeag_enc_low_2p",
+      "name": "[비수기] 2인 가족",
+      "includesLocalFees": true,
+      "priceMatrix": {
+        "columns": [
+          "4W",
+          "6W",
+          "8W"
+        ],
+        "rows": [
+          {
+            "label": "2인",
+            "prices": [
+              7000000,
+              10500000,
+              14000000
+            ]
+          }
+        ]
+      },
+      "currency": "KRW",
+      "note": "2026 비수기. 입학금·수업료·기숙사·관리비·청소·세탁·SSP·SSP I-CARD·비자(5주+)·전기물세·공항픽드롭 포함."
+    },
+    {
+      "id": "smeag_enc_low_3p",
+      "name": "[비수기] 3인 가족",
+      "includesLocalFees": true,
+      "priceMatrix": {
+        "columns": [
+          "4W",
+          "6W",
+          "8W"
+        ],
+        "rows": [
+          {
+            "label": "3인",
+            "prices": [
+              10100000,
+              15150000,
+              20200000
+            ]
+          }
+        ]
+      },
+      "currency": "KRW"
+    },
+    {
+      "id": "smeag_enc_low_4p",
+      "name": "[비수기] 4인 가족",
+      "includesLocalFees": true,
+      "priceMatrix": {
+        "columns": [
+          "4W",
+          "6W",
+          "8W"
+        ],
+        "rows": [
+          {
+            "label": "4인",
+            "prices": [
+              13000000,
+              19500000,
+              26000000
+            ]
+          }
+        ]
+      },
+      "currency": "KRW"
+    },
+    {
+      "id": "smeag_enc_high26_2p",
+      "name": "[성수기 2026] 2인 가족",
+      "includesLocalFees": true,
+      "priceMatrix": {
+        "columns": [
+          "4W",
+          "6W",
+          "8W"
+        ],
+        "rows": [
+          {
+            "label": "2인",
+            "prices": [
+              7200000,
+              10800000,
+              14400000
+            ]
+          }
+        ]
+      },
+      "currency": "KRW",
+      "note": "2026 7-8월 성수기."
+    },
+    {
+      "id": "smeag_enc_high26_3p",
+      "name": "[성수기 2026] 3인 가족",
+      "includesLocalFees": true,
+      "priceMatrix": {
+        "columns": [
+          "4W",
+          "6W",
+          "8W"
+        ],
+        "rows": [
+          {
+            "label": "3인",
+            "prices": [
+              10400000,
+              15600000,
+              20800000
+            ]
+          }
+        ]
+      },
+      "currency": "KRW"
+    },
+    {
+      "id": "smeag_enc_high26_4p",
+      "name": "[성수기 2026] 4인 가족",
+      "includesLocalFees": true,
+      "priceMatrix": {
+        "columns": [
+          "4W",
+          "6W",
+          "8W"
+        ],
+        "rows": [
+          {
+            "label": "4인",
+            "prices": [
+              13400000,
+              20100000,
+              26800000
+            ]
+          }
+        ]
+      },
+      "currency": "KRW"
+    },
+    {
+      "id": "smeag_enc_high27_2p",
+      "name": "[성수기 2027] 2인 가족",
+      "includesLocalFees": true,
+      "priceMatrix": {
+        "columns": [
+          "4W",
+          "6W",
+          "8W"
+        ],
+        "rows": [
+          {
+            "label": "2인",
+            "prices": [
+              7400000,
+              11100000,
+              14800000
+            ]
+          }
+        ]
+      },
+      "currency": "KRW",
+      "note": "2027 1-2월 성수기."
+    },
+    {
+      "id": "smeag_enc_high27_3p",
+      "name": "[성수기 2027] 3인 가족",
+      "includesLocalFees": true,
+      "priceMatrix": {
+        "columns": [
+          "4W",
+          "6W",
+          "8W"
+        ],
+        "rows": [
+          {
+            "label": "3인",
+            "prices": [
+              10700000,
+              16050000,
+              21400000
+            ]
+          }
+        ]
+      },
+      "currency": "KRW"
+    },
+    {
+      "id": "smeag_enc_high27_4p",
+      "name": "[성수기 2027] 4인 가족",
+      "includesLocalFees": true,
+      "priceMatrix": {
+        "columns": [
+          "4W",
+          "6W",
+          "8W"
+        ],
+        "rows": [
+          {
+            "label": "4인",
+            "prices": [
+              13800000,
+              20700000,
+              27600000
+            ]
+          }
+        ]
+      },
+      "currency": "KRW"
+    }
+  ],
+  "surcharges": [],
+  "localFees": [],
+  "additionalCharges": [],
+  "generalNotes": "SMEAG Encanto Resort 가족캠프. 세부 막탄 소재 (공항 20분, J-Park 옆). 연중 진행.\n\n포함: 입학금, 수업료, 기숙사, 관리비, 청소(주1회), 세탁, SSP, SSP I-CARD, 비자(5주+), 전기물세, 공항 픽드롭.\n불포함: 항공료, 여행자보험, 주말액티비티, 개인용돈.\n식사: 월~토 3식, 일 브런치+석식.\n\n수업(학생): 1:1 4클래스 + 1:4 2클래스 + 1:8 2클래스 + 평일 액티비티.\n수업(학부모): 1:1 2클래스 + 1:8 2클래스.\n교내액티비티: 수영, 구연동화, 쿠킹, 아트, 댄스.",
+  "isActive": true,
+  "createdAt": "2026-05-29",
+  "updatedAt": "2026-05-29"
+}

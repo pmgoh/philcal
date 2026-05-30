@@ -1,0 +1,325 @@
+{
+  "id": "jic_challenger",
+  "schoolCode": "JIC_CHALLENGER",
+  "name": "JIC Challenger Campus",
+  "campus": "Challenger",
+  "region": "바기오",
+  "schoolType": "general",
+  "minWeeks": 1,
+  "allowShortTerm": true,
+  "shortTermRates": {
+    "week1": 0.40,
+    "week2": 0.65,
+    "week3": 0.85
+  },
+  "programTags": ["ESL", "IELTS", "스파르타"],
+  "registrationFee": {
+    "amount": 100000,
+    "currency": "KRW",
+    "note": "등록금 ₩100,000 (등록 시 1회 납부, 환불 불가)"
+  },
+  "courses": [
+    {
+      "id": "jic_c_esl_flex",
+      "name": "ESL Flex",
+      "category": "ESL",
+      "classDetails": "1:1 3H + Special 2H = 총 5H",
+      "price4Weeks": 800000,
+      "currency": "KRW"
+    },
+    {
+      "id": "jic_c_esl_lite",
+      "name": "ESL Lite",
+      "category": "ESL",
+      "classDetails": "1:1 2H + 1:1 Core 2H + 그룹 2H + Special 2H = 총 8H",
+      "price4Weeks": 1000000,
+      "currency": "KRW"
+    },
+    {
+      "id": "jic_c_esl_core",
+      "name": "ESL Core",
+      "category": "ESL",
+      "classDetails": "1:1 3H + 1:1 Core 2H + 그룹 2H + Special 2H = 총 9H",
+      "price4Weeks": 1120000,
+      "currency": "KRW"
+    },
+    {
+      "id": "jic_c_esl_standard",
+      "name": "ESL Standard",
+      "category": "ESL",
+      "classDetails": "1:1 4H + 1:1 Core 2H + 그룹 2H + Special 2H = 총 10H",
+      "price4Weeks": 1240000,
+      "currency": "KRW"
+    },
+    {
+      "id": "jic_c_ielts_lite",
+      "name": "IELTS Lite",
+      "category": "IELTS",
+      "classDetails": "1:1 Core 4H + 그룹 2H + Special 2H = 총 8H",
+      "price4Weeks": 1240000,
+      "currency": "KRW"
+    },
+    {
+      "id": "jic_c_ielts_core",
+      "name": "IELTS Core",
+      "category": "IELTS",
+      "classDetails": "1:1 Core 5H + 그룹 2H + Special 2H = 총 9H",
+      "price4Weeks": 1320000,
+      "currency": "KRW"
+    },
+    {
+      "id": "jic_c_ielts_standard",
+      "name": "IELTS Standard",
+      "category": "IELTS",
+      "classDetails": "1:1 Core 6H + 그룹 2H + Special 2H = 총 10H",
+      "price4Weeks": 1400000,
+      "currency": "KRW"
+    },
+    {
+      "id": "jic_c_ielts_guarantee",
+      "name": "IELTS Guarantee",
+      "category": "IELTS",
+      "classDetails": "1:1 Core 6H + 그룹 2H + Special 2H = 총 10H",
+      "price4Weeks": 1400000,
+      "currency": "KRW",
+      "note": "IELTS Guarantee Application Fee ₱18,000 별도 (현지납부, 8주 단위). 최소 12주 등록 필수."
+    }
+  ],
+  "dormitories": [
+    {
+      "id": "jic_c_room1_studio",
+      "name": "Room for 1 (studio)",
+      "price4Weeks": 1590000,
+      "currency": "KRW"
+    },
+    {
+      "id": "jic_c_room2_studio",
+      "name": "Room for 2 (studio)",
+      "price4Weeks": 950000,
+      "currency": "KRW"
+    },
+    {
+      "id": "jic_c_room4_loft",
+      "name": "Room for 4 (loft)",
+      "price4Weeks": 890000,
+      "currency": "KRW"
+    },
+    {
+      "id": "jic_c_room4_studio",
+      "name": "Room for 4 (studio)",
+      "price4Weeks": 750000,
+      "currency": "KRW"
+    }
+  ],
+  "surcharges": [
+    {
+      "id": "jic_c_peak_surcharge",
+      "label": "성수기 추가 요금",
+      "startDate": "2026-06-28",
+      "endDate": "2026-08-22",
+      "amountPerWeek": 50000,
+      "currency": "KRW",
+      "applyTo": "courses",
+      "note": "2026년 6월 28일 ~ 8월 22일 성수기 기간, 주당 50,000원 추가."
+    }
+  ],
+  "longTermDiscount": [
+    { "weeks": 12, "discount": 300000, "currency": "KRW" },
+    { "weeks": 16, "discount": 400000, "currency": "KRW" },
+    { "weeks": 20, "discount": 500000, "currency": "KRW" },
+    { "weeks": 24, "discount": 600000, "currency": "KRW" },
+    { "note": "Every additional 4 weeks: ₩100,000 OFF" }
+  ],
+  "promotions": null,
+  "localFees": [
+    {
+      "id": "jic_c_ssp",
+      "name": "SSP",
+      "amount": 7800,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "trigger": "enrollment",
+      "note": "Special Study Permit. Valid for 6 months."
+    },
+    {
+      "id": "jic_c_ssp_icard",
+      "name": "SSP I-card",
+      "amount": 4500,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "trigger": "enrollment",
+      "note": "Special Study Permit Card. Valid for 1 year."
+    },
+    {
+      "id": "jic_c_acr_icard",
+      "name": "ACR-I Card",
+      "amount": 4000,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "trigger": "stay_over_59days",
+      "triggerWeeks": 9,
+      "note": "Alien Registration Card"
+    },
+    {
+      "id": "jic_c_student_id",
+      "name": "Student ID card",
+      "amount": 200,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "trigger": "enrollment",
+      "note": "Photography included"
+    },
+    {
+      "id": "jic_c_deposit",
+      "name": "Deposit (refundable)",
+      "amount": 3000,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "trigger": "enrollment",
+      "note": "Full refund if no penalty deduction"
+    },
+    {
+      "id": "jic_c_utility",
+      "name": "Utility Bill",
+      "amount": 3000,
+      "currency": "PHP",
+      "chargeUnit": "per_4weeks",
+      "trigger": "enrollment",
+      "note": "Water & Electricity"
+    },
+    {
+      "id": "jic_c_laundry",
+      "name": "Laundry Fee",
+      "amount": 1200,
+      "currency": "PHP",
+      "chargeUnit": "per_4weeks",
+      "trigger": "enrollment",
+      "note": "Wash, dry and fold (twice a week)"
+    },
+    {
+      "id": "jic_c_maintenance",
+      "name": "Maintenance",
+      "amount": 1000,
+      "currency": "PHP",
+      "chargeUnit": "per_4weeks",
+      "trigger": "enrollment",
+      "note": "Facility management and maintenance"
+    },
+    {
+      "id": "jic_c_visa_1st",
+      "name": "VISA Extension 1st (8 weeks)",
+      "amount": 4940,
+      "currency": "PHP",
+      "chargeUnit": "cumulative",
+      "trigger": "stay_over",
+      "triggerWeeks": 5,
+      "note": "누적형. 1st extension at 8 weeks."
+    },
+    {
+      "id": "jic_c_visa_2nd",
+      "name": "VISA Extension 2nd (12 weeks)",
+      "amount": 11150,
+      "currency": "PHP",
+      "chargeUnit": "cumulative",
+      "trigger": "stay_over",
+      "triggerWeeks": 9,
+      "note": "누적형. 2nd extension at 12 weeks."
+    },
+    {
+      "id": "jic_c_visa_3rd",
+      "name": "VISA Extension 3rd (16 weeks)",
+      "amount": 15390,
+      "currency": "PHP",
+      "chargeUnit": "cumulative",
+      "trigger": "stay_over",
+      "triggerWeeks": 13,
+      "note": "누적형. 3rd extension at 16 weeks."
+    },
+    {
+      "id": "jic_c_visa_4th",
+      "name": "VISA Extension 4th (20 weeks)",
+      "amount": 19630,
+      "currency": "PHP",
+      "chargeUnit": "cumulative",
+      "trigger": "stay_over",
+      "triggerWeeks": 17,
+      "note": "누적형. 4th extension at 20 weeks."
+    },
+    {
+      "id": "jic_c_visa_5th",
+      "name": "VISA Extension 5th (24 weeks)",
+      "amount": 23870,
+      "currency": "PHP",
+      "chargeUnit": "cumulative",
+      "trigger": "stay_over",
+      "triggerWeeks": 21,
+      "note": "누적형. 5th extension at 24 weeks."
+    },
+    {
+      "id": "jic_c_ielts_guarantee_fee",
+      "name": "IELTS Guarantee Application Fee",
+      "amount": 18000,
+      "currency": "PHP",
+      "chargeUnit": "per_8weeks",
+      "trigger": "ielts_guarantee",
+      "note": "IELTS Guarantee 코스 등록 시. 최소 12주 등록 필수."
+    },
+    {
+      "id": "jic_c_odd_week",
+      "name": "Odd week (Arrival and Graduation)",
+      "amount": 8000,
+      "currency": "PHP",
+      "chargeUnit": "per_odd_week",
+      "trigger": "odd_week",
+      "note": "홀수 주차 입학/졸업 시 각 8,000페소"
+    }
+  ],
+  "packages": [],
+  "additionalCharges": [
+    {
+      "id": "jic_c_class_material",
+      "name": "교재비 (4주당, 코스별 상이)",
+      "currency": "PHP",
+      "note": "ESL Flex: ₱1,100 / ESL Lite: ₱1,500 / ESL Core: ₱1,600 / ESL Standard: ₱1,700 / IELTS: ₱1,900"
+    },
+    {
+      "id": "jic_c_additional_1on1",
+      "name": "추가 1:1 수업 (4주당)",
+      "currency": "PHP",
+      "note": "ESL 1:1: ₱6,500 / IELTS 1:1: ₱7,500. 공휴일 수업 없음."
+    },
+    {
+      "id": "jic_c_additional_group",
+      "name": "추가 그룹 수업 (4주당)",
+      "currency": "PHP",
+      "note": "Special Group: ₱2,000 / ESL Group: ₱3,500 / IELTS Group: ₱4,000. 공휴일 수업 없음."
+    },
+    {
+      "id": "jic_c_barista",
+      "name": "바리스타 인턴십 (1회, 12세션)",
+      "amount": 4500,
+      "currency": "PHP",
+      "note": "사전 스케줄 필요."
+    },
+    {
+      "id": "jic_c_pickup_manila_sunday",
+      "name": "공항 픽업 - Manila NAIA (일요일 BESA 픽업일)",
+      "amount": 3000,
+      "currency": "PHP",
+      "note": "일요일 BESA 픽업일: 인원 무관 ₱3,000. 기타 요일: 3인 이상 ₱4,000 / 2인 ₱6,000 / 1인 ₱12,000."
+    },
+    {
+      "id": "jic_c_pickup_clark_sunday",
+      "name": "공항 픽업 - Clark CRK (일요일 BESA 픽업일)",
+      "amount": 2500,
+      "currency": "PHP",
+      "note": "일요일 BESA 픽업일: 인원 무관 ₱2,500. 기타 요일: 3인 이상 ₱3,000 / 2인 ₱4,000 / 1인 ₱7,000."
+    }
+  ],
+  "refundPolicy": "",
+  "dormitoryRules": "",
+  "generalNotes": "JIC Challenger Campus. 바기오 소재.\n\n등록금: ₩100,000 (1회, 환불 불가).\n단기: 1주 40% / 2주 65% / 3주 85% of 4주 가격.\n장기할인: 12주 30만 / 16주 40만 / 20주 50만 / 24주 60만 / 추가 4주당 10만.\n성수기: 2026.6.28~8.22, 주당 5만원 추가.\n\nIELTS Guarantee: Application Fee ₱18,000 (현지납부, 8주 단위). 최소 12주.\n\n교재비 코스별 상이 (현지 납부).\n공휴일 수업 없음.\n학비는 등록 당시 기준, 추후 인상 가능.\n\nCORE 5+2 ESL 코스 (1:1 5H + 그룹 2H, 107만원/4주)는 메인캠퍼스 소속. 입학 시 챌린저 2주 필수 수료 후 등록 가능.",
+  "isActive": true,
+  "createdAt": "2026-05-29",
+  "updatedAt": "2026-05-29"
+}

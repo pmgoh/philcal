@@ -1,0 +1,301 @@
+{
+  "id": "english_fella_1",
+  "schoolCode": "ENGLISH_FELLA_1",
+  "name": "English Fella (1캠퍼스 (스파르타))",
+  "campus": "1캠퍼스 (스파르타)",
+  "region": "세부",
+  "schoolType": "general",
+  "minWeeks": 1,
+  "allowShortTerm": true,
+  "shortTermDataStatus": "confirmed",
+  "programTags": [
+    "ESL",
+    "TOEIC",
+    "IELTS",
+    "주니어",
+    "비즈니스"
+  ],
+  "registrationFee": {
+    "amount": 100000,
+    "currency": "KRW",
+    "note": "입학금 10만원. SSP 한국 원화 결제 시 195,000원."
+  },
+  "courses": [
+    {
+      "id": "ef_pic4",
+      "name": "PIC-4 (1:1 4타임)",
+      "price4Weeks": 950000,
+      "currency": "KRW",
+      "note": "1:1 4타임",
+      "campus": "1캠퍼스 (스파르타)"
+    },
+    {
+      "id": "ef_pic5",
+      "name": "PIC-5 (1:1 5타임)",
+      "price4Weeks": 1000000,
+      "currency": "KRW",
+      "note": "1:1 5타임",
+      "campus": "1캠퍼스 (스파르타)"
+    },
+    {
+      "id": "ef_pic6",
+      "name": "PIC-6 (1:1 6타임)",
+      "price4Weeks": 1100000,
+      "currency": "KRW",
+      "note": "1:1 6타임",
+      "campus": "1캠퍼스 (스파르타)"
+    },
+    {
+      "id": "ef_ppt",
+      "name": "PPT / TOEIC+ESL",
+      "price4Weeks": 1100000,
+      "currency": "KRW",
+      "note": "PPT 또는 TOEIC+ESL",
+      "campus": "1캠퍼스 (스파르타)"
+    },
+    {
+      "id": "ef_pift",
+      "name": "PIFT / PTFT TOEIC",
+      "price4Weeks": 1150000,
+      "currency": "KRW",
+      "note": "PIFT 또는 PTFT TOEIC",
+      "campus": "1캠퍼스 (스파르타)"
+    },
+    {
+      "id": "ef_pigi",
+      "name": "PIGI / PIRC",
+      "price4Weeks": 1250000,
+      "currency": "KRW",
+      "note": "PIGI 또는 PIRC",
+      "campus": "1캠퍼스 (스파르타)"
+    },
+    {
+      "id": "ef_toeic_guarantee",
+      "name": "TOEIC Guarantee",
+      "price4Weeks": 1250000,
+      "currency": "KRW",
+      "note": "12주 이상 등록만 가능. Fella1 캠퍼스만 운영.",
+      "campus": "1캠퍼스 (스파르타)"
+    }
+  ],
+  "courseShortTermRates": {
+    "mode": "percent",
+    "week1": 40,
+    "week2": 60,
+    "week3": 80,
+    "week4Included": false
+  },
+  "dormitories": [
+    {
+      "id": "ef_1p",
+      "name": "1인실 (1P)",
+      "price4Weeks": 1350000,
+      "currency": "KRW",
+      "campus": "1캠퍼스 (스파르타)"
+    },
+    {
+      "id": "ef_1a",
+      "name": "1인실A (1A)",
+      "price4Weeks": 1150000,
+      "currency": "KRW",
+      "campus": "1캠퍼스 (스파르타)"
+    },
+    {
+      "id": "ef_1b",
+      "name": "1인실B (1B)",
+      "price4Weeks": 1100000,
+      "currency": "KRW",
+      "campus": "1캠퍼스 (스파르타)"
+    },
+    {
+      "id": "ef_2a",
+      "name": "2인실 (2A)",
+      "price4Weeks": 950000,
+      "currency": "KRW",
+      "campus": "1캠퍼스 (스파르타)"
+    },
+    {
+      "id": "ef_3a",
+      "name": "3인실 (3A)",
+      "price4Weeks": 850000,
+      "currency": "KRW",
+      "campus": "1캠퍼스 (스파르타)"
+    }
+  ],
+  "dormShortTermRates": {
+    "mode": "percent",
+    "week1": 40,
+    "week2": 60,
+    "week3": 80,
+    "week4Included": false
+  },
+  "packages": [],
+  "surcharges": [],
+  "localFees": [
+    {
+      "id": "ef_textbook",
+      "name": "교재비",
+      "amount": 2500,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "note": "과정별 상이. PIC 9권, IELTS 7권, TOEFL 8권, TOEIC 8권. 1~2주는 1,500페소."
+    },
+    {
+      "id": "ef_deposit",
+      "name": "보증금",
+      "amount": 3000,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "note": "1주 1,000 / 2주 2,000 / 3~8주 3,000 / 12주+ 4,000페소."
+    },
+    {
+      "id": "ef_padlock",
+      "name": "Padlock Deposit",
+      "amount": 100,
+      "currency": "PHP",
+      "chargeUnit": "per_person"
+    },
+    {
+      "id": "ef_id",
+      "name": "학생증",
+      "amount": 200,
+      "currency": "PHP",
+      "chargeUnit": "per_person"
+    },
+    {
+      "id": "ef_management",
+      "name": "종합관리비",
+      "amount": 2500,
+      "currency": "PHP",
+      "chargeUnit": "per_4weeks",
+      "note": "기본 500페소 + 주당 500페소 증가. 물세, 식수, 기본 전기세, 시설관리비 포함."
+    },
+    {
+      "id": "ef_pickup",
+      "name": "픽업비",
+      "amount": 1000,
+      "currency": "PHP",
+      "chargeUnit": "per_person"
+    },
+    {
+      "id": "ef_ssp",
+      "name": "SSP",
+      "amount": 7800,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "note": "SSP-ECARD 발급 후 1년 사용 가능. 1주 학생은 Express Fee 1,000페소 추가."
+    },
+    {
+      "id": "ef_ssp_ecard",
+      "name": "SSP E-Card",
+      "amount": 4100,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "note": "4주 이하 4,600페소. 5주+ 4,100페소."
+    },
+    {
+      "id": "ef_visa_1",
+      "name": "1차 비자연장",
+      "amount": 5170,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "triggerWeeks": 5,
+      "note": "무비자 30일 초과 시."
+    },
+    {
+      "id": "ef_visa_2",
+      "name": "2차 비자연장",
+      "amount": 4100,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "triggerWeeks": 9
+    },
+    {
+      "id": "ef_acr_icard",
+      "name": "ACR-I Card",
+      "amount": 4100,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "triggerWeeks": 9
+    },
+    {
+      "id": "ef_arp",
+      "name": "ARP",
+      "amount": 500,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "triggerWeeks": 9
+    }
+  ],
+  "additionalCharges": [
+    {
+      "id": "ef_add_11",
+      "label": "1:1 추가 (4주)",
+      "amount": 200000,
+      "currency": "KRW",
+      "note": "4주 기준"
+    },
+    {
+      "id": "ef_add_group",
+      "label": "그룹 추가 (4주)",
+      "amount": 150000,
+      "currency": "KRW",
+      "note": "4주 기준"
+    },
+    {
+      "id": "ef_add_jr11",
+      "label": "주니어 1:1 추가 (4주)",
+      "amount": 240000,
+      "currency": "KRW",
+      "note": "4주 기준"
+    },
+    {
+      "id": "ef_add_adv11",
+      "label": "고급반 1:1 추가 (4주)",
+      "amount": 240000,
+      "currency": "KRW",
+      "note": "4주 기준"
+    },
+    {
+      "id": "ef_aircon",
+      "label": "에어컨 사용비",
+      "amount": 20,
+      "unit": "1kw당",
+      "currency": "PHP",
+      "note": "기숙사 사용 기간 및 인원에 따라 소분 청구."
+    }
+  ],
+  "longTermDiscount": {
+    "condition": "12주 이상 등록 시",
+    "discountTable": [
+      {
+        "weeks": 12,
+        "discount": 100000
+      },
+      {
+        "weeks": 16,
+        "discount": 200000
+      },
+      {
+        "weeks": 20,
+        "discount": 300000
+      },
+      {
+        "weeks": 24,
+        "discount": 400000
+      }
+    ],
+    "rule": "+4주당 +100,000원",
+    "excludeCourses": [
+      "ef_gec",
+      "ef_jec"
+    ],
+    "note": "GEC, JEC 코스 제외."
+  },
+  "refundPolicy": "",
+  "dormitoryRules": "",
+  "generalNotes": "English Fella. 세부 소재.\n\nGuarantee Course (TOEIC Guarantee): 12주 이상 등록만 가능. Fella1 캠퍼스만 운영.\n\n장기할인: 12주 10만 / 16주 20만 / 20주 30만 / 24주 40만 (+4주당 +10만). GEC, JEC 코스 제외.\n\nSSP 한국 원화 결제 가능: 195,000원.\n1주 학생 SSP Express Fee 1,000페소 추가.\nSSP-ECARD 발급 후 1년 사용 가능.\n\n종합관리비: 기본 500페소 + 주당 500페소 증가 (물세, 식수, 기본 전기세, 시설관리비 포함).\n에어컨 사용비: 기숙사 기간/인원 소분, 1kw당 20페소.\n\n현지비용 기간별 총액 (SSP+E-Card+종합관리비+픽업비+학생증+Padlock+보증금+교재비 포함, 비자/ARP 별도):\n1주 17,200 / 2주 18,200 / 3주 20,700 / 4주 21,200 / 8주 28,370 / 12주 42,410 / 16주 48,890 / 20주 55,370 / 24주 61,850.\n[캠퍼스 분리] 1캠퍼스 (스파르타). 단가는 양캠 동일, 코스 구성만 다름.",
+  "isActive": true,
+  "createdAt": "2026-05-29",
+  "updatedAt": "2026-05-30"
+}

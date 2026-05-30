@@ -1,0 +1,786 @@
+{
+  "id": "pilaedu",
+  "schoolCode": "PILAEDU",
+  "name": "PILAedu (Philippine International Language Academy)",
+  "campus": "IT-Park",
+  "region": "세부",
+  "schoolType": "general",
+  "minWeeks": 1,
+  "allowShortTerm": true,
+  "shortTermDataStatus": "confirmed",
+  "programTags": [
+    "ESL",
+    "IELTS",
+    "TOEFL",
+    "비즈니스",
+    "가족연수",
+    "주니어",
+    "캠프",
+    "관리형"
+  ],
+  "registrationFee": {
+    "amount": 130000,
+    "currency": "KRW",
+    "note": "등록비 13만원."
+  },
+  "courses": [
+    {
+      "id": "pila_trial",
+      "name": "Trial ESL (1:1 3h + 그룹 3h)",
+      "price4Weeks": 700000,
+      "currency": "KRW"
+    },
+    {
+      "id": "pila_lite",
+      "name": "Lite ESL (1:1 4h + 그룹 4h)",
+      "price4Weeks": 900000,
+      "currency": "KRW"
+    },
+    {
+      "id": "pila_regular",
+      "name": "Regular ESL (1:1 5h + 그룹 5h)",
+      "price4Weeks": 1100000,
+      "currency": "KRW"
+    },
+    {
+      "id": "pila_intensive",
+      "name": "Intensive ESL (1:1 6h + 그룹 5h)",
+      "price4Weeks": 1250000,
+      "currency": "KRW"
+    },
+    {
+      "id": "pila_business",
+      "name": "Business (1:1 5h + 그룹 5h)",
+      "price4Weeks": 1200000,
+      "currency": "KRW"
+    },
+    {
+      "id": "pila_ielts",
+      "name": "IELTS/TOEFL (1:1 5h + 그룹 5h)",
+      "price4Weeks": 1400000,
+      "currency": "KRW"
+    }
+  ],
+  "dormitories": [
+    {
+      "id": "pila_single_b",
+      "name": "Single B (Dorm w/ T/B)",
+      "price4Weeks": 2000000,
+      "currency": "KRW"
+    },
+    {
+      "id": "pila_twin_b",
+      "name": "Twin B (Dorm w/ T/B)",
+      "price4Weeks": 1600000,
+      "currency": "KRW"
+    },
+    {
+      "id": "pila_twin_c",
+      "name": "Twin C (Dorm w/o T/B)",
+      "price4Weeks": 1400000,
+      "currency": "KRW"
+    },
+    {
+      "id": "pila_quad_b",
+      "name": "Quad B (Dorm w/o T/B)",
+      "price4Weeks": 1250000,
+      "currency": "KRW"
+    },
+    {
+      "id": "pila_quad_c",
+      "name": "Quad C (Dorm w/o T/B)",
+      "price4Weeks": 1050000,
+      "currency": "KRW"
+    },
+    {
+      "id": "pila_single_a",
+      "name": "Single A (Condo)",
+      "price4Weeks": 2500000,
+      "currency": "KRW"
+    },
+    {
+      "id": "pila_twin_a",
+      "name": "Twin A (Condo)",
+      "price4Weeks": 1900000,
+      "currency": "KRW"
+    }
+  ],
+  "packages": [
+    {
+      "id": "pila_fam_peak_twina",
+      "name": "[성수기 가족] 2인 Twin A",
+      "includesLocalFees": true,
+      "priceMatrix": {
+        "columns": [
+          "1W",
+          "2W",
+          "3W",
+          "4W",
+          "6W",
+          "8W"
+        ],
+        "rows": [
+          {
+            "label": "Parent",
+            "prices": [
+              1700000,
+              2550000,
+              3200000,
+              3450000,
+              5050000,
+              6550000
+            ]
+          },
+          {
+            "label": "Kid",
+            "prices": [
+              1850000,
+              2900000,
+              3600000,
+              3900000,
+              5650000,
+              7350000
+            ]
+          }
+        ]
+      },
+      "currency": "KRW",
+      "note": "성수기 1-3월/6-9월. 포함: 수업, 기숙사, 식사, 현지비용(픽드롭), 주2회 빨래."
+    },
+    {
+      "id": "pila_fam_peak_twinb",
+      "name": "[성수기 가족] 2인 Twin B",
+      "includesLocalFees": true,
+      "priceMatrix": {
+        "columns": [
+          "1W",
+          "2W",
+          "3W",
+          "4W",
+          "6W",
+          "8W"
+        ],
+        "rows": [
+          {
+            "label": "Parent",
+            "prices": [
+              1650000,
+              2500000,
+              3150000,
+              3400000,
+              4850000,
+              6300000
+            ]
+          },
+          {
+            "label": "Kid",
+            "prices": [
+              1800000,
+              2750000,
+              3400000,
+              3700000,
+              5450000,
+              7050000
+            ]
+          }
+        ]
+      },
+      "currency": "KRW"
+    },
+    {
+      "id": "pila_fam_peak_twinc",
+      "name": "[성수기 가족] 2인 Twin C",
+      "includesLocalFees": true,
+      "priceMatrix": {
+        "columns": [
+          "1W",
+          "2W",
+          "3W",
+          "4W",
+          "6W",
+          "8W"
+        ],
+        "rows": [
+          {
+            "label": "Parent",
+            "prices": [
+              1600000,
+              2350000,
+              3000000,
+              3200000,
+              4550000,
+              5900000
+            ]
+          },
+          {
+            "label": "Kid",
+            "prices": [
+              1700000,
+              2600000,
+              3200000,
+              3450000,
+              5150000,
+              6650000
+            ]
+          }
+        ]
+      },
+      "currency": "KRW",
+      "note": "Same gender only."
+    },
+    {
+      "id": "pila_fam_peak_triple",
+      "name": "[성수기 가족] 3인 Triple A",
+      "includesLocalFees": true,
+      "priceMatrix": {
+        "columns": [
+          "1W",
+          "2W",
+          "3W",
+          "4W",
+          "6W",
+          "8W"
+        ],
+        "rows": [
+          {
+            "label": "Parent",
+            "prices": [
+              1600000,
+              2600000,
+              3300000,
+              3650000,
+              5200000,
+              6800000
+            ]
+          },
+          {
+            "label": "Kid",
+            "prices": [
+              1900000,
+              2900000,
+              3650000,
+              3900000,
+              5800000,
+              7550000
+            ]
+          }
+        ]
+      },
+      "currency": "KRW"
+    },
+    {
+      "id": "pila_fam_peak_deluxe",
+      "name": "[성수기 가족] 3인 Deluxe 1BR",
+      "includesLocalFees": true,
+      "priceMatrix": {
+        "columns": [
+          "1W",
+          "2W",
+          "3W",
+          "4W",
+          "6W",
+          "8W"
+        ],
+        "rows": [
+          {
+            "label": "Parent",
+            "prices": [
+              1750000,
+              2850000,
+              3700000,
+              4000000,
+              5800000,
+              7600000
+            ]
+          },
+          {
+            "label": "Kid",
+            "prices": [
+              2100000,
+              3250000,
+              4050000,
+              4400000,
+              6500000,
+              8500000
+            ]
+          }
+        ]
+      },
+      "currency": "KRW"
+    },
+    {
+      "id": "pila_fam_peak_2br",
+      "name": "[성수기 가족] 4인 2BR Suite",
+      "includesLocalFees": true,
+      "priceMatrix": {
+        "columns": [
+          "1W",
+          "2W",
+          "3W",
+          "4W",
+          "6W",
+          "8W"
+        ],
+        "rows": [
+          {
+            "label": "Parent",
+            "prices": [
+              1550000,
+              2650000,
+              3250000,
+              3550000,
+              5200000,
+              6950000
+            ]
+          },
+          {
+            "label": "Kid",
+            "prices": [
+              1900000,
+              2900000,
+              3700000,
+              4000000,
+              5900000,
+              7650000
+            ]
+          }
+        ]
+      },
+      "currency": "KRW"
+    },
+    {
+      "id": "pila_fam_low_twina",
+      "name": "[비수기 가족] 2인 Twin A",
+      "includesLocalFees": false,
+      "priceMatrix": {
+        "columns": [
+          "2W",
+          "3W",
+          "4W",
+          "5W",
+          "6W",
+          "8W"
+        ],
+        "rows": [
+          {
+            "label": "Parent w/ class",
+            "prices": [
+              1800000,
+              2150000,
+              2350000,
+              2900000,
+              3500000,
+              4700000
+            ]
+          },
+          {
+            "label": "Parent w/o class",
+            "prices": [
+              1300000,
+              1500000,
+              1650000,
+              2050000,
+              2450000,
+              3300000
+            ]
+          },
+          {
+            "label": "Kid",
+            "prices": [
+              2000000,
+              2500000,
+              2700000,
+              3400000,
+              4050000,
+              5400000
+            ]
+          }
+        ]
+      },
+      "currency": "KRW",
+      "note": "비수기. 포함: 수업, 기숙사, 식사. 현지비용 별도. Total Local fee 4w: 51,500PHP."
+    },
+    {
+      "id": "pila_fam_low_twinb",
+      "name": "[비수기 가족] 2인 Twin B",
+      "includesLocalFees": false,
+      "priceMatrix": {
+        "columns": [
+          "2W",
+          "3W",
+          "4W",
+          "5W",
+          "6W",
+          "8W"
+        ],
+        "rows": [
+          {
+            "label": "Parent w/ class",
+            "prices": [
+              1700000,
+              2050000,
+              2200000,
+              2800000,
+              3300000,
+              4400000
+            ]
+          },
+          {
+            "label": "Parent w/o class",
+            "prices": [
+              1150000,
+              1400000,
+              1500000,
+              1950000,
+              2250000,
+              3000000
+            ]
+          },
+          {
+            "label": "Kid",
+            "prices": [
+              1950000,
+              2400000,
+              2600000,
+              3200000,
+              3900000,
+              5200000
+            ]
+          }
+        ]
+      },
+      "currency": "KRW"
+    },
+    {
+      "id": "pila_fam_low_twinc",
+      "name": "[비수기 가족] 2인 Twin C",
+      "includesLocalFees": false,
+      "priceMatrix": {
+        "columns": [
+          "2W",
+          "3W",
+          "4W",
+          "5W",
+          "6W",
+          "8W"
+        ],
+        "rows": [
+          {
+            "label": "Parent w/ class",
+            "prices": [
+              1500000,
+              1850000,
+              2050000,
+              2600000,
+              3100000,
+              4100000
+            ]
+          },
+          {
+            "label": "Parent w/o class",
+            "prices": [
+              950000,
+              1250000,
+              1350000,
+              1700000,
+              2050000,
+              2700000
+            ]
+          },
+          {
+            "label": "Kid",
+            "prices": [
+              1850000,
+              2250000,
+              2400000,
+              3000000,
+              3600000,
+              4800000
+            ]
+          }
+        ]
+      },
+      "currency": "KRW"
+    },
+    {
+      "id": "pila_fam_low_triple",
+      "name": "[비수기 가족] 3인 Triple A",
+      "includesLocalFees": false,
+      "priceMatrix": {
+        "columns": [
+          "2W",
+          "3W",
+          "4W",
+          "5W",
+          "6W",
+          "8W"
+        ],
+        "rows": [
+          {
+            "label": "Parent w/ class",
+            "prices": [
+              1850000,
+              2250000,
+              2400000,
+              3100000,
+              3650000,
+              4800000
+            ]
+          },
+          {
+            "label": "Parent w/o class",
+            "prices": [
+              1300000,
+              1600000,
+              1700000,
+              2250000,
+              2600000,
+              3400000
+            ]
+          },
+          {
+            "label": "Kid",
+            "prices": [
+              2150000,
+              2600000,
+              2850000,
+              3500000,
+              4250000,
+              5700000
+            ]
+          }
+        ]
+      },
+      "currency": "KRW",
+      "note": "Total Local fee 4w: 71,000PHP (3인 기준)."
+    },
+    {
+      "id": "pila_fam_low_2br",
+      "name": "[비수기 가족] 4인 2BR Suite",
+      "includesLocalFees": false,
+      "priceMatrix": {
+        "columns": [
+          "2W",
+          "3W",
+          "4W",
+          "5W",
+          "6W",
+          "8W"
+        ],
+        "rows": [
+          {
+            "label": "Parent w/ class",
+            "prices": [
+              1800000,
+              1950000,
+              2300000,
+              2850000,
+              3250000,
+              4600000
+            ]
+          },
+          {
+            "label": "Parent w/o class",
+            "prices": [
+              1250000,
+              1350000,
+              1600000,
+              2000000,
+              2200000,
+              3200000
+            ]
+          },
+          {
+            "label": "Kid",
+            "prices": [
+              2100000,
+              2400000,
+              2550000,
+              3200000,
+              3900000,
+              5100000
+            ]
+          }
+        ]
+      },
+      "currency": "KRW",
+      "note": "Total Local fee 4w: 90,500PHP (4인 기준)."
+    },
+    {
+      "id": "pila_junior_camp",
+      "name": "[주니어캠프] 2026 여름",
+      "includesLocalFees": true,
+      "priceMatrix": {
+        "columns": [
+          "3W",
+          "4W"
+        ],
+        "rows": [
+          {
+            "label": "주니어캠프",
+            "prices": [
+              4700000,
+              5200000
+            ]
+          }
+        ]
+      },
+      "currency": "KRW",
+      "note": "초3~고2. 2026.7.19~8.15(4주) / 7.26~8.15(3주). 포함: 수업, 기숙사(호텔), 식사, 간식, 청소, 세탁, SSP, SSP I-Card, VISA, 현지비용, 항공권(선착순 50명 대한항공), WEG, 보험."
+    }
+  ],
+  "surcharges": [],
+  "localFees": [
+    {
+      "id": "pila_deposit",
+      "name": "보증금",
+      "amount": 3000,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "note": "8주 미만 3,000 / 8주 이상 6,000. 가족 10,000페소."
+    },
+    {
+      "id": "pila_ssp",
+      "name": "SSP",
+      "amount": 8000,
+      "currency": "PHP",
+      "chargeUnit": "per_person"
+    },
+    {
+      "id": "pila_ssp_icard",
+      "name": "SSP I-Card",
+      "amount": 4500,
+      "currency": "PHP",
+      "chargeUnit": "per_person"
+    },
+    {
+      "id": "pila_visa_icard",
+      "name": "VISA I-Card (ACR)",
+      "amount": 4000,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "triggerWeeks": 9,
+      "note": "1년 유효."
+    },
+    {
+      "id": "pila_misc",
+      "name": "종합관리비 (Miscellaneous)",
+      "amount": 3000,
+      "currency": "PHP",
+      "chargeUnit": "per_4weeks"
+    },
+    {
+      "id": "pila_elec_water",
+      "name": "전기/수도",
+      "amount": 3500,
+      "currency": "PHP",
+      "chargeUnit": "per_4weeks",
+      "note": "2,500+1,000. 초과 시 누진세."
+    },
+    {
+      "id": "pila_pickup",
+      "name": "픽업 (편도)",
+      "amount": 1200,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "note": "가족 픽업 4인 기준 2,500페소."
+    },
+    {
+      "id": "pila_idcard",
+      "name": "ID 발급",
+      "amount": 500,
+      "currency": "PHP",
+      "chargeUnit": "per_person"
+    },
+    {
+      "id": "pila_textbook",
+      "name": "교재비",
+      "amount": 500,
+      "currency": "PHP",
+      "chargeUnit": "per_book"
+    },
+    {
+      "id": "pila_ecc",
+      "name": "ECC",
+      "amount": 1500,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "triggerWeeks": 25,
+      "note": "6개월 이상 체류 시."
+    },
+    {
+      "id": "pila_visa_1",
+      "name": "비자연장 (누적)",
+      "amount": 5130,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "triggerWeeks": 5,
+      "note": "8w 5,130 / 12w 11,540 / 16w 16,080 / 20w 20,620 / 24w 25,160."
+    }
+  ],
+  "additionalCharges": [
+    {
+      "id": "pila_add_11",
+      "label": "추가 1:1 수업 (4주)",
+      "amount": 150,
+      "currency": "USD"
+    },
+    {
+      "id": "pila_add_group",
+      "label": "추가 그룹 수업 (4주)",
+      "amount": 100,
+      "currency": "USD"
+    },
+    {
+      "id": "pila_group_to_11",
+      "label": "그룹→1:1 변경",
+      "amount": 80,
+      "currency": "USD"
+    },
+    {
+      "id": "pila_guardian",
+      "label": "가디언 비용 (4주)",
+      "amount": 500,
+      "currency": "USD",
+      "note": "만15~18세 미성년자. 포함: 보증금, 공항픽드롭, ID, 교재, 주1회 빨래, 주말브런치/저녁, 월2회 주말액티비티."
+    },
+    {
+      "id": "pila_walkin_meal_1",
+      "label": "통학 식사 1Meal (4주)",
+      "amount": 150,
+      "currency": "USD"
+    },
+    {
+      "id": "pila_walkin_meal_2",
+      "label": "통학 식사 2Meal (4주)",
+      "amount": 300,
+      "currency": "USD"
+    },
+    {
+      "id": "pila_walkin_meal_3",
+      "label": "통학 식사 3Meal (4주)",
+      "amount": 450,
+      "currency": "USD"
+    }
+  ],
+  "generalNotes": "PILAedu. 세부 IT-Park 소재. 2026년 상반기 학비 기준 (5월 4일부 커리큘럼 개편 적용).\n\n[커리큘럼 개편 (5/4~)] 수업 50분→45분. 그룹수업 대폭 확대. 옵션그룹(CNN, American Accent, Media, Sport). 주말 2끼(브런치+저녁).\n\n[성인 통학 Walk-in (USD)] Trial $1,000 / Lite $1,100 / Regular $1,300 / Intensive $1,400 / IELTS $1,500 / TOEFL $1,500. 단기: 1w 40%, 2w 70%, 3w 90%. 식사 별도.\n\n[가족연수 성수기 (1-3월/6-9월)] 1인 가격. 현지비용(픽드롭) 포함. 예약금 100만원 선입금(환불불가).\n[가족연수 비수기] 1인 가격. 현지비용 별도.\n\n[주니어캠프 2026 여름] 초3~고2. 3주 470만 / 4주 520만. 항공권+현지비용 포함.\n\n[관리형 조기유학] 가디언비 $500/4주. 현지비용 별도. 월2회 주말액티비티.\n관리형 현지비용: 4w 17,500PHP / 8w 28,130PHP / 12w 43,540PHP.\n\n[현지비용 총액 (성인)]\n4w 23,700PHP / 8w 38,330PHP / 12w 55,240PHP / 16w 66,280PHP / 20w 77,320PHP / 24w 88,360PHP.\n\n[버디 선생님] Quad B 사용 시 선생님 룸메이트 배정, 24시간 영어환경.",
+  "isActive": true,
+  "createdAt": "2026-05-29",
+  "updatedAt": "2026-05-30",
+  "courseShortTermRates": {
+    "mode": "percent",
+    "week1": 40,
+    "week2": 70,
+    "week3": 90,
+    "week4Included": false,
+    "note": "성인 기준. 가족 패키지는 비용표 주당비용 별도"
+  },
+  "dormShortTermRates": {
+    "mode": "percent",
+    "week1": 40,
+    "week2": 70,
+    "week3": 90,
+    "week4Included": false,
+    "note": "성인 기준. 가족 패키지는 비용표 주당비용 별도"
+  }
+}

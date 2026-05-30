@@ -1,0 +1,160 @@
+{
+  "id": "besta",
+  "schoolCode": "BESTA",
+  "name": "BESTA 라메디리조트",
+  "campus": "라메디리조트",
+  "region": "기타",
+  "schoolType": "general",
+  "minWeeks": 4,
+  "allowShortTerm": false,
+  "programTags": ["가족연수", "주니어"],
+  "registrationFee": {
+    "amount": 100000,
+    "currency": "KRW",
+    "note": "등록금 10만원 (인당)"
+  },
+  "courses": [],
+  "dormitories": [],
+  "packages": [
+    {
+      "id": "besta_lamedi_offseason",
+      "label": "라메디리조트 비수기 (3~7월, 9~12월)",
+      "season": "비수기",
+      "currency": "KRW",
+      "columns": ["오픈가 (4주)"],
+      "priceMatrix": [
+        {
+          "weeks": 4,
+          "prices": [
+            { "label": "1인실(디럭스) 성인만", "amount": 2550000, "originalPrice": 2800000 },
+            { "label": "가족룸(디럭스) 보호자1+자녀1", "amount": 2700000, "originalPrice": 5400000 },
+            { "label": "가족룸(디럭스) 보호자1+자녀2", "amount": 4500000, "originalPrice": 8500000 },
+            { "label": "가족룸(디럭스) 보호자2+자녀1", "amount": 3000000, "originalPrice": 6000000 },
+            { "label": "가족룸(풀억세스/풀사이드) 보호자1+자녀1", "amount": 3000000, "originalPrice": 6000000 },
+            { "label": "가족룸(풀억세스/풀사이드) 보호자1+자녀2", "amount": 4800000, "originalPrice": 8800000 },
+            { "label": "가족룸(풀억세스/풀사이드) 보호자2+자녀1", "amount": 3400000, "originalPrice": 6800000 },
+            { "label": "가족룸(풀억세스)+엑베 보호자2+자녀2", "amount": 5300000, "originalPrice": 10500000 },
+            { "label": "가족룸(풀억세스)+엑베 보호자1+자녀3", "amount": 6300000, "originalPrice": 11500000 }
+          ]
+        }
+      ],
+      "additionalRules": [
+        {
+          "id": "ielts_add",
+          "condition": "아이엘츠 수업 신청 시",
+          "addAmount": 300000,
+          "currency": "KRW"
+        }
+      ],
+      "includes": "숙박 4주 + 자녀 1:1(6times) + 호텔조식 포함",
+      "excludes": "등록금 10만원(인당)\n현지납부비용\n보호자 수업 (현지에서 별도 신청)\n점심/저녁 식사 (자녀 학원 점심 제공)",
+      "note": "오픈 프로모션 가격. 호텔에서 학원까지 약 35분 거리.\n보호자 수업 희망 시 현지에서 신청가능.\n자녀 학원에서 점심제공."
+    }
+  ],
+  "surcharges": [],
+  "localFees": [
+    {
+      "id": "besta_ssp_icard",
+      "name": "SSP+I Card",
+      "amount": 12100,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "note": "1인당"
+    },
+    {
+      "id": "besta_deposit",
+      "name": "보증금",
+      "amount": 100,
+      "currency": "USD",
+      "chargeUnit": "per_family",
+      "note": "가족별"
+    },
+    {
+      "id": "besta_textbook",
+      "name": "교재비",
+      "amount": 400,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "note": "P400~800 (권당)"
+    },
+    {
+      "id": "besta_id",
+      "name": "ID",
+      "amount": 300,
+      "currency": "PHP",
+      "chargeUnit": "per_person"
+    },
+    {
+      "id": "besta_electric",
+      "name": "전기세",
+      "amount": 500,
+      "currency": "PHP",
+      "chargeUnit": "per_week",
+      "note": "1인당 주당"
+    },
+    {
+      "id": "besta_maintenance",
+      "name": "관리비",
+      "amount": 500,
+      "currency": "PHP",
+      "chargeUnit": "per_week",
+      "note": "1인당 주당"
+    },
+    {
+      "id": "besta_laundry",
+      "name": "세탁비",
+      "amount": 0,
+      "currency": "PHP",
+      "chargeUnit": "per_usage",
+      "note": "외부 또는 호텔유료이용"
+    },
+    {
+      "id": "besta_pickup",
+      "name": "공항픽업",
+      "amount": 1000,
+      "currency": "PHP",
+      "chargeUnit": "per_visit",
+      "note": "가족당 P1,000/One way"
+    },
+    {
+      "id": "besta_visa_1",
+      "name": "비자연장 1차 (29일)",
+      "amount": 4630,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "triggerWeeks": 5
+    },
+    {
+      "id": "besta_visa_2",
+      "name": "비자연장 2차 (30일)",
+      "amount": 5900,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "triggerWeeks": 9,
+      "note": "Visa I Card P4,500 별도"
+    },
+    {
+      "id": "besta_visa_3",
+      "name": "비자연장 3차 (30일)",
+      "amount": 3930,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "triggerWeeks": 13
+    },
+    {
+      "id": "besta_visa_icard",
+      "name": "Visa I Card",
+      "amount": 4500,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "triggerWeeks": 9,
+      "note": "2차 연장 시 발급"
+    }
+  ],
+  "refundPolicy": "",
+  "dormitoryRules": "",
+  "generalNotes": "BESTA 라메디리조트 프로그램. 보홀 소재.\n비수기(3~7월, 9~12월) 운영. 오픈 프로모션 적용가.\n가족룸 디럭스: 퀸베드+싱글베드, 풀뷰, 베란다.\n가족룸 풀억세스/풀사이드: 퀸베드+싱글베드, 베란다.\n\n보홀 가족캠프(여름/겨울 성수기)는 별도 학원 BESTA_BOHOL에서 관리.",
+  "isActive": true,
+  "createdAt": "2026-05-29",
+  "updatedAt": "2026-05-29"
+}

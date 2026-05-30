@@ -1,0 +1,428 @@
+{
+  "id": "coco",
+  "schoolCode": "COCO",
+  "name": "보라카이 코코 어학원 (Boracay COCO English Academy)",
+  "campus": "본원",
+  "region": "기타",
+  "schoolType": "general",
+  "minWeeks": 1,
+  "allowShortTerm": true,
+  "programTags": [
+    "ESL",
+    "IELTS",
+    "비즈니스",
+    "골프",
+    "주니어",
+    "킨더"
+  ],
+  "registrationFee": {
+    "amount": 100000,
+    "currency": "KRW",
+    "note": "등록금 100,000원. 수업을 듣지 않고 숙식만 하는 인원도 부과되며, 재등록 학생은 면제."
+  },
+  "courses": [
+    {
+      "id": "coco_general_esl",
+      "name": "General ESL",
+      "classDetails": "1:1 4H + 소그룹 2H + 셀프스터디 1 + 선택저녁그룹 1 + 방과후액티비티 1",
+      "price4Weeks": 1000000,
+      "currency": "KRW",
+      "note": "성수기 가격. 비수기: 800,000원. surcharges의 비수기 할인(20%)으로 자동 적용."
+    },
+    {
+      "id": "coco_power_esl",
+      "name": "Power ESL",
+      "classDetails": "1:1 5H + 셀프스터디 1 + 선택저녁그룹 1 + 방과후액티비티 1",
+      "price4Weeks": 1050000,
+      "currency": "KRW",
+      "note": "성수기 가격. 비수기: 840,000원. surcharges의 비수기 할인(20%)으로 자동 적용."
+    },
+    {
+      "id": "coco_intensive_esl",
+      "name": "Intensive ESL",
+      "classDetails": "1:1 5H + 소그룹 2H + 셀프스터디 1 + 선택저녁그룹 1 + 방과후액티비티 1",
+      "price4Weeks": 1100000,
+      "currency": "KRW",
+      "note": "성수기 가격. 비수기: 880,000원. surcharges의 비수기 할인(20%)으로 자동 적용."
+    },
+    {
+      "id": "coco_super_intensive",
+      "name": "Super Intensive ESL",
+      "classDetails": "1:1 6H + 소그룹 2H + 셀프스터디 1 + 선택저녁그룹 1 + 방과후액티비티 1",
+      "price4Weeks": 1250000,
+      "currency": "KRW",
+      "note": "성수기 가격. 비수기: 1,000,000원. surcharges의 비수기 할인(20%)으로 자동 적용."
+    },
+    {
+      "id": "coco_business",
+      "name": "Business Course",
+      "classDetails": "1:1 5H + 소그룹 2H + 셀프스터디 1 + 선택저녁그룹 1 + 방과후액티비티 1",
+      "price4Weeks": 1250000,
+      "currency": "KRW",
+      "note": "성수기 가격. 비수기: 1,000,000원. surcharges의 비수기 할인(20%)으로 자동 적용."
+    },
+    {
+      "id": "coco_ielts",
+      "name": "IELTS Course",
+      "classDetails": "1:1 5H + 소그룹 2H + 셀프스터디 1 + 선택저녁그룹 1 + 방과후액티비티 1",
+      "price4Weeks": 1250000,
+      "currency": "KRW",
+      "note": "성수기 가격. 비수기: 1,000,000원. surcharges의 비수기 할인(20%)으로 자동 적용."
+    },
+    {
+      "id": "coco_lite_esl",
+      "name": "Lite ESL",
+      "classDetails": "1:1 3H + 선택저녁그룹 1 + 방과후액티비티 1",
+      "price4Weeks": 900000,
+      "currency": "KRW",
+      "note": "성수기 가격. 비수기: 720,000원. surcharges의 비수기 할인(20%)으로 자동 적용."
+    },
+    {
+      "id": "coco_nursery",
+      "name": "Nursery Course (만 3-4세)",
+      "classDetails": "1:1 2H + 액티비티 5H + 방과후액티비티 1",
+      "price4Weeks": 1500000,
+      "currency": "KRW",
+      "note": "주니어 코스. 성수기 가격. 비수기: 1,200,000원. surcharges의 비수기 할인(20%)으로 자동 적용."
+    },
+    {
+      "id": "coco_kinder",
+      "name": "Kinder Course (만 5-6세)",
+      "classDetails": "1:1 2H + 액티비티 5H + 방과후액티비티 1",
+      "price4Weeks": 1500000,
+      "currency": "KRW",
+      "note": "주니어 코스. 성수기 가격. 비수기: 1,200,000원. surcharges의 비수기 할인(20%)으로 자동 적용."
+    },
+    {
+      "id": "coco_junior",
+      "name": "Junior Course (만 7-14세)",
+      "classDetails": "1:1 3H + 소그룹 3H + 액티비티 2H + 방과후액티비티 1",
+      "price4Weeks": 1750000,
+      "currency": "KRW",
+      "note": "주니어 코스. 성수기 가격. 비수기: 1,400,000원. surcharges의 비수기 할인(20%)으로 자동 적용."
+    }
+  ],
+  "dormitories": [
+    {
+      "id": "coco_deluxe_single",
+      "name": "Deluxe 1인실 (성인)",
+      "price4Weeks": 1700000,
+      "currency": "KRW",
+      "note": "성수기 가격. 비수기: 1,360,000원. surcharges의 비수기 할인(20%)으로 자동 적용."
+    },
+    {
+      "id": "coco_deluxe_double",
+      "name": "Deluxe 2인실 (성인)",
+      "price4Weeks": 1100000,
+      "currency": "KRW",
+      "note": "성수기 가격. 비수기: 880,000원. surcharges의 비수기 할인(20%)으로 자동 적용."
+    },
+    {
+      "id": "coco_deluxe_double_family",
+      "name": "Deluxe 2인실 (가족/그룹)",
+      "price4Weeks": 1100000,
+      "currency": "KRW",
+      "note": "성수기 가격. 비수기: 880,000원. surcharges의 비수기 할인(20%)으로 자동 적용."
+    },
+    {
+      "id": "coco_deluxe_triple_family",
+      "name": "Deluxe 3인실 (가족/그룹)",
+      "price4Weeks": 950000,
+      "currency": "KRW",
+      "note": "성수기 가격. 비수기: 760,000원. surcharges의 비수기 할인(20%)으로 자동 적용."
+    },
+    {
+      "id": "coco_deluxe_triple_family_b",
+      "name": "Deluxe 3인실 (가족/그룹 B)",
+      "price4Weeks": 1100000,
+      "currency": "KRW",
+      "note": "성수기 가격. 비수기: 880,000원. 기숙사표의 두번째 3인실. surcharges의 비수기 할인(20%)으로 자동 적용."
+    },
+    {
+      "id": "coco_premier_4",
+      "name": "Premier 4인실",
+      "price4Weeks": 1000000,
+      "currency": "KRW",
+      "note": "성수기 가격. 비수기: 800,000원. Premier는 Deluxe보다 50% 넓음. surcharges의 비수기 할인(20%)으로 자동 적용."
+    },
+    {
+      "id": "coco_premier_5",
+      "name": "Premier 5인실",
+      "price4Weeks": 900000,
+      "currency": "KRW",
+      "note": "성수기 가격. 비수기: 720,000원. surcharges의 비수기 할인(20%)으로 자동 적용."
+    }
+  ],
+  "surcharges": [
+    {
+      "id": "coco_offseason_discount",
+      "label": "비수기 프로모션 할인",
+      "startDate": "2026-03-01",
+      "endDate": "2026-06-27",
+      "amountPerWeek": 0,
+      "currency": "KRW",
+      "applyTo": "all",
+      "discountPercent": 20,
+      "note": "비수기 기간: 2026.3.1~6.27 & 2026.8.23~2027.1.2. 코스+기숙사 모두 정규가의 80% 적용 (20% 할인). 비수기 프로모션은 기숙사에서 함께 지내는 학생에게만 적용."
+    },
+    {
+      "id": "coco_offseason_discount_2",
+      "label": "비수기 프로모션 할인 (하반기)",
+      "startDate": "2026-08-23",
+      "endDate": "2027-01-02",
+      "amountPerWeek": 0,
+      "currency": "KRW",
+      "applyTo": "all",
+      "discountPercent": 20,
+      "note": "비수기 하반기. 코스+기숙사 모두 정규가의 80% 적용 (20% 할인)."
+    }
+  ],
+  "promotions": null,
+  "localFees": [
+    {
+      "id": "coco_ssp",
+      "name": "SSP",
+      "amount": 7800,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "trigger": "enrollment"
+    },
+    {
+      "id": "coco_ssp_ecard",
+      "name": "SSP E-CARD",
+      "amount": 4500,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "trigger": "enrollment"
+    },
+    {
+      "id": "coco_service",
+      "name": "서비스 비용 (유틸리티/관리비/청소비/셔틀)",
+      "amount": 800,
+      "currency": "PHP",
+      "chargeUnit": "per_week",
+      "trigger": "enrollment"
+    },
+    {
+      "id": "coco_elec_single",
+      "name": "전기세&수도세 (1인실)",
+      "amount": 1200,
+      "currency": "PHP",
+      "chargeUnit": "per_week",
+      "trigger": "enrollment"
+    },
+    {
+      "id": "coco_elec_multi",
+      "name": "전기세&수도세 (2~5인실)",
+      "amount": 800,
+      "currency": "PHP",
+      "chargeUnit": "per_week",
+      "trigger": "enrollment"
+    },
+    {
+      "id": "coco_elec_over",
+      "name": "전기세 초과분",
+      "amount": 20,
+      "currency": "PHP",
+      "chargeUnit": "per_kwh",
+      "trigger": "usage",
+      "note": "기본 전기세보다 초과 사용 시 부과"
+    },
+    {
+      "id": "coco_pickup",
+      "name": "공항 픽업 서비스",
+      "amount": 1200,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "trigger": "enrollment",
+      "note": "Kalibo 또는 Caticlan 공항"
+    },
+    {
+      "id": "coco_sending",
+      "name": "공항 센딩 서비스",
+      "amount": 1000,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "trigger": "enrollment"
+    },
+    {
+      "id": "coco_deposit",
+      "name": "디파짓 (보증금)",
+      "amount": 3000,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "trigger": "enrollment",
+      "note": "인당 또는 가족당. 퇴실시 파손 없으면 전액 환불."
+    },
+    {
+      "id": "coco_textbook",
+      "name": "교재비",
+      "amount": 300,
+      "currency": "PHP",
+      "chargeUnit": "per_book",
+      "trigger": "enrollment",
+      "note": "300~500/book. 4주 기준 1,000~2,500."
+    },
+    {
+      "id": "coco_id",
+      "name": "학생 ID 카드",
+      "amount": 200,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "trigger": "enrollment",
+      "note": "발급 여부 선택 가능"
+    },
+    {
+      "id": "coco_laundry",
+      "name": "세탁비",
+      "amount": 300,
+      "currency": "PHP",
+      "chargeUnit": "per_load",
+      "trigger": "usage",
+      "note": "1회 최대 8kg"
+    },
+    {
+      "id": "coco_visa_8",
+      "name": "비자연장비 (8주)",
+      "amount": 5100,
+      "currency": "PHP",
+      "chargeUnit": "cumulative",
+      "trigger": "stay_over",
+      "triggerWeeks": 5
+    },
+    {
+      "id": "coco_visa_12",
+      "name": "비자연장비 (12주)",
+      "amount": 11500,
+      "currency": "PHP",
+      "chargeUnit": "cumulative",
+      "trigger": "stay_over",
+      "triggerWeeks": 9
+    },
+    {
+      "id": "coco_visa_16",
+      "name": "비자연장비 (16주)",
+      "amount": 15900,
+      "currency": "PHP",
+      "chargeUnit": "cumulative",
+      "trigger": "stay_over",
+      "triggerWeeks": 13
+    },
+    {
+      "id": "coco_visa_20",
+      "name": "비자연장비 (20주)",
+      "amount": 20300,
+      "currency": "PHP",
+      "chargeUnit": "cumulative",
+      "trigger": "stay_over",
+      "triggerWeeks": 17
+    },
+    {
+      "id": "coco_visa_24",
+      "name": "비자연장비 (24주)",
+      "amount": 24700,
+      "currency": "PHP",
+      "chargeUnit": "cumulative",
+      "trigger": "stay_over",
+      "triggerWeeks": 21
+    }
+  ],
+  "packages": [],
+  "additionalCharges": [
+    {
+      "id": "coco_add_1on1",
+      "name": "1:1 수업 추가 비용",
+      "amount": 1500,
+      "currency": "PHP",
+      "note": "1주당. 최소 2주부터 신청."
+    },
+    {
+      "id": "coco_extra_stay_single",
+      "name": "추가 숙식비 Single",
+      "amount": 2500,
+      "currency": "PHP",
+      "note": "1박. 기존 숙박일수 초과 시 (객실 여유 시에만)."
+    },
+    {
+      "id": "coco_extra_stay_twin",
+      "name": "추가 숙식비 Twin/Double",
+      "amount": 2000,
+      "currency": "PHP",
+      "note": "1박."
+    },
+    {
+      "id": "coco_extra_stay_family3",
+      "name": "추가 숙식비 Family 3인",
+      "amount": 1500,
+      "currency": "PHP",
+      "note": "1박."
+    },
+    {
+      "id": "coco_extra_stay_family4",
+      "name": "추가 숙식비 Family 4인",
+      "amount": 1250,
+      "currency": "PHP",
+      "note": "1박."
+    },
+    {
+      "id": "coco_guardian_visit",
+      "name": "학부모 가족연수 중 방문 숙식",
+      "amount": 2500,
+      "currency": "PHP",
+      "note": "1박. 잠깐 방문하여 같은 방에서 지낼 때."
+    },
+    {
+      "id": "coco_extra_meal_breakfast",
+      "name": "추가 식사비 (조식)",
+      "amount": 1100,
+      "currency": "PHP"
+    },
+    {
+      "id": "coco_extra_meal_lunch",
+      "name": "추가 식사비 (중식)",
+      "amount": 1650,
+      "currency": "PHP"
+    },
+    {
+      "id": "coco_extra_meal_dinner",
+      "name": "추가 식사비 (석식)",
+      "amount": 1650,
+      "currency": "PHP"
+    },
+    {
+      "id": "coco_extra_meal_3meals",
+      "name": "추가 식사비 (3끼)",
+      "amount": 4000,
+      "currency": "PHP",
+      "note": "어학원 파트너 외부 숙소 학생용."
+    },
+    {
+      "id": "coco_babysitter",
+      "name": "베이비 시터 서비스",
+      "amount": 1500,
+      "currency": "PHP",
+      "note": "1일 8시간. 만 3세 이하. 최소 주5회, 8시간 이상 신청."
+    }
+  ],
+  "refundPolicy": "",
+  "dormitoryRules": "체크인: 일요일 종일. 체크아웃: 토요일 오후 1시.",
+  "generalNotes": "보라카이 코코 어학원. 보라카이 소재.\n\n등록금: 100,000원.\n\n성수기: 2026.6.28~8.22 & 2027.1.3~2.27 (정규 비용).\n비수기: 2026.3.1~6.27 & 2026.8.23~2027.1.2 (비수기 프로모션 비용 = 정규의 약 80%).\n비수기 프로모션은 기숙사에서 함께 지내는 학생에게만 적용.\n\n소그룹 수업: 4~6명 (최대 9명). Nursery/Kinder 액티비티: 2~4명 (최대 6명).\n선택 저녁 그룹수업 & 방과후 액티비티: 화~목요일 운영, 참여 자유.\n셀프 스터디 클래스: 참여 여부 선택 가능.\n24개월 이하 아기: 등록금 및 서비스 비용 면제.\n\n기숙사 비용 1인 기준. 평일 3식 + 주말 브런치 포함.\nPremier는 Deluxe보다 50% 넓음.\n\n단기: 1주 40% / 2주 60% / 3주 80% of 4주 비용.",
+  "isActive": true,
+  "createdAt": "2026-05-29",
+  "updatedAt": "2026-05-30",
+  "courseShortTermRates": {
+    "mode": "percent",
+    "week1": 40,
+    "week2": 80,
+    "week3": 80,
+    "week4Included": false
+  },
+  "dormShortTermRates": {
+    "mode": "percent",
+    "week1": 40,
+    "week2": 80,
+    "week3": 80,
+    "week4Included": false
+  },
+  "shortTermDataStatus": "confirmed"
+}

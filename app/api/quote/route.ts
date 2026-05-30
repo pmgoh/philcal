@@ -36,6 +36,7 @@ const EXTRACT_PROMPT = `엠버시유학 견적 시스템. 사용자는 상담원
 6. 학원 ID, 코스 ID, 기숙사 ID, 패키지 ID는 [학원 데이터]에 실제 존재하는 ID만 사용한다.
 7. 패키지에 columns(['2인가족','3인가족','주니어 1인' 등])가 있으면 columnLabel을 반드시 받는다.
 8. 사용자가 현재 모드와 안 맞는 학원(예: 일반 연수 모드에서 "CIA 캠프")을 찾으면, "그 학원은 캠프·가족·주니어 모드에 있습니다. 화면 위의 모드 토글로 전환해주세요"라고 안내한다(need_info에 question으로).
+9. [캠퍼스] 한 학원에 여러 캠퍼스가 있을 수 있다(코스·기숙사의 campus 필드로 구분, 예: BECI = EOP/스파르타/시티). 사용자가 "베시 시티", "EV 라메르"처럼 캠퍼스를 말하면 그 campus의 코스·기숙사만 후보로 삼는다. 캠퍼스를 말하지 않았는데 학원에 여러 campus가 있으면, 어느 캠퍼스인지 need_info로 반드시 묻는다(임의로 정하지 않는다). 코스와 기숙사는 같은 campus끼리만 묶는다(다른 캠퍼스 조합 금지).
 
 [출력 형식 - JSON 하나만]
 정보 부족 시:
@@ -310,6 +311,7 @@ export async function POST(req: NextRequest) {
       return {
         id: p.id,
         label: p.promoName,
+        target: p.target,
         basisType: p.basisType ?? 'enrollment_date',
         alwaysApply: p.alwaysApply ?? false,
         // stackable 기본 true (중복 적용 가능). 명시적 false 시에만 단독.
@@ -416,12 +418,14 @@ export async function POST(req: NextRequest) {
         .filter(c => (c as unknown as Record<string,number>).price4Weeks > 0)
         .sort((a,b) => ((a as unknown as Record<string,number>).price4Weeks||0) - ((b as unknown as Record<string,number>).price4Weeks||0))
         .map(c => ({ id: c.id, name: c.name, target: c.target,
+          campus: (c as unknown as { campus?: string }).campus,
           p: (c as unknown as Record<string,number>).price4Weeks, cur: c.currency }))
 
       const dorms = (s.dormitories ?? [])
         .filter(d => (d as unknown as Record<string,number>).price4Weeks > 0)
         .sort((a,b) => ((a as unknown as Record<string,number>).price4Weeks||0) - ((b as unknown as Record<string,number>).price4Weeks||0))
         .map(d => ({ id: d.id, name: d.name,
+          campus: (d as unknown as { campus?: string }).campus,
           p: (d as unknown as Record<string,number>).price4Weeks, cur: d.currency }))
 
       const packages = (s.packages ?? []).map(p => ({

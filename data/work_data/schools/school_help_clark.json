@@ -1,0 +1,417 @@
+{
+  "id": "help_clark",
+  "schoolCode": "HELP_CLARK",
+  "name": "HELP English (헬프어학원)",
+  "campus": "클락 캠퍼스 (Bldg 5272 C.M Recto Highway Clark Freeport Zone, Pampanga)",
+  "region": "클락",
+  "schoolType": "general",
+  "programTags": [
+    "성인일반",
+    "가족연수",
+    "주니어",
+    "IELTS",
+    "비즈니스"
+  ],
+  "minWeeks": 4,
+  "allowShortTerm": true,
+  "registrationFee": {
+    "amount": 100000,
+    "currency": "KRW",
+    "note": "등록비 1인당 10만원"
+  },
+  "courses": [
+    {
+      "id": "esl",
+      "name": "ESL",
+      "target": "성인일반",
+      "price4Weeks": 1000000,
+      "currency": "KRW",
+      "note": "성인 ESL 과정. 4주 100만원."
+    },
+    {
+      "id": "ielts",
+      "name": "IELTS",
+      "target": "성인일반",
+      "price4Weeks": 1220000,
+      "currency": "KRW",
+      "note": "성인 IELTS 과정. 4주 122만원."
+    },
+    {
+      "id": "business",
+      "name": "비즈니스 과정",
+      "target": "성인일반",
+      "price4Weeks": 1220000,
+      "currency": "KRW",
+      "note": "성인 비즈니스 과정. 4주 122만원."
+    },
+    {
+      "id": "family_guardian_high",
+      "name": "가족연수 보호자 (성수기)",
+      "target": "가족연수",
+      "price4Weeks": 720000,
+      "currency": "KRW",
+      "note": "1:1 수업 3타임 (양도 가능). 성수기: 7/6 시작~8/14까지, 2027년 1/4 시작~2/26까지."
+    },
+    {
+      "id": "family_junior_high",
+      "name": "가족연수 주니어 (성수기)",
+      "target": "가족연수",
+      "price4Weeks": 1300000,
+      "currency": "KRW",
+      "note": "1:1 수업 5타임 + 액티비티1 + P.E 1. 초등4부터 이브닝클래스(보카,라이팅첨삭) 신청시 15만원 추가."
+    },
+    {
+      "id": "family_kinder_high",
+      "name": "가족연수 유치부 (성수기)",
+      "target": "가족연수",
+      "price4Weeks": 1200000,
+      "currency": "KRW",
+      "note": "젠트리 유치원 통학 (8:10~14:00). 성수기 전용."
+    },
+    {
+      "id": "family_junior_low",
+      "name": "가족연수 주니어 (비수기)",
+      "target": "가족연수",
+      "price4Weeks": 1000000,
+      "currency": "KRW",
+      "note": "1:1 수업 5타임. 비수기: 여름/겨울 성수기를 제외한 기간. 보호자 수업 없음."
+    },
+    {
+      "id": "family_kinder_low",
+      "name": "가족연수 유치부 (비수기)",
+      "target": "가족연수",
+      "price4Weeks": 1000000,
+      "currency": "KRW",
+      "note": "젠트리 유치원 통학 (8:10~14:00). 비수기 전용. 보호자 수업 없음."
+    },
+    {
+      "id": "camp_parent_2026",
+      "name": "2026 가족캠프 학부모",
+      "target": "가족연수",
+      "price4Weeks": 1150000,
+      "currency": "KRW",
+      "note": "2026년 6월부터. 1:1 개인수업 5타임 (자녀에게 최대 3타임 양도 가능). 4주/6주/8주/10주/12주 신청 가능. 4주 과정은 1월, 2월 일정으로 입학 가능."
+    },
+    {
+      "id": "camp_child_2026",
+      "name": "2026 가족캠프 자녀",
+      "target": "가족연수",
+      "price4Weeks": 1450000,
+      "currency": "KRW",
+      "note": "2026년 6월부터. 1:1 개인수업 5타임 + 액티비티 수업 1타임 + P.E 수업 1타임 + 이브닝 클래스(단어암기 & 영작 글짓기 첨삭, 초등 4학년부터 참여 가능). 대상: 만 3세 이상."
+    },
+    {
+      "id": "camp_kinder_2026",
+      "name": "2026 가족캠프 유치부",
+      "target": "가족연수",
+      "price4Weeks": 1200000,
+      "currency": "KRW",
+      "note": "만 3~4세 Nursery, 만 4~5세 Kinder 1, 만 5~6세 Kinder 2."
+    }
+  ],
+  "dormitories": [
+    {
+      "id": "single_adult",
+      "name": "1인실 (성인)",
+      "roomType": "1인실",
+      "target": "성인일반",
+      "price4Weeks": 1240000,
+      "currency": "KRW",
+      "note": "성인 전용 1인실. 4주 124만원."
+    },
+    {
+      "id": "double_adult",
+      "name": "2인실 (성인)",
+      "roomType": "2인실",
+      "target": "성인일반",
+      "price4Weeks": 990000,
+      "currency": "KRW",
+      "note": "성인 전용 2인실. 4주 99만원."
+    },
+    {
+      "id": "triple_adult",
+      "name": "3인실 (성인)",
+      "roomType": "3인실",
+      "target": "성인일반",
+      "price4Weeks": 850000,
+      "currency": "KRW",
+      "note": "성인 전용 3인실. 4주 85만원."
+    },
+    {
+      "id": "quad_adult",
+      "name": "4인실 (성인)",
+      "roomType": "4인실",
+      "target": "성인일반",
+      "price4Weeks": 750000,
+      "currency": "KRW",
+      "note": "성인 전용 4인실. 4주 75만원."
+    },
+    {
+      "id": "double_family_high",
+      "name": "2인실 (가족연수 성수기)",
+      "roomType": "2인실",
+      "target": "가족연수",
+      "price4Weeks": 1140000,
+      "currency": "KRW",
+      "note": "가족연수 성수기 전용 2인실. 4주 114만원. 성수기: 7/6~8/14, 2027년 1/4~2/26."
+    },
+    {
+      "id": "triple_family_high",
+      "name": "3인실 (가족연수 성수기)",
+      "roomType": "3인실",
+      "target": "가족연수",
+      "price4Weeks": 1000000,
+      "currency": "KRW",
+      "note": "가족연수 성수기 전용 3인실. 4주 100만원."
+    },
+    {
+      "id": "quad_family_high",
+      "name": "4인실 (가족연수 성수기)",
+      "roomType": "4인실",
+      "target": "가족연수",
+      "price4Weeks": 900000,
+      "currency": "KRW",
+      "note": "가족연수 성수기 전용 4인실. 4주 90만원."
+    },
+    {
+      "id": "double_family_low",
+      "name": "2인실 (가족연수 비수기)",
+      "roomType": "2인실",
+      "target": "가족연수",
+      "price4Weeks": 1090000,
+      "currency": "KRW",
+      "note": "가족연수 비수기 전용 2인실. 4주 109만원. 비수기: 여름/겨울 성수기 제외 기간."
+    },
+    {
+      "id": "triple_family_low",
+      "name": "3인실 (가족연수 비수기)",
+      "roomType": "3인실",
+      "target": "가족연수",
+      "price4Weeks": 950000,
+      "currency": "KRW",
+      "note": "가족연수 비수기 전용 3인실. 4주 95만원."
+    },
+    {
+      "id": "quad_family_low",
+      "name": "4인실 (가족연수 비수기)",
+      "roomType": "4인실",
+      "target": "가족연수",
+      "price4Weeks": 850000,
+      "currency": "KRW",
+      "note": "가족연수 비수기 전용 4인실. 4주 85만원."
+    },
+    {
+      "id": "double_camp_2026",
+      "name": "2인실 (2026 가족캠프)",
+      "roomType": "2인실",
+      "target": "가족연수",
+      "price4Weeks": 1040000,
+      "currency": "KRW",
+      "note": "2026 가족캠프 전용. 2인가족 = 2인실. 4주 104만원."
+    },
+    {
+      "id": "triple_camp_2026",
+      "name": "3인실 (2026 가족캠프)",
+      "roomType": "3인실",
+      "target": "가족연수",
+      "price4Weeks": 900000,
+      "currency": "KRW",
+      "note": "2026 가족캠프 전용. 3인가족 = 3인실. 4주 90만원."
+    },
+    {
+      "id": "quad_camp_2026",
+      "name": "4인실 (2026 가족캠프)",
+      "roomType": "4인실",
+      "target": "가족연수",
+      "price4Weeks": 800000,
+      "currency": "KRW",
+      "note": "2026 가족캠프 전용. 4인가족 = 4인실. 4주 80만원."
+    }
+  ],
+  "surcharges": [],
+  "packages": [],
+  "promotions": null,
+  "localFees": [
+    {
+      "id": "deposit",
+      "name": "보증금",
+      "amount": 3000,
+      "currency": "PHP",
+      "trigger": "always",
+      "chargeUnit": "flat",
+      "note": "가족당 3,000페소. 졸업시 교재비/전기세 초과금/시설 파손시 수리비 제외 후 반환. 성인은 인당 3,000페소."
+    },
+    {
+      "id": "ssp",
+      "name": "SSP",
+      "amount": 7800,
+      "currency": "PHP",
+      "trigger": "always",
+      "chargeUnit": "per_person",
+      "note": "1인당 7,800페소. 비수기 가족연수 보호자는 SSP 면제."
+    },
+    {
+      "id": "ssp_ecard",
+      "name": "SSP E-Card",
+      "amount": 4500,
+      "currency": "PHP",
+      "trigger": "always",
+      "chargeUnit": "per_person",
+      "note": "1인당 4,500페소. 비수기 가족연수 보호자는 E_I 카드 비용 면제."
+    },
+    {
+      "id": "visa_1",
+      "name": "비자연장 1차",
+      "amount": 4940,
+      "currency": "PHP",
+      "trigger": "over_weeks",
+      "triggerWeeks": 4,
+      "chargeUnit": "per_person",
+      "note": "입국일로부터 8주까지"
+    },
+    {
+      "id": "visa_2",
+      "name": "비자연장 2차",
+      "amount": 6210,
+      "currency": "PHP",
+      "trigger": "over_weeks",
+      "triggerWeeks": 8,
+      "chargeUnit": "per_person",
+      "note": "입국일로부터 12주까지. 2026 가족캠프 자료 기준 6,210페소."
+    },
+    {
+      "id": "water",
+      "name": "수도요금",
+      "amount": 600,
+      "currency": "PHP",
+      "trigger": "per_4weeks",
+      "chargeUnit": "per_person",
+      "note": "인당 600페소/4주. 기간에 비례 증가 (6주 900, 8주 1200, 10주 1500, 12주 1800)."
+    },
+    {
+      "id": "utility",
+      "name": "유틸리티 (기타비용)",
+      "amount": 1000,
+      "currency": "PHP",
+      "trigger": "per_4weeks",
+      "chargeUnit": "per_person",
+      "note": "인당 1,000페소/4주. 기간에 비례."
+    },
+    {
+      "id": "laundry",
+      "name": "세탁비",
+      "amount": 1000,
+      "currency": "PHP",
+      "trigger": "per_4weeks",
+      "chargeUnit": "per_person",
+      "note": "인당 1,000페소/4주. 기간에 비례."
+    },
+    {
+      "id": "electricity_deposit",
+      "name": "전기보증금",
+      "amount": 1000,
+      "currency": "PHP",
+      "trigger": "per_4weeks",
+      "chargeUnit": "per_person",
+      "note": "인당 1,000페소/4주. 추후 차감 후 남으면 반환."
+    },
+    {
+      "id": "acr_icard",
+      "name": "ACR I-Card",
+      "amount": 4000,
+      "currency": "PHP",
+      "trigger": "over_weeks",
+      "triggerWeeks": 8,
+      "chargeUnit": "per_person",
+      "note": "8주 이상 체류시 4,000페소. 성인 연수비용 PDF에는 없음, 2026 가족캠프 자료 기준."
+    },
+    {
+      "id": "textbook",
+      "name": "교재비",
+      "amount": 1700,
+      "currency": "PHP",
+      "trigger": "per_4weeks",
+      "chargeUnit": "per_person",
+      "note": "1,700페소/4주. 기간에 비례 (8주 3400, 12주 5100)."
+    },
+    {
+      "id": "id_card",
+      "name": "학생증",
+      "amount": 200,
+      "currency": "PHP",
+      "trigger": "always",
+      "chargeUnit": "per_person",
+      "note": "인당 200페소. 1회성."
+    }
+  ],
+  "additionalCharges": [
+    {
+      "id": "pickup_adult",
+      "label": "클락공항 픽업비 (성인)",
+      "amount": 30000,
+      "unit": "1인당",
+      "currency": "KRW",
+      "category": "1회성",
+      "note": "성인 일반 연수 클락공항 픽업 1인당 3만원."
+    },
+    {
+      "id": "pickup_camp_2026",
+      "label": "클락공항 픽업비 (2026 가족캠프)",
+      "amount": 20000,
+      "unit": "1인당",
+      "currency": "KRW",
+      "category": "1회성",
+      "note": "2026 가족캠프 클락공항 픽업 1인당 2만원."
+    },
+    {
+      "id": "pickup_family",
+      "label": "클락공항 픽업비 (가족연수)",
+      "amount": 30000,
+      "unit": "1인당",
+      "currency": "KRW",
+      "category": "1회성",
+      "note": "가족연수 프로그램 클락공항 픽업 1인당 3만원."
+    },
+    {
+      "id": "evening_class",
+      "label": "이브닝클래스 추가 (초등4~)",
+      "amount": 150000,
+      "unit": "4주당",
+      "currency": "KRW",
+      "category": "옵션",
+      "note": "성수기 가족연수 주니어 초등4부터 이브닝클래스(보카, 라이팅첨삭) 신청시 15만원 추가."
+    },
+    {
+      "id": "camp_deposit_2026",
+      "label": "보증금 (2026 가족캠프)",
+      "amount": 75000,
+      "unit": "가족당",
+      "currency": "KRW",
+      "category": "1회성",
+      "note": "2026 가족캠프 보증금 7.5만원 (가족당). 일반 가족연수는 가족당 3,000페소(현지납부)."
+    }
+  ],
+  "refundPolicy": "",
+  "dormitoryRules": "* 가족의 숫자에 따라 기숙사 배정: 2인가족=2인실, 3인가족=3인실, 4인가족=4인실\n* 모든 식사는 한식으로 제공, 배식 시스템\n* 자녀 저녁 식사 이후 저녁 수업 (7~9시) 진행\n* 수업은 1타임 40분\n* 아이의 자유시간에는 부모님이 관리\n* 학부모 수업 중 최대 3타임까지 자녀에게 양도 가능",
+  "generalNotes": "▶학원 개요◀\n* HELP English Language Program, Inc. 클락 캠퍼스\n* 클락경제특구 내 위치, 관리형 세미 스파르타\n* 24년간 운영 노하우\n\n▶성수기/비수기 기간◀\n* 성수기: 7/6 시작~8/14까지, 2027년 1/4 시작~2/26까지\n* 비수기: 여름/겨울 성수기를 제외한 기간\n\n▶비수기 가족연수 특이사항◀\n* 보호자 수업 없음\n* 보호자 SSP, E_I 카드 비용 면제\n\n▶2026 가족캠프 (여름 가족연수) 특이사항◀\n* 2026년 6월부터 시작, 4주/6주/8주/10주/12주 신청 가능\n* 4주 과정은 1월, 2월 일정으로 입학 가능\n* 학부모 1:1 5타임 (자녀에게 최대 3타임 양도 가능)\n* 자녀 1:1 5타임 + 액티비티1 + PE1 + 이브닝 클래스\n* 픽업비 2만원 (일반 가족연수 3만원과 다름)\n* 보증금 7.5만원 KRW (일반 가족연수 3,000페소와 다름)\n* 샌딩 비용 불포함\n\n▶2026 가족캠프 비용 안내표 (검산용)◀\n* 2인 가족 4주: 4,995,000원 / 6주: 7,335,000원 / 8주: 9,675,000원\n* 3인 가족 4주: 7,185,000원 / 6주: 10,506,000원 / 8주: 13,335,000원\n* 4인 가족 4주: 9,255,000원 / 6주: 13,205,000원 / 8주: 17,955,000원\n\n▶2026 가족캠프 비용 안내표 주의◀\n* 자료의 '비용 안내' 합산표(2인4주 499.5만 등)는 현지비용(페소→원화 환산) 포함 추정. 개별 항목(수업료/기숙사) 합산과 불일치.\n* 견적 시 개별 항목(코스+기숙사+현지비) 기준으로 산출하고, 자료 합산표는 고객 안내용 참고자료로 활용.\n\n▶현지비용 참고◀\n* 2026년 1월 5일 시작 프로그램부터 적용\n* 모든 비자연장 관련 비용(SSP, ACR-I Card, SSP E-Card)은 첫 입학시 등록 개월 수에 따라 일괄 수납\n* 2026 가족캠프 현지비 12주 SSP E Card란에 45,000으로 표기되어 있으나 4,500 오타로 추정 (합계 불일치)",
+  "isActive": true,
+  "createdAt": "2026-05-30",
+  "updatedAt": "2026-05-30",
+  "courseShortTermRates": {
+    "mode": "percent",
+    "week1": 40,
+    "week2": 60,
+    "week3": 85,
+    "week4Included": false,
+    "note": "비성수기 동일"
+  },
+  "dormShortTermRates": {
+    "mode": "percent",
+    "week1": 40,
+    "week2": 60,
+    "week3": 85,
+    "week4Included": false,
+    "note": "비성수기 동일"
+  },
+  "shortTermDataStatus": "confirmed"
+}

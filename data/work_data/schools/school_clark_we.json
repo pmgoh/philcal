@@ -1,0 +1,127 @@
+{
+  "id": "clark_we",
+  "schoolCode": "CLARK_WE",
+  "name": "Clark WE Academy",
+  "campus": "클락 본원",
+  "region": "클락",
+  "schoolType": "general",
+  "minWeeks": 1,
+  "allowShortTerm": true,
+  "shortTermRates": { "week1": 0.35, "week2": 0.60, "week3": 0.80, "note": "4주 미만 연수 시 4주 단가 기준 1주 35%, 2주 60%, 3주 80%" },
+  "programTags": ["ESL", "IELTS", "TOEIC", "TOEFL", "비즈니스", "네이티브", "골프", "주니어", "가족"],
+  "registrationFee": { "amount": 100000, "currency": "KRW", "note": "등록비 10만원. 등록비 및 픽업비 불포함 가격." },
+  "courses": [
+    { "id": "cwe_esl4", "name": "ESL4", "classDetails": "1:1 4H", "price4Weeks": 850000, "currency": "KRW" },
+    { "id": "cwe_esl5", "name": "ESL5", "classDetails": "1:1 5H", "price4Weeks": 950000, "currency": "KRW" },
+    { "id": "cwe_esl6", "name": "ESL6", "classDetails": "1:1 6H", "price4Weeks": 1050000, "currency": "KRW" },
+    { "id": "cwe_special", "name": "TOEIC/TOEFL/IELTS/Business ESL", "classDetails": "1:1 시험대비/비즈니스", "price4Weeks": 1150000, "currency": "KRW" },
+    { "id": "cwe_native_light", "name": "Native Mix Light", "classDetails": "네이티브 믹스 라이트", "price4Weeks": 1000000, "currency": "KRW" },
+    { "id": "cwe_native_general", "name": "Native Mix General", "classDetails": "네이티브 믹스 제너럴", "price4Weeks": 1250000, "currency": "KRW" },
+    { "id": "cwe_native_intensive", "name": "Native Mix Intensive", "classDetails": "네이티브 믹스 인텐시브", "price4Weeks": 1500000, "currency": "KRW" },
+    { "id": "cwe_golf", "name": "ESL + GOLF (성인 골프코스)", "classDetails": "ESL + 골프", "price4Weeks": 1250000, "currency": "KRW" },
+    { "id": "cwe_golf_round", "name": "ESL + GOLF ROUND (필드레슨 포함)", "classDetails": "ESL + 골프 + 필드레슨", "price4Weeks": 1850000, "currency": "KRW" },
+    { "id": "cwe_junior_esl", "name": "Junior ESL", "classDetails": "6H (5/1/0)", "price4Weeks": 1200000, "currency": "KRW", "note": "가족연수 전용. 미성년 자녀는 가족연수 프로그램에 한하여 신청 가능." },
+    { "id": "cwe_junior_native", "name": "Junior ESL Native", "classDetails": "6H (3/1/2)", "price4Weeks": 1600000, "currency": "KRW", "note": "가족연수 전용. 원어민 1:1 2시간 포함." },
+    { "id": "cwe_kinder", "name": "Kinder ESL (WE Kindergarten)", "classDetails": "8H (0/8/0)", "price4Weeks": 1300000, "currency": "KRW", "note": "가족연수 전용. 1일 총 8시간 (오전 8:50~오후 4:20)." },
+    { "id": "cwe_guardian", "name": "ESL3 FOR GUARDIAN", "classDetails": "3H (3/0/0)", "price4Weeks": 750000, "currency": "KRW", "note": "가족연수 전용. 보호자 수업을 자녀에게 양도 가능. 일반코스 신청도 가능." }
+  ],
+  "dormitories": [
+    { "id": "cwe_1", "name": "1인실", "price4Weeks": 1200000, "currency": "KRW", "note": "성인 ESL/SPECIAL/NATIVE/GOLF 코스 전용" },
+    { "id": "cwe_2", "name": "2인실", "price4Weeks": 900000, "currency": "KRW" },
+    { "id": "cwe_3", "name": "3인실", "price4Weeks": 800000, "currency": "KRW" },
+    { "id": "cwe_4", "name": "4인실", "price4Weeks": 700000, "currency": "KRW" }
+  ],
+  "surcharges": [],
+  "promotions": null,
+  "localFees": [
+    { "id": "cwe_deposit", "name": "기숙사 보증금", "amount": 3000, "currency": "PHP", "chargeUnit": "per_person", "trigger": "enrollment", "note": "퇴실 시 반환" },
+    { "id": "cwe_ssp", "name": "SSP", "amount": 7800, "currency": "PHP", "chargeUnit": "per_person", "trigger": "enrollment" },
+    { "id": "cwe_ssp_ecard", "name": "SSP E CARD", "amount": 4000, "currency": "PHP", "chargeUnit": "per_person", "trigger": "enrollment" },
+    { "id": "cwe_acr_icard", "name": "ACR I CARD", "amount": 4000, "currency": "PHP", "chargeUnit": "per_person", "trigger": "stay_over_59days", "triggerWeeks": 9 },
+    { "id": "cwe_textbook", "name": "교재비", "amount": 250, "currency": "PHP", "chargeUnit": "per_book", "trigger": "enrollment", "note": "250~500페소/권" },
+    { "id": "cwe_utility", "name": "유틸리티비", "amount": 2000, "currency": "PHP", "chargeUnit": "per_4weeks", "trigger": "enrollment", "note": "세탁/청소/식수/공용전기 등. 1주당 500페소." },
+    { "id": "cwe_electricity", "name": "전기세", "amount": 22, "currency": "PHP", "chargeUnit": "per_kw", "trigger": "usage", "note": "객실 전기계량. 룸메이트 있으면 1/N" },
+    { "id": "cwe_id", "name": "학생증", "amount": 300, "currency": "PHP", "chargeUnit": "per_person", "trigger": "enrollment" },
+    { "id": "cwe_visitor", "name": "방문자 1박비용", "amount": 1500, "currency": "PHP", "chargeUnit": "per_night", "trigger": "usage", "note": "가족연수 직계가족 한정. 최대 5박. 식사 포함. 별도 방 이용 시 2,000페소/박." },
+    { "id": "cwe_pickup_clark", "name": "픽업비 (클락)", "amount": 1500, "currency": "PHP", "chargeUnit": "per_family", "trigger": "enrollment", "note": "가족 1팀 비용. 4인 초과 시 1인당 250페소 추가. 개인 1,000페소." },
+    { "id": "cwe_pickup_manila", "name": "픽업비 (마닐라)", "amount": 6000, "currency": "PHP", "chargeUnit": "per_family", "trigger": "enrollment", "note": "가족 1팀 비용. 4인 초과 시 1인당 500페소 추가. 개인 5,000페소." },
+    { "id": "cwe_extra_night", "name": "추가 1박", "amount": 1500, "currency": "PHP", "chargeUnit": "per_night", "trigger": "usage", "note": "1인당. 식사 포함." },
+    { "id": "cwe_visa_1", "name": "비자연장 1차 (8주/059일)", "amount": 4800, "currency": "PHP", "chargeUnit": "cumulative", "trigger": "stay_over", "triggerWeeks": 5 },
+    { "id": "cwe_visa_2", "name": "비자연장 2차 (12주/089일)", "amount": 6000, "currency": "PHP", "chargeUnit": "cumulative", "trigger": "stay_over", "triggerWeeks": 9 },
+    { "id": "cwe_visa_3", "name": "비자연장 3차 (16주/119일)", "amount": 4500, "currency": "PHP", "chargeUnit": "cumulative", "trigger": "stay_over", "triggerWeeks": 13 },
+    { "id": "cwe_visa_4", "name": "비자연장 4차 (20주/149일)", "amount": 4500, "currency": "PHP", "chargeUnit": "cumulative", "trigger": "stay_over", "triggerWeeks": 17 },
+    { "id": "cwe_visa_5", "name": "비자연장 5차 (24주/179일)", "amount": 4500, "currency": "PHP", "chargeUnit": "cumulative", "trigger": "stay_over", "triggerWeeks": 21 }
+  ],
+  "packages": [
+    {
+      "id": "cwe_hotel_adult",
+      "name": "성인연수 호텔패키지",
+      "programType": "hotel",
+      "includesLocalFees": false,
+      "note": "호텔숙박료, 셔틀차량 이용료, 학원내 식사(주중에만 해당), 전기세, 수도세, 청소서비스 비용 포함. 수업비/이민국비용(SSP/비자연장비 등)/픽업비/학생증 불포함. Deluxe Room 22SQM.",
+      "includes": "호텔숙박료, 셔틀차량 이용료, 학원내 식사(주중), 전기세, 수도세, 청소서비스",
+      "excludes": "수업비, 이민국비용(SSP, 비자연장비 등), 픽업비, 학생증",
+      "priceMatrix": {
+        "columns": ["4주 인당", "4주 총액"],
+        "rows": [
+          { "label": "Single Room", "prices": [1700000, 1700000] },
+          { "label": "Twin Room", "prices": [1200000, 2400000] }
+        ]
+      },
+      "currency": "KRW"
+    },
+    {
+      "id": "cwe_hotel_family",
+      "name": "가족연수 호텔패키지",
+      "programType": "family_hotel",
+      "includesLocalFees": false,
+      "note": "호텔숙박료, 셔틀차량 이용료, 학원내 식사(주중), 전기세, 수도세, 청소서비스 포함. 수업비/이민국비용/픽업비/학생증 불포함. 2PAX: 일반 디럭스 룸. 3~4PAX: SUITE 룸 (방 2개 + 거실). Twin 동일조건 형제자매/친구/연인/유학원 매칭 2인 동시등록 동일기간 가능.",
+      "includes": "호텔숙박료, 셔틀차량 이용료, 학원내 식사(주중), 전기세, 수도세, 청소서비스",
+      "excludes": "수업비, 이민국비용(SSP, 비자연장비 등), 픽업비, 학생증",
+      "priceMatrix": {
+        "columns": ["4주 인당", "4주 총액"],
+        "rows": [
+          { "label": "2PAX (디럭스 룸)", "prices": [1200000, 2400000] },
+          { "label": "3PAX (SUITE 가족룸)", "prices": [1200000, 3600000] },
+          { "label": "4PAX (SUITE 가족룸)", "prices": [1000000, 4000000] }
+        ]
+      },
+      "currency": "KRW"
+    },
+    {
+      "id": "cwe_special_house",
+      "name": "SPECIAL HOUSE (특별 숙소)",
+      "programType": "addon",
+      "includesLocalFees": false,
+      "note": "1인당 추가비용 200,000원/4주. 최소 3인부터 이용가능.",
+      "priceMatrix": {
+        "columns": ["4주 인당 추가"],
+        "rows": [{ "label": "Special House", "prices": [200000] }]
+      },
+      "currency": "KRW"
+    },
+    {
+      "id": "cwe_big_room",
+      "name": "BIG SIZE ROOM (넓은 방)",
+      "programType": "addon",
+      "includesLocalFees": false,
+      "note": "1인당 추가비용 150,000원/4주.",
+      "priceMatrix": {
+        "columns": ["4주 인당 추가"],
+        "rows": [{ "label": "Big Size Room", "prices": [150000] }]
+      },
+      "currency": "KRW"
+    }
+  ],
+  "additionalCharges": [
+    { "id": "cwe_add_native_1on1", "name": "추가 원어민 1:1 수업 (4주)", "amount": 16000, "currency": "PHP", "note": "1시간/4주 기준" },
+    { "id": "cwe_add_phil_1on1", "name": "추가 필리핀 1:1 수업 (4주)", "amount": 8000, "currency": "PHP", "note": "1시간/4주 기준" },
+    { "id": "cwe_family_deposit", "name": "가족연수 보증금", "amount": 500000, "currency": "KRW", "note": "1팀당. 등록 시 납부 필수." }
+  ],
+  "refundPolicy": "",
+  "dormitoryRules": "청소/세탁 주 3회 제공 (연휴 시 주 2회).",
+  "generalNotes": "Clark WE Academy. 클락 소재.\n\n등록비: 10만원 (등록비 및 픽업비 불포함 가격).\n기숙사: 1인실은 성인 ESL/SPECIAL/NATIVE/GOLF 전용. 가족연수는 2~4인실.\n\n가족연수 필수사항:\n- 미성년 자녀 동반 모든 형태 = 가족연수\n- 미성년 자녀는 가족연수 프로그램만 신청 가능 (골프코스 등록 불가)\n- 가족연수 1팀당 보증금 50만원, 등록 시 납부 필수\n\n성수기: 12~2월, 7~8월.\n\n가족연수 코스:\n- Junior ESL 6H(5/1/0): 120만원\n- Junior ESL Native 6H(3/1/2): 160만원\n- WE Kindergarten 8H(0/8/0): 130만원\n- ESL3 FOR GUARDIAN 3H(3/0/0): 75만원\n보호자 수업 자녀에게 양도 가능. 그룹수업 1:6.\n추가수업비: 원어민 1:1 16,000P / 필리핀 1:1 8,000P (1시간/4주).\n\n2025.1.1부터 적용 (학비표 PDF 기준).",
+  "isActive": true,
+  "createdAt": "2026-05-30",
+  "updatedAt": "2026-05-30"
+}

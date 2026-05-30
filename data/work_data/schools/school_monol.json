@@ -1,0 +1,59 @@
+{
+  "id": "monol",
+  "schoolCode": "MONOL",
+  "name": "Monol 어학원",
+  "campus": "본원",
+  "region": "바기오",
+  "schoolType": "general",
+  "minWeeks": 2,
+  "allowShortTerm": true,
+  "programTags": ["ESL", "IELTS", "시니어"],
+  "registrationFee": { "amount": 100000, "currency": "KRW", "note": "등록금 ₩100,000" },
+  "courses": [
+    { "id": "monol_leap5", "name": "LEAP 5", "classDetails": "1:1 5H + 그룹(옵션) 4H = 총 9H", "price4Weeks": 1450000, "currency": "KRW" },
+    { "id": "monol_ielts5", "name": "IELTS 5", "classDetails": "1:1 5H + 그룹(옵션) 4H = 총 9H", "price4Weeks": 1250000, "currency": "KRW" },
+    { "id": "monol_esl5", "name": "ESL 5", "classDetails": "1:1 5H + 그룹(옵션) 4H = 총 9H", "price4Weeks": 1100000, "currency": "KRW" },
+    { "id": "monol_esl4", "name": "ESL 4", "classDetails": "1:1 4H + 그룹(옵션) 4H = 총 8H", "price4Weeks": 930000, "currency": "KRW" },
+    { "id": "monol_esl3", "name": "ESL 3", "classDetails": "1:1 3H + 그룹(옵션) 4H = 총 7H", "price4Weeks": 760000, "currency": "KRW" },
+    { "id": "monol_senior_esl", "name": "Senior ESL", "classDetails": "1:1 3H + 그룹(옵션) 4H = 총 7H", "price4Weeks": 850000, "currency": "KRW" }
+  ],
+  "dormitories": [
+    { "id": "monol_premium1", "name": "프리미엄 1인실", "price4Weeks": 1400000, "currency": "KRW", "note": "최대정원 4인. 추가인원 1명당 30만원/4주." },
+    { "id": "monol_standard1", "name": "스텐다드 1인실", "price4Weeks": 1090000, "currency": "KRW" },
+    { "id": "monol_semi1", "name": "세미 1인실", "price4Weeks": 990000, "currency": "KRW" },
+    { "id": "monol_3", "name": "3인실", "price4Weeks": 830000, "currency": "KRW" },
+    { "id": "monol_4_capsule", "name": "4인실 (캡슐)", "price4Weeks": 750000, "currency": "KRW" }
+  ],
+  "surcharges": [
+    { "id": "monol_peak", "label": "성수기 추가 요금", "startDate": "2026-06-29", "endDate": "2026-08-22", "amountPerWeek": 50000, "currency": "KRW", "applyTo": "courses", "note": "바기오 서차지. 2026.6.29~8.22, 주당 50,000원." }
+  ],
+  "longTermDiscount": [],
+  "promotions": null,
+  "localFees": [
+    { "id": "monol_ssp", "name": "SSP", "amount": 7800, "currency": "PHP", "chargeUnit": "per_person", "trigger": "enrollment" },
+    { "id": "monol_ssp_ecard", "name": "SSP E-CARD", "amount": 4500, "currency": "PHP", "chargeUnit": "per_person", "trigger": "enrollment", "note": "외국인 등록증. SSP와 함께 발급." },
+    { "id": "monol_visa_1", "name": "비자연장비 5~8주", "amount": 4940, "currency": "PHP", "chargeUnit": "cumulative", "trigger": "stay_over", "triggerWeeks": 5 },
+    { "id": "monol_visa_2", "name": "비자연장비 9~12주", "amount": 11150, "currency": "PHP", "chargeUnit": "cumulative", "trigger": "stay_over", "triggerWeeks": 9 },
+    { "id": "monol_visa_3", "name": "비자연장비 13~16주", "amount": 15390, "currency": "PHP", "chargeUnit": "cumulative", "trigger": "stay_over", "triggerWeeks": 13 },
+    { "id": "monol_visa_4", "name": "비자연장비 17~20주", "amount": 19630, "currency": "PHP", "chargeUnit": "cumulative", "trigger": "stay_over", "triggerWeeks": 17 },
+    { "id": "monol_visa_5", "name": "비자연장비 21~24주", "amount": 23870, "currency": "PHP", "chargeUnit": "cumulative", "trigger": "stay_over", "triggerWeeks": 21 },
+    { "id": "monol_comprehensive", "name": "종합 관리비", "amount": 5000, "currency": "PHP", "chargeUnit": "per_4weeks", "trigger": "enrollment", "note": "호텔식 룸 서비스(청소, 수건 제공 등), 전기세, 수도세, 세탁 서비스, 공용 장소 관리비" },
+    { "id": "monol_student_id", "name": "학생증", "amount": 0, "currency": "PHP", "chargeUnit": "per_person", "trigger": "enrollment", "note": "기본 제공. 재발급 시 200페소." },
+    { "id": "monol_deposit", "name": "보증금 (환불가능)", "amount": 4000, "currency": "PHP", "chargeUnit": "per_person", "trigger": "enrollment", "note": "₱4,000 또는 $100" }
+  ],
+  "packages": [],
+  "additionalCharges": [
+    { "id": "monol_textbook", "name": "교재비", "currency": "PHP", "note": "이북(eBook) 무료 제공. 일반 교재: 200~300페소 (선택 구입)." },
+    { "id": "monol_barista", "name": "바리스타 프로그램", "currency": "PHP", "note": "선택 학습 프로그램 기본 수업료 + 바리스타 과정 교육 & 카페 실습 (3주 9세션) + 교육비 5,000페소/3주" },
+    { "id": "monol_pickup_manila", "name": "마닐라 정규 픽업(단체)", "amount": 3000, "currency": "PHP" },
+    { "id": "monol_pickup_manila_ind", "name": "마닐라 비정규 픽업(개별)", "amount": 12000, "currency": "PHP", "note": "인원수에 따라 공동 납부" },
+    { "id": "monol_pickup_clark", "name": "클락 정규 픽업(단체)", "amount": 2500, "currency": "PHP" },
+    { "id": "monol_pickup_clark_ind", "name": "클락 비정규 픽업(개별)", "amount": 7000, "currency": "PHP", "note": "인원수에 따라 공동 납부" }
+  ],
+  "refundPolicy": "등록 취소 시 등록금 환불 불가. 출국 4주전: 등록금 제외 잔여 학비 환불. 출국 2주전: 등록금+기숙사비 20% 제외. 출국 2주 이내: 등록금+(수업료+기숙사비) 20% 제외. 연수 개시 후 50% 이상 남은 경우 잔여기간 50% 환불. 50% 미만 25% 환불. 4주 미만 환불 불가.",
+  "dormitoryRules": "",
+  "generalNotes": "Monol 어학원. 바기오 소재.\n\n등록금: ₩100,000.\n그룹수업 무료, 최대 4개 선택 수강.\n가족연수팀 부모님은 수업 미신청 가능 (단, 무료 그룹수업 선택 불가).\n프리미엄 1인실 최대정원 4인, 추가 1명당 30만원/4주.\n\n성수기: 2026.6.29~8.22, 주당 5만원.\n2026.5.4부터 적용.",
+  "isActive": true,
+  "createdAt": "2026-05-29",
+  "updatedAt": "2026-05-29"
+}

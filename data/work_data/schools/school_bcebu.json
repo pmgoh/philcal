@@ -1,0 +1,449 @@
+{
+  "id": "bcebu",
+  "schoolCode": "BCEBU",
+  "name": "B'CEBU",
+  "campus": "본원",
+  "region": "세부",
+  "schoolType": "general",
+  "minWeeks": 1,
+  "allowShortTerm": true,
+  "programTags": [
+    "ESL",
+    "IELTS",
+    "비즈니스",
+    "주니어",
+    "가족연수"
+  ],
+  "courseShortTermRates": {
+    "mode": "percent",
+    "week1": 40,
+    "week2": 60,
+    "week3": 80,
+    "week4Included": false
+  },
+  "registrationFee": {
+    "amount": 100000,
+    "currency": "KRW",
+    "note": "등록비 10만원"
+  },
+  "courses": [
+    {
+      "id": "bcebu_lite_esl",
+      "name": "LITE ESL",
+      "price4Weeks": 850000,
+      "currency": "KRW",
+      "note": "1:1수업 4H. 여유있는 수업 스케쥴을 선호하는 시니어 및 보호자."
+    },
+    {
+      "id": "bcebu_speed_esl",
+      "name": "SPEED ESL",
+      "price4Weeks": 950000,
+      "currency": "KRW",
+      "note": "1:1수업 4H + 그룹수업 2H + 옵션수업 2H. 기초과정부터 고급과정까지, 가장 대표적인 ESL코스."
+    },
+    {
+      "id": "bcebu_bsparta",
+      "name": "B'SPARTA",
+      "price4Weeks": 1150000,
+      "currency": "KRW",
+      "note": "1:1수업 5H + 그룹수업 2H + 옵션수업 3H + 의무자습 2H. 하루 12시간의 체계적인 학습 프로그램을 원하는 학생."
+    },
+    {
+      "id": "bcebu_intensive_esl",
+      "name": "INTENSIVE ESL",
+      "price4Weeks": 1150000,
+      "currency": "KRW",
+      "note": "1:1수업 6H + 옵션수업 2H. 집중적인 1:1 수업을 선호하는 학생이나 영어초보 학생."
+    },
+    {
+      "id": "bcebu_ielts_basic",
+      "name": "IELTS 기본반",
+      "price4Weeks": 1150000,
+      "currency": "KRW",
+      "note": "1:1수업 4H + 그룹수업 2H + 옵션수업 2H. 아이엘츠 공인시험을 본 적 없는 초보자나 기본레벨의 학생."
+    },
+    {
+      "id": "bcebu_business",
+      "name": "BUSINESS",
+      "price4Weeks": 1150000,
+      "currency": "KRW",
+      "note": "1:1수업 4H + 그룹수업 2H + 옵션수업 2H. 비지니스 업무에 대한 대화,회의,프리젠테이션스킬을 원하는 학생."
+    },
+    {
+      "id": "bcebu_ielts_guarantee",
+      "name": "IELTS 보장반",
+      "price4Weeks": 1250000,
+      "currency": "KRW",
+      "note": "1:1수업 4H + 그룹수업 2H + 의무수업 2H. 4.0 이상의 공인점수를 보유중인 학생 (12주 이상 등록가능)."
+    },
+    {
+      "id": "bcebu_kinder",
+      "name": "KINDER",
+      "price4Weeks": 1250000,
+      "currency": "KRW",
+      "note": "그룹수업 8H (08:30~17:00). 만4세 ~ 만5세의 미취학 아동 (만 3세 이하의 유아는 등록불가)."
+    },
+    {
+      "id": "bcebu_junior_esl",
+      "name": "JUNIOR ESL",
+      "price4Weeks": 1350000,
+      "currency": "KRW",
+      "note": "1:1수업 6H. 만6세 ~ 중학생 (고등학생은 일반과정인 ESL이나 IELTS로 수강)."
+    }
+  ],
+  "dormitories": [
+    {
+      "id": "bcebu_1p_outside",
+      "name": "1인실 (바깥뷰)",
+      "price4Weeks": 1750000,
+      "currency": "KRW",
+      "note": "쾌적하고 개방감있는 1인실 타입 (막탄뷰, 오션뷰)"
+    },
+    {
+      "id": "bcebu_1p_building",
+      "name": "1인실 (건물뷰)",
+      "price4Weeks": 1650000,
+      "currency": "KRW",
+      "note": "조용한 1인실 타입을 원하는 학생에게 추천 (건물뷰)"
+    },
+    {
+      "id": "bcebu_2p_living",
+      "name": "2인실 리빙",
+      "price4Weeks": 1450000,
+      "currency": "KRW",
+      "note": "동반연수를 계획중인 부부나 친구 추천, 넓은 거실보유"
+    },
+    {
+      "id": "bcebu_2p",
+      "name": "2인실",
+      "price4Weeks": 1050000,
+      "currency": "KRW",
+      "note": "2인이 살기에 적합한 개인 학습공간 및 생활공간을 제공"
+    },
+    {
+      "id": "bcebu_2plus1",
+      "name": "2+1인실",
+      "price4Weeks": 1000000,
+      "currency": "KRW",
+      "note": "외국 룸메이트와 필리핀 선생님과 함께 생활 (여학생 Only)"
+    },
+    {
+      "id": "bcebu_3p",
+      "name": "3인실",
+      "price4Weeks": 850000,
+      "currency": "KRW",
+      "note": "저렴한 비용, 외국 룸메이트들과 함께 생활하길 원하는 학생"
+    }
+  ],
+  "packages": [
+    {
+      "id": "bcebu_family_offseason",
+      "label": "비수기 가족연수 체험단",
+      "season": "비수기",
+      "currency": "KRW",
+      "columns": [
+        "아이만 수업 4주",
+        "아이만 수업 8주",
+        "보호자 수업 포함 4주",
+        "보호자 수업 포함 8주"
+      ],
+      "priceMatrix": [
+        {
+          "weeks": 4,
+          "prices": [
+            {
+              "label": "보호자1+아이1 / 2인실 / 아이만",
+              "amount": 3100000
+            },
+            {
+              "label": "보호자1+아이1 / 리빙2인 / 아이만",
+              "amount": 3900000
+            },
+            {
+              "label": "보호자1+아이2 / 3인실 / 아이만",
+              "amount": 5650000
+            },
+            {
+              "label": "보호자1+아이2 / 리빙3인 / 아이만",
+              "amount": 6450000
+            },
+            {
+              "label": "보호자2+아이1 / 3인실 / 아이만",
+              "amount": 3650000
+            },
+            {
+              "label": "보호자2+아이1 / 리빙3인 / 아이만",
+              "amount": 4450000
+            },
+            {
+              "label": "보호자2+아이2 / 2인실(2개) / 아이만",
+              "amount": 6200000
+            },
+            {
+              "label": "보호자1+아이1 / 2인실 / 보호자수업포함",
+              "amount": 3650000
+            },
+            {
+              "label": "보호자1+아이1 / 리빙2인 / 보호자수업포함",
+              "amount": 4450000
+            },
+            {
+              "label": "보호자1+아이2 / 3인실 / 보호자수업포함",
+              "amount": 6050000
+            },
+            {
+              "label": "보호자1+아이2 / 리빙3인 / 보호자수업포함",
+              "amount": 6850000
+            },
+            {
+              "label": "보호자2+아이1 / 3인실 / 보호자수업포함",
+              "amount": 4900000
+            },
+            {
+              "label": "보호자2+아이1 / 리빙3인 / 보호자수업포함",
+              "amount": 5700000
+            },
+            {
+              "label": "보호자2+아이2 / 2인실(2개) / 보호자수업포함",
+              "amount": 7300000
+            }
+          ]
+        },
+        {
+          "weeks": 8,
+          "prices": [
+            {
+              "label": "보호자1+아이1 / 2인실 / 아이만",
+              "amount": 6000000
+            },
+            {
+              "label": "보호자1+아이1 / 리빙2인 / 아이만",
+              "amount": 7600000
+            },
+            {
+              "label": "보호자1+아이2 / 3인실 / 아이만",
+              "amount": 11000000
+            },
+            {
+              "label": "보호자1+아이2 / 리빙3인 / 아이만",
+              "amount": 12600000
+            },
+            {
+              "label": "보호자2+아이1 / 3인실 / 아이만",
+              "amount": 7000000
+            },
+            {
+              "label": "보호자2+아이1 / 리빙3인 / 아이만",
+              "amount": 8600000
+            },
+            {
+              "label": "보호자2+아이2 / 2인실(2개) / 아이만",
+              "amount": 12000000
+            },
+            {
+              "label": "보호자1+아이1 / 2인실 / 보호자수업포함",
+              "amount": 7100000
+            },
+            {
+              "label": "보호자1+아이1 / 리빙2인 / 보호자수업포함",
+              "amount": 8700000
+            },
+            {
+              "label": "보호자1+아이2 / 3인실 / 보호자수업포함",
+              "amount": 11800000
+            },
+            {
+              "label": "보호자1+아이2 / 리빙3인 / 보호자수업포함",
+              "amount": 13400000
+            },
+            {
+              "label": "보호자2+아이1 / 3인실 / 보호자수업포함",
+              "amount": 9500000
+            },
+            {
+              "label": "보호자2+아이1 / 리빙3인 / 보호자수업포함",
+              "amount": 11100000
+            },
+            {
+              "label": "보호자2+아이2 / 2인실(2개) / 보호자수업포함",
+              "amount": 14200000
+            }
+          ]
+        }
+      ],
+      "additionalRules": [],
+      "includes": "주니어: 1:1 클래스 6T + 액티비티 1T + 나이트 클래스 2T\n보호자 수업(포함 시): Lite 코스 1:1 클래스 4T (자녀에게 2T까지 양도 가능)\n킨더(만4세~6세): 원내 키즈센터에서 수업, 오전 9시~오후 5시 운영\n아일랜드 데이 1회 참가 제공",
+      "excludes": "현지 납부 비용\n세탁비\n용돈\n주말 액티비티",
+      "schedules": [
+        {
+          "startDate": "2026-03-02",
+          "endDate": "2026-06-26",
+          "season": "비수기"
+        },
+        {
+          "startDate": "2026-09-01",
+          "endDate": "2026-12-25",
+          "season": "비수기"
+        }
+      ],
+      "note": "비수기 가족연수 체험단. 참여조건: 48개월 이상 ~ 초등, 중학생을 포함한 가족. 블로그 또는 카페에 체험 후기 주 1회 작성.\n자료에 취소선 가격은 정가이며 실제 적용 가격은 할인된 금액.\n현지 납부 비용: 비자연장, SSP, I Card(59일이상 체류 시), E Card, 학생증, 수도/전기세, 관리비, 교재비, 보증금, 공항픽업"
+    }
+  ],
+  "surcharges": [
+    {
+      "id": "bcebu_summer_surcharge",
+      "name": "여름 성수기 서차지",
+      "amountPerWeek": 50000,
+      "currency": "KRW",
+      "startDate": "2026-07-05",
+      "endDate": "2026-08-15",
+      "note": "서차지는 비수기 프로모션 적용 불가. 서차지 포함 비용에서 학비&기숙사 10% 유학원 할인 가능."
+    }
+  ],
+  "localFees": [
+    {
+      "id": "bcebu_ssp",
+      "name": "SSP",
+      "amount": 7800,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "note": "특별 학습 허가증. 1~24주."
+    },
+    {
+      "id": "bcebu_ssp_ecard",
+      "name": "SSP E-CARD",
+      "amount": 4500,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "note": "연수기간에 상관 없이 모든 학생 발급"
+    },
+    {
+      "id": "bcebu_visa_5_8",
+      "name": "비자연장비 (5~8주)",
+      "amount": 5130,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "trigger": "5주 이상",
+      "triggerWeeks": 5
+    },
+    {
+      "id": "bcebu_visa_9_12",
+      "name": "비자연장비 (9~12주)",
+      "amount": 11530,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "trigger": "9주 이상",
+      "triggerWeeks": 9
+    },
+    {
+      "id": "bcebu_visa_13_16",
+      "name": "비자연장비 (13~16주)",
+      "amount": 15960,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "trigger": "13주 이상",
+      "triggerWeeks": 13
+    },
+    {
+      "id": "bcebu_visa_17_20",
+      "name": "비자연장비 (17~20주)",
+      "amount": 20390,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "trigger": "17주 이상",
+      "triggerWeeks": 17
+    },
+    {
+      "id": "bcebu_visa_21_24",
+      "name": "비자연장비 (21~24주)",
+      "amount": 24820,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "trigger": "21주 이상",
+      "triggerWeeks": 21
+    },
+    {
+      "id": "bcebu_acr",
+      "name": "ACR I-CARD",
+      "amount": 4000,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "trigger": "59일 초과 체류자",
+      "triggerWeeks": 9,
+      "note": "외국인 등록 거주증 (59일 초과 체류자)"
+    },
+    {
+      "id": "bcebu_student_id",
+      "name": "학생증",
+      "amount": 200,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "note": "사진촬영비용 포함"
+    },
+    {
+      "id": "bcebu_utility",
+      "name": "수도/전기세",
+      "amount": 1000,
+      "currency": "PHP",
+      "chargeUnit": "per_week",
+      "note": "1주 기준. 주당 15kw 이상 전력 사용시 1kw마다 20페소 초과요금. 여러 명의 방일 경우 방인원으로 나눈 금액."
+    },
+    {
+      "id": "bcebu_maintenance",
+      "name": "관리비",
+      "amount": 500,
+      "currency": "PHP",
+      "chargeUnit": "per_week",
+      "note": "1주 기준. 학원내 강의동 및 기타시설 사용 등에 대한 관리비용."
+    },
+    {
+      "id": "bcebu_textbook",
+      "name": "교재비",
+      "amount": 1000,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "note": "4주 기준 1,000페소부터. 교재별 상이."
+    },
+    {
+      "id": "bcebu_deposit",
+      "name": "보증금",
+      "amount": 3000,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "note": "1~4주: 3,000페소, 5주 이상: 5,000페소. 초과 전기요금이나 기물파손 등이 발생할 경우 보증금에서 차감.",
+      "amountMax": 5000
+    },
+    {
+      "id": "bcebu_laundry",
+      "name": "세탁비",
+      "amount": 200,
+      "currency": "PHP",
+      "chargeUnit": "per_usage",
+      "note": "1회 8kg까지 200페소"
+    },
+    {
+      "id": "bcebu_pickup",
+      "name": "막탄국제공항 픽업",
+      "amount": 1000,
+      "currency": "PHP",
+      "chargeUnit": "per_visit",
+      "note": "토요일 오후 4시 ~ 월요일 새벽 1시: 1,000페소, 그 외 시간 픽업: 1,500페소",
+      "amountMax": 1500
+    }
+  ],
+  "priceIncrease": null,
+  "refundPolicy": "",
+  "dormitoryRules": "기숙사 체크인(입실)은 토요일 오후 4시부터 가능하며, 체크아웃(퇴실)은 토요일 오후 1시까지.\n얼리체크인 및 추가 숙박비/1박: 3인실 1,500php, 2인실 & 2+1인실 2,000php, 1인실 & 2인실 리빙 2,500php",
+  "generalNotes": "2026년 1월 1일 등록자부터 적용.\n\n단기연수 비용: 1주 40%, 2주 60%, 3주 80% (7~8월, 1~2월 성수기 입학자의 경우 4주 이상만 등록 가능).\n장기연수 할인: 8주 5만원, 12주 10만원, 16주 20만원, 20주 30만원, 24주 40만원 (12주부터 4주당 10만원씩 추가 할인).\n1:1 수업 1시간 추가: 4주당 8,000php / 그룹수업 1시간 추가: 4주당 4,000php (ESL코스 학생에 한함).\n미성년학생 관리비: 부모님이나 보호자가 함께 동행하지 않은 만 18세 미만의 학생들(고등학생)의 건강, 통금 등 생활관리 비용 (1주당 5만원).\n\n가족연수 체험단(비수기): 참여혜택 액티비티 1T + 나이트 클래스 2T 추가 제공, 아일랜드 데이 1회 참가. 참여조건 48개월 이상 ~ 초등, 중학생 포함 가족, 블로그/카페 체험 후기 주 1회 작성.",
+  "isActive": true,
+  "createdAt": "2026-05-29",
+  "updatedAt": "2026-05-30",
+  "dormShortTermRates": {
+    "mode": "percent",
+    "week1": 40,
+    "week2": 60,
+    "week3": 80,
+    "week4Included": false
+  },
+  "shortTermDataStatus": "confirmed"
+}

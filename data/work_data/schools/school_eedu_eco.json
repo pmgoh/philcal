@@ -1,0 +1,405 @@
+{
+  "id": "eedu_eco",
+  "schoolCode": "EEDU_ECO",
+  "name": "A&J e-Edu 에코 캠퍼스",
+  "campus": "Eco Campus",
+  "region": "바기오",
+  "schoolType": "general",
+  "minWeeks": 1,
+  "allowShortTerm": true,
+  "programTags": [
+    "ESL",
+    "IELTS",
+    "TOEIC",
+    "TOEFL",
+    "PTE",
+    "워킹홀리데이",
+    "주니어",
+    "스파르타"
+  ],
+  "registrationFee": {
+    "amount": 100000,
+    "currency": "KRW",
+    "note": "등록금 ₩100,000"
+  },
+  "courses": [
+    {
+      "id": "eedu_e_relax_light",
+      "name": "에코 릴렉스 라이트",
+      "price4Weeks": 750000,
+      "currency": "KRW"
+    },
+    {
+      "id": "eedu_e_relax_plus",
+      "name": "에코 릴렉스 플러스",
+      "price4Weeks": 850000,
+      "currency": "KRW"
+    },
+    {
+      "id": "eedu_e_hub",
+      "name": "에코 허브",
+      "price4Weeks": 950000,
+      "currency": "KRW"
+    },
+    {
+      "id": "eedu_e_sparta",
+      "name": "에코 스파르타",
+      "price4Weeks": 1250000,
+      "currency": "KRW"
+    },
+    {
+      "id": "eedu_e_test",
+      "name": "TEST 코스 (토익/토플/아이엘츠/PTE)",
+      "price4Weeks": 1050000,
+      "currency": "KRW"
+    },
+    {
+      "id": "eedu_e_toeic_guarantee",
+      "name": "토익 보장반",
+      "price4Weeks": 1050000,
+      "currency": "KRW",
+      "note": "토익 보장반. 12주 315만원 / 16주 420만원. 4주 환산값 105만원 (12주÷3 기준)."
+    },
+    {
+      "id": "eedu_e_ielts_guarantee",
+      "name": "아이엘츠 보장반 (선.후)",
+      "price4Weeks": 1150000,
+      "currency": "KRW",
+      "note": "아이엘츠 보장반 (선.후). 12주 345만원 / 20주 575만원 / 24주 690만원. 4주 환산값 115만원 (12주÷3 기준)."
+    },
+    {
+      "id": "eedu_e_working_holiday",
+      "name": "워킹홀리데이",
+      "price4Weeks": 1000000,
+      "currency": "KRW"
+    },
+    {
+      "id": "eedu_e_junior_esl",
+      "name": "주니어 ESL",
+      "price4Weeks": 1400000,
+      "currency": "KRW"
+    },
+    {
+      "id": "eedu_e_junior_test",
+      "name": "주니어 TEST코스 (토익/토플/아이엘츠)",
+      "price4Weeks": 1450000,
+      "currency": "KRW"
+    },
+    {
+      "id": "eedu_e_junior_light",
+      "name": "주니어 라이트 코스",
+      "price4Weeks": 1000000,
+      "currency": "KRW"
+    }
+  ],
+  "dormitories": [
+    {
+      "id": "eedu_e_deluxe1",
+      "name": "DELUXE 1인실",
+      "price4Weeks": 1550000,
+      "currency": "KRW"
+    },
+    {
+      "id": "eedu_e_deluxe2",
+      "name": "DELUXE 2인실",
+      "price4Weeks": 1050000,
+      "currency": "KRW"
+    },
+    {
+      "id": "eedu_e_deluxe3",
+      "name": "DELUXE 3인실",
+      "price4Weeks": 900000,
+      "currency": "KRW"
+    },
+    {
+      "id": "eedu_e_premium1",
+      "name": "PREMIUM 1인실",
+      "price4Weeks": 1750000,
+      "currency": "KRW"
+    },
+    {
+      "id": "eedu_e_premium2",
+      "name": "PREMIUM 2인실",
+      "price4Weeks": 1250000,
+      "currency": "KRW"
+    },
+    {
+      "id": "eedu_e_premium_suite",
+      "name": "PREMIUM 스위트",
+      "price4Weeks": 2200000,
+      "currency": "KRW"
+    },
+    {
+      "id": "eedu_e_pstudio1",
+      "name": "PREMIUM STUDIO 1인실",
+      "price4Weeks": 1750000,
+      "currency": "KRW"
+    },
+    {
+      "id": "eedu_e_pstudio2",
+      "name": "PREMIUM STUDIO 2인실",
+      "price4Weeks": 1250000,
+      "currency": "KRW"
+    },
+    {
+      "id": "eedu_e_pstudio34",
+      "name": "PREMIUM STUDIO 3인실",
+      "price4Weeks": 1270000,
+      "currency": "KRW",
+      "note": "방 전체 가격 3인 380만원. 인당 약 127만원. 4인실은 별도 항목."
+    },
+    {
+      "id": "eedu_e_villa1",
+      "name": "ECO VILLA 1인실",
+      "price4Weeks": 2400000,
+      "currency": "KRW"
+    },
+    {
+      "id": "eedu_e_villa2",
+      "name": "ECO VILLA 2인실",
+      "price4Weeks": 1400000,
+      "currency": "KRW",
+      "note": "방 전체 가격 2인 280만원. 인당 140만원."
+    },
+    {
+      "id": "eedu_e_villa3",
+      "name": "ECO VILLA 3인실",
+      "price4Weeks": 1270000,
+      "currency": "KRW",
+      "note": "방 전체 가격 3인 380만원. 인당 약 127만원."
+    },
+    {
+      "id": "eedu_e_pstudio4",
+      "name": "PREMIUM STUDIO 4인실",
+      "price4Weeks": 1200000,
+      "currency": "KRW",
+      "note": "방 전체 가격 4인 480만원. 인당 120만원."
+    }
+  ],
+  "surcharges": [
+    {
+      "id": "eedu_e_peak",
+      "label": "성수기 추가 요금",
+      "startDate": "2026-06-29",
+      "endDate": "2026-08-22",
+      "amountPerWeek": 50000,
+      "currency": "KRW",
+      "applyTo": "courses",
+      "note": "바기오 서차지. 2026.6.29~8.22, 주당 50,000원."
+    }
+  ],
+  "localFees": [
+    {
+      "id": "eedu_e_ssp",
+      "name": "SSP",
+      "amount": 7800,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "trigger": "enrollment"
+    },
+    {
+      "id": "eedu_e_visa_8",
+      "name": "비자연장비 8주",
+      "amount": 4940,
+      "currency": "PHP",
+      "chargeUnit": "cumulative",
+      "trigger": "stay_over",
+      "triggerWeeks": 5
+    },
+    {
+      "id": "eedu_e_visa_12",
+      "name": "비자연장비 12주",
+      "amount": 11150,
+      "currency": "PHP",
+      "chargeUnit": "cumulative",
+      "trigger": "stay_over",
+      "triggerWeeks": 9
+    },
+    {
+      "id": "eedu_e_visa_16",
+      "name": "비자연장비 16주",
+      "amount": 15390,
+      "currency": "PHP",
+      "chargeUnit": "cumulative",
+      "trigger": "stay_over",
+      "triggerWeeks": 13
+    },
+    {
+      "id": "eedu_e_visa_20",
+      "name": "비자연장비 20주",
+      "amount": 19630,
+      "currency": "PHP",
+      "chargeUnit": "cumulative",
+      "trigger": "stay_over",
+      "triggerWeeks": 17
+    },
+    {
+      "id": "eedu_e_visa_24",
+      "name": "비자연장비 24주",
+      "amount": 23870,
+      "currency": "PHP",
+      "chargeUnit": "cumulative",
+      "trigger": "stay_over",
+      "triggerWeeks": 21
+    },
+    {
+      "id": "eedu_e_ecard",
+      "name": "E-CARD",
+      "amount": 4500,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "trigger": "enrollment"
+    },
+    {
+      "id": "eedu_e_icard",
+      "name": "I-CARD",
+      "amount": 4000,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "trigger": "stay_over_59days",
+      "triggerWeeks": 9
+    },
+    {
+      "id": "eedu_e_utility_deluxe",
+      "name": "유틸리티비 (디럭스)",
+      "amount": 2500,
+      "currency": "PHP",
+      "chargeUnit": "per_4weeks",
+      "trigger": "enrollment"
+    },
+    {
+      "id": "eedu_e_utility_premium",
+      "name": "유틸리티비 (프리미엄&에코빌라)",
+      "amount": 3500,
+      "currency": "PHP",
+      "chargeUnit": "per_4weeks",
+      "trigger": "enrollment"
+    },
+    {
+      "id": "eedu_e_utility_suite",
+      "name": "유틸리티비 (스위트)",
+      "amount": 4000,
+      "currency": "PHP",
+      "chargeUnit": "per_4weeks",
+      "trigger": "enrollment"
+    },
+    {
+      "id": "eedu_e_mgmt_deluxe",
+      "name": "관리유지비 (디럭스)",
+      "amount": 1000,
+      "currency": "PHP",
+      "chargeUnit": "per_4weeks",
+      "trigger": "enrollment"
+    },
+    {
+      "id": "eedu_e_mgmt_premium",
+      "name": "관리유지비 (프리미엄&에코빌라)",
+      "amount": 1500,
+      "currency": "PHP",
+      "chargeUnit": "per_4weeks",
+      "trigger": "enrollment"
+    },
+    {
+      "id": "eedu_e_id",
+      "name": "학원 아이디 카드비",
+      "amount": 200,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "trigger": "enrollment"
+    },
+    {
+      "id": "eedu_e_pickup",
+      "name": "픽업비",
+      "amount": 3000,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "trigger": "enrollment"
+    },
+    {
+      "id": "eedu_e_textbook",
+      "name": "교재비",
+      "amount": 1000,
+      "currency": "PHP",
+      "chargeUnit": "per_4weeks",
+      "trigger": "enrollment"
+    },
+    {
+      "id": "eedu_e_deposit_deluxe",
+      "name": "보증금 (디럭스)",
+      "amount": 3000,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "trigger": "enrollment"
+    },
+    {
+      "id": "eedu_e_deposit_premium",
+      "name": "보증금 (프리미엄&에코빌라)",
+      "amount": 5000,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "trigger": "enrollment"
+    }
+  ],
+  "packages": [],
+  "additionalCharges": [
+    {
+      "id": "eedu_e_add_1on1_esl",
+      "name": "추가 1:1 수업 (ESL, 4주)",
+      "amount": 8000,
+      "currency": "PHP"
+    },
+    {
+      "id": "eedu_e_add_1on1_test",
+      "name": "추가 1:1 수업 (TEST코스, 4주)",
+      "amount": 10000,
+      "currency": "PHP"
+    },
+    {
+      "id": "eedu_e_add_group",
+      "name": "추가 그룹수업 (2시간 단위, 4주)",
+      "amount": 6000,
+      "currency": "PHP"
+    },
+    {
+      "id": "eedu_e_pickup_ind_clark",
+      "name": "개인픽업 클락",
+      "amount": 7500,
+      "currency": "PHP"
+    },
+    {
+      "id": "eedu_e_pickup_ind_manila",
+      "name": "개인픽업 마닐라",
+      "amount": 12000,
+      "currency": "PHP"
+    },
+    {
+      "id": "eedu_e_sending_clark",
+      "name": "BESA 샌딩 클락",
+      "amount": 1500,
+      "currency": "PHP",
+      "note": "금요일 저녁 7시, 토요일 새벽 5시, 저녁 7시"
+    }
+  ],
+  "dormitoryRules": "입실: 일요일 오후 2시 (2026.3.22부터 일요일 오전 5시). 퇴실: 토요일 오후 12시.\n조기입실/늦은퇴실 추가요금: 디럭스 P1,500, 프리미엄&에코빌라 P2,000.\n퇴실연장(1일): 12시간 이내 디럭스 P1,000 프리미엄&에코빌라 P1,500 / 12시간 이상 디럭스 P1,500 프리미엄&에코빌라 P2,000.",
+  "generalNotes": "A&J e-Edu 에코 캠퍼스. 바기오 소재.\n\n등록금 ₩100,000.\n단기: 1주 40% / 2주 65% / 3주 90%.\n식사: 평일 3식, 공휴일과 주말은 2식.\n\n성수기: 2026.6.29~8.22, 주당 5만원.\n\n보장반 코스는 총액 표기 (학비 총액 = price4Weeks 환산 불가).\nPremium Studio 3~4인실, Eco Villa 2~3인실은 방 전체 가격 (인당 환산 불가).\n\n프로모션: 출국일 기준 시기별 차등 할인 (에코 캠퍼스 전용).",
+  "isActive": true,
+  "createdAt": "2026-05-29",
+  "updatedAt": "2026-05-30",
+  "courseShortTermRates": {
+    "mode": "percent",
+    "week1": 40,
+    "week2": 65,
+    "week3": 90,
+    "week4Included": false,
+    "note": "성수기 4주 미만 등록 불가할 수 있음"
+  },
+  "dormShortTermRates": {
+    "mode": "percent",
+    "week1": 40,
+    "week2": 65,
+    "week3": 90,
+    "week4Included": false,
+    "note": "성수기 4주 미만 등록 불가할 수 있음"
+  },
+  "shortTermDataStatus": "confirmed"
+}

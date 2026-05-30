@@ -1,0 +1,188 @@
+{
+  "id": "edu_talk",
+  "schoolCode": "EDU_TALK",
+  "name": "에듀톡 (EDU TALK English Academy)",
+  "campus": "막탄 (프라임월드 콘도)",
+  "region": "세부",
+  "schoolType": "general",
+  "minWeeks": 1,
+  "allowShortTerm": true,
+  "programTags": ["가족연수", "주니어캠프", "킨더"],
+  "registrationFee": {
+    "amount": 100000,
+    "currency": "KRW",
+    "note": "입학금 1인당 10만원 별도"
+  },
+  "courses": [],
+  "dormitories": [],
+  "packages": [
+    {
+      "id": "edutalk_family_peak",
+      "label": "성수기 가족캠프 (킨더/ESL 주니어)",
+      "season": "성수기",
+      "currency": "KRW",
+      "columns": ["스튜디오(4주)", "원베드룸(4주)", "투베드 패밀리룸(4주)"],
+      "priceMatrix": [
+        {
+          "weeks": 4,
+          "prices": [
+            { "label": "2인(보호자1+아이1) / 스튜디오", "amount": 5300000 },
+            { "label": "2인(보호자1+아이1) / 원베드룸", "amount": 5700000 },
+            { "label": "3인(보호자1+아이2) / 스튜디오", "amount": 7200000 },
+            { "label": "3인(보호자1+아이2) / 원베드룸", "amount": 7500000 },
+            { "label": "3인(보호자1+아이2) / 투베드 패밀리룸", "amount": 8700000 },
+            { "label": "3인(보호자2+아이1) / 원베드룸", "amount": 6900000 },
+            { "label": "3인(보호자2+아이1) / 투베드 패밀리룸", "amount": 8100000 },
+            { "label": "4인(보호자2+아이2) / 투베드 패밀리룸", "amount": 9600000 },
+            { "label": "4인(보호자1+아이3) / 투베드 패밀리룸", "amount": 11100000 }
+          ]
+        }
+      ],
+      "includes": "수업료, 등록비, 룸클리닝/세탁서비스, 공항 픽업/샌딩, 유틸리티(전기,수도,와이파이), 식사, 셔틀서비스, 화상영어",
+      "excludes": "입학금, 현지비용, 항공, 보험, 외부액티비티(옵션으로 선택가능)",
+      "schedules": [
+        { "startDate": "2026-07-20", "endDate": "2026-08-28", "season": "성수기" },
+        { "startDate": "2027-01-04", "endDate": "2027-02-26", "season": "성수기" }
+      ],
+      "note": "킨더/주니어ESL 비용 동일. 원서 집중반, 시험 대비반 + 20만원(4주기준).\n3인 가족의 경우 금액 추가하여 투베드룸으로 업그레이드 가능.\n투베드룸 예약시 5인 가족의 경우 부모 포함 5인만 가능(친인척 같이 등록 불가)."
+    },
+    {
+      "id": "edutalk_commute_peak",
+      "label": "성수기 통학 학생 (정원 5명)",
+      "season": "성수기",
+      "currency": "KRW",
+      "columns": ["4주", "5주", "6주", "7주", "8주"],
+      "priceMatrix": [
+        {
+          "weeks": 4,
+          "prices": [
+            { "label": "킨더 4주", "amount": 1700000 },
+            { "label": "ESL 주니어 4주", "amount": 1700000 },
+            { "label": "원서 집중반 4주", "amount": 1900000 },
+            { "label": "시험 대비반 4주", "amount": 1900000 }
+          ]
+        },
+        {
+          "weeks": 5,
+          "prices": [
+            { "label": "킨더 5주", "amount": 2130000 },
+            { "label": "ESL 주니어 5주", "amount": 2130000 },
+            { "label": "원서 집중반 5주", "amount": 2380000 },
+            { "label": "시험 대비반 5주", "amount": 2380000 }
+          ]
+        },
+        {
+          "weeks": 6,
+          "prices": [
+            { "label": "킨더 6주", "amount": 2550000 },
+            { "label": "ESL 주니어 6주", "amount": 2550000 },
+            { "label": "원서 집중반 6주", "amount": 2850000 },
+            { "label": "시험 대비반 6주", "amount": 2850000 }
+          ]
+        },
+        {
+          "weeks": 7,
+          "prices": [
+            { "label": "킨더 7주", "amount": 2980000 },
+            { "label": "ESL 주니어 7주", "amount": 2980000 },
+            { "label": "원서 집중반 7주", "amount": 3330000 },
+            { "label": "시험 대비반 7주", "amount": 3330000 }
+          ]
+        },
+        {
+          "weeks": 8,
+          "prices": [
+            { "label": "킨더 8주", "amount": 3400000 },
+            { "label": "ESL 주니어 8주", "amount": 3400000 },
+            { "label": "원서 집중반 8주", "amount": 3800000 },
+            { "label": "시험 대비반 8주", "amount": 3800000 }
+          ]
+        }
+      ],
+      "includes": "수업비, 등록비, 학원 아이디카드, 방과 후 수업 - 비욘드 클래스 택1, 킨더 - 추가 신청 수업중 택1",
+      "excludes": "입학금, 중식비(1주 1500페소), 차량비(장소에 따라 상이), 교재비, SSP/I-CARD",
+      "note": "통학 학생 정원 5명."
+    },
+    {
+      "id": "edutalk_junior_camp",
+      "label": "주니어캠프 (여름/겨울)",
+      "season": "성수기",
+      "currency": "KRW",
+      "columns": ["주니어ESL", "원서 심화반"],
+      "priceMatrix": [
+        { "weeks": 4, "prices": [
+          { "label": "4주 주니어ESL", "amount": 4200000 },
+          { "label": "4주 원서 심화반", "amount": 4400000 }
+        ]},
+        { "weeks": 6, "prices": [
+          { "label": "6주 주니어ESL", "amount": 6300000 },
+          { "label": "6주 원서 심화반", "amount": 6600000 }
+        ]},
+        { "weeks": 8, "prices": [
+          { "label": "8주 주니어ESL", "amount": 8400000 },
+          { "label": "8주 원서 심화반", "amount": 8800000 }
+        ]}
+      ],
+      "includes": "프로그램비용, 수학수업, 교재비, 사전입학 테스트/수료테스트, 숙소비용/유틸리티비용, 캠프단체티셔츠, 학원 아이디, 전 일정 3식/간식/주말 특식(외식), 부모 미동반 서류 공증 비용, 공항 인솔교사, 현지생활 보조교사, 캠프 기간 내 주말 액티비티/주말 활동, 해양 탐험대 체험비용, SSP/ACR I-CARD, 비자연장비(필리핀 체류 29일 초과 시)",
+      "excludes": "입학금, 왕복 항공권, 여행자 보험, 개인 수학교재, 입국세(약 3,620페소), WEG(부모 미동반시 필요, 만 15세 미만), 개인 용돈(약 $150/4주)",
+      "includesLocalFees": true,
+      "schedules": [
+        { "startDate": "2026-07-20", "endDate": "2026-08-14", "season": "성수기", "weeks": 4, "note": "여름 1차" },
+        { "startDate": "2026-07-27", "endDate": "2026-08-21", "season": "성수기", "weeks": 4, "note": "여름 2차" },
+        { "startDate": "2027-01-03", "endDate": "2027-01-30", "season": "성수기", "weeks": 4, "note": "겨울 1차" },
+        { "startDate": "2027-01-31", "endDate": "2027-02-27", "season": "성수기", "weeks": 4, "note": "겨울 2차" }
+      ],
+      "note": "모집연령: 초3~중3. 6주, 8주의 경우 1차 시작일에 맞춰 진행.\n입학금 10만원 별도.\n조기 등록 혜택: 5월 31일까지 프로그램 등록 후 등록금 입금자에 한함 — 4주 10만원, 6주 15만원, 8주 20만원."
+    },
+    {
+      "id": "edutalk_family_offseason",
+      "label": "비수기 프리미엄 체험단 (MAX 38% 할인)",
+      "season": "비수기",
+      "currency": "KRW",
+      "columns": ["4주 할인가"],
+      "priceMatrix": [
+        {
+          "weeks": 4,
+          "prices": [
+            { "label": "2인 보호자+아이1 / 스튜디오", "amount": 3400000, "originalPrice": 5300000 },
+            { "label": "3인 보호자+아이2 / 스튜디오", "amount": 4680000, "originalPrice": 7200000 },
+            { "label": "2인 보호자+아이1 / 원베드룸", "amount": 3600000, "originalPrice": 5700000 },
+            { "label": "3인 보호자+아이2 / 원베드룸", "amount": 4880000, "originalPrice": 7500000 },
+            { "label": "3인 보호자2+아이1 / 원베드룸", "amount": 4300000, "originalPrice": 6900000 },
+            { "label": "3인 보호자+아이2 / 투베드 패밀리룸", "amount": 5650000, "originalPrice": 8700000 },
+            { "label": "3인 보호자2+아이1 / 투베드 패밀리룸", "amount": 5020000, "originalPrice": 8100000 },
+            { "label": "4인 보호자2+아이2 / 투베드 패밀리룸", "amount": 6240000, "originalPrice": 9600000 },
+            { "label": "4인 보호자+아이3 / 투베드 패밀리룸", "amount": 7100000, "originalPrice": 11100000 }
+          ]
+        }
+      ],
+      "includes": "주니어 ESL/킨더 수업료, 등록비, 주3회 하우스키핑+세탁, 체크인 시 1회 어메니티 제공, 비수기 기간내 셔틀버스, 마사지/레스토랑/여행컨시어지 제휴 할인제공",
+      "excludes": "입학금, 현지비용(SSP 8500/ACR CARD 4000, 교재비, 숙소 보증금/관리비, 전기수도, 공항픽업/샌딩), 보호자 수업비(별도 현지 납부), 옵션 수업",
+      "schedules": [
+        { "startDate": "2026-03-02", "endDate": "2026-07-17", "season": "비수기" },
+        { "startDate": "2026-08-31", "endDate": "2026-12-25", "season": "비수기" }
+      ],
+      "note": "체험단 조건: 4주당 2회 SNS(블로그, 유튜브, 등록한 유학원카페 등)에 올려주셔야 합니다.\n비수기 한정 특별 혜택: 해양탐험대 프로그램 무료 + 등록 주수만큼 화상영어 제공.\n원서 집중반, 시험대비반 변경 시 +20만원."
+    }
+  ],
+  "surcharges": [],
+  "localFees": [
+    { "id": "edutalk_ssp", "name": "SSP", "amount": 8500, "currency": "PHP", "chargeUnit": "per_person" },
+    { "id": "edutalk_acr", "name": "ACR CARD", "amount": 4000, "currency": "PHP", "chargeUnit": "per_person" },
+    { "id": "edutalk_deposit", "name": "숙소보증금", "amount": 5000, "currency": "PHP", "chargeUnit": "per_family", "note": "1룸당" },
+    { "id": "edutalk_maintenance", "name": "숙소관리비", "amount": 2000, "currency": "PHP", "chargeUnit": "per_family", "note": "4주 기준 1룸당. 공용시설 관리비." },
+    { "id": "edutalk_utility_offseason", "name": "전기/수도 (비수기)", "amount": 600, "currency": "PHP", "chargeUnit": "per_week", "note": "가족당. 비수기에만 별도 부과." },
+    { "id": "edutalk_pickup", "name": "공항픽업 (비수기)", "amount": 1200, "currency": "PHP", "chargeUnit": "per_visit", "note": "가족당. 비수기만 별도. 성수기는 포함." },
+    { "id": "edutalk_sending", "name": "공항샌딩 (비수기)", "amount": 1200, "currency": "PHP", "chargeUnit": "per_visit", "note": "가족당. 비수기만 별도. 성수기는 포함." },
+    { "id": "edutalk_textbook", "name": "교재비", "amount": 500, "currency": "PHP", "chargeUnit": "per_person", "note": "주니어ESL 기준 3권 약 1500페소. 권당 500~600페소." },
+    { "id": "edutalk_id", "name": "Edutalk ID", "amount": 300, "currency": "PHP", "chargeUnit": "per_person" },
+    { "id": "edutalk_visa_1", "name": "비자연장 1차", "amount": 5500, "currency": "PHP", "chargeUnit": "per_person", "triggerWeeks": 5 },
+    { "id": "edutalk_visa_2", "name": "비자연장 2차 (12주)", "amount": 11000, "currency": "PHP", "chargeUnit": "per_person", "triggerWeeks": 9, "note": "누적 금액 16,500" }
+  ],
+  "refundPolicy": "",
+  "dormitoryRules": "내부 기숙사: 2인실, 3인실, 4~5인실. 외부기숙사(독채형): 방3개 2층하우스, 방4개 2층 하우스 단독 사용.\n청소: 내부 주3회/빨래 주2회, 외부 주3회/빨래 주3회.\n식사: 내부 평일 3식(학생3식, 보호자2식), 토요일 조식 제공, 공휴일 식사 없음. 외부(독채) 평일 3식(학생3식, 보호자2식), 주말 조식 제공.",
+  "generalNotes": "에듀톡 (EDU TALK English Academy). 세부 막탄 소재. 프라임월드 콘도 / 호텔.\n\n모집연령: 만4세~성인. 킨더클래스 보유.\n입학일: 매주 월요일. 비수기는 1주부터, 성수기는 3주 이상부터 신청 가능.\n\n보호자 수업: 별도 비용, 현지 지불.\n4주: 2Time 22,000페소 / 3Time 33,000페소.\n3주: 2Time 16,500페소 / 3Time 24,800페소.\n2주: 2Time 11,000페소 / 3Time 16,500페소.\n1타임 45분 수업.\n\n성수기와 비수기의 현지비용이 상이할 수 있음 (성수기에는 전기/수도, 픽업/샌딩 포함, 오션탐험대 별도).",
+  "isActive": true,
+  "createdAt": "2026-05-29",
+  "updatedAt": "2026-05-29"
+}

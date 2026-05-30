@@ -20,7 +20,7 @@ export default function DataHealthPage() {
   const [schools, setSchools] = useState<School[]>([])
   const [promos, setPromos] = useState<PromoEntry[]>([])
   const [loading, setLoading] = useState(true)
-  const [tab, setTab] = useState<'orphan_promos' | 'unknown_schools'>('orphan_promos')
+  const [tab, setTab] = useState<'orphan_promos' | 'unknown_schools' | 'short_term'>('orphan_promos')
 
   const load = async () => {
     setLoading(true)
@@ -67,7 +67,24 @@ export default function DataHealthPage() {
   })()
 
   // ── 프로모션 미확인 학원 (promotions === null) ─────────────────────────────
+
   const unknownPromoSchools = schools.filter(s => s.promotions === null)
+
+  // ── 단기(4주 미만) 비율 점검 ──────────────────────────────────────────────
+  // 단기 허용 + 코스 보유인데, 단기 비율도 없고 unconfirmed 표시도 없으면
+  // 견적이 조용히 정비례로 계산됨 → 운영자가 확인해서 비율 입력 또는 unconfirmed 처리 필요.
+  const shortTermIssues = schools.filter(s => {
+    const allow = (s as { allowShortTerm?: boolean }).allowShortTerm
+    const ncourse = (s.courses ?? []).length
+    const hasRates = Boolean(
+      (s as { courseShortTermRates?: unknown }).courseShortTermRates ||
+      (s as { dormShortTermRates?: unknown }).dormShortTermRates ||
+      (s as { shortTermRates?: unknown }).shortTermRates
+    )
+    const status = (s as { shortTermDataStatus?: string }).shortTermDataStatus
+    // 단기허용 + 코스있음 + 비율없음 + (확인됨이라 표시했거나 아무 표시 없음)
+    return allow && ncourse > 0 && !hasRates && status !== 'unconfirmed'
+  })
 
   if (loading) return (
     <AdminLayout>
@@ -114,6 +131,13 @@ export default function DataHealthPage() {
             icon={<Building2 size={14} />}
             label="프로모션 미확인 학원"
             count={unknownPromoSchools.length}
+          />
+          <TabButton
+            active={tab === 'short_term'}
+            onClick={() => setTab('short_term')}
+            icon={<Building2 size={14} />}
+            label="단기 비율 미확인"
+            count={shortTermIssues.length}
           />
         </div>
 
@@ -201,6 +225,41 @@ export default function DataHealthPage() {
                     <div className="flex-1 min-w-0">
                       <div className="font-semibold text-gray-900 truncate">{s.name}</div>
                       <div className="text-xs text-gray-500 mt-0.5">{s.region} · {s.programTags?.join(', ') || '태그 없음'}</div>
+                    </div>
+                    <Link
+                      href={`/schools/${s.id}`}
+                      className="btn-primary text-xs flex items-center gap-1 whitespace-nowrap"
+                    >
+                      편집 <ChevronRight size={12} />
+                    </Link>
+                  </div>
+                ))}
+              </>
+            )}
+          </div>
+        )}
+
+        {tab === 'short_term' && (
+          <div className="space-y-3">
+            {shortTermIssues.length === 0 ? (
+              <EmptyState message="단기 비율이 모두 확인되었거나 미확인 표시되어 있습니다." />
+            ) : (
+              <>
+                <p className="text-xs text-gray-500">
+                  단기(4주 미만) 등록을 허용하고 코스가 있는데, 단기 비율(1·2·3주)이 입력되지 않았고
+                  &ldquo;미확인&rdquo; 표시도 없는 학원입니다. 이대로면 견적이 조용히 정비례(주수÷4)로 계산됩니다.
+                  자료의 단기 비율을 입력하거나, 자료가 없으면 학원 편집에서 단기 데이터 상태를 &ldquo;미확인&rdquo;으로 두세요.
+                </p>
+                {shortTermIssues.map(s => (
+                  <div key={s.id} className="card p-4 flex items-center gap-3">
+                    <div className="flex-1 min-w-0">
+                      <div className="font-semibold text-gray-900 truncate">{s.name}</div>
+                      <div className="text-xs text-gray-500 mt-0.5">
+                        {s.region} · 코스 {(s.courses ?? []).length}개
+                        {(s as { shortTermDataStatus?: string }).shortTermDataStatus === 'confirmed'
+                          ? ' · ⚠️ 확인됨 표시인데 비율 데이터 없음'
+                          : ' · 단기 비율·상태 미입력'}
+                      </div>
                     </div>
                     <Link
                       href={`/schools/${s.id}`}

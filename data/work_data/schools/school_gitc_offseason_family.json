@@ -1,0 +1,43 @@
+{
+  "id": "gitc_offseason_family",
+  "schoolCode": "GITC_OFFSEASON_FAMILY",
+  "name": "GITC 비수기 가족 영어캠프",
+  "campus": "Iloilo Campus (비수기 가족)",
+  "region": "기타",
+  "schoolType": "camp",
+  "minWeeks": 1,
+  "allowShortTerm": true,
+  "programTags": ["가족연수", "비수기"],
+  "registrationFee": { "amount": 0, "currency": "KRW", "note": "패키지에 포함" },
+  "courses": [], "dormitories": [], "surcharges": [], "promotions": null, "localFees": [],
+  "packages": [
+    {
+      "id": "gitc_off_family",
+      "name": "비수기 가족 영어캠프 (All in One Package)",
+      "programType": "family",
+      "includesLocalFees": true,
+      "period": "연수 시작일 기준 2026.2.9(월) ~ 2026.5.25(월)",
+      "note": "현지비 포함 (SSP/SSP-Card/ACR/VISA연장비/최초교재비(Study Note/주니어+교재2권) 포함). 불포함: 항공료/공증비및입국료/개인액티비티비용/전기세/수도세.",
+      "includes": "숙식, 수업 (부모 1:1(2)+G(1), 자녀 Regular 1:1(4)+G(3)), 임무수행 (주1회 4시간), 생생현장생존영어 (only GITC), 최초교재비 (Study Note/주니어+교재2권), SSP, SSP-Card, ACR, VISA연장비",
+      "excludes": "항공료, 공증비및입국료 (부모님이 아닌 다른분과 함께 올 경우), 개인액티비티비용, 전기세, 수도세",
+      "priceMatrix": {
+        "columns": ["1주", "2주", "4주"],
+        "rows": [
+          { "label": "부모1/자녀1 - Injap Hotel", "prices": [1150000, 2100000, null] },
+          { "label": "부모1/자녀1 - Condo", "prices": [null, null, 2800000] },
+          { "label": "부모1/자녀2 - Injap Hotel", "prices": [1700000, 3100000, null] },
+          { "label": "부모1/자녀2 - Condo", "prices": [1700000, 3100000, 4150000] },
+          { "label": "부모1/자녀3 - Condo", "prices": [2300000, 4100000, 5450000] },
+          { "label": "부모2/자녀1 - Injap Hotel", "prices": [1500000, 2750000, null] },
+          { "label": "부모2/자녀1 - Condo", "prices": [1500000, 2750000, 3550000] }
+        ]
+      },
+      "currency": "KRW"
+    }
+  ],
+  "additionalCharges": [],
+  "generalNotes": "GITC 비수기 가족 영어캠프. 일로일로 소재.\n\n기한: 연수 시작일 기준 2026.2.9(월) ~ 2026.5.25(월).\n현지비 포함 (SSP/SSP-Card/ACR/VISA연장비/최초교재비).\n불포함: 항공료/공증비/개인액티비티/전기세/수도세.\n\nHotel: Injap Hotel (SM 도로건너편, 도보 5분). 수영장/마사지샵/헬스장. 조리불가.\nCondo: 조리가능. 2bed Room. 수영장/헬스장.\n\n골프: GITC학생 20%할인. 주중 약72,000원 / 주말 약82,000원.",
+  "isActive": true,
+  "createdAt": "2026-05-29",
+  "updatedAt": "2026-05-29"
+}

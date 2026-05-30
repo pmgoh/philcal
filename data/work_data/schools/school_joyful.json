@@ -1,0 +1,725 @@
+{
+  "id": "joyful",
+  "schoolCode": "JOYFUL",
+  "name": "Joyful Education (T-Shine Hotel)",
+  "campus": "T-Shine Hotel",
+  "region": "세부",
+  "schoolType": "family",
+  "minWeeks": 1,
+  "allowShortTerm": true,
+  "shortTermDataStatus": "confirmed",
+  "programTags": [
+    "가족연수",
+    "주니어",
+    "킨더"
+  ],
+  "registrationFee": {
+    "amount": 0,
+    "currency": "KRW",
+    "note": "패키지에 입학금 포함."
+  },
+  "courses": [],
+  "dormitories": [],
+  "packages": [
+    {
+      "id": "joy_dlx_2p",
+      "name": "[성수기] 디럭스 2인실",
+      "includesLocalFees": false,
+      "priceMatrix": {
+        "columns": [
+          "1W",
+          "2W",
+          "3W",
+          "4W",
+          "5W",
+          "6W",
+          "7W",
+          "8W",
+          "9W"
+        ],
+        "rows": [
+          {
+            "label": "디럭스 2인",
+            "prices": [
+              1620000,
+              2340000,
+              3060000,
+              3600000,
+              4500000,
+              5400000,
+              6300000,
+              7200000,
+              8100000
+            ]
+          }
+        ]
+      },
+      "currency": "KRW",
+      "note": "1인 비용. 입학금 포함."
+    },
+    {
+      "id": "joy_dlx_3p",
+      "name": "[성수기] 디럭스 3인실",
+      "includesLocalFees": false,
+      "priceMatrix": {
+        "columns": [
+          "1W",
+          "2W",
+          "3W",
+          "4W",
+          "5W",
+          "6W",
+          "7W",
+          "8W",
+          "9W"
+        ],
+        "rows": [
+          {
+            "label": "디럭스 3인",
+            "prices": [
+              1530000,
+              2210000,
+              2890000,
+              3400000,
+              4250000,
+              5100000,
+              5950000,
+              6800000,
+              7650000
+            ]
+          }
+        ]
+      },
+      "currency": "KRW"
+    },
+    {
+      "id": "joy_dlx_4p",
+      "name": "[성수기] 디럭스 4인실",
+      "includesLocalFees": false,
+      "priceMatrix": {
+        "columns": [
+          "1W",
+          "2W",
+          "3W",
+          "4W",
+          "5W",
+          "6W",
+          "7W",
+          "8W",
+          "9W"
+        ],
+        "rows": [
+          {
+            "label": "디럭스 4인",
+            "prices": [
+              1440000,
+              2080000,
+              2720000,
+              3200000,
+              4000000,
+              4800000,
+              5600000,
+              6400000,
+              7200000
+            ]
+          }
+        ]
+      },
+      "currency": "KRW"
+    },
+    {
+      "id": "joy_dlx_5p",
+      "name": "[성수기] 디럭스 5인실",
+      "includesLocalFees": false,
+      "priceMatrix": {
+        "columns": [
+          "1W",
+          "2W",
+          "3W",
+          "4W",
+          "5W",
+          "6W",
+          "7W",
+          "8W",
+          "9W"
+        ],
+        "rows": [
+          {
+            "label": "디럭스 5인",
+            "prices": [
+              1350000,
+              1950000,
+              2550000,
+              3000000,
+              3750000,
+              4500000,
+              5250000,
+              6000000,
+              6750000
+            ]
+          }
+        ]
+      },
+      "currency": "KRW"
+    },
+    {
+      "id": "joy_fam_4p",
+      "name": "[성수기] 패밀리 4인실",
+      "includesLocalFees": false,
+      "priceMatrix": {
+        "columns": [
+          "1W",
+          "2W",
+          "3W",
+          "4W",
+          "5W",
+          "6W",
+          "7W",
+          "8W",
+          "9W"
+        ],
+        "rows": [
+          {
+            "label": "패밀리 4인",
+            "prices": [
+              1665000,
+              2405000,
+              3145000,
+              3700000,
+              4625000,
+              5550000,
+              6475000,
+              7400000,
+              8325000
+            ]
+          }
+        ]
+      },
+      "currency": "KRW"
+    },
+    {
+      "id": "joy_fam_5p",
+      "name": "[성수기] 패밀리 5인실",
+      "includesLocalFees": false,
+      "priceMatrix": {
+        "columns": [
+          "1W",
+          "2W",
+          "3W",
+          "4W",
+          "5W",
+          "6W",
+          "7W",
+          "8W",
+          "9W"
+        ],
+        "rows": [
+          {
+            "label": "패밀리 5인",
+            "prices": [
+              1575000,
+              2275000,
+              2975000,
+              3500000,
+              4375000,
+              5250000,
+              6125000,
+              7000000,
+              7875000
+            ]
+          }
+        ]
+      },
+      "currency": "KRW"
+    },
+    {
+      "id": "joy_fam_6p",
+      "name": "[성수기] 패밀리 6인실",
+      "includesLocalFees": false,
+      "priceMatrix": {
+        "columns": [
+          "1W",
+          "2W",
+          "3W",
+          "4W",
+          "5W",
+          "6W",
+          "7W",
+          "8W",
+          "9W"
+        ],
+        "rows": [
+          {
+            "label": "패밀리 6인",
+            "prices": [
+              1485000,
+              2145000,
+              2805000,
+              3300000,
+              4125000,
+              4950000,
+              5775000,
+              6600000,
+              7425000
+            ]
+          }
+        ]
+      },
+      "currency": "KRW"
+    },
+    {
+      "id": "joy_vip1_4p",
+      "name": "[성수기] VIP1 4인실",
+      "includesLocalFees": false,
+      "priceMatrix": {
+        "columns": [
+          "1W",
+          "2W",
+          "3W",
+          "4W",
+          "5W",
+          "6W",
+          "7W",
+          "8W",
+          "9W"
+        ],
+        "rows": [
+          {
+            "label": "VIP1 4인",
+            "prices": [
+              1755000,
+              2535000,
+              3315000,
+              3900000,
+              4875000,
+              5850000,
+              6825000,
+              7800000,
+              8775000
+            ]
+          }
+        ]
+      },
+      "currency": "KRW"
+    },
+    {
+      "id": "joy_vip1_5p",
+      "name": "[성수기] VIP1 5인실",
+      "includesLocalFees": false,
+      "priceMatrix": {
+        "columns": [
+          "1W",
+          "2W",
+          "3W",
+          "4W",
+          "5W",
+          "6W",
+          "7W",
+          "8W",
+          "9W"
+        ],
+        "rows": [
+          {
+            "label": "VIP1 5인",
+            "prices": [
+              1665000,
+              2405000,
+              3145000,
+              3700000,
+              4625000,
+              5550000,
+              6475000,
+              7400000,
+              8325000
+            ]
+          }
+        ]
+      },
+      "currency": "KRW"
+    },
+    {
+      "id": "joy_vip1_6p",
+      "name": "[성수기] VIP1 6인실",
+      "includesLocalFees": false,
+      "priceMatrix": {
+        "columns": [
+          "1W",
+          "2W",
+          "3W",
+          "4W",
+          "5W",
+          "6W",
+          "7W",
+          "8W",
+          "9W"
+        ],
+        "rows": [
+          {
+            "label": "VIP1 6인",
+            "prices": [
+              1575000,
+              2275000,
+              2975000,
+              3500000,
+              4375000,
+              5250000,
+              6125000,
+              7000000,
+              7875000
+            ]
+          }
+        ]
+      },
+      "currency": "KRW"
+    },
+    {
+      "id": "joy_vip2_4p",
+      "name": "[성수기] VIP2 4인실",
+      "includesLocalFees": false,
+      "priceMatrix": {
+        "columns": [
+          "1W",
+          "2W",
+          "3W",
+          "4W",
+          "5W",
+          "6W",
+          "7W",
+          "8W",
+          "9W"
+        ],
+        "rows": [
+          {
+            "label": "VIP2 4인",
+            "prices": [
+              1800000,
+              2600000,
+              3400000,
+              4000000,
+              5000000,
+              6000000,
+              7000000,
+              8000000,
+              9000000
+            ]
+          }
+        ]
+      },
+      "currency": "KRW"
+    },
+    {
+      "id": "joy_vip2_5p",
+      "name": "[성수기] VIP2 5인실",
+      "includesLocalFees": false,
+      "priceMatrix": {
+        "columns": [
+          "1W",
+          "2W",
+          "3W",
+          "4W",
+          "5W",
+          "6W",
+          "7W",
+          "8W",
+          "9W"
+        ],
+        "rows": [
+          {
+            "label": "VIP2 5인",
+            "prices": [
+              1710000,
+              2470000,
+              3230000,
+              3800000,
+              4750000,
+              5700000,
+              6650000,
+              7600000,
+              8550000
+            ]
+          }
+        ]
+      },
+      "currency": "KRW"
+    },
+    {
+      "id": "joy_vip2_6p",
+      "name": "[성수기] VIP2 6인실",
+      "includesLocalFees": false,
+      "priceMatrix": {
+        "columns": [
+          "1W",
+          "2W",
+          "3W",
+          "4W",
+          "5W",
+          "6W",
+          "7W",
+          "8W",
+          "9W"
+        ],
+        "rows": [
+          {
+            "label": "VIP2 6인",
+            "prices": [
+              1620000,
+              2340000,
+              3060000,
+              3600000,
+              4500000,
+              5400000,
+              6300000,
+              7200000,
+              8100000
+            ]
+          }
+        ]
+      },
+      "currency": "KRW"
+    },
+    {
+      "id": "joy_prime_4w_2p",
+      "name": "[프라임] 4주 2인 가족",
+      "includesLocalFees": true,
+      "priceMatrix": {
+        "columns": [
+          "할인가"
+        ],
+        "rows": [
+          {
+            "label": "4주 2인",
+            "prices": [
+              8000000
+            ]
+          }
+        ]
+      },
+      "currency": "KRW",
+      "note": "T-Shine 호텔 2주 + J-Park 리조트 2주. 40만원 할인 적용. 7월/8월."
+    },
+    {
+      "id": "joy_prime_4w_3p",
+      "name": "[프라임] 4주 3인 가족",
+      "includesLocalFees": true,
+      "priceMatrix": {
+        "columns": [
+          "할인가"
+        ],
+        "rows": [
+          {
+            "label": "4주 3인",
+            "prices": [
+              11400000
+            ]
+          }
+        ]
+      },
+      "currency": "KRW",
+      "note": "60만원 할인 적용."
+    },
+    {
+      "id": "joy_prime_3w_2p",
+      "name": "[프라임] 3주 2인 가족",
+      "includesLocalFees": true,
+      "priceMatrix": {
+        "columns": [
+          "할인가"
+        ],
+        "rows": [
+          {
+            "label": "3주 2인",
+            "prices": [
+              6450000
+            ]
+          }
+        ]
+      },
+      "currency": "KRW",
+      "note": "20만원 할인 적용."
+    },
+    {
+      "id": "joy_prime_3w_3p",
+      "name": "[프라임] 3주 3인 가족",
+      "includesLocalFees": true,
+      "priceMatrix": {
+        "columns": [
+          "할인가"
+        ],
+        "rows": [
+          {
+            "label": "3주 3인",
+            "prices": [
+              9165000
+            ]
+          }
+        ]
+      },
+      "currency": "KRW",
+      "note": "30만원 할인 적용."
+    },
+    {
+      "id": "joy_prime_2w_2p",
+      "name": "[프라임] 2주 2인 가족",
+      "includesLocalFees": true,
+      "priceMatrix": {
+        "columns": [
+          "할인가"
+        ],
+        "rows": [
+          {
+            "label": "2주 2인",
+            "prices": [
+              5150000
+            ]
+          }
+        ]
+      },
+      "currency": "KRW",
+      "note": "10만원 할인 적용."
+    },
+    {
+      "id": "joy_prime_2w_3p",
+      "name": "[프라임] 2주 3인 가족",
+      "includesLocalFees": true,
+      "priceMatrix": {
+        "columns": [
+          "할인가"
+        ],
+        "rows": [
+          {
+            "label": "2주 3인",
+            "prices": [
+              7335000
+            ]
+          }
+        ]
+      },
+      "currency": "KRW",
+      "note": "15만원 할인 적용."
+    }
+  ],
+  "surcharges": [],
+  "localFees": [
+    {
+      "id": "joy_deposit",
+      "name": "보증금",
+      "amount": 2000,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "note": "호텔 체크인 시 납부."
+    },
+    {
+      "id": "joy_hotel_maint",
+      "name": "호텔 서비스 & 관리비",
+      "amount": 500,
+      "currency": "PHP",
+      "chargeUnit": "per_week"
+    },
+    {
+      "id": "joy_elec_water",
+      "name": "전기·수도",
+      "amount": 750,
+      "currency": "PHP",
+      "chargeUnit": "per_week",
+      "note": "추가요금 없음."
+    },
+    {
+      "id": "joy_ssp",
+      "name": "SSP",
+      "amount": 7800,
+      "currency": "PHP",
+      "chargeUnit": "per_person"
+    },
+    {
+      "id": "joy_ssp_icard",
+      "name": "SSP I-Card",
+      "amount": 4300,
+      "currency": "PHP",
+      "chargeUnit": "per_person"
+    },
+    {
+      "id": "joy_photo",
+      "name": "증명사진",
+      "amount": 50,
+      "currency": "PHP",
+      "chargeUnit": "per_person"
+    },
+    {
+      "id": "joy_visa_icard",
+      "name": "VISA I-Card",
+      "amount": 4300,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "triggerWeeks": 9
+    },
+    {
+      "id": "joy_pickup",
+      "name": "공항픽업 (가족)",
+      "amount": 2000,
+      "currency": "PHP",
+      "chargeUnit": "per_team",
+      "note": "개인 1,200페소."
+    },
+    {
+      "id": "joy_visa_1",
+      "name": "1차 비자연장",
+      "amount": 5130,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "triggerWeeks": 5
+    },
+    {
+      "id": "joy_visa_2",
+      "name": "2차 비자연장 (누적)",
+      "amount": 11530,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "triggerWeeks": 9
+    },
+    {
+      "id": "joy_visa_3",
+      "name": "3차 비자연장 (누적)",
+      "amount": 15960,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "triggerWeeks": 13
+    },
+    {
+      "id": "joy_visa_4",
+      "name": "4차 비자연장 (누적)",
+      "amount": 20390,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "triggerWeeks": 17
+    },
+    {
+      "id": "joy_visa_5",
+      "name": "5차 비자연장 (누적)",
+      "amount": 24820,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "triggerWeeks": 21
+    }
+  ],
+  "additionalCharges": [],
+  "generalNotes": "Joyful Education. 세부 T-Shine Hotel 기반. 가족연수/주니어/킨더.\n\n[2027 성수기] 1인 비용 기준. 입학금 포함. 현지비용 별도.\n기간: 2027.01.04~02.26 / 2027.06.28~08.27.\n객실: 디럭스(2~5인) / 패밀리(4~6인) / VIP1(4~6인) / VIP2(4~6인).\n\n[프라임 프로그램] T-Shine 호텔 + J-Park 리조트 연계. 7-8월. 현지비용 포함.\n보증금: T-Shine P2,000 / J-Park $100(6,000페소). 체크아웃 시 반환.\n\n[현지비용 총액] 4w 19,150PHP / 8w 29,280PHP / 12w 44,980PHP / 16w 54,410PHP / 20w 63,840PHP / 24w 73,420PHP.",
+  "isActive": true,
+  "createdAt": "2026-05-29",
+  "updatedAt": "2026-05-30",
+  "courseShortTermRates": {
+    "mode": "percent",
+    "week1": 45,
+    "week2": 65,
+    "week3": 85,
+    "week4Included": false,
+    "note": "자료: 1주는 겨울 성수기 제외"
+  },
+  "dormShortTermRates": {
+    "mode": "percent",
+    "week1": 45,
+    "week2": 65,
+    "week3": 85,
+    "week4Included": false,
+    "note": "자료: 1주는 겨울 성수기 제외"
+  }
+}

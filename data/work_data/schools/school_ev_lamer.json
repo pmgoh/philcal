@@ -1,0 +1,234 @@
+{
+  "id": "ev_lamer",
+  "schoolCode": "EV_LAMER",
+  "name": "EV Academy La Mer Campus",
+  "campus": "La Mer",
+  "region": "세부",
+  "schoolType": "general",
+  "minWeeks": 1,
+  "allowShortTerm": true,
+  "shortTermDataStatus": "confirmed",
+  "programTags": [
+    "ESL",
+    "시니어",
+    "세미스파르타"
+  ],
+  "registrationFee": {
+    "amount": 100000,
+    "currency": "KRW",
+    "note": "입학금 10만원. 학비표 합산가에 포함."
+  },
+  "courses": [
+    {
+      "id": "evlm_classic",
+      "name": "ESL Classic",
+      "price4Weeks": 1010000,
+      "currency": "KRW"
+    },
+    {
+      "id": "evlm_senior",
+      "name": "Senior",
+      "price4Weeks": 1190000,
+      "currency": "KRW",
+      "note": "시니어 코스"
+    },
+    {
+      "id": "evlm_ps6",
+      "name": "Power Speaking 6",
+      "price4Weeks": 1190000,
+      "currency": "KRW"
+    },
+    {
+      "id": "evlm_ps8",
+      "name": "Power Speaking 8",
+      "price4Weeks": 1420000,
+      "currency": "KRW"
+    }
+  ],
+  "dormitories": [
+    {
+      "id": "evlm_single",
+      "name": "1인실 (Single)",
+      "price4Weeks": 1900000,
+      "currency": "KRW",
+      "note": "식사 3식, 하우스키핑 포함"
+    },
+    {
+      "id": "evlm_double_a",
+      "name": "2인실A (Pool Access Room)",
+      "price4Weeks": 1280000,
+      "currency": "KRW",
+      "note": "풀 액세스. 식사 3식, 하우스키핑 포함"
+    },
+    {
+      "id": "evlm_double_b",
+      "name": "2인실B (Double B)",
+      "price4Weeks": 1180000,
+      "currency": "KRW",
+      "note": "식사 3식, 하우스키핑 포함"
+    },
+    {
+      "id": "evlm_triple",
+      "name": "3인실 (Triple)",
+      "price4Weeks": 1020000,
+      "currency": "KRW",
+      "note": "식사 3식, 하우스키핑 포함"
+    },
+    {
+      "id": "evlm_quad",
+      "name": "4인실 (Quadruple)",
+      "price4Weeks": 970000,
+      "currency": "KRW",
+      "note": "식사 3식, 하우스키핑 포함"
+    }
+  ],
+  "packages": [],
+  "surcharges": [
+    {
+      "id": "evlm_peak",
+      "name": "성수기 서차지",
+      "amount": 50000,
+      "currency": "KRW",
+      "unit": "per_week",
+      "periods": [
+        {
+          "start": "2025-07-06",
+          "end": "2025-08-30"
+        },
+        {
+          "start": "2026-07-05",
+          "end": "2026-08-29"
+        }
+      ]
+    }
+  ],
+  "localFees": [
+    {
+      "id": "evlm_ssp",
+      "name": "SSP",
+      "amount": 7800,
+      "currency": "PHP",
+      "chargeUnit": "per_person"
+    },
+    {
+      "id": "evlm_ssp_ecard",
+      "name": "SSP E-Card",
+      "amount": 4500,
+      "currency": "PHP",
+      "chargeUnit": "per_person"
+    },
+    {
+      "id": "evlm_acr_icard",
+      "name": "ACR I-Card",
+      "amount": 4000,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "triggerWeeks": 9
+    },
+    {
+      "id": "evlm_idcard",
+      "name": "ID Card",
+      "amount": 500,
+      "currency": "PHP",
+      "chargeUnit": "per_person"
+    },
+    {
+      "id": "evlm_electricity",
+      "name": "전기세",
+      "amount": 500,
+      "currency": "PHP",
+      "chargeUnit": "per_week",
+      "note": "15kw 초과 시 1kw당 20페소 추가."
+    },
+    {
+      "id": "evlm_operation",
+      "name": "운영비",
+      "amount": 500,
+      "currency": "PHP",
+      "chargeUnit": "per_week"
+    },
+    {
+      "id": "evlm_water",
+      "name": "수도세",
+      "amount": 300,
+      "currency": "PHP",
+      "chargeUnit": "per_week"
+    },
+    {
+      "id": "evlm_deposit",
+      "name": "보증금",
+      "amount": 3000,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "note": "1~3주 2,000 / 4~8주 3,000 / 9주+ 5,000페소."
+    },
+    {
+      "id": "evlm_pickup",
+      "name": "픽업비",
+      "amount": 1200,
+      "currency": "PHP",
+      "chargeUnit": "per_person"
+    },
+    {
+      "id": "evlm_visa_1",
+      "name": "1차 비자연장",
+      "amount": 5130,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "triggerWeeks": 5
+    },
+    {
+      "id": "evlm_visa_2",
+      "name": "2차 비자연장 (누적)",
+      "amount": 11530,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "triggerWeeks": 9
+    },
+    {
+      "id": "evlm_visa_3",
+      "name": "3차 비자연장 (누적)",
+      "amount": 15960,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "triggerWeeks": 13
+    },
+    {
+      "id": "evlm_visa_4",
+      "name": "4차 비자연장 (누적)",
+      "amount": 20390,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "triggerWeeks": 17
+    },
+    {
+      "id": "evlm_visa_5",
+      "name": "5차 비자연장 (누적)",
+      "amount": 24820,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "triggerWeeks": 21
+    }
+  ],
+  "additionalCharges": [],
+  "refundPolicy": "",
+  "dormitoryRules": "",
+  "generalNotes": "EV Academy La Mer Campus. 세부 소재. 세미스파르타만 운영.\n\n[가격 구조]\n학비표 합산가 = 입학금(10만) + 코스비 + 기숙사비.\n기숙사비에 숙소, 식사(3식), 하우스키핑 포함.\n\n[단기 비율] 1w=40%, 2w=65%, 3w=85% of 4주 가격.\n\n[성수기 서차지] 5만원/주 (KRW). 2026: 7/5~8/29.\n\n[현지비용] EV 본원과 동일 구조. 내부기숙사 기준.\n전기세 500P/주, 운영비 500P/주, 수도세 300P/주. 15kw 초과 시 1kw당 20페소 추가.",
+  "isActive": true,
+  "createdAt": "2026-05-29",
+  "updatedAt": "2026-05-30",
+  "courseShortTermRates": {
+    "mode": "percent",
+    "week1": 40,
+    "week2": 65,
+    "week3": 85,
+    "week4Included": false
+  },
+  "dormShortTermRates": {
+    "mode": "percent",
+    "week1": 40,
+    "week2": 65,
+    "week3": 85,
+    "week4Included": false
+  }
+}

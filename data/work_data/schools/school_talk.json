@@ -1,0 +1,454 @@
+{
+  "id": "talk",
+  "schoolCode": "TALK",
+  "name": "TALK Academy (토크 어학원)",
+  "campus": "클락 캠퍼스",
+  "region": "클락",
+  "schoolType": "general",
+  "programTags": [
+    "성인일반",
+    "가족연수",
+    "IELTS",
+    "TOEIC",
+    "비즈니스",
+    "시니어",
+    "골프"
+  ],
+  "minWeeks": 1,
+  "allowShortTerm": true,
+  "registrationFee": {
+    "amount": 100000,
+    "currency": "KRW",
+    "note": "인당 등록금 10만원 별도."
+  },
+  "courses": [
+    {
+      "id": "1class",
+      "name": "1 CLASS",
+      "target": "성인일반",
+      "price4Weeks": 220000,
+      "currency": "KRW",
+      "note": "1:1 1타임. 1주 55,000원."
+    },
+    {
+      "id": "1group",
+      "name": "1 GROUP",
+      "target": "성인일반",
+      "price4Weeks": 110000,
+      "currency": "KRW",
+      "note": "그룹 1타임. 1주 불가."
+    },
+    {
+      "id": "talk4",
+      "name": "TALK4",
+      "target": "성인일반",
+      "price4Weeks": 880000,
+      "currency": "KRW",
+      "note": "1:1 4타임. 4주 88만원."
+    },
+    {
+      "id": "talk6",
+      "name": "TALK6",
+      "target": "성인일반",
+      "price4Weeks": 1320000,
+      "currency": "KRW",
+      "note": "1:1 6타임. 4주 132만원."
+    },
+    {
+      "id": "talk4_hybrid_a",
+      "name": "TALK4 Hybrid A",
+      "target": "성인일반",
+      "price4Weeks": 1100000,
+      "currency": "KRW",
+      "note": "1주 불가. 4주 110만원."
+    },
+    {
+      "id": "talk6_hybrid_a",
+      "name": "TALK6 Hybrid A",
+      "target": "성인일반",
+      "price4Weeks": 1540000,
+      "currency": "KRW",
+      "note": "1주 불가. 4주 154만원."
+    },
+    {
+      "id": "talk4_hybrid_j",
+      "name": "TALK4 Hybrid J",
+      "target": "성인일반",
+      "price4Weeks": 1100000,
+      "currency": "KRW",
+      "note": "1주 불가. 4주 110만원."
+    },
+    {
+      "id": "talk6_hybrid_j",
+      "name": "TALK6 Hybrid J",
+      "target": "성인일반",
+      "price4Weeks": 1540000,
+      "currency": "KRW",
+      "note": "1주 불가. 4주 154만원."
+    },
+    {
+      "id": "senior",
+      "name": "SENIOR",
+      "target": "시니어",
+      "price4Weeks": 900000,
+      "currency": "KRW",
+      "note": "시니어 과정. 4주 90만원."
+    },
+    {
+      "id": "talk_golf",
+      "name": "TALK GOLF",
+      "target": "성인일반",
+      "price4Weeks": 440000,
+      "currency": "KRW",
+      "note": "골프 과정. 4주 44만원."
+    },
+    {
+      "id": "business",
+      "name": "BUSINESS",
+      "target": "성인일반",
+      "price4Weeks": 1320000,
+      "currency": "KRW",
+      "note": "비즈니스 과정. 4주 132만원."
+    },
+    {
+      "id": "internship",
+      "name": "INTERNSHIP",
+      "target": "성인일반",
+      "price4Weeks": 0,
+      "currency": "KRW",
+      "note": "4주 180만원 / 8주 340만원만 존재 (특수 기간). price4Weeks는 시스템 계산에 사용 불가 → 운영자 수동 견적."
+    },
+    {
+      "id": "barista",
+      "name": "BARISTA",
+      "target": "성인일반",
+      "price4Weeks": 0,
+      "currency": "KRW",
+      "note": "12주 520만원만 존재 (특수 기간). price4Weeks는 시스템 계산에 사용 불가 → 운영자 수동 견적."
+    },
+    {
+      "id": "toeic",
+      "name": "TOEIC",
+      "target": "성인일반",
+      "price4Weeks": 1540000,
+      "currency": "KRW",
+      "note": "TOEIC 과정. 4주 154만원."
+    },
+    {
+      "id": "ielts",
+      "name": "IELTS",
+      "target": "성인일반",
+      "price4Weeks": 1650000,
+      "currency": "KRW",
+      "note": "IELTS 과정. 4주 165만원."
+    }
+  ],
+  "dormitories": [
+    {
+      "id": "single_adult_before_0828",
+      "name": "1인실 성인 (~2026.8.28)",
+      "roomType": "1인실",
+      "target": "성인일반",
+      "price4Weeks": 1200000,
+      "currency": "KRW",
+      "note": "식사 불포함. ~2026.8.28 적용. 불포함: 세탁, 식사, 청소, 콘도관리비, 전기세, 수도세, 인터넷비."
+    },
+    {
+      "id": "double_adult_before_0828",
+      "name": "2인실 성인 (~2026.8.28)",
+      "roomType": "2인실",
+      "target": "성인일반",
+      "price4Weeks": 800000,
+      "currency": "KRW",
+      "note": "식사 불포함, 식사 선택 필수. ~2026.8.28 적용."
+    },
+    {
+      "id": "single_adult_after_0831",
+      "name": "1인실 성인 (2026.8.31~)",
+      "roomType": "1인실",
+      "target": "성인일반",
+      "price4Weeks": 1200000,
+      "currency": "KRW",
+      "note": "식사 불포함. 2026.8.31부터 적용. 불포함: 현지비 및 1인실 선택시 청소, 빨래, 식사비."
+    },
+    {
+      "id": "double_adult_after_0831",
+      "name": "2인실 성인 (2026.8.31~)",
+      "roomType": "2인실",
+      "target": "성인일반",
+      "price4Weeks": 1320000,
+      "currency": "KRW",
+      "note": "평일3식, 주2회 청소/빨래 포함. 2026.8.31부터 적용."
+    },
+    {
+      "id": "triple_adult_after_0831",
+      "name": "3+1인실 성인 (2026.8.31~)",
+      "roomType": "3인실",
+      "target": "성인일반",
+      "price4Weeks": 900000,
+      "currency": "KRW",
+      "note": "평일3식, 주2회 청소/빨래 포함. 2026.8.31부터 적용."
+    },
+    {
+      "id": "quad_adult_after_0831",
+      "name": "4인실 성인 (2026.8.31~)",
+      "roomType": "4인실",
+      "target": "성인일반",
+      "price4Weeks": 800000,
+      "currency": "KRW",
+      "note": "평일3식, 주2회 청소/빨래 포함. 2026.8.31부터 적용."
+    },
+    {
+      "id": "family_2p_before_0828",
+      "name": "가족 2인실 (~2026.8.28)",
+      "roomType": "2인실",
+      "target": "가족연수",
+      "price4Weeks": 1600000,
+      "currency": "KRW",
+      "note": "식사 불포함. ~2026.8.28 적용."
+    },
+    {
+      "id": "family_3p_before_0828",
+      "name": "가족 3인실 (~2026.8.28)",
+      "roomType": "3인실",
+      "target": "가족연수",
+      "price4Weeks": 1900000,
+      "currency": "KRW",
+      "note": "식사 불포함. ~2026.8.28 적용."
+    },
+    {
+      "id": "family_4p_before_0828",
+      "name": "가족 4인실 (~2026.8.28)",
+      "roomType": "4인실",
+      "target": "가족연수",
+      "price4Weeks": 2200000,
+      "currency": "KRW",
+      "note": "식사 불포함. ~2026.8.28 적용."
+    },
+    {
+      "id": "family_2p_after_0831",
+      "name": "가족 2인실 (2026.8.31~12.31)",
+      "roomType": "2인실",
+      "target": "가족연수",
+      "price4Weeks": 1600000,
+      "currency": "KRW",
+      "note": "식사 불포함. 2026.8.31~12.31 적용. ~2026.8.28과 동일 가격."
+    },
+    {
+      "id": "family_3p_after_0831",
+      "name": "가족 3인실 (2026.8.31~12.31)",
+      "roomType": "3인실",
+      "target": "가족연수",
+      "price4Weeks": 1900000,
+      "currency": "KRW",
+      "note": "식사 불포함. 2026.8.31~12.31 적용."
+    },
+    {
+      "id": "family_4p_after_0831",
+      "name": "가족 4인실 (2026.8.31~12.31)",
+      "roomType": "4인실",
+      "target": "가족연수",
+      "price4Weeks": 2200000,
+      "currency": "KRW",
+      "note": "식사 불포함. 2026.8.31~12.31 적용."
+    },
+    {
+      "id": "family_2p_after_2027",
+      "name": "가족 2인실 (2027.1.4~)",
+      "roomType": "2인실",
+      "target": "가족연수",
+      "price4Weeks": 2780000,
+      "currency": "KRW",
+      "note": "평일3식, 주2회 청소/빨래 포함. 2027.1.4부터 적용. 대폭 인상."
+    },
+    {
+      "id": "family_3p_after_2027",
+      "name": "가족 3인실 (2027.1.4~)",
+      "roomType": "3인실",
+      "target": "가족연수",
+      "price4Weeks": 3620000,
+      "currency": "KRW",
+      "note": "평일3식, 주2회 청소/빨래 포함. 2027.1.4부터 적용."
+    },
+    {
+      "id": "family_4p_after_2027",
+      "name": "가족 4인실 (2027.1.4~)",
+      "roomType": "4인실",
+      "target": "가족연수",
+      "price4Weeks": 4460000,
+      "currency": "KRW",
+      "note": "평일3식, 주2회 청소/빨래 포함. 2027.1.4부터 적용."
+    }
+  ],
+  "surcharges": [],
+  "packages": [],
+  "promotions": null,
+  "localFees": [
+    {
+      "id": "deposit",
+      "name": "숙소 보증금",
+      "amount": 0,
+      "currency": "PHP",
+      "trigger": "always",
+      "chargeUnit": "flat",
+      "note": "통학/성인 5,000페소, 가족/토익/IELTS 10,000페소."
+    },
+    {
+      "id": "condo_mgmt",
+      "name": "숙소 콘도 관리비",
+      "amount": 2000,
+      "currency": "PHP",
+      "trigger": "per_4weeks",
+      "chargeUnit": "per_person",
+      "note": "인당/4주 2,000페소."
+    },
+    {
+      "id": "utility",
+      "name": "전기세, 수도세, 인터넷비",
+      "amount": 0,
+      "currency": "PHP",
+      "trigger": "per_4weeks",
+      "chargeUnit": "per_person",
+      "note": "1인실 3,500페소 / 2인실 3,000페소 / 3인실 2,500페소 / 4인실 2,000페소. 인당/4주. 1인실 4주 기준 전기 및 수도 사용료가 5,000페소 초과시 초과금액 추가 부과."
+    },
+    {
+      "id": "textbook",
+      "name": "교재비",
+      "amount": 0,
+      "currency": "PHP",
+      "trigger": "always",
+      "chargeUnit": "per_person",
+      "note": "권당 170~500페소. 보증금에서 차감."
+    },
+    {
+      "id": "pickup",
+      "name": "클락공항 픽업비",
+      "amount": 0,
+      "currency": "PHP",
+      "trigger": "always",
+      "chargeUnit": "flat",
+      "note": "성인 1,000페소, 가족 500페소(인당)."
+    },
+    {
+      "id": "id_card",
+      "name": "아이디",
+      "amount": 500,
+      "currency": "PHP",
+      "trigger": "always",
+      "chargeUnit": "per_person",
+      "note": "인당 500페소."
+    },
+    {
+      "id": "ssp",
+      "name": "SSP",
+      "amount": 7800,
+      "currency": "PHP",
+      "trigger": "always",
+      "chargeUnit": "per_person",
+      "note": "7,800페소."
+    },
+    {
+      "id": "visa_1",
+      "name": "비자연장 (8주)",
+      "amount": 5130,
+      "currency": "PHP",
+      "trigger": "over_weeks",
+      "triggerWeeks": 4,
+      "chargeUnit": "per_person",
+      "note": "8주 등록시."
+    },
+    {
+      "id": "visa_2",
+      "name": "비자연장 (12주)",
+      "amount": 11540,
+      "currency": "PHP",
+      "trigger": "over_weeks",
+      "triggerWeeks": 8,
+      "chargeUnit": "per_person",
+      "note": "12주 등록시 누적."
+    },
+    {
+      "id": "visa_3",
+      "name": "비자연장 (16주)",
+      "amount": 16080,
+      "currency": "PHP",
+      "trigger": "over_weeks",
+      "triggerWeeks": 12,
+      "chargeUnit": "per_person",
+      "note": "16주 등록시 누적."
+    },
+    {
+      "id": "visa_4",
+      "name": "비자연장 (20주)",
+      "amount": 20620,
+      "currency": "PHP",
+      "trigger": "over_weeks",
+      "triggerWeeks": 16,
+      "chargeUnit": "per_person",
+      "note": "20주 등록시 누적."
+    },
+    {
+      "id": "visa_5",
+      "name": "비자연장 (24주)",
+      "amount": 26600,
+      "currency": "PHP",
+      "trigger": "over_weeks",
+      "triggerWeeks": 20,
+      "chargeUnit": "per_person",
+      "note": "24주 등록시 누적."
+    },
+    {
+      "id": "acr_icard",
+      "name": "ACR I-CARD",
+      "amount": 4500,
+      "currency": "PHP",
+      "trigger": "over_weeks",
+      "triggerWeeks": 8,
+      "chargeUnit": "per_person",
+      "note": "12주 이상 등록시 4,500페소."
+    }
+  ],
+  "additionalCharges": [
+    {
+      "id": "meal_1",
+      "label": "현지 선택 식사 옵션 - 1식",
+      "amount": 8000,
+      "unit": "4주당",
+      "currency": "PHP",
+      "category": "옵션",
+      "note": "1식(점심/저녁 택1) + 청소 주1회 + 침구류 2주 1회 교체. 4주 8,000페소. 1주 2,000 / 2주 4,000 / 3주 6,000."
+    },
+    {
+      "id": "meal_2",
+      "label": "현지 선택 식사 옵션 - 2식",
+      "amount": 15000,
+      "unit": "4주당",
+      "currency": "PHP",
+      "category": "옵션",
+      "note": "2식(점심,저녁) + 청소 주2회 + 침구류 2주 1회 교체. 4주 15,000페소. 2식 선택시 조식 포함 3식 제공. 주말/공휴일 식사 미제공."
+    }
+  ],
+  "refundPolicy": "",
+  "dormitoryRules": "* 식사는 선택적으로 현지 옵션으로 추가 가능 (성인 2인실 선택시 식사 의무)\n* 제공 사항: 침구, 밥솥, 전자렌지, 커피포트, 냄비, 조리도구, 미니선풍기, 식기류, 비데, 워터디스펜서, 헤어드라이기, 옷걸이 제공\n* 2026.8.31부터: 성인 2인실/3+1인실/4인실은 평일3식+주2회 청소/빨래 포함. 1인실은 불포함.\n* 2027.1.4부터: 가족 기숙사 평일3식+주2회 청소/빨래 포함으로 변경 (가격 대폭 인상)",
+  "generalNotes": "▶학원 개요◀\n* TALK Academy 클락 캠퍼스\n* 인당 등록금 10만원 별도\n\n▶기숙사 3시기 가격표◀\n* ~2026.8.28: 식사 불포함 (성인/가족 모두)\n* 2026.8.31~: 성인 2인실/3+1인실/4인실 식사+청소+빨래 포함. 1인실/가족은 불포함 유지.\n* 2027.1.4~: 가족 기숙사도 식사+청소+빨래 포함. 가격 대폭 인상.\n→ 견적 시 연수 시작일에 따라 해당 시기 기숙사 선택 필요.\n\n▶가족 비수기 특별가 (별도 자료)◀\n* 비수기: 2인 160만/3인 180만(비수기)/4인 180만(비수기)/5인 180만(비수기)\n* 성수기: 2인 160만/3인 190만/4인 220만/5인 220만\n* 기숙사 비수기 주차별: 1주/2주/3주/4주 비례\n* 프로모션 talk_2026_low_family 참조\n\n▶INTERNSHIP / BARISTA 코스◀\n* INTERNSHIP: 4주 180만원 / 8주 340만원만 존재\n* BARISTA: 12주 520만원만 존재\n* 시스템 자동 계산 불가 → 운영자 수동 견적\n\n▶현지비용 참고◀\n* 최신 PDF (클락_토크_어학원_현지_비용_2026_09_01__.pdf) 기준: SSP 7,800, 보증금 5,000/10,000, ID 500\n* 식사 옵션은 현지에서 페소로 납부 (한국 계좌 이체 가능)\n* 조식, 주말, 공휴일은 식사 미제공",
+  "isActive": true,
+  "createdAt": "2026-05-30",
+  "updatedAt": "2026-05-30",
+  "courseShortTermRates": {
+    "mode": "percent",
+    "week1": 25,
+    "week2": 50,
+    "week3": 75,
+    "week4Included": false,
+    "note": "학비(코스) 기준"
+  },
+  "dormShortTermRates": {
+    "mode": "percent",
+    "week1": 45,
+    "week2": 65,
+    "week3": 85,
+    "week4Included": false,
+    "note": "기숙사 기준"
+  },
+  "shortTermDataStatus": "confirmed"
+}

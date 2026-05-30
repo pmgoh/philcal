@@ -1,0 +1,97 @@
+{
+  "id": "eedu_early",
+  "schoolCode": "EEDU_EARLY",
+  "name": "A&J e-Edu 조기유학 프로그램",
+  "campus": "에코 캠퍼스 (조기유학)",
+  "region": "바기오",
+  "schoolType": "camp",
+  "minWeeks": 20,
+  "allowShortTerm": false,
+  "programTags": [
+    "조기유학"
+  ],
+  "registrationFee": {
+    "amount": 0,
+    "currency": "KRW",
+    "note": "패키지에 포함"
+  },
+  "courses": [],
+  "dormitories": [],
+  "surcharges": [],
+  "promotions": null,
+  "localFees": [],
+  "packages": [
+    {
+      "id": "eedu_early_deluxe",
+      "name": "조기유학 - 디럭스 2인실 (5개월)",
+      "programType": "early_study",
+      "includesLocalFees": false,
+      "note": "5개월 비용 기간: 1학기 8월초~12월말, 2학기 1월초~5월말. 학비 700만원 + 디럭스 2인실 525만원 = 총 1,225만원.",
+      "includes": "학원 학비 및 케어 5개월, 디럭스 2인실 5개월",
+      "excludes": "학교 입학처리비용 50만원, 통학 셔틀 밴비용 40만원/매달, 학원 등록금 10만원 (한번만 지불), 현지비용 (SSP P7,800, E-CARD P4,500, 비자연장, 유틸리티비 P12,500~P17,500/5개월, 관리유지비 P5,000~P7,500, 픽업비 P3,000, 학원아이디카드 P200, 교재비 P1,000/4주, 보증금 P3,000~P5,000)",
+      "priceMatrix": {
+        "columns": [
+          "총 금액"
+        ],
+        "rows": [
+          {
+            "label": "디럭스 2인실 5개월",
+            "weeks": 20,
+            "prices": [
+              12250000
+            ]
+          }
+        ]
+      },
+      "currency": "KRW"
+    },
+    {
+      "id": "eedu_early_premium",
+      "name": "조기유학 - 프리미엄 2인실 (5개월)",
+      "programType": "early_study",
+      "includesLocalFees": false,
+      "note": "학비 700만원 + 프리미엄 2인실 625만원 = 총 1,325만원.",
+      "includes": "학원 학비 및 케어 5개월, 프리미엄 2인실 5개월",
+      "excludes": "학교 입학처리비용 50만원, 통학 셔틀 밴비용 40만원/매달, 학원 등록금 10만원, 현지비용",
+      "priceMatrix": {
+        "columns": [
+          "총 금액"
+        ],
+        "rows": [
+          {
+            "label": "프리미엄 2인실 5개월",
+            "weeks": 20,
+            "prices": [
+              13250000
+            ]
+          }
+        ]
+      },
+      "currency": "KRW"
+    }
+  ],
+  "additionalCharges": [
+    {
+      "id": "eedu_early_school_fee",
+      "name": "학교 입학처리비용",
+      "pricePerUnit": 500000,
+      "currency": "KRW"
+    },
+    {
+      "id": "eedu_early_shuttle",
+      "name": "통학 셔틀 밴비용 (매달)",
+      "pricePerUnit": 400000,
+      "currency": "KRW"
+    },
+    {
+      "id": "eedu_early_reg",
+      "name": "학원 등록금 (한번만)",
+      "pricePerUnit": 100000,
+      "currency": "KRW"
+    }
+  ],
+  "generalNotes": "A&J e-Edu 조기유학 프로그램. 5개월 단위 납부.\n\n1학기: 8월초~12월말 (8월 전 입학시험준비로 일찍 오는 학생은 연수비용 추가).\n2학기: 1월초~5월말.\n방학 중 학원에 남아있는 경우 학원 연수비용 추가.\n방학기간은 성수기라 최소 6달 전 연수여부 알려주셔야 함.\n\n현지비용은 별도 (SSP/E-CARD/비자연장/유틸리티/관리유지비/픽업/ID/교재/보증금).",
+  "isActive": true,
+  "createdAt": "2026-05-29",
+  "updatedAt": "2026-05-30"
+}

@@ -1,0 +1,335 @@
+{
+  "id": "pj_academy",
+  "schoolCode": "PJ_ACADEMY",
+  "name": "PJ피자어학원",
+  "campus": "본원",
+  "region": "세부",
+  "schoolType": "camp",
+  "minWeeks": 2,
+  "allowShortTerm": false,
+  "programTags": [
+    "가족연수",
+    "주니어캠프",
+    "조기유학",
+    "위키즈"
+  ],
+  "registrationFee": {
+    "amount": 0,
+    "currency": "KRW",
+    "note": "등록금 별도 없음 (패키지에 포함되거나 현지비로 처리)"
+  },
+  "courses": [],
+  "dormitories": [],
+  "surcharges": [],
+  "promotions": null,
+  "localFees": [
+    {
+      "id": "pj_ssp_ecard",
+      "name": "SSP / E-Card",
+      "amount": 7800,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "trigger": "enrollment",
+      "note": "SSP 7,800페소 / E-Card 4,000페소"
+    },
+    {
+      "id": "pj_ecard",
+      "name": "E-Card",
+      "amount": 4000,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "trigger": "enrollment",
+      "note": "E-Card 발급비"
+    },
+    {
+      "id": "pj_visa_1st",
+      "name": "비자연장비 1차 (4주 초과 시)",
+      "amount": 4900,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "trigger": "stay_over",
+      "triggerWeeks": 5,
+      "note": "4주 초과 시 1차 비자연장"
+    },
+    {
+      "id": "pj_visa_2nd",
+      "name": "비자연장비 2차 (8주 초과 시)",
+      "amount": 6800,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "trigger": "stay_over",
+      "triggerWeeks": 9,
+      "note": "8주 초과 시 2차 비자연장"
+    },
+    {
+      "id": "pj_visa_3to5",
+      "name": "비자연장비 3차~5차",
+      "amount": 4250,
+      "currency": "PHP",
+      "chargeUnit": "per_extension",
+      "trigger": "stay_over",
+      "triggerWeeks": 13,
+      "note": "3차~5차 비자연장. 매 연장 시 4,250페소."
+    },
+    {
+      "id": "pj_acr_icard",
+      "name": "ACR I-Card (2차 비자연장 시)",
+      "amount": 3500,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "trigger": "stay_over",
+      "triggerWeeks": 9,
+      "note": "2차 비자연장 시 발급 필요"
+    },
+    {
+      "id": "pj_deposit",
+      "name": "보증금 (팀당)",
+      "amount": 2500,
+      "currency": "PHP",
+      "chargeUnit": "per_team",
+      "trigger": "enrollment",
+      "note": "보증금. 팀당."
+    },
+    {
+      "id": "pj_regfee_id",
+      "name": "등록비 ID발급 (인당)",
+      "amount": 2000,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "trigger": "enrollment",
+      "note": "등록비 및 ID 발급비"
+    },
+    {
+      "id": "pj_utility",
+      "name": "전기 / 수도 / 관리비 (4주)",
+      "amount": 6000,
+      "currency": "PHP",
+      "chargeUnit": "per_4weeks",
+      "trigger": "enrollment",
+      "note": "전기세/수도/관리비는 초과 시 초과금만큼 부과"
+    },
+    {
+      "id": "pj_textbook",
+      "name": "교재비",
+      "amount": 1500,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "trigger": "enrollment",
+      "note": "교재비 1,000~2,000페소"
+    }
+  ],
+  "packages": [
+    {
+      "id": "pj_cebu_off_silsok",
+      "name": "세부 비수기 가족연수 - 실속형",
+      "programType": "family",
+      "note": "레지던스 타입 숙소. 실속형 상품은 인당 100만원의 계약금 납부 상품. 현지비용 별도.",
+      "includes": "숙소 레지던스 타입 + 기본 어메니티 최초 1회 제공, 학원 수업 프로그램 (1대1 최대 7시간 + 단어 1시간), 주 3회 하우스키핑 + 빨래 주 3회 외부에서 제공, 공항 픽업 & 샌딩, 식사 (중식 & 석식 + 간단 조식 / 주말 조식 미제공), 레지던스 숙소 콘도미니엄 컨시어지 서비스",
+      "excludes": "왕복 항공권 & 여행자보험, 한국 수업 & 저녁 한국 수업·영어활동, 개인비용, 추가 인원 공항 픽드랍 (편도 1,000페소), 액티비티·셔틀·부모님 수업 및 현지 비용 다음 페이지 참조, NEW! 라빅토리아 레지던스 업그레이드 - 4주 40만원",
+      "priceMatrix": {
+        "columns": [
+          "2인 가족",
+          "3인 가족",
+          "4인 가족"
+        ],
+        "rows": [
+          {
+            "weeks": 2,
+            "prices": [
+              2100000,
+              3000000,
+              3900000
+            ]
+          },
+          {
+            "weeks": 3,
+            "prices": [
+              2600000,
+              3650000,
+              4700000
+            ]
+          },
+          {
+            "weeks": 4,
+            "prices": [
+              3170000,
+              4300000,
+              5600000
+            ]
+          },
+          {
+            "weeks": 6,
+            "prices": [
+              4550000,
+              6300000,
+              8100000
+            ]
+          },
+          {
+            "weeks": 8,
+            "prices": [
+              5650000,
+              8100000,
+              10650000
+            ]
+          },
+          {
+            "weeks": 12,
+            "prices": [
+              8100000,
+              11100000,
+              14650000
+            ]
+          }
+        ]
+      },
+      "currency": "KRW"
+    },
+    {
+      "id": "pj_cebu_off_wikids",
+      "name": "세부 비수기 가족연수 - 위키즈 ONLY 프로그램",
+      "programType": "family",
+      "note": "위키즈 영어놀이 프로그램 8시간 (오전 9시부터 오후 9시 중식포함). 현지비용 별도.",
+      "includes": "숙소 레지던스 타입 + 기본 어메니티 최초 1회 제공, 위키즈 영어놀이 프로그램 8시간, 공항 픽업 & 샌딩, 식사 (중식 & 석식 + 간단 조식 / 주말 조식 미제공), 막탄 뉴타운 비치 입장료 할인 (30페소/인 입장)",
+      "excludes": "왕복 항공권 & 여행자보험, 한국 수업 & 저녁 한국 수업·영어활동 / 정규 주니어 수업, 개인비용, 추가 인원 공항 픽드랍 (편도 1,000페소), 액티비티·셔틀·부모님 수업 및 현지 비용 (비자/SSP/등록비 등), NEW! 라빅토리아 레지던스 업그레이드 - 4주 40만원",
+      "priceMatrix": {
+        "columns": [
+          "2인 가족",
+          "3인 가족",
+          "4인 가족"
+        ],
+        "rows": [
+          {
+            "weeks": 3,
+            "prices": [
+              2150000,
+              2850000,
+              3550000
+            ]
+          },
+          {
+            "weeks": 4,
+            "prices": [
+              2650000,
+              3850000,
+              5050000
+            ]
+          },
+          {
+            "weeks": 6,
+            "prices": [
+              3950000,
+              5750000,
+              7550000
+            ]
+          },
+          {
+            "weeks": 8,
+            "prices": [
+              5300000,
+              7700000,
+              10100000
+            ]
+          },
+          {
+            "weeks": 12,
+            "prices": [
+              7950000,
+              11550000,
+              15150000
+            ]
+          }
+        ]
+      },
+      "currency": "KRW"
+    },
+    {
+      "id": "pj_cebu_early_study",
+      "name": "세부 조기 유학",
+      "programType": "early_study",
+      "note": "뉴타운 숙소 레지던스 원베드룸 + 인터넷 포함. 현지비용 별도 (왕복 항공권, 비자, SSP/비자연장, 유학생보험, 학비, 개인용돈, 관리비 등).",
+      "includes": "뉴타운 숙소 레지던스 원베드룸 (최초 1달 어메니티 제공) + 인터넷 포함, 식사 & 주 3회 하우스키핑 & 외부 세탁 (조식·중식·석식 + 학교 도시락, 주말 조식 제외), 학원 수업 (학교 입학 준비프로그램 + 입학 후 내신 관리 2시간 매일, 학교 입학 전까지 매일 8시간 ESL & 입학 준비 과정, 입학 후에는 내신관리·ESL·토플 등 시험 준비 수업 매일 2시간), 저녁공부 & 공휴일 학원 관리, 가디언 활동 (학교 활동 가디언 비용 일체·서류 대행 등 컨시어지 + 생활 관련), 토플/SAT 등 시험 준비 & 알라방 연계 또는 해외 연계 대학 진학 컨설팅 및 대행, 부모님 1대1 수업 3시간 3개월 지원, 스케줄에 맞춘 학원 셔틀 이용권 & 학원 ID발급 (학원 부대시설 모두 이용 가능)",
+      "excludes": "왕복 항공권 & 비자 연관 비용 (SSP/비자연장), 유학생 보험 (의료 비용), 학비 (학교 관련 비용), 개인 용돈 & 관리비 (전기세/물세 등), 위 포함되지 않은 모든 사항",
+      "priceMatrix": {
+        "columns": [
+          "2인 가족",
+          "3인 가족",
+          "4인 가족"
+        ],
+        "rows": [
+          {
+            "label": "6개월 단위 납부",
+            "weeks": 24,
+            "prices": [
+              21000000,
+              33000000,
+              39000000
+            ]
+          },
+          {
+            "label": "12개월 단위 납부",
+            "weeks": 48,
+            "prices": [
+              38500000,
+              60500000,
+              71500000
+            ]
+          }
+        ]
+      },
+      "currency": "KRW"
+    },
+    {
+      "id": "pj_alabang_early_study",
+      "name": "알라방 조기 유학",
+      "programType": "early_study",
+      "note": "홈스테이 숙소 & 부대시설 일체 + 어메니티. 현지비용 별도 (왕복 항공권, 유학생보험, 학비, 개인용돈).",
+      "includes": "홈스테이 숙소 & 부대시설 일체 + 어메니티, 매일 3식 (학교 등교 시 도시락), 학원 수업 (학교 입학 준비프로그램 + 입학 후 내신 관리 2시간 매일), 홈스테이 학습 관리 (한국 수학·학교 내신 보조·원서 읽기·CNN뉴스기사 해석·에세이작성), 가디언 활동 (학교 활동 가디언 비용 일체·서류 대행 등), 비자연장비용, 주기적으로 진행되는 액티비티 (해외 여행은 추가비용 발생), 토플/SAT 등 시험 준비 & 대학 진학 컨설팅 및 대행",
+      "excludes": "왕복 항공권, 유학생 보험 (의료 비용), 학비 (학교 관련 비용), 개인 용돈",
+      "priceMatrix": {
+        "columns": [
+          "홈스테이 비용"
+        ],
+        "rows": [
+          {
+            "label": "3개월 단위 납부",
+            "weeks": 12,
+            "prices": [
+              8700000
+            ]
+          },
+          {
+            "label": "6개월 단위 납부",
+            "weeks": 24,
+            "prices": [
+              16000000
+            ]
+          },
+          {
+            "label": "1년 단위 납부",
+            "weeks": 48,
+            "prices": [
+              31900000
+            ]
+          }
+        ]
+      },
+      "currency": "KRW"
+    }
+  ],
+  "additionalCharges": [
+    {
+      "id": "pj_extra_visit",
+      "name": "추가 인원 방문 (식사 + 숙박) / 픽업 & 샌딩",
+      "pricePerUnit": 100000,
+      "currency": "KRW",
+      "note": "1박 10만원(인) / 공항 픽드랍 편도 1,000페소"
+    }
+  ],
+  "refundPolicy": "",
+  "dormitoryRules": "",
+  "generalNotes": "PJ피자어학원. 세부/알라방 소재. 가족연수·주니어캠프·조기유학 전문.\n\n현지비용(실속형 기준): SSP 7,800페소, E-Card 4,000페소, 비자연장 1차 4,900/2차 6,800/3~5차 4,250, ACR I-Card 3,500, 보증금 2,500(팀당), 등록비ID 2,000(인당), 전기수도관리비 6,000(4주), 교재비 1,000~2,000.\n전기세/수도/관리비는 초과시 초과금만큼 부과.\n현지비용은 현지 입국 후 납부.\n실속형 상품은 인당 100만원의 계약금 납부 상품.\n\n라빅토리아 레지던스 업그레이드: 4주 40만원 추가.",
+  "isActive": true,
+  "createdAt": "2026-05-29",
+  "updatedAt": "2026-05-30"
+}

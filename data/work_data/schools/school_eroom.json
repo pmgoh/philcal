@@ -1,0 +1,59 @@
+{
+  "id": "eroom",
+  "schoolCode": "EROOM",
+  "name": "이룸 어학원 (E-Room Language Center)",
+  "campus": "본원",
+  "region": "기타",
+  "schoolType": "general",
+  "minWeeks": 1,
+  "allowShortTerm": true,
+  "programTags": ["ESL", "IELTS", "TOEIC", "비즈니스"],
+  "registrationFee": { "amount": 100000, "currency": "KRW", "note": "입학금 100,000원" },
+  "courses": [
+    { "id": "eroom_guardian", "name": "GUARDIAN (학부모)", "classDetails": "1:1 3H + 옵션 1H", "price4Weeks": 580000, "currency": "KRW" },
+    { "id": "eroom_flexible", "name": "FLEXIBLE", "classDetails": "1:1 3H + 1:4 1H + 옵션 1H", "price4Weeks": 620000, "currency": "KRW" },
+    { "id": "eroom_light", "name": "LIGHT", "classDetails": "1:1 4H + 1:4 1H + 옵션 1H", "price4Weeks": 720000, "currency": "KRW" },
+    { "id": "eroom_regular", "name": "REGULAR", "classDetails": "1:1 5H + 1:4 1H + 옵션 1H", "price4Weeks": 820000, "currency": "KRW" },
+    { "id": "eroom_intensive", "name": "INTENSIVE", "classDetails": "1:1 6H + 1:4 1H + 옵션 1H", "price4Weeks": 920000, "currency": "KRW" },
+    { "id": "eroom_power_speaking", "name": "POWER SPEAKING", "classDetails": "1:1 7H + 1:4 1H + 옵션 1H", "price4Weeks": 1020000, "currency": "KRW" },
+    { "id": "eroom_ielts_toeic_light", "name": "IELTS/TOEIC LIGHT", "classDetails": "1:1 4H + 1:4 1H + 옵션 1H", "price4Weeks": 860000, "currency": "KRW" },
+    { "id": "eroom_ielts_toeic_regular", "name": "IELTS/TOEIC REGULAR", "classDetails": "1:1 5H + 1:4 1H + 옵션 1H", "price4Weeks": 960000, "currency": "KRW" },
+    { "id": "eroom_ielts_toeic_intensive", "name": "IELTS/TOEIC INTENSIVE", "classDetails": "1:1 6H + 1:4 1H + 옵션 1H", "price4Weeks": 1060000, "currency": "KRW" },
+    { "id": "eroom_ielts_toeic_power", "name": "IELTS/TOEIC POWER", "classDetails": "1:1 7H + 1:4 1H + 옵션 1H", "price4Weeks": 1160000, "currency": "KRW" }
+  ],
+  "dormitories": [
+    { "id": "eroom_1", "name": "1인실", "price4Weeks": 970000, "currency": "KRW" },
+    { "id": "eroom_2", "name": "2인실", "price4Weeks": 820000, "currency": "KRW" },
+    { "id": "eroom_3", "name": "3인실", "price4Weeks": 720000, "currency": "KRW" },
+    { "id": "eroom_4", "name": "4인실", "price4Weeks": 620000, "currency": "KRW", "note": "문의요망" }
+  ],
+  "surcharges": [],
+  "promotions": null,
+  "localFees": [
+    { "id": "eroom_ssp", "name": "SSP", "amount": 7200, "currency": "PHP", "chargeUnit": "per_person", "trigger": "enrollment", "note": "6개월 유효" },
+    { "id": "eroom_acr_icard", "name": "ACR I-CARD", "amount": 4010, "currency": "PHP", "chargeUnit": "per_person", "trigger": "enrollment", "note": "1년 유효" },
+    { "id": "eroom_id", "name": "학생ID 발급비", "amount": 200, "currency": "PHP", "chargeUnit": "per_person", "trigger": "enrollment" },
+    { "id": "eroom_electricity", "name": "전기세", "amount": 500, "currency": "PHP", "chargeUnit": "per_4weeks_min", "trigger": "enrollment", "note": "사용량만큼 청구. 4주당 약 500~1,000페소. 1Kw:20페소." },
+    { "id": "eroom_water_mgmt", "name": "수도 및 관리비", "amount": 500, "currency": "PHP", "chargeUnit": "per_week", "trigger": "enrollment", "note": "1주당 500페소" },
+    { "id": "eroom_textbook", "name": "교재비", "amount": 250, "currency": "PHP", "chargeUnit": "per_book", "trigger": "enrollment", "note": "권당 250~450페소" },
+    { "id": "eroom_deposit", "name": "기숙사보증금", "amount": 3000, "currency": "PHP", "chargeUnit": "per_person", "trigger": "enrollment", "note": "연수 후 환불팀" },
+    { "id": "eroom_visa_4", "name": "비자연장 (4주 후)", "amount": 4360, "currency": "PHP", "chargeUnit": "cumulative", "trigger": "stay_over", "triggerWeeks": 5 },
+    { "id": "eroom_visa_8", "name": "비자연장 (8주 후)", "amount": 5630, "currency": "PHP", "chargeUnit": "cumulative", "trigger": "stay_over", "triggerWeeks": 9 },
+    { "id": "eroom_visa_12", "name": "비자연장 (12주 후)", "amount": 3660, "currency": "PHP", "chargeUnit": "cumulative", "trigger": "stay_over", "triggerWeeks": 13 },
+    { "id": "eroom_visa_16", "name": "비자연장 (16주 후)", "amount": 3660, "currency": "PHP", "chargeUnit": "cumulative", "trigger": "stay_over", "triggerWeeks": 17 },
+    { "id": "eroom_visa_20", "name": "비자연장 (20주 후)", "amount": 3660, "currency": "PHP", "chargeUnit": "cumulative", "trigger": "stay_over", "triggerWeeks": 21 }
+  ],
+  "packages": [],
+  "additionalCharges": [
+    { "id": "eroom_pickup", "name": "바콜로드 픽업비", "amount": 30000, "currency": "KRW", "note": "GUARDIAN과정은 무료" },
+    { "id": "eroom_flight", "name": "항공권", "amount": 400000, "currency": "KRW", "note": "40~60만원" },
+    { "id": "eroom_add_1on1", "name": "1:1 수업 추가", "amount": 150000, "currency": "KRW", "note": "4주 15만원" },
+    { "id": "eroom_add_group", "name": "1:4 그룹수업 추가", "amount": 60000, "currency": "KRW", "note": "4주 6만원" }
+  ],
+  "refundPolicy": "",
+  "dormitoryRules": "",
+  "generalNotes": "이룸 어학원. 바콜로드 소재.\n\n입학금: 100,000원.\n기숙사비: 청소/세탁 주 3회, 1일 3식 포함(주중, 주말).\n4인실은 문의요망.\n\nESL/BUSINESS 코스: CLASSIC & SEMI-SPARTA.\nIELTS/TOEIC 코스: CLASSIC & SEMI-SPARTA.\n\n비자연장비 주의: 이룸은 바기오/세부 표준과 다른 금액 (4주 후 4,360 / 8주 후 5,630 / 12~20주 후 각 3,660).\n\n2026.4.6 이후 등록 기준.",
+  "isActive": true,
+  "createdAt": "2026-05-29",
+  "updatedAt": "2026-05-29"
+}

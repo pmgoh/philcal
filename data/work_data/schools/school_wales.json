@@ -1,0 +1,405 @@
+{
+  "id": "wales",
+  "schoolCode": "WALES",
+  "name": "WALES 어학원",
+  "campus": "본원 (기숙형)",
+  "region": "바기오",
+  "schoolType": "general",
+  "minWeeks": 4,
+  "allowShortTerm": true,
+  "programTags": [
+    "ESL",
+    "IELTS",
+    "주니어",
+    "PTE"
+  ],
+  "registrationFee": {
+    "amount": 100000,
+    "currency": "KRW",
+    "note": "등록금 KRW 100,000"
+  },
+  "courses": [
+    {
+      "id": "wales_eep_lite",
+      "name": "EEP LITE",
+      "classDetails": "1:1 3H",
+      "price4Weeks": 900000,
+      "currency": "KRW"
+    },
+    {
+      "id": "wales_eep",
+      "name": "EEP",
+      "classDetails": "1:1 4H + Group 1H",
+      "price4Weeks": 1100000,
+      "currency": "KRW"
+    },
+    {
+      "id": "wales_infinity_lite",
+      "name": "INFINITY LITE",
+      "classDetails": "1:1 3H + Group 1H",
+      "price4Weeks": 1050000,
+      "currency": "KRW"
+    },
+    {
+      "id": "wales_infinity_intensive",
+      "name": "INFINITY INTENSIVE",
+      "classDetails": "1:1 5H + Group 3H",
+      "price4Weeks": 1400000,
+      "currency": "KRW"
+    },
+    {
+      "id": "wales_infinity_standard",
+      "name": "INFINITY STANDARD",
+      "classDetails": "1:1 4H + Group 2H",
+      "price4Weeks": 1200000,
+      "currency": "KRW"
+    },
+    {
+      "id": "wales_infinity_pro",
+      "name": "INFINITY PRO",
+      "classDetails": "1:1 4H + Group 3H",
+      "price4Weeks": 1650000,
+      "currency": "KRW"
+    },
+    {
+      "id": "wales_pte",
+      "name": "Pearson Test of English (PTE)",
+      "classDetails": "1:1 5H + Group 2H",
+      "price4Weeks": 1650000,
+      "currency": "KRW"
+    },
+    {
+      "id": "wales_ielts",
+      "name": "IELTS",
+      "classDetails": "1:1 5H + Group 2H",
+      "price4Weeks": 1650000,
+      "currency": "KRW"
+    },
+    {
+      "id": "wales_ielts_guarantee",
+      "name": "IELTS GUARANTEE (보장반)",
+      "classDetails": "1:1 4H + Group 2H",
+      "price4Weeks": 1820000,
+      "currency": "KRW",
+      "note": "보장반. 12주 546만 / 16주 728만 / 20주 910만 / 24주 1092만원. 12주 이상 등록 필수. 등록금 ₩200,000. 4주 환산값 182만원 (12주÷3 기준)."
+    },
+    {
+      "id": "wales_toeic_guarantee",
+      "name": "TOEIC GUARANTEE (보장반)",
+      "classDetails": "1:1 6H",
+      "price4Weeks": 1050000,
+      "currency": "KRW",
+      "note": "보장반. 12주 315만 / 16주 420만원. 12주 이상 등록 필수. 등록금 ₩200,000. 4주 환산값 105만원 (12주÷3 기준)."
+    },
+    {
+      "id": "wales_junior_esl",
+      "name": "JUNIOR ESL",
+      "classDetails": "1:1 5H + Group 3H",
+      "price4Weeks": 1800000,
+      "currency": "KRW"
+    },
+    {
+      "id": "wales_junior_ielts",
+      "name": "JUNIOR IELTS",
+      "classDetails": "1:1 5H + Group 2H",
+      "price4Weeks": 1950000,
+      "currency": "KRW"
+    }
+  ],
+  "dormitories": [
+    {
+      "id": "wales_condo_semisingle",
+      "name": "Condo Semi-Single",
+      "price4Weeks": 1950000,
+      "currency": "KRW"
+    },
+    {
+      "id": "wales_condo_family3",
+      "name": "Condo Family(3)",
+      "price4Weeks": 1600000,
+      "currency": "KRW"
+    },
+    {
+      "id": "wales_condo_family4",
+      "name": "Condo Family(4)",
+      "price4Weeks": 1470000,
+      "currency": "KRW"
+    },
+    {
+      "id": "wales_lps_single",
+      "name": "Lower Premium Studio Single",
+      "price4Weeks": 2200000,
+      "currency": "KRW"
+    },
+    {
+      "id": "wales_lps_double",
+      "name": "Lower Premium Studio Double",
+      "price4Weeks": 1500000,
+      "currency": "KRW"
+    },
+    {
+      "id": "wales_lps_family3",
+      "name": "Lower Premium Studio Family(3)",
+      "price4Weeks": 1250000,
+      "currency": "KRW"
+    },
+    {
+      "id": "wales_share_single_veranda",
+      "name": "Share Single(Veranda)",
+      "price4Weeks": 1600000,
+      "currency": "KRW"
+    },
+    {
+      "id": "wales_share_single",
+      "name": "Share Single",
+      "price4Weeks": 1450000,
+      "currency": "KRW"
+    },
+    {
+      "id": "wales_share_double",
+      "name": "Share Double",
+      "price4Weeks": 1300000,
+      "currency": "KRW"
+    },
+    {
+      "id": "wales_lower_studio_single",
+      "name": "Lower Studio Single",
+      "price4Weeks": 1650000,
+      "currency": "KRW"
+    },
+    {
+      "id": "wales_lower_studio_family2",
+      "name": "Lower Studio Family(2)",
+      "price4Weeks": 1250000,
+      "currency": "KRW"
+    },
+    {
+      "id": "wales_premium_studio_single",
+      "name": "Premium Studio Single",
+      "price4Weeks": 2350000,
+      "currency": "KRW"
+    },
+    {
+      "id": "wales_premium_studio_double",
+      "name": "Premium Studio Double",
+      "price4Weeks": 1650000,
+      "currency": "KRW"
+    },
+    {
+      "id": "wales_premium_studio_family3",
+      "name": "Premium Studio Family(3)",
+      "price4Weeks": 1400000,
+      "currency": "KRW"
+    },
+    {
+      "id": "wales_studio_single",
+      "name": "Studio Single",
+      "price4Weeks": 1800000,
+      "currency": "KRW"
+    },
+    {
+      "id": "wales_studio_family2",
+      "name": "Studio Family(2)",
+      "price4Weeks": 1375000,
+      "currency": "KRW"
+    }
+  ],
+  "surcharges": [],
+  "localFees": [
+    {
+      "id": "wales_ssp",
+      "name": "SSP",
+      "amount": 12300,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "trigger": "enrollment"
+    },
+    {
+      "id": "wales_acr_icard",
+      "name": "ACR I-CARD",
+      "amount": 4000,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "trigger": "stay_over_59days",
+      "triggerWeeks": 9,
+      "note": "4주/6주/8주: 0. 12주+: 4,000."
+    },
+    {
+      "id": "wales_visa_6",
+      "name": "비자연장 (6주)",
+      "amount": 4940,
+      "currency": "PHP",
+      "chargeUnit": "cumulative",
+      "trigger": "stay_over",
+      "triggerWeeks": 5
+    },
+    {
+      "id": "wales_visa_8",
+      "name": "비자연장 (8주)",
+      "amount": 4940,
+      "currency": "PHP",
+      "chargeUnit": "cumulative",
+      "trigger": "stay_over",
+      "triggerWeeks": 5
+    },
+    {
+      "id": "wales_visa_12",
+      "name": "비자연장 (12주)",
+      "amount": 11150,
+      "currency": "PHP",
+      "chargeUnit": "cumulative",
+      "trigger": "stay_over",
+      "triggerWeeks": 9
+    },
+    {
+      "id": "wales_visa_16",
+      "name": "비자연장 (16주)",
+      "amount": 15300,
+      "currency": "PHP",
+      "chargeUnit": "cumulative",
+      "trigger": "stay_over",
+      "triggerWeeks": 13
+    },
+    {
+      "id": "wales_visa_20",
+      "name": "비자연장 (20주)",
+      "amount": 19630,
+      "currency": "PHP",
+      "chargeUnit": "cumulative",
+      "trigger": "stay_over",
+      "triggerWeeks": 17
+    },
+    {
+      "id": "wales_visa_24",
+      "name": "비자연장 (24주)",
+      "amount": 24140,
+      "currency": "PHP",
+      "chargeUnit": "cumulative",
+      "trigger": "stay_over",
+      "triggerWeeks": 21
+    },
+    {
+      "id": "wales_deposit",
+      "name": "Dormitory Deposit",
+      "amount": 5000,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "trigger": "enrollment"
+    },
+    {
+      "id": "wales_student_id",
+      "name": "Student ID Card",
+      "amount": 300,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "trigger": "enrollment"
+    },
+    {
+      "id": "wales_mgmt",
+      "name": "Management Fee",
+      "amount": 1000,
+      "currency": "PHP",
+      "chargeUnit": "per_4weeks",
+      "trigger": "enrollment"
+    },
+    {
+      "id": "wales_elec_water",
+      "name": "Electricity & Water",
+      "amount": 3500,
+      "currency": "PHP",
+      "chargeUnit": "per_4weeks",
+      "trigger": "enrollment"
+    }
+  ],
+  "packages": [],
+  "additionalCharges": [
+    {
+      "id": "wales_textbook_lite",
+      "name": "교재비 (EEP Lite, EEP, Infinity Lite)",
+      "amount": 1500,
+      "currency": "PHP",
+      "note": "4주당"
+    },
+    {
+      "id": "wales_textbook_adv",
+      "name": "교재비 (INFINITY, IELTS, Junior)",
+      "amount": 2000,
+      "currency": "PHP",
+      "note": "4주당"
+    },
+    {
+      "id": "wales_pickup_manila",
+      "name": "Group Pickup (Manila)",
+      "amount": 3000,
+      "currency": "PHP"
+    },
+    {
+      "id": "wales_pickup_clark",
+      "name": "Group Pickup (Clark)",
+      "amount": 2500,
+      "currency": "PHP"
+    },
+    {
+      "id": "wales_private_manila",
+      "name": "Private Pickup (Manila)",
+      "amount": 12000,
+      "currency": "PHP"
+    },
+    {
+      "id": "wales_private_clark",
+      "name": "Private Pickup (Clark)",
+      "amount": 7500,
+      "currency": "PHP"
+    },
+    {
+      "id": "wales_add_class",
+      "name": "추가수업",
+      "currency": "PHP",
+      "note": "EEP/Infinity: P7,000 / IELTS: P8,000 / Junior: P9,000 / Group: P5,000 (EEP, Infinity)"
+    },
+    {
+      "id": "wales_add_dorm_share",
+      "name": "추가 기숙사 (Share Type)",
+      "currency": "PHP",
+      "note": "P1,000/night. No meals included."
+    },
+    {
+      "id": "wales_add_dorm_other",
+      "name": "추가 기숙사 (Other Type)",
+      "currency": "PHP",
+      "note": "P2,000/night. No meals included."
+    },
+    {
+      "id": "wales_ielts_guarantee_fee",
+      "name": "IELTS Guarantee Local Fee",
+      "amount": 18000,
+      "currency": "PHP",
+      "note": "현지납부"
+    },
+    {
+      "id": "wales_pte_mock",
+      "name": "PTE Mock Test Exam Fee",
+      "amount": 6000,
+      "currency": "PHP"
+    }
+  ],
+  "generalNotes": "WALES 어학원. 바기오 소재.\n\n등록금: KRW 100,000 (보장반은 KRW 200,000).\nKRW 가격표 기반.\n\nIELTS/TOEIC 보장반은 학비 총액 표시 (4주 환산 불가).\n\n기숙사 타입이 매우 다양 (condo/share/lower_premium_studio/premium_studio/lower_studio/studio).\nFamily 기숙사: 인당 가격.\n\n2026.3.27부터 적용 (WALES 학비표 PDF 기준).\n비자연장비 24주: ₱24,140 (바기오 표준 23,870과 다름 — PDF 원본 그대로 반영).",
+  "isActive": true,
+  "createdAt": "2026-05-29",
+  "updatedAt": "2026-05-30",
+  "courseShortTermRates": {
+    "mode": "percent",
+    "week1": 40,
+    "week2": 60,
+    "week3": 80,
+    "week4Included": false
+  },
+  "dormShortTermRates": {
+    "mode": "percent",
+    "week1": 40,
+    "week2": 60,
+    "week3": 80,
+    "week4Included": false
+  },
+  "shortTermDataStatus": "confirmed"
+}

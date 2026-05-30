@@ -1,0 +1,429 @@
+{
+  "id": "ciec",
+  "schoolCode": "CIEC",
+  "name": "CIEC GLOBAL",
+  "campus": "본원",
+  "region": "세부",
+  "schoolType": "general",
+  "minWeeks": 4,
+  "allowShortTerm": true,
+  "programTags": [
+    "주니어",
+    "가족연수",
+    "IELTS",
+    "TOEFL",
+    "조기유학",
+    "관리형"
+  ],
+  "registrationFee": {
+    "amount": 100000,
+    "currency": "KRW",
+    "note": "입학금 10만원 (1회 납부, 환불 불가)"
+  },
+  "courses": [
+    {
+      "id": "ciec_kinder",
+      "name": "유치부 프로그램",
+      "price4Weeks": 1150000,
+      "currency": "KRW",
+      "note": "48개월~7세. 오전그룹 3H+오후 1:1 2H+오침 1H"
+    },
+    {
+      "id": "ciec_jr_academic",
+      "name": "주니어 아카데믹",
+      "price4Weeks": 1250000,
+      "currency": "KRW",
+      "note": "1:1 4H+그룹 3H"
+    },
+    {
+      "id": "ciec_jr_intensive",
+      "name": "주니어 인텐시브",
+      "price4Weeks": 1500000,
+      "currency": "KRW",
+      "note": "1:1 4H+그룹 4H+Self Study 1H"
+    },
+    {
+      "id": "ciec_jr_ielts_toefl",
+      "name": "주니어 IELTS/TOEFL",
+      "price4Weeks": 1500000,
+      "currency": "KRW",
+      "note": "1:1 4H+그룹 3H(ESL)"
+    },
+    {
+      "id": "ciec_entrance_prep",
+      "name": "입학 준비반",
+      "price4Weeks": 1500000,
+      "currency": "KRW",
+      "note": "1:1 6H+Self Study"
+    },
+    {
+      "id": "ciec_early_study",
+      "name": "조기유학 과정",
+      "price4Weeks": 1250000,
+      "currency": "KRW",
+      "note": "현지 학교 등하교+도시락+방과 후 1:1 3H. 학교 학비 별도."
+    },
+    {
+      "id": "ciec_guardian_esl",
+      "name": "보호자 ESL",
+      "price4Weeks": 700000,
+      "currency": "KRW",
+      "note": "1:1 3H. 20세 이상."
+    },
+    {
+      "id": "ciec_guardian_biz_ielts",
+      "name": "보호자 BUSINESS/IELTS",
+      "price4Weeks": 800000,
+      "currency": "KRW",
+      "note": "1:1 3H. 20세 이상."
+    },
+    {
+      "id": "ciec_cidec",
+      "name": "CIDEC",
+      "price4Weeks": 3500000,
+      "currency": "KRW",
+      "note": "1:1 4H+그룹 3H+Self Study. 초1~고3. 350만원+135만원(한 학년 학비+4주 학비, 프로젝트 교재비). 불포함: CIDEC학교 SSP+Ecard 등."
+    }
+  ],
+  "dormitories": [
+    {
+      "id": "ciec_2p",
+      "name": "본원 2인실",
+      "price4Weeks": 970000,
+      "currency": "KRW",
+      "note": "식사(주중 3식/주말 2식), 세탁/청소(주2회) 포함"
+    },
+    {
+      "id": "ciec_3p",
+      "name": "본원 3인실",
+      "price4Weeks": 890000,
+      "currency": "KRW",
+      "note": "식사(주중 3식/주말 2식), 세탁/청소(주2회) 포함"
+    }
+  ],
+  "packages": [
+    {
+      "id": "ciec_summer_camp_2026",
+      "label": "2026 여름 주니어캠프",
+      "season": "성수기",
+      "currency": "KRW",
+      "columns": [
+        "4주"
+      ],
+      "priceMatrix": [
+        {
+          "weeks": 4,
+          "prices": [
+            {
+              "label": "4주 과정",
+              "amount": 3800000
+            }
+          ]
+        }
+      ],
+      "includes": "수업비 및 교재, 식사, 간식, 성적평가서, SSP(Special Study Permit)발급비, 소아공증, 필리핀 입출국시 미동반 소아 입국세(3,620페소), 각종 Activity 비용(입장료 및 활동비), 여행자 보험, 교통비, 캠프 티셔츠",
+      "excludes": "왕복 항공료, 여권발급비, 개인용돈($150~$200), 개인 비상약",
+      "includesLocalFees": true,
+      "schedules": [
+        {
+          "startDate": "2026-07-25",
+          "endDate": "2026-08-22",
+          "season": "성수기",
+          "weeks": 4
+        }
+      ],
+      "note": "캠프장소: CIEC 주니어 본원 센터. 모집대상: 초등학교 3학년~중학교 3학년.\n숙박형태: 본원기숙사 내 3인 1실 기준/24시간 안전 통제.\n계약금 50만원, 잔금 330만원."
+    },
+    {
+      "id": "ciec_managed_intensive",
+      "label": "관리형 주니어 인텐시브",
+      "season": "연중",
+      "currency": "KRW",
+      "columns": [
+        "2인실 4주",
+        "3인실 4주"
+      ],
+      "priceMatrix": [
+        {
+          "weeks": 4,
+          "prices": [
+            {
+              "label": "주니어 인텐시브 2인실",
+              "amount": 2770000
+            },
+            {
+              "label": "주니어 인텐시브 3인실",
+              "amount": 2690000
+            }
+          ]
+        }
+      ],
+      "includes": "수업료, 숙식비(기숙사비, 주중3식/주말2식, 주2회 세탁/청소), 가디언 비용",
+      "excludes": "항공료, 해외여행자(유학)보험, 소아공증 & 입국세, 현지 납부 비용, 액티비티 비용, 개인 용돈",
+      "note": "참가대상: 초3~고3. 연중 입학, 매주 월요일 시작.\n수업구성: 1:1 4H+그룹 4H+Self study 1H = 총 9시간.\n등록금 10만원. 공항픽업비 2만원(편도)/4만원(왕복)."
+    },
+    {
+      "id": "ciec_managed_entrance",
+      "label": "관리형 입학 준비반",
+      "season": "연중",
+      "currency": "KRW",
+      "columns": [
+        "2인실 4주",
+        "3인실 4주"
+      ],
+      "priceMatrix": [
+        {
+          "weeks": 4,
+          "prices": [
+            {
+              "label": "입학 준비반 2인실",
+              "amount": 2770000
+            },
+            {
+              "label": "입학 준비반 3인실",
+              "amount": 2690000
+            }
+          ]
+        }
+      ],
+      "includes": "수업료, 숙식비(기숙사비, 주중3식/주말2식, 주2회 세탁/청소), 가디언 비용",
+      "excludes": "항공료, 해외여행자(유학)보험, 소아공증 & 입국세, 현지 납부 비용, 액티비티 비용, 개인 용돈",
+      "note": "참가대상: 초3~고3. 연중 입학, 매주 월요일 시작.\n수업구성: 1:1 6H+Self study.\n등록금 10만원. 공항픽업비 2만원(편도)/4만원(왕복)."
+    },
+    {
+      "id": "ciec_managed_early_study",
+      "label": "관리형 조기유학",
+      "season": "연중",
+      "currency": "KRW",
+      "columns": [
+        "2인실 4주",
+        "3인실 4주"
+      ],
+      "priceMatrix": [
+        {
+          "weeks": 4,
+          "prices": [
+            {
+              "label": "조기유학 2인실",
+              "amount": 2520000
+            },
+            {
+              "label": "조기유학 3인실",
+              "amount": 2440000
+            }
+          ]
+        }
+      ],
+      "includes": "방과 후 수업료, 숙식비(기숙사비, 주중3식/주말2식, 주2회 세탁/청소), 가디언 비용",
+      "excludes": "항공료, 해외여행자(유학)보험, 소아공증 & 입국세, 현지 학교 비용, 액티비티 비용, 개인 용돈",
+      "note": "참가대상: 초3~고3. 연중 입학, 매주 월요일 시작.\n수업구성: 현지 학교 등하교(픽드랍 포함)+도시락+방과 후 3H. 현지 국제학교 및 사립학교 비용 별도.\n등록금 10만원. 공항픽업비 2만원(편도)/4만원(왕복)."
+    },
+    {
+      "id": "ciec_managed_intensive_no_guardian",
+      "label": "관리형 인텐시브 (보호자 미동반)",
+      "season": "연중",
+      "currency": "KRW",
+      "columns": [
+        "4주"
+      ],
+      "priceMatrix": [
+        {
+          "weeks": 4,
+          "prices": [
+            {
+              "label": "보호자 미동반 (입학금+공항픽업샌딩+기숙사2인실+학비+가디언케어)",
+              "amount": 2910000
+            }
+          ]
+        }
+      ],
+      "includes": "",
+      "excludes": "항공료, 보험, 공증 및 소아입국세(3,620페소 - 보호자 미동반시), SSP, 비자연장 및 I-CARD, 종합관리비, 수도세, 전기세, 교재비, 액티비티, 용돈, 기타비용",
+      "note": "한국 지불: 입학금 10만원+공항픽업샌딩비 4만원+기숙사비 2인실 97만원(3인실 89만원)+학비 150만원+가디언케어비 30만원.\n현지 지불: SSP/SSP E-CARD 8,000/4,500, 종합관리비 2,000(4주), 수도세 800(4주), 학생증 200, 각종 액티비티 비용 별도."
+    }
+  ],
+  "surcharges": [],
+  "localFees": [
+    {
+      "id": "ciec_deposit",
+      "name": "기숙사 보증금",
+      "amount": 5000,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "note": "5,000페소 또는 $100. 퇴실시 반환."
+    },
+    {
+      "id": "ciec_ssp",
+      "name": "SSP신청비",
+      "amount": 8000,
+      "currency": "PHP",
+      "chargeUnit": "per_person"
+    },
+    {
+      "id": "ciec_ssp_ecard",
+      "name": "SSP E-CARD",
+      "amount": 4500,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "note": "발급일로부터 1년간 유효"
+    },
+    {
+      "id": "ciec_icard",
+      "name": "I-CARD 발급비",
+      "amount": 4000,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "trigger": "59일 이상 연수 시",
+      "triggerWeeks": 9
+    },
+    {
+      "id": "ciec_crtv",
+      "name": "CRTV",
+      "amount": 2000,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "note": "6개월 이상 체류 시"
+    },
+    {
+      "id": "ciec_ecc",
+      "name": "ECC",
+      "amount": 2000,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "note": "6개월 이상 체류 시 범죄 기록서 발급"
+    },
+    {
+      "id": "ciec_textbook_1on1",
+      "name": "교재비(원본) 1:1 수업",
+      "amount": 600,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "note": "권당 600~1,500페소. 레벨, 수업 시간에 따라 다름."
+    },
+    {
+      "id": "ciec_textbook_group",
+      "name": "교재비(복사본) 그룹수업",
+      "amount": 1000,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "note": "4주 기준"
+    },
+    {
+      "id": "ciec_kinder_material",
+      "name": "유치부 수업자료(복사본)",
+      "amount": 1000,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "note": "4주 기준"
+    },
+    {
+      "id": "ciec_electric",
+      "name": "전기세",
+      "amount": 23,
+      "currency": "PHP",
+      "chargeUnit": "per_usage",
+      "note": "1kw당 23페소. 사용량에 따라 부과."
+    },
+    {
+      "id": "ciec_maintenance",
+      "name": "종합관리비",
+      "amount": 2400,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "note": "4주 기준(1인당)"
+    },
+    {
+      "id": "ciec_water",
+      "name": "수도세",
+      "amount": 1200,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "note": "4주 기준(1인당)"
+    },
+    {
+      "id": "ciec_student_id",
+      "name": "학생증",
+      "amount": 200,
+      "currency": "PHP",
+      "chargeUnit": "per_person"
+    },
+    {
+      "id": "ciec_sending",
+      "name": "샌딩비용",
+      "amount": 2000,
+      "currency": "PHP",
+      "chargeUnit": "per_family",
+      "note": "가족당(최대 4인)"
+    },
+    {
+      "id": "ciec_extra_night",
+      "name": "하루 스테이 비용",
+      "amount": 1500,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "note": "1인 기준/최대 5일"
+    },
+    {
+      "id": "ciec_visa_1",
+      "name": "비자연장 1차",
+      "amount": 4800,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "triggerWeeks": 5,
+      "note": "29일 연장"
+    },
+    {
+      "id": "ciec_visa_2_30",
+      "name": "비자연장 2차 (30일)",
+      "amount": 5800,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "triggerWeeks": 9
+    },
+    {
+      "id": "ciec_visa_2_60",
+      "name": "비자연장 2차 (60일)",
+      "amount": 7000,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "triggerWeeks": 9
+    },
+    {
+      "id": "ciec_visa_3_30",
+      "name": "비자연장 3차 (30일)",
+      "amount": 5300,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "triggerWeeks": 13
+    },
+    {
+      "id": "ciec_visa_3_60",
+      "name": "비자연장 3차 (60일)",
+      "amount": 5500,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "triggerWeeks": 13
+    }
+  ],
+  "refundPolicy": "출국 전: 연수시작일 기준 4주 전 취소 시 등록비를 제외한 수업료/기숙사 비용(100%) 환불. 4주 이내 취소 시 등록비와 수업료/기숙사 비용의 50% 제외 후 환불.\n출국 후: 센터 도착 즉시 취소 신청 시 4주 연수 등록의 경우 환불 불가. 연수기간의 50% 미만 지났을 경우 4주 단위로 환불되며 잔여 수업료/기숙사 비용의 50%만 환불. 연수기간의 50% 이상 남은 경우 환불 불가.\n현지 납부 비용은 1주 단위로 환불. 단, 전기세를 제외한 디포짓(Deposit), 미사용 비자연장비용 잔액 환불. 모든 환불 비용은 1개월(30일)내에 처리.",
+  "dormitoryRules": "",
+  "generalNotes": "CIEC GLOBAL 주니어 전문 어학원. 26년 3월 1일 등록자부터 적용.\n\n가족연수: 만4세(48개월)~고3 자녀+부모. 성수기/비수기 구분없이 연중 운영, 매주 월요일 시작. 숙소 CIEC GLOBAL 센터내 본원 기숙사 2인실/3인실.\n\n기숙사비 특이사항: 1~24개월 이하 자녀 기숙사비 무료(종합관리비, 수도세 부과). 25~47개월 자녀 동반 시 기숙사비의 50% 부과(인실 업그레이드 불가).\n보호자 수업 면제: 12주 이상 등록 시 보호자 수업 선택 가능. 48개월 미만 자녀 동반 시 보호자 수업 면제.\n\n공항픽업비: 1인당 2만원(편도). 샌딩비 불포함.\n가디언비: 30만원/4주 (보호자 미동반시 적용).\n\n관리형 프로그램: 주니어 인텐시브, 입학 준비반, 조기유학 — 각각 가디언 비용 포함 패키지.",
+  "isActive": true,
+  "createdAt": "2026-05-29",
+  "updatedAt": "2026-05-30",
+  "courseShortTermRates": {
+    "mode": "percent",
+    "week1": 40,
+    "week2": 75,
+    "week3": 85,
+    "week4Included": false
+  },
+  "dormShortTermRates": {
+    "mode": "percent",
+    "week1": 40,
+    "week2": 75,
+    "week3": 85,
+    "week4Included": false
+  },
+  "shortTermDataStatus": "confirmed"
+}

@@ -1,0 +1,439 @@
+{
+  "id": "blue_ocean",
+  "schoolCode": "BLUE_OCEAN",
+  "name": "CEBU BLUE OCEAN",
+  "campus": "본원",
+  "region": "세부",
+  "schoolType": "general",
+  "minWeeks": 1,
+  "allowShortTerm": true,
+  "programTags": [
+    "ESL",
+    "IELTS",
+    "토익",
+    "비즈니스",
+    "주니어",
+    "가족연수"
+  ],
+  "courseShortTermRates": {
+    "mode": "percent",
+    "week1": 40,
+    "week2": 65,
+    "week3": 85,
+    "week4Included": false
+  },
+  "registrationFee": {
+    "amount": 100000,
+    "currency": "KRW",
+    "note": "등록비 10만원"
+  },
+  "courses": [
+    {
+      "id": "bo_lite_esl4",
+      "name": "라이트 ESL4",
+      "price4Weeks": 1000000,
+      "currency": "KRW",
+      "classHours": "1:1 4H",
+      "note": ""
+    },
+    {
+      "id": "bo_intensive_esl",
+      "name": "인텐시브 ESL",
+      "price4Weeks": 1180000,
+      "currency": "KRW",
+      "classHours": "1:1 5H + 4:1 2H",
+      "note": ""
+    },
+    {
+      "id": "bo_power_esl5",
+      "name": "파워 ESL5",
+      "price4Weeks": 1130000,
+      "currency": "KRW",
+      "classHours": "1:1 5H",
+      "note": "2과목 변경가능(상담필요)"
+    },
+    {
+      "id": "bo_power_esl7",
+      "name": "파워 ESL7",
+      "price4Weeks": 1380000,
+      "currency": "KRW",
+      "classHours": "1:1 7H",
+      "note": "2과목 변경가능(상담필요)"
+    },
+    {
+      "id": "bo_survival_esl",
+      "name": "서바이벌 ESL (최대 4주)",
+      "price4Weeks": 1280000,
+      "currency": "KRW",
+      "classHours": "1:1 4H + 4:1 2H",
+      "note": "선생님과 씨티투어 1회, 액티비티 1회 비용포함"
+    },
+    {
+      "id": "bo_business",
+      "name": "비즈니스",
+      "price4Weeks": 1380000,
+      "currency": "KRW",
+      "classHours": "1:1 5H + 4:1 2H",
+      "note": ""
+    },
+    {
+      "id": "bo_toeic",
+      "name": "토익",
+      "price4Weeks": 1200000,
+      "currency": "KRW",
+      "classHours": "1:1 5H + 4:1 2H",
+      "note": ""
+    },
+    {
+      "id": "bo_ielts",
+      "name": "아이엘츠",
+      "price4Weeks": 1330000,
+      "currency": "KRW",
+      "classHours": "1:1 5H + 4:1 2H",
+      "note": ""
+    },
+    {
+      "id": "bo_junior_family",
+      "name": "주니어 가족코스",
+      "price4Weeks": 1680000,
+      "currency": "KRW",
+      "classHours": "1:1 5H + 4:1 2H",
+      "note": ""
+    },
+    {
+      "id": "bo_parent",
+      "name": "부모 코스",
+      "price4Weeks": 880000,
+      "currency": "KRW",
+      "classHours": "1:1 3H",
+      "note": "보호자 코스 1시간 자녀에게 양도 가능"
+    }
+  ],
+  "dormitories": [
+    {
+      "id": "bo_2p_ocean",
+      "name": "2인실 오션뷰 (내부/EGI)",
+      "price4Weeks": 1230000,
+      "currency": "KRW",
+      "note": "내부기숙사 EGI리조트"
+    },
+    {
+      "id": "bo_2p_city",
+      "name": "2인실 씨티뷰 (내부/EGI)",
+      "price4Weeks": 960000,
+      "currency": "KRW",
+      "note": "내부기숙사 EGI리조트"
+    },
+    {
+      "id": "bo_3p_ocean",
+      "name": "3인실 오션뷰 (내부/EGI)",
+      "price4Weeks": 910000,
+      "currency": "KRW",
+      "note": "내부기숙사 EGI리조트"
+    },
+    {
+      "id": "bo_1p_ocean_os",
+      "name": "1인실 오션뷰 (Ocean Suites)",
+      "price4Weeks": 1800000,
+      "currency": "KRW",
+      "note": "Ocean Suites. 주당 1,000페소(전기+수도) 선지불."
+    },
+    {
+      "id": "bo_1p_deluxe_os",
+      "name": "1인실 디럭스 (Ocean Suites)",
+      "price4Weeks": 1600000,
+      "currency": "KRW",
+      "note": "Ocean Suites"
+    },
+    {
+      "id": "bo_1p_superior_os",
+      "name": "1인실 슈페리얼 (Ocean Suites)",
+      "price4Weeks": 1400000,
+      "currency": "KRW",
+      "note": "Ocean Suites"
+    },
+    {
+      "id": "bo_couple_deluxe_os",
+      "name": "디럭스 커플룸 (Ocean Suites)",
+      "price4Weeks": 960000,
+      "currency": "KRW",
+      "note": "Ocean Suites"
+    }
+  ],
+  "packages": [
+    {
+      "id": "bo_winter_family_2027",
+      "label": "2027 성수기 가족캠프 (겨울)",
+      "season": "성수기",
+      "currency": "KRW",
+      "columns": [
+        "4주",
+        "6주",
+        "8주",
+        "12주"
+      ],
+      "priceMatrix": [
+        {
+          "weeks": 4,
+          "prices": [
+            {
+              "label": "2인 씨티뷰 (성인1+주니어1)",
+              "amount": 6800000
+            },
+            {
+              "label": "2인 오션뷰 (성인1+주니어1)",
+              "amount": 7400000
+            },
+            {
+              "label": "3인 오션뷰 (성인1+주니어2)",
+              "amount": 10550000
+            },
+            {
+              "label": "3인 오션뷰 (성인2+주니어1)",
+              "amount": 8950000
+            },
+            {
+              "label": "4인 씨티뷰 (성인1+주니어3) 방 2개",
+              "amount": 14500000
+            }
+          ]
+        },
+        {
+          "weeks": 6,
+          "prices": [
+            {
+              "label": "2인 씨티뷰 (성인1+주니어1)",
+              "amount": 10000000
+            },
+            {
+              "label": "2인 오션뷰 (성인1+주니어1)",
+              "amount": 10900000
+            },
+            {
+              "label": "3인 오션뷰 (성인1+주니어2)",
+              "amount": 15520000
+            },
+            {
+              "label": "3인 오션뷰 (성인2+주니어1)",
+              "amount": 13120000
+            },
+            {
+              "label": "4인 씨티뷰 (성인1+주니어3) 방 2개",
+              "amount": 21250000
+            }
+          ]
+        },
+        {
+          "weeks": 8,
+          "prices": [
+            {
+              "label": "2인 씨티뷰 (성인1+주니어1)",
+              "amount": 13150000
+            },
+            {
+              "label": "2인 오션뷰 (성인1+주니어1)",
+              "amount": 14350000
+            },
+            {
+              "label": "3인 오션뷰 (성인1+주니어2)",
+              "amount": 20420000
+            },
+            {
+              "label": "3인 오션뷰 (성인2+주니어1)",
+              "amount": 17220000
+            },
+            {
+              "label": "4인 씨티뷰 (성인1+주니어3) 방 2개",
+              "amount": 27900000
+            }
+          ]
+        },
+        {
+          "weeks": 12,
+          "prices": [
+            {
+              "label": "2인 씨티뷰 (성인1+주니어1)",
+              "amount": 19100000
+            },
+            {
+              "label": "2인 오션뷰 (성인1+주니어1)",
+              "amount": 20900000
+            },
+            {
+              "label": "3인 오션뷰 (성인1+주니어2)",
+              "amount": 29300000
+            },
+            {
+              "label": "3인 오션뷰 (성인2+주니어1)",
+              "amount": 24900000
+            },
+            {
+              "label": "4인 씨티뷰 (성인1+주니어3) 방 2개",
+              "amount": 39900000
+            }
+          ]
+        }
+      ],
+      "additionalRules": [],
+      "includes": "등록금, 수업료, 교재비, 기숙사, SSP, ICard, Visa, 공항픽업(토 오전10시~일 오전2시), 관리비, 식사(매일 3식),\n전기세/물세(1인당 4,000페소 한도, 예) 3인 12,000페소 초과비용은 개인부담)\n호텔서비스: 타올 1인 주5개, 청소 주2회, 이불 주1회 교체, 냉장고, 커피포트, 헤어드라이어, 샤워 필터 2주 1개",
+      "excludes": "세탁비용 (세탁+건조 200페소, 회당 최대 7kg)\n공항드랍\n여행자보험\n항공권\n주말액티비티\n용돈",
+      "includesLocalFees": true,
+      "schedules": [
+        {
+          "startDate": "2026-11-29",
+          "endDate": "2027-02-20",
+          "season": "성수기",
+          "weeks": 12
+        }
+      ],
+      "note": "성수기 기간: 2026년 11월 29일 ~ 2027년 2월 20일 (12주).\n등록 가능 나이: 2027년 기준 초1 입학 예정자부터 고1 입학 예정자까지.\n확약금: 1가족 100만원 (3일이내 입금, 확약금은 연수 취소, 연기 등의 사유로 환불되지 않음)."
+    }
+  ],
+  "surcharges": [
+    {
+      "id": "bo_summer_surcharge",
+      "name": "여름 성수기 서차지",
+      "amountPerWeek": 50000,
+      "currency": "KRW",
+      "startDate": "2026-06-29",
+      "endDate": "2026-08-22",
+      "note": "서차지 포함 비용에서 학비&기숙사 10% 유학원 할인 가능."
+    }
+  ],
+  "localFees": [
+    {
+      "id": "bo_ssp",
+      "name": "SSP",
+      "amount": 7800,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "note": "6개월 유효"
+    },
+    {
+      "id": "bo_ssp_icard",
+      "name": "SSP I-CARD",
+      "amount": 4500,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "note": "1년"
+    },
+    {
+      "id": "bo_acr",
+      "name": "ACR I-CARD",
+      "amount": 4000,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "trigger": "59일 초과",
+      "triggerWeeks": 9
+    },
+    {
+      "id": "bo_visa_1",
+      "name": "비자연장 1차 (5~8주)",
+      "amount": 5140,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "triggerWeeks": 5
+    },
+    {
+      "id": "bo_visa_2",
+      "name": "비자연장 2차 (12주 이하)",
+      "amount": 11550,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "triggerWeeks": 9
+    },
+    {
+      "id": "bo_visa_3",
+      "name": "비자연장 3차 (16주 이하)",
+      "amount": 15990,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "triggerWeeks": 13
+    },
+    {
+      "id": "bo_visa_4",
+      "name": "비자연장 4차 (20주 이하)",
+      "amount": 20430,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "triggerWeeks": 17
+    },
+    {
+      "id": "bo_visa_5",
+      "name": "비자연장 5차 (24주 이하)",
+      "amount": 24870,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "triggerWeeks": 21
+    },
+    {
+      "id": "bo_maintenance",
+      "name": "관리비",
+      "amount": 500,
+      "currency": "PHP",
+      "chargeUnit": "per_week",
+      "note": "1주당"
+    },
+    {
+      "id": "bo_textbook",
+      "name": "교재비",
+      "amount": 1100,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "note": "5권 이하 1,100 / 6권 이상 1,500 / IELTS 1,800"
+    },
+    {
+      "id": "bo_id",
+      "name": "아이디 카드",
+      "amount": 300,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "note": "재발행 170"
+    },
+    {
+      "id": "bo_deposit",
+      "name": "보증금",
+      "amount": 1000,
+      "currency": "PHP",
+      "chargeUnit": "per_week",
+      "note": "1주당. 내부기숙사 전기/수도세는 보증금에서 매월 차감."
+    },
+    {
+      "id": "bo_laundry",
+      "name": "세탁+건조",
+      "amount": 200,
+      "currency": "PHP",
+      "chargeUnit": "per_usage",
+      "note": "세탁 or 건조만: 150페소"
+    },
+    {
+      "id": "bo_sending",
+      "name": "Sending Fee",
+      "amount": 1000,
+      "currency": "PHP",
+      "chargeUnit": "per_visit"
+    },
+    {
+      "id": "bo_pickup",
+      "name": "픽업비",
+      "amount": 1200,
+      "currency": "PHP",
+      "chargeUnit": "per_visit",
+      "note": "정규 픽업 1,200 (토요일 오전 10시~일요일 새벽 2시). 비정규 픽업 없음."
+    }
+  ],
+  "refundPolicy": "",
+  "dormitoryRules": "내부기숙사(EGI): 미터기로 전기/수도 책정, 보증금에서 매월 차감.\nOcean Suites: 주당 1,000페소(전기+수도) 연수기간만큼 선지불.\n추가 숙박: 3인실 1,500, 2인실 2,000, 1인실 2,500페소.\n비정규 졸업 비용: 다인실 8,000 / 1인실 12,000페소. 비정규 입학 불가 / 1주, 3주 등록만 비정규 추가 비용 해당없음.",
+  "generalNotes": "2026년 3월 27일부터 적용.\n\n단기 등록 추가 비용: 1주 4주*40%, 2주 4주*65%, 3주 4주*85%.\n장기 연수 할인: 12주 30만원, 16주 40만원, 20주 50만원.\n옵션 수업: 300~800페소 (2주당).\n1:1 수업 추가: 7,500(ESL) / 8,500(테스트모듈,비즈니스) / 3,500(4:1 class).\n\n기숙사 2종류: 내부기숙사(EGI리조트) / Ocean Suites — 전기/수도 방식 다름.",
+  "isActive": true,
+  "createdAt": "2026-05-29",
+  "updatedAt": "2026-05-30",
+  "dormShortTermRates": {
+    "mode": "percent",
+    "week1": 40,
+    "week2": 65,
+    "week3": 85,
+    "week4Included": false
+  },
+  "shortTermDataStatus": "confirmed"
+}

@@ -1,0 +1,401 @@
+{
+  "id": "gs",
+  "schoolCode": "GS",
+  "name": "GS 어학원 (Global Standard)",
+  "campus": "본원",
+  "region": "클락",
+  "schoolType": "general",
+  "minWeeks": 2,
+  "allowShortTerm": true,
+  "programTags": [
+    "ESL",
+    "IELTS",
+    "TOEIC",
+    "비즈니스",
+    "워킹홀리데이",
+    "골프",
+    "킨더",
+    "관리형"
+  ],
+  "registrationFee": {
+    "amount": 100000,
+    "currency": "KRW",
+    "note": "등록금 10만원"
+  },
+  "courses": [
+    {
+      "id": "gs_esl_lite",
+      "name": "ESL LITE",
+      "classDetails": "1:1 2H + 그룹 1H",
+      "price4Weeks": 750000,
+      "currency": "KRW"
+    },
+    {
+      "id": "gs_esl",
+      "name": "ESL",
+      "classDetails": "1:1 4H + 그룹 2H",
+      "price4Weeks": 900000,
+      "currency": "KRW"
+    },
+    {
+      "id": "gs_golf_esl_lite",
+      "name": "GOLF ESL LITE",
+      "classDetails": "1:1 2H + 그룹 1H + GC 1H",
+      "price4Weeks": 1050000,
+      "currency": "KRW"
+    },
+    {
+      "id": "gs_golf_esl",
+      "name": "GOLF ESL",
+      "classDetails": "1:1 4H + 그룹 2H + GC 1H",
+      "price4Weeks": 1200000,
+      "currency": "KRW"
+    },
+    {
+      "id": "gs_ielts",
+      "name": "IELTS",
+      "classDetails": "1:1 4H + 그룹 3H",
+      "price4Weeks": 1200000,
+      "currency": "KRW"
+    },
+    {
+      "id": "gs_toeic",
+      "name": "TOEIC",
+      "classDetails": "1:1 4H + 그룹 2H",
+      "price4Weeks": 1200000,
+      "currency": "KRW"
+    },
+    {
+      "id": "gs_business",
+      "name": "Business English",
+      "classDetails": "1:1 4H + 그룹 2H",
+      "price4Weeks": 1200000,
+      "currency": "KRW"
+    },
+    {
+      "id": "gs_working_holiday",
+      "name": "Working Holiday Program",
+      "classDetails": "1:1 4H + 그룹 2H",
+      "price4Weeks": 1200000,
+      "currency": "KRW"
+    },
+    {
+      "id": "gs_ggc",
+      "name": "GGC Program",
+      "classDetails": "1:1 4H + 그룹 2H",
+      "price4Weeks": 1200000,
+      "currency": "KRW"
+    },
+    {
+      "id": "gs_kinder",
+      "name": "KINDER",
+      "classDetails": "Kinder 3H + 1:1 3H",
+      "price4Weeks": 1150000,
+      "currency": "KRW"
+    }
+  ],
+  "dormitories": [
+    {
+      "id": "gs_global_single",
+      "name": "Global (Luxury) Single",
+      "price4Weeks": 1400000,
+      "currency": "KRW"
+    },
+    {
+      "id": "gs_global_semi_single",
+      "name": "Global (Luxury) Semi Single",
+      "price4Weeks": 1300000,
+      "currency": "KRW"
+    },
+    {
+      "id": "gs_global_double",
+      "name": "Global (Luxury) Double",
+      "price4Weeks": 1000000,
+      "currency": "KRW"
+    },
+    {
+      "id": "gs_global_triple",
+      "name": "Global (Luxury) Triple",
+      "price4Weeks": 900000,
+      "currency": "KRW"
+    },
+    {
+      "id": "gs_global_quadruple",
+      "name": "Global (Luxury) Quadruple",
+      "price4Weeks": 850000,
+      "currency": "KRW"
+    },
+    {
+      "id": "gs_global_triple_2rooms",
+      "name": "Global (Luxury) Triple (2rooms)",
+      "price4Weeks": 1100000,
+      "currency": "KRW"
+    },
+    {
+      "id": "gs_global_quadruple_2rooms",
+      "name": "Global (Luxury) Quadruple (2rooms)",
+      "price4Weeks": 950000,
+      "currency": "KRW"
+    },
+    {
+      "id": "gs_clark_single",
+      "name": "Clark (Premium) Single",
+      "price4Weeks": 1300000,
+      "currency": "KRW"
+    },
+    {
+      "id": "gs_clark_double",
+      "name": "Clark (Premium) Double",
+      "price4Weeks": 950000,
+      "currency": "KRW"
+    },
+    {
+      "id": "gs_clark_triple",
+      "name": "Clark (Premium) Triple",
+      "price4Weeks": 850000,
+      "currency": "KRW"
+    },
+    {
+      "id": "gs_clark_quadruple",
+      "name": "Clark (Premium) Quadruple",
+      "price4Weeks": 750000,
+      "currency": "KRW"
+    },
+    {
+      "id": "gs_standard_single",
+      "name": "Standard Single",
+      "price4Weeks": 1200000,
+      "currency": "KRW"
+    },
+    {
+      "id": "gs_standard_double",
+      "name": "Standard Double",
+      "price4Weeks": 800000,
+      "currency": "KRW"
+    },
+    {
+      "id": "gs_standard_triple",
+      "name": "Standard Triple",
+      "price4Weeks": 750000,
+      "currency": "KRW"
+    },
+    {
+      "id": "gs_standard_quadruple",
+      "name": "Standard Quadruple",
+      "price4Weeks": 700000,
+      "currency": "KRW"
+    }
+  ],
+  "surcharges": [],
+  "longTermDiscount": [
+    {
+      "weeks": 12,
+      "discount": 50000,
+      "currency": "KRW"
+    },
+    {
+      "weeks": 16,
+      "discount": 100000,
+      "currency": "KRW"
+    },
+    {
+      "weeks": 20,
+      "discount": 150000,
+      "currency": "KRW"
+    },
+    {
+      "weeks": 24,
+      "discount": 200000,
+      "currency": "KRW"
+    }
+  ],
+  "promotions": null,
+  "localFees": [
+    {
+      "id": "gs_deposit",
+      "name": "Deposit (보증금)",
+      "amount": 3000,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "trigger": "enrollment",
+      "note": "환불 가능"
+    },
+    {
+      "id": "gs_ssp",
+      "name": "SSP",
+      "amount": 7500,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "trigger": "enrollment"
+    },
+    {
+      "id": "gs_visa_8",
+      "name": "Visa Extension (8주)",
+      "amount": 5130,
+      "currency": "PHP",
+      "chargeUnit": "cumulative",
+      "trigger": "stay_over",
+      "triggerWeeks": 5
+    },
+    {
+      "id": "gs_visa_12",
+      "name": "Visa Extension (12주)",
+      "amount": 11540,
+      "currency": "PHP",
+      "chargeUnit": "cumulative",
+      "trigger": "stay_over",
+      "triggerWeeks": 9
+    },
+    {
+      "id": "gs_visa_16",
+      "name": "Visa Extension (16주)",
+      "amount": 16080,
+      "currency": "PHP",
+      "chargeUnit": "cumulative",
+      "trigger": "stay_over",
+      "triggerWeeks": 13
+    },
+    {
+      "id": "gs_visa_20",
+      "name": "Visa Extension (20주)",
+      "amount": 20620,
+      "currency": "PHP",
+      "chargeUnit": "cumulative",
+      "trigger": "stay_over",
+      "triggerWeeks": 17
+    },
+    {
+      "id": "gs_visa_24",
+      "name": "Visa Extension (24주)",
+      "amount": 25160,
+      "currency": "PHP",
+      "chargeUnit": "cumulative",
+      "trigger": "stay_over",
+      "triggerWeeks": 21
+    },
+    {
+      "id": "gs_icard",
+      "name": "I-Card",
+      "amount": 3500,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "trigger": "stay_over_59days",
+      "triggerWeeks": 9
+    },
+    {
+      "id": "gs_id",
+      "name": "ID Card",
+      "amount": 300,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "trigger": "enrollment"
+    },
+    {
+      "id": "gs_electricity",
+      "name": "Electricity (전기세)",
+      "amount": 1000,
+      "currency": "PHP",
+      "chargeUnit": "per_4weeks",
+      "trigger": "enrollment"
+    },
+    {
+      "id": "gs_water",
+      "name": "Water (수도세)",
+      "amount": 500,
+      "currency": "PHP",
+      "chargeUnit": "per_4weeks",
+      "trigger": "enrollment"
+    },
+    {
+      "id": "gs_laundry",
+      "name": "Laundry (세탁비)",
+      "amount": 1000,
+      "currency": "PHP",
+      "chargeUnit": "per_4weeks",
+      "trigger": "enrollment"
+    },
+    {
+      "id": "gs_utility",
+      "name": "Utility",
+      "amount": 1000,
+      "currency": "PHP",
+      "chargeUnit": "per_4weeks",
+      "trigger": "enrollment"
+    }
+  ],
+  "packages": [
+    {
+      "id": "gs_managed",
+      "name": "MANAGED PROGRAM (관리형)",
+      "programType": "managed",
+      "includesLocalFees": false,
+      "note": "Teacher 1 / Student 2. Global (Luxury) Triple(2rooms) 전용. Dormitory 100만 + Tuition 90만 + Care 50만 = 4주 240만원. 현지비 별도.",
+      "priceMatrix": {
+        "columns": [
+          "관리형 비용"
+        ],
+        "rows": [
+          {
+            "weeks": 4,
+            "prices": [
+              2500000
+            ]
+          },
+          {
+            "weeks": 8,
+            "prices": [
+              4900000
+            ]
+          },
+          {
+            "weeks": 12,
+            "prices": [
+              7300000
+            ]
+          },
+          {
+            "weeks": 16,
+            "prices": [
+              9700000
+            ]
+          },
+          {
+            "weeks": 20,
+            "prices": [
+              12100000
+            ]
+          },
+          {
+            "weeks": 24,
+            "prices": [
+              14500000
+            ]
+          }
+        ]
+      },
+      "currency": "KRW"
+    }
+  ],
+  "additionalCharges": [],
+  "refundPolicy": "",
+  "dormitoryRules": "",
+  "generalNotes": "GS 어학원 (Global Standard English Language School). 클락 소재.\n\n등록금: 10만원.\n기숙사 3등급: Global (Luxury) / Clark (Premium) / Standard.\n장기할인: 12주 -5만 / 16주 -10만 / 20주 -15만 / 24주 -20만 (합산표에 이미 반영된 값).\n\n관리형 프로그램: Teacher 1 / Student 2. Global Luxury Triple(2rooms) 전용. 4주 250만원 (등록비 포함).\n\n현지비용: SSP 7,500P / Deposit 3,000P / ID Card 300P / Visa 누적형 / I-Card 3,500P (8주+) / 전기세·수도세·세탁비·유틸리티 각 4주 단위.\n\n현지비 4주 총액(보증금 제외): 14,300P (2주도 동일).\n현지비 8주 총액(보증금 제외): 26,430P.\n\nGOLF 코스: GC(Golf Class) 1시간 포함.",
+  "isActive": true,
+  "createdAt": "2026-05-29",
+  "updatedAt": "2026-05-30",
+  "courseShortTermRates": {
+    "mode": "percent",
+    "week1": 40,
+    "week2": 60,
+    "week3": 80,
+    "week4Included": false
+  },
+  "dormShortTermRates": {
+    "mode": "percent",
+    "week1": 40,
+    "week2": 60,
+    "week3": 80,
+    "week4Included": false
+  },
+  "shortTermDataStatus": "confirmed"
+}

@@ -1,5 +1,6 @@
 import type { School, Course, Dormitory, QuoteItem, ExchangeRate, LocalFee, RegistrationFee, Package, ShortTermRates, Promotion } from '@/types'
 import { toKrw } from './utils'
+import { normalizeSchool } from './normalizeSchool'
 
 export interface CourseItem   { courseId: string; weeks: number }
 export interface DormItem     { dormitoryId: string; weeks: number }
@@ -110,7 +111,8 @@ function getPrice4w(item: Course | Dormitory): number {
 }
 
 export function calculateQuote(input: QuoteInput, rate: ExchangeRate): CalcResult {
-  const { school, startDate, enrollmentDate } = input
+  const { school: rawSchool, startDate, enrollmentDate } = input
+  const school = normalizeSchool(rawSchool)
   const warnings: string[] = []
   const notes: string[] = []
   const courseItems: QuoteItem[] = []
@@ -293,6 +295,26 @@ export function calculateQuote(input: QuoteInput, rate: ExchangeRate): CalcResul
     dormItems.push({ label, weeks: w, unitPrice: Math.round(price/w), currency: dorm.currency, krwAmount: toKrw(price, dorm.currency, rate) + addKrw * w })
   }
 
+  // [캠퍼스 검증] 한 학원에 여러 캠퍼스(예: BECI = EOP/스파르타/시티)가 있을 때,
+  // 코스와 기숙사가 서로 다른 캠퍼스면 실제로 불가능한 조합 → 견적이 틀린다. 경고로 막는다.
+  {
+    const pickedCampuses = new Set<string>()
+    for (const ci of input.courses ?? []) {
+      const c = (school.courses ?? []).find(x => x.id === ci.courseId) as { campus?: string } | undefined
+      if (c?.campus) pickedCampuses.add(c.campus)
+    }
+    for (const di of input.dormitories ?? []) {
+      const d = (school.dormitories ?? []).find(x => x.id === di.dormitoryId) as { campus?: string } | undefined
+      if (d?.campus) pickedCampuses.add(d.campus)
+    }
+    if (pickedCampuses.size > 1) {
+      warnings.push(
+        `⚠️ [캠퍼스 불일치] 선택한 코스·기숙사가 서로 다른 캠퍼스입니다 (${[...pickedCampuses].join(', ')}). ` +
+        `같은 캠퍼스끼리만 등록 가능하니 확인하세요.`
+      )
+    }
+  }
+
   // 등록비 (1회)
   const regFee = school.registrationFee
   let registrationFeeKrw = regFee ? toKrw(regFee.amount, regFee.currency, rate) : 0
@@ -388,7 +410,42 @@ export function calculateQuote(input: QuoteInput, rate: ExchangeRate): CalcResul
     return { ok: true }
   }
 
+  // [캠퍼스 필터용] 이번 견적에서 선택된 코스/기숙사의 campus 집합을 미리 구한다.
+  // 학원 안에 여러 캠퍼스(BECI=EOP/스파르타/시티 등)가 있을 때, 프로모션이 특정 캠퍼스
+  // 전용이면 그 캠퍼스를 고른 경우에만 적용해야 한다.
+  const selectedCampuses = new Set<string>()
+  for (const ci of input.courses ?? []) {
+    const c = (school.courses ?? []).find(x => x.id === ci.courseId) as { campus?: string } | undefined
+    if (c?.campus) selectedCampuses.add(c.campus)
+  }
+  for (const di of input.dormitories ?? []) {
+    const d = (school.dormitories ?? []).find(x => x.id === di.dormitoryId) as { campus?: string } | undefined
+    if (d?.campus) selectedCampuses.add(d.campus)
+  }
+
   for (const promo of sortedPromos) {
+    // [target 필터] 일반 연수 견적(코스/기숙사로 들어온 경우)에는 캠프·주니어·가족 전용
+    // 프로모션이 붙으면 안 된다(예: CPI "주니어캠프 형제자매"가 성인 코스에 오매칭).
+    // 견적에 packages가 없고 courses가 있으면 일반 연수로 보고 캠프성 프로모션 제외.
+    const isGeneralCourse = (input.courses?.length ?? 0) > 0 && (input.packages?.length ?? 0) === 0
+    const promoTarget = (promo as { target?: string }).target
+    if (isGeneralCourse && promoTarget && ['camp','junior','family'].includes(promoTarget)) {
+      notes.push(`ℹ️ ${promo.label}: ${promoTarget} 전용 — 일반 연수 견적이라 미적용`)
+      continue
+    }
+
+    // [캠퍼스 매칭] 프로모션이 campus를 명시했는데, 이번에 선택한 코스/기숙사 캠퍼스와
+    // 겹치지 않으면 이 프로모션은 해당 캠퍼스 전용이므로 적용하지 않는다.
+    const promoCampus = (promo as { campus?: string }).campus
+    if (promoCampus && selectedCampuses.size > 0 && !selectedCampuses.has(promoCampus)) {
+      notes.push(`ℹ️ ${promo.label}: ${promoCampus} 캠퍼스 전용 — 선택한 캠퍼스(${[...selectedCampuses].join(', ')})와 달라 미적용`)
+      continue
+    }
+    // 프로모션은 campus를 명시했는데 코스/기숙사엔 campus 정보가 없으면, 캠퍼스 판단 불가 → 경고만
+    if (promoCampus && selectedCampuses.size === 0) {
+      warnings.push(`⚠️ ${promo.label}: ${promoCampus} 캠퍼스 전용이나 선택 항목에 캠퍼스 정보가 없어 적용 여부 확인 필요`)
+    }
+
     // 이미 적용된 프로모션들과의 호환 관계 검사
     const compat = checkCompat(promo)
     if (!compat.ok) {
@@ -416,6 +473,21 @@ export function calculateQuote(input: QuoteInput, rate: ExchangeRate): CalcResul
       }
       const checkDate = promo.basisType === 'start_date' ? startDate : enrollmentDate
       if (!isInRange(checkDate, promo.startDate, promo.endDate)) continue
+    }
+
+    // [체류기간 포함 조건] 일부 프로모션은 "체류기간에 특정 날짜 구간(예: 연말 12/21~1/1)이
+    // N주 이상 포함된 학생"만 대상. 등록일/입국일 범위가 아니라 체류기간 자체를 검사해야 한다.
+    // 데이터의 requireStayIncludes = { start, end, minWeeks } 가 있으면 검사.
+    const stayReq = (promo as { requireStayIncludes?: { start?: string; end?: string; minWeeks?: number } }).requireStayIncludes
+    if (stayReq && stayReq.start && stayReq.end) {
+      // 날짜 미정이면 판정 불가 → 적용 보류(미적용)
+      if (dateUnset) continue
+      const stayStart = startDate
+      const stayEnd = endDate   // 위에서 addWeeksHelper(startDate, totalWeeks)로 계산됨
+      // 체류기간[stayStart, stayEnd]과 요구구간[reqStart, reqEnd]의 겹치는 주수
+      const overlapWeeks = getOverlapWeeks(stayStart, stayEnd, stayReq.start, stayReq.end)
+      const need = stayReq.minWeeks ?? 1
+      if (overlapWeeks < need) continue   // 조건 미충족 → 이 프로모션 적용 안 함
     }
 
     // [허용조건] minWeeks 명시 필드 우선. 없으면 condition 문자열 정규식(구버전 폴백).
@@ -491,7 +563,10 @@ export function calculateQuote(input: QuoteInput, rate: ExchangeRate): CalcResul
         thisDiscount = toKrw(matched.amount, promo.currency ?? 'KRW', rate)
         notes.push(`ℹ️ ${promo.label}: ${matched.minWeeks}주 이상 적용 = ${matched.amount.toLocaleString()}${promo.currency === 'PHP' ? '페소' : '원'}`)
       } else {
-        continue  // 적용 tier 없음
+        // [수정] 적용 tier 없음(예: 8주인데 학원 장기할인은 12주~) → 학원 할인은 0이지만
+        // 프로모션을 통째로 스킵하면 안 된다. 이 프로모션에 딸린 상시 유학원 할인(agency,
+        // 예: 수업료+기숙사비 10%)은 주수 무관하게 적용돼야 하므로, continue 대신 학원 할인만 0.
+        thisDiscount = 0
       }
     } else {
       thisDiscount = toKrw(promo.discountValue, promo.currency ?? 'KRW', rate)
@@ -546,6 +621,7 @@ export function calculateQuote(input: QuoteInput, rate: ExchangeRate): CalcResul
   // ── 2차: 유학원 할인 계산 (학원 할인 전부 합산된 뒤) ──────────────────────────
   // base 기준: 'after_discount'(기본) = 학원 할인 차감 후 / 'before_discount' = 차감 전 원금.
   // 자료 표현대로 학원별 지정. 차감 후가 정확하려면 promotionDiscount가 확정된 이 시점이어야 함.
+  let regFeeAgencyApplied = false  // 등록비성 유학원할인이 이미 한 번 적용됐는지 (중복 방지)
   for (const { label, id, pad } of agencyPending) {
     if (pad.minWeeks && totalWeeks < pad.minWeeks) {
       notes.push(`ℹ️ ${label}: ${pad.minWeeks}주 미만은 유학원 할인 불가 (요청 ${totalWeeks}주)`)
@@ -584,10 +660,13 @@ export function calculateQuote(input: QuoteInput, rate: ExchangeRate): CalcResul
       if ((pad as { methodConfirmed?: boolean }).methodConfirmed === false) {
         warnings.push(`⚠️ ${label}(유학원할인): 계산방식 미확인 — 4주 단위 내림(적게 할인)으로 처리됨. 본사 확인 필요.`)
       }
-    } else if (pad.type === 'amount_flat') {
+    } else if (pad.type === 'amount_flat' || pad.type === 'amount') {
+      // 정액 유학원 할인 (예: PILAedu 등록비 13만 할인, BCEBU 등록금 10만 할인)
       thisAgencyDiscount = pad.value
+      if (pad.maxAmount) thisAgencyDiscount = Math.min(thisAgencyDiscount, pad.maxAmount)
     } else if (pad.type === 'reg_fee_only') {
-      thisAgencyDiscount = 0
+      // 등록비 전액 유학원 할인 (예: 블루오션 "등록비 할인 가능") → 등록비만큼 차감
+      thisAgencyDiscount = registrationFeeKrw
     } else if (pad.type === 'week_tiers') {
       const tier = (pad.weekTiers ?? []).find(t => {
         if (totalWeeks < t.minWeeks) return false
@@ -606,6 +685,21 @@ export function calculateQuote(input: QuoteInput, rate: ExchangeRate): CalcResul
       const regDiscount = Math.min(pad.regFeeDiscount, registrationFeeKrw)
       registrationFeeKrw = Math.max(0, registrationFeeKrw - regDiscount)
       thisAgencyDiscount += regDiscount
+    }
+
+    // [등록비성 정액할인 중복 방지] PILAedu·BCEBU처럼 여러 프로모션에 같은 "등록비 N만원 할인"이
+    // 중복 기재된 경우, 등록비는 한 번만 내므로 할인도 한 번만. 또한 등록비를 초과해 깎을 수 없다.
+    const isRegFeeDiscount = (pad.type === 'amount' || pad.type === 'amount_flat' || pad.type === 'reg_fee_only')
+      && /등록비|등록금|입학금/.test(pad.rawText ?? pad.note ?? '')
+    if (isRegFeeDiscount) {
+      if (regFeeAgencyApplied) {
+        // 이미 등록비성 유학원할인을 적용함 → 이번 건은 중복이므로 적용하지 않음
+        thisAgencyDiscount = 0
+      } else {
+        // 등록비를 초과하지 않도록 상한
+        thisAgencyDiscount = Math.min(thisAgencyDiscount, registrationFeeKrw)
+        if (thisAgencyDiscount > 0) regFeeAgencyApplied = true
+      }
     }
 
     agencyDiscountKrw += thisAgencyDiscount
@@ -723,9 +817,29 @@ export function calculateQuote(input: QuoteInput, rate: ExchangeRate): CalcResul
 function addWeeksHelper(d: string, w: number): string {
   const dt = new Date(d); dt.setDate(dt.getDate() + w * 7); return dt.toISOString().split('T')[0]
 }
-function getOverlapWeeks(s1:string,e1:string,s2:string,e2:string): number {
-  const s = Math.max(new Date(s1).getTime(), new Date(s2).getTime())
-  const e = Math.min(new Date(e1).getTime(), new Date(e2).getTime())
-  return e <= s ? 0 : Math.ceil((e-s)/604800000)
+
+// [토일월 그룹 정규화] 학원마다 입국 요일이 토/일/월로 달라도 같은 입국 묶음으로 본다.
+// 어떤 날짜든 "그 날짜가 속한 토/일/월 그룹의 대표일(직전 또는 당일 토요일)"로 정렬한다.
+// 토(6)=당일, 일(0)=전날 토, 월(1)=이틀전 토. 화~금은 그 주 토요일로 (입국일은 보통 토일월).
+function toSatMonGroup(d: string): string {
+  const dt = new Date(d)
+  const day = dt.getUTCDay()  // 일0 월1 ... 토6
+  // 토일월을 직전 토요일로 묶음: 토→0, 일→-1, 월→-2, 그 외(화~금)→해당 주 토요일(-day-1)
+  const back = day === 6 ? 0 : day === 0 ? 1 : day === 1 ? 2 : (day + 1)
+  dt.setUTCDate(dt.getUTCDate() - back)
+  return dt.toISOString().split('T')[0]
 }
-function isInRange(d:string,s:string,e:string): boolean { return d>=s && d<=e }
+
+function getOverlapWeeks(s1:string,e1:string,s2:string,e2:string): number {
+  // 토일월 그룹으로 정렬 후 겹침 계산 (요일 1~2일 차이로 인한 경계 오차 제거)
+  const g1s = toSatMonGroup(s1), g1e = toSatMonGroup(e1)
+  const g2s = toSatMonGroup(s2), g2e = toSatMonGroup(e2)
+  const s = Math.max(new Date(g1s).getTime(), new Date(g2s).getTime())
+  const e = Math.min(new Date(g1e).getTime(), new Date(g2e).getTime())
+  return e <= s ? 0 : Math.floor((e-s)/604800000)
+}
+function isInRange(d:string,s:string,e:string): boolean {
+  // 토일월 그룹 정렬 후 비교: 입국일과 기간 경계를 같은 그룹 기준으로
+  const gd = toSatMonGroup(d), gs = toSatMonGroup(s), ge = toSatMonGroup(e)
+  return gd >= gs && gd <= ge
+}

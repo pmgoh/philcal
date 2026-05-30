@@ -1,0 +1,426 @@
+{
+  "id": "pines",
+  "schoolCode": "PINES",
+  "name": "파인스 어학원",
+  "campus": "메인 스피킹 / 아이엘츠",
+  "region": "바기오",
+  "schoolType": "general",
+  "minWeeks": 1,
+  "allowShortTerm": true,
+  "programTags": [
+    "ESL",
+    "IELTS",
+    "TOEIC",
+    "주니어",
+    "가족"
+  ],
+  "registrationFee": {
+    "amount": 100000,
+    "currency": "KRW",
+    "note": "등록금 10만원"
+  },
+  "courses": [
+    {
+      "id": "pines_power_speaking",
+      "name": "파워 스피킹",
+      "campus": "메인",
+      "classDetails": "1:1 4H + 4:1 4H",
+      "price4Weeks": 1080000,
+      "currency": "KRW"
+    },
+    {
+      "id": "pines_intensive_esl",
+      "name": "인텐시브 ESL",
+      "campus": "메인",
+      "classDetails": "1:1 5H + 4:1 2H",
+      "price4Weeks": 1180000,
+      "currency": "KRW"
+    },
+    {
+      "id": "pines_light_esl4",
+      "name": "라이트 ESL4",
+      "campus": "메인",
+      "classDetails": "1:1 4H",
+      "price4Weeks": 930000,
+      "currency": "KRW"
+    },
+    {
+      "id": "pines_power_esl5",
+      "name": "파워 ESL5",
+      "campus": "메인",
+      "classDetails": "1:1 5H",
+      "price4Weeks": 1130000,
+      "currency": "KRW",
+      "note": "2과목 변경 가능 (상담 필요)"
+    },
+    {
+      "id": "pines_power_esl7",
+      "name": "파워 ESL7",
+      "campus": "메인",
+      "classDetails": "1:1 7H",
+      "price4Weeks": 1380000,
+      "currency": "KRW",
+      "note": "2과목 변경 가능 (상담 필요)"
+    },
+    {
+      "id": "pines_global_junior_ielts",
+      "name": "글로벌 청소년 IELTS",
+      "campus": "메인",
+      "classDetails": "1:1 6H",
+      "price4Weeks": 1350000,
+      "currency": "KRW"
+    },
+    {
+      "id": "pines_guardian",
+      "name": "보호자 (수업 미선택 가능)",
+      "campus": "메인",
+      "classDetails": "1:1 3H",
+      "price4Weeks": 830000,
+      "currency": "KRW",
+      "note": "수업 미등록 가능. 1시간 수업 양도 가능."
+    },
+    {
+      "id": "pines_junior_family",
+      "name": "주니어 가족 (비수기)",
+      "campus": "메인",
+      "classDetails": "1:1 6H",
+      "price4Weeks": 1580000,
+      "currency": "KRW"
+    },
+    {
+      "id": "pines_toeic_tos",
+      "name": "토익 / 토스",
+      "campus": "IELTS",
+      "classDetails": "1:1 4H + 4:1 4H",
+      "price4Weeks": 1130000,
+      "currency": "KRW"
+    },
+    {
+      "id": "pines_pre_ielts",
+      "name": "PRE 아이엘츠",
+      "campus": "IELTS",
+      "classDetails": "1:1 4H + 4:1 4H",
+      "price4Weeks": 1150000,
+      "currency": "KRW"
+    },
+    {
+      "id": "pines_ielts",
+      "name": "아이엘츠",
+      "campus": "IELTS",
+      "classDetails": "1:1 4H + 4:1 3H",
+      "price4Weeks": 1200000,
+      "currency": "KRW"
+    },
+    {
+      "id": "pines_ielts_guarantee_8w",
+      "name": "아이엘츠 보장 8주",
+      "campus": "IELTS",
+      "classDetails": "1:1 5H + 4:1 2H",
+      "price4Weeks": 1655000,
+      "currency": "KRW",
+      "note": "아이엘츠 보장 8주. 8주 총액 331만원. 4주 환산값 165.5만원. 1:1 5H + 4:1 2H."
+    },
+    {
+      "id": "pines_ielts_guarantee_12w",
+      "name": "아이엘츠 보장 12주",
+      "campus": "IELTS",
+      "classDetails": "1:1 5H + 4:1 2H",
+      "price4Weeks": 1520000,
+      "currency": "KRW",
+      "note": "아이엘츠 보장 12주. 12주 총액 456만원. 4주 환산값 152만원. 1:1 5H + 4:1 2H."
+    },
+    {
+      "id": "pines_ielts_intensive",
+      "name": "아이엘츠 인텐시브",
+      "campus": "IELTS",
+      "classDetails": "1:1 6H",
+      "price4Weeks": 1350000,
+      "currency": "KRW"
+    }
+  ],
+  "dormitories": [
+    {
+      "id": "pines_1a_main",
+      "name": "1인실 A (메인)",
+      "campus": "메인",
+      "price4Weeks": 1450000,
+      "currency": "KRW"
+    },
+    {
+      "id": "pines_1b_main",
+      "name": "1인실 B (메인)",
+      "campus": "메인",
+      "price4Weeks": 1350000,
+      "currency": "KRW"
+    },
+    {
+      "id": "pines_1c_main",
+      "name": "1인실 C (메인)",
+      "campus": "메인",
+      "price4Weeks": 1150000,
+      "currency": "KRW"
+    },
+    {
+      "id": "pines_2a_main",
+      "name": "2인실 A (메인)",
+      "campus": "메인",
+      "price4Weeks": 1040000,
+      "currency": "KRW"
+    },
+    {
+      "id": "pines_2b_main",
+      "name": "2인실 B (메인)",
+      "campus": "메인",
+      "price4Weeks": 980000,
+      "currency": "KRW"
+    },
+    {
+      "id": "pines_3_main",
+      "name": "3인실 (메인)",
+      "campus": "메인",
+      "price4Weeks": 880000,
+      "currency": "KRW"
+    },
+    {
+      "id": "pines_4_main",
+      "name": "4인실 (메인)",
+      "campus": "메인",
+      "price4Weeks": 810000,
+      "currency": "KRW"
+    },
+    {
+      "id": "pines_6_main",
+      "name": "6인실 (메인)",
+      "campus": "메인",
+      "price4Weeks": 690000,
+      "currency": "KRW"
+    },
+    {
+      "id": "pines_6plus1_main",
+      "name": "6인실(4+1) (메인)",
+      "campus": "메인",
+      "price4Weeks": 810000,
+      "currency": "KRW",
+      "note": "글로벌 청소년 IELTS 학생만 가능"
+    },
+    {
+      "id": "pines_1a_ielts",
+      "name": "1인실 A (IELTS)",
+      "campus": "IELTS",
+      "price4Weeks": 1450000,
+      "currency": "KRW"
+    },
+    {
+      "id": "pines_1b_ielts",
+      "name": "1인실 B (IELTS)",
+      "campus": "IELTS",
+      "price4Weeks": 1350000,
+      "currency": "KRW"
+    },
+    {
+      "id": "pines_2a_ielts",
+      "name": "2인실 A (IELTS)",
+      "campus": "IELTS",
+      "price4Weeks": 1040000,
+      "currency": "KRW"
+    },
+    {
+      "id": "pines_3_ielts",
+      "name": "3인실 (IELTS)",
+      "campus": "IELTS",
+      "price4Weeks": 790000,
+      "currency": "KRW"
+    },
+    {
+      "id": "pines_4_ielts",
+      "name": "4인실 (IELTS)",
+      "campus": "IELTS",
+      "price4Weeks": 710000,
+      "currency": "KRW"
+    }
+  ],
+  "surcharges": [],
+  "longTermDiscount": [
+    {
+      "weeks": 12,
+      "discount": 300000,
+      "currency": "KRW"
+    },
+    {
+      "weeks": 16,
+      "discount": 400000,
+      "currency": "KRW"
+    },
+    {
+      "weeks": 20,
+      "discount": 500000,
+      "currency": "KRW"
+    }
+  ],
+  "localFees": [
+    {
+      "id": "pines_ssp",
+      "name": "SSP",
+      "amount": 7800,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "trigger": "enrollment"
+    },
+    {
+      "id": "pines_ssp_icard",
+      "name": "SSP I-CARD",
+      "amount": 4500,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "trigger": "enrollment"
+    },
+    {
+      "id": "pines_deposit",
+      "name": "보증금",
+      "amount": 4000,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "trigger": "enrollment"
+    },
+    {
+      "id": "pines_utility",
+      "name": "전기/수도 (4주당)",
+      "amount": 3000,
+      "currency": "PHP",
+      "chargeUnit": "per_4weeks",
+      "trigger": "enrollment"
+    },
+    {
+      "id": "pines_id",
+      "name": "아이디 카드",
+      "amount": 200,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "trigger": "enrollment"
+    },
+    {
+      "id": "pines_visa_1",
+      "name": "비자연장 1차 (5~8주)",
+      "amount": 4940,
+      "currency": "PHP",
+      "chargeUnit": "cumulative",
+      "trigger": "stay_over",
+      "triggerWeeks": 5
+    },
+    {
+      "id": "pines_visa_2",
+      "name": "비자연장 2차 (~12주)",
+      "amount": 11150,
+      "currency": "PHP",
+      "chargeUnit": "cumulative",
+      "trigger": "stay_over",
+      "triggerWeeks": 9
+    },
+    {
+      "id": "pines_visa_3",
+      "name": "비자연장 3차 (~16주)",
+      "amount": 15390,
+      "currency": "PHP",
+      "chargeUnit": "cumulative",
+      "trigger": "stay_over",
+      "triggerWeeks": 13
+    },
+    {
+      "id": "pines_visa_4",
+      "name": "비자연장 4차 (~20주)",
+      "amount": 19630,
+      "currency": "PHP",
+      "chargeUnit": "cumulative",
+      "trigger": "stay_over",
+      "triggerWeeks": 17
+    },
+    {
+      "id": "pines_visa_5",
+      "name": "비자연장 5차 (~24주)",
+      "amount": 23870,
+      "currency": "PHP",
+      "chargeUnit": "cumulative",
+      "trigger": "stay_over",
+      "triggerWeeks": 21
+    }
+  ],
+  "packages": [],
+  "additionalCharges": [
+    {
+      "id": "pines_textbook",
+      "name": "교재비",
+      "currency": "PHP",
+      "note": "5권 이하 1,100 / 6권 이상 1,500 / 아이엘츠 2,500"
+    },
+    {
+      "id": "pines_laundry",
+      "name": "세탁+건조",
+      "amount": 150,
+      "currency": "PHP",
+      "note": "세탁 or 건조만 100페소"
+    },
+    {
+      "id": "pines_eb_pro",
+      "name": "EB PRO (관리형 스파르타)",
+      "amount": 5000,
+      "currency": "PHP",
+      "note": "4주당. 메인캠퍼스만 진행."
+    },
+    {
+      "id": "pines_option_class",
+      "name": "옵션수업",
+      "amount": 300,
+      "currency": "PHP",
+      "note": "2주당. 리스닝, 프리젠테이션, 요가, 런닝크루 외"
+    },
+    {
+      "id": "pines_add_1on1",
+      "name": "수업추가",
+      "currency": "PHP",
+      "note": "1:1 ESL 6,500 / TOEIC/TOS, IELTS 7,500 / 4:1 class 3,500"
+    },
+    {
+      "id": "pines_weekend_meal",
+      "name": "주말식사",
+      "currency": "PHP",
+      "note": "끼니당 179페소. 희망자에 한해 토(점심) 일(점심,저녁) 신청."
+    },
+    {
+      "id": "pines_extra_stay",
+      "name": "추가 숙박",
+      "currency": "PHP",
+      "note": "다인실 1,500 / single room 2,500"
+    },
+    {
+      "id": "pines_irregular",
+      "name": "비정규 입학/졸업 비용",
+      "currency": "PHP",
+      "note": "다인실 8,000 / 1인실 12,000. 입학/졸업 모두 비정규인 경우 1회만 적용. 1주, 3주 등록만 비정규 추가 비용 해당없음."
+    },
+    {
+      "id": "pines_pickup",
+      "name": "픽업 서비스",
+      "currency": "PHP",
+      "note": "정규 픽업일 기준: 마닐라 3,000 / 클락 2,500"
+    }
+  ],
+  "generalNotes": "파인스 어학원. 바기오 소재. 메인 스피킹 캠퍼스 + 아이엘츠 캠퍼스.\n\n등록금 10만원.\n단기: 1주 40% / 2주 65% / 3주 85%.\n장기할인: 12주 30만 / 16주 40만 / 20주 50만.\n\n보장반(IELTS 8주/12주)은 총액 표시 (4주 환산 불가).\n보호자 코스: 수업 미등록 가능, 1시간 자녀에게 양도 가능.\n파워 ESL 5,7: 2과목 변경 가능 (상담 필요).\n6인실(4+1): 글로벌 청소년 IELTS 학생만.\n\n포인트 시스템: 교재비/ID카드/세탁비/옵션수업/카페음료 등 포인트로 사용. 소진 시 충전.\n\n2026.3.27부터 적용.",
+  "isActive": true,
+  "createdAt": "2026-05-29",
+  "updatedAt": "2026-05-30",
+  "courseShortTermRates": {
+    "mode": "percent",
+    "week1": 40,
+    "week2": 65,
+    "week3": 85,
+    "week4Included": false
+  },
+  "dormShortTermRates": {
+    "mode": "percent",
+    "week1": 40,
+    "week2": 65,
+    "week3": 85,
+    "week4Included": false
+  },
+  "shortTermDataStatus": "confirmed"
+}

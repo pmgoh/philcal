@@ -1,0 +1,406 @@
+{
+  "id": "mk",
+  "schoolCode": "MK",
+  "name": "MK Language Training Center",
+  "campus": "본원",
+  "region": "기타",
+  "schoolType": "general",
+  "minWeeks": 1,
+  "allowShortTerm": true,
+  "programTags": [
+    "ESL",
+    "IELTS",
+    "TESOL",
+    "비즈니스",
+    "워킹홀리데이",
+    "주니어",
+    "가족",
+    "인턴십"
+  ],
+  "registrationFee": {
+    "amount": 150000,
+    "currency": "KRW",
+    "note": "등록비 15만원"
+  },
+  "courses": [
+    {
+      "id": "mk_esl_basic",
+      "name": "ESL Basic",
+      "classDetails": "1:1 3H + 1:5 2H + 저녁스터디 2H",
+      "price4Weeks": 800000,
+      "currency": "KRW"
+    },
+    {
+      "id": "mk_esl_standard",
+      "name": "ESL Standard",
+      "classDetails": "1:1 4H + 1:5 2H + 저녁스터디 2H",
+      "price4Weeks": 900000,
+      "currency": "KRW"
+    },
+    {
+      "id": "mk_esl_premium",
+      "name": "ESL Premium",
+      "classDetails": "1:1 5H + 1:5 2H + 저녁스터디 2H",
+      "price4Weeks": 1050000,
+      "currency": "KRW"
+    },
+    {
+      "id": "mk_esl_intensive",
+      "name": "ESL Intensive",
+      "classDetails": "1:1 7H + 저녁스터디 2H",
+      "price4Weeks": 1200000,
+      "currency": "KRW"
+    },
+    {
+      "id": "mk_ielts",
+      "name": "IELTS",
+      "classDetails": "1:1 4H + 1:5 2H + 저녁스터디 2H",
+      "price4Weeks": 1100000,
+      "currency": "KRW"
+    },
+    {
+      "id": "mk_ielts_guarantee",
+      "name": "IELTS Guarantee",
+      "classDetails": "1:1 6H + 1:5 2H + 저녁스터디 2H",
+      "price4Weeks": 1300000,
+      "currency": "KRW"
+    },
+    {
+      "id": "mk_tesol",
+      "name": "TESOL",
+      "classDetails": "정규 수업 + 매주 토요일 WVSU 8시간 수업 (4주 코스)",
+      "price4Weeks": 450000,
+      "currency": "KRW",
+      "note": "WVSU SSP 별도 필요"
+    },
+    {
+      "id": "mk_business",
+      "name": "Business Course",
+      "classDetails": "1:1 4H + 1:5 2H + 저녁스터디 2H",
+      "price4Weeks": 1100000,
+      "currency": "KRW"
+    },
+    {
+      "id": "mk_working_holiday",
+      "name": "Working Holiday",
+      "classDetails": "1:1 4H + 1:5 2H + 저녁스터디 2H",
+      "price4Weeks": 1050000,
+      "currency": "KRW"
+    },
+    {
+      "id": "mk_survival",
+      "name": "Survival Course",
+      "classDetails": "1:1 4H + 1:5 2H + 저녁스터디 2H",
+      "price4Weeks": 1100000,
+      "currency": "KRW"
+    },
+    {
+      "id": "mk_guardian",
+      "name": "Guardian (보호자)",
+      "classDetails": "1:1 4H + 저녁스터디 2H",
+      "price4Weeks": 750000,
+      "currency": "KRW"
+    },
+    {
+      "id": "mk_junior_basic",
+      "name": "Junior Basic",
+      "classDetails": "1:1 4H + 1:5 1H + 저녁스터디 2H",
+      "price4Weeks": 1100000,
+      "currency": "KRW"
+    },
+    {
+      "id": "mk_junior_premium",
+      "name": "Junior Premium",
+      "classDetails": "1:1 6H + 1:5 1H + 저녁스터디 2H",
+      "price4Weeks": 1300000,
+      "currency": "KRW"
+    },
+    {
+      "id": "mk_internship",
+      "name": "Internship Course",
+      "classDetails": "초기4주: 1:1 4H + 1:5 3H + 저녁스터디 2H / 4주 이후: 1:1 4H + 인턴십 3H + 저녁스터디 2H",
+      "price4Weeks": 1100000,
+      "currency": "KRW"
+    }
+  ],
+  "dormitories": [
+    {
+      "id": "mk_1",
+      "name": "1인실",
+      "price4Weeks": 1100000,
+      "currency": "KRW"
+    },
+    {
+      "id": "mk_2",
+      "name": "2인실",
+      "price4Weeks": 850000,
+      "currency": "KRW"
+    },
+    {
+      "id": "mk_3",
+      "name": "3인실",
+      "price4Weeks": 750000,
+      "currency": "KRW"
+    },
+    {
+      "id": "mk_4",
+      "name": "4인실",
+      "price4Weeks": 700000,
+      "currency": "KRW"
+    },
+    {
+      "id": "mk_5",
+      "name": "5인실",
+      "price4Weeks": 650000,
+      "currency": "KRW",
+      "note": "가족연수 Guardian/Junior 코스에서 사용"
+    }
+  ],
+  "surcharges": [],
+  "promotions": null,
+  "localFees": [
+    {
+      "id": "mk_ssp",
+      "name": "SSP",
+      "amount": 7500,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "trigger": "enrollment",
+      "note": "6개월 유효"
+    },
+    {
+      "id": "mk_ssp_icard",
+      "name": "SSP I-CARD",
+      "amount": 4500,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "trigger": "enrollment",
+      "note": "1년 유효"
+    },
+    {
+      "id": "mk_acr_icard",
+      "name": "ACR I-CARD",
+      "amount": 4300,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "trigger": "stay_over_59days",
+      "triggerWeeks": 9,
+      "note": "1년 유효"
+    },
+    {
+      "id": "mk_id",
+      "name": "MK ID Card",
+      "amount": 300,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "trigger": "enrollment"
+    },
+    {
+      "id": "mk_textbook",
+      "name": "교재비",
+      "amount": 300,
+      "currency": "PHP",
+      "chargeUnit": "per_book",
+      "trigger": "enrollment",
+      "note": "약 300페소/book"
+    },
+    {
+      "id": "mk_electricity",
+      "name": "전기세",
+      "amount": 0,
+      "currency": "PHP",
+      "chargeUnit": "per_usage",
+      "trigger": "enrollment",
+      "note": "계량기 사용량 납부"
+    },
+    {
+      "id": "mk_water",
+      "name": "수도세",
+      "amount": 200,
+      "currency": "PHP",
+      "chargeUnit": "per_week",
+      "trigger": "enrollment",
+      "note": "200페소/주"
+    },
+    {
+      "id": "mk_management",
+      "name": "관리비",
+      "amount": 250,
+      "currency": "PHP",
+      "chargeUnit": "per_week",
+      "trigger": "enrollment"
+    },
+    {
+      "id": "mk_laundry",
+      "name": "세탁비",
+      "amount": 150,
+      "currency": "PHP",
+      "chargeUnit": "per_load",
+      "trigger": "usage",
+      "note": "150페소 8kg까지"
+    },
+    {
+      "id": "mk_deposit",
+      "name": "기숙사 보증금",
+      "amount": 100,
+      "currency": "USD",
+      "chargeUnit": "per_person",
+      "trigger": "enrollment",
+      "note": "퇴실 시 환불"
+    },
+    {
+      "id": "mk_key_deposit",
+      "name": "기숙사 키 보증금",
+      "amount": 150,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "trigger": "enrollment",
+      "note": "퇴실 시 환불"
+    },
+    {
+      "id": "mk_visa_1st",
+      "name": "VISA 1st",
+      "amount": 5040,
+      "currency": "PHP",
+      "chargeUnit": "cumulative",
+      "trigger": "stay_over",
+      "triggerWeeks": 5
+    },
+    {
+      "id": "mk_visa_2nd",
+      "name": "VISA 2nd",
+      "amount": 6420,
+      "currency": "PHP",
+      "chargeUnit": "cumulative",
+      "trigger": "stay_over",
+      "triggerWeeks": 9
+    },
+    {
+      "id": "mk_visa_3rd",
+      "name": "VISA 3rd",
+      "amount": 4330,
+      "currency": "PHP",
+      "chargeUnit": "cumulative",
+      "trigger": "stay_over",
+      "triggerWeeks": 13
+    },
+    {
+      "id": "mk_visa_4th",
+      "name": "VISA 4th",
+      "amount": 4330,
+      "currency": "PHP",
+      "chargeUnit": "cumulative",
+      "trigger": "stay_over",
+      "triggerWeeks": 17
+    },
+    {
+      "id": "mk_visa_5th",
+      "name": "VISA 5th",
+      "amount": 4330,
+      "currency": "PHP",
+      "chargeUnit": "cumulative",
+      "trigger": "stay_over",
+      "triggerWeeks": 21
+    },
+    {
+      "id": "mk_crtv",
+      "name": "CRTV",
+      "amount": 1800,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "trigger": "stay_over",
+      "triggerWeeks": 25
+    },
+    {
+      "id": "mk_ecc",
+      "name": "ECC",
+      "amount": 1000,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "trigger": "stay_over",
+      "triggerWeeks": 25
+    },
+    {
+      "id": "mk_pickup_iloilo_1",
+      "name": "픽업비 일로일로 공항 (1인)",
+      "amount": 1700,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "trigger": "enrollment"
+    },
+    {
+      "id": "mk_pickup_kalibo_1",
+      "name": "픽업비 칼리보 공항 (1인)",
+      "amount": 4000,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "trigger": "enrollment"
+    }
+  ],
+  "packages": [],
+  "additionalCharges": [
+    {
+      "id": "mk_add_1on1_esl",
+      "name": "추가 1:1 수업 (ESL)",
+      "amount": 150000,
+      "currency": "KRW",
+      "note": "4주 기준"
+    },
+    {
+      "id": "mk_add_group_esl",
+      "name": "추가 1:5 수업 (ESL)",
+      "amount": 100000,
+      "currency": "KRW",
+      "note": "4주 기준"
+    },
+    {
+      "id": "mk_add_1on1_ielts",
+      "name": "추가 1:1 수업 (IELTS)",
+      "amount": 200000,
+      "currency": "KRW",
+      "note": "4주 기준"
+    },
+    {
+      "id": "mk_add_group_ielts",
+      "name": "추가 1:5 수업 (IELTS)",
+      "amount": 150000,
+      "currency": "KRW",
+      "note": "4주 기준"
+    },
+    {
+      "id": "mk_pickup_family_iloilo",
+      "name": "가족 픽업비 일로일로 (인원별)",
+      "amount": 0,
+      "currency": "PHP",
+      "note": "2인 2,550 / 3인 3,400 / 4인 4,250. 추가인원 50% 할인."
+    },
+    {
+      "id": "mk_pickup_family_kalibo",
+      "name": "가족 픽업비 칼리보 (인원별)",
+      "amount": 0,
+      "currency": "PHP",
+      "note": "2인 6,000 / 3인 8,000 / 4인 10,000"
+    }
+  ],
+  "refundPolicy": "",
+  "dormitoryRules": "",
+  "generalNotes": "MK Language Training Center. 일로일로 소재.\n\n등록비: 15만원.\n기숙사비: 청소비용, 일일3식 포함. 전기세/수도세/세탁비 불포함.\n1클래스: 45분.\n\n4주 미만: 코스/기숙사 모두 1주 40%, 2주 65%, 3주 85%.\n\n가족연수는 합산표(수업료+기숙사+등록비) 제공. 현지비용은 인원별×기간별 별도 표 있음.\nGuardian 코스: 2~5인실 사용.\n\n특파원 프로모션: 코스별 합산표 + 장기할인(12주 6만 / 16주 12만 / 20주 18만 / 24주 24만). 현지비용은 인원별(1~4명) × 기간별(4/8/12주) 총액표로 별도 제공.\n\n가족연수 기타비용: Registration Fee ₩130,000 (Arrangement cost) + ₩91,000 (Kalibo airport→MK). SSP 6,500P / SSP I-Card 4,000P / ACR I-Card 3,300P / MK ID 150P / VISA 약3,000P/4주 / 교재 300P/book / 전기 사용량 / 수도 15P/일 / 관리비 400P/4주 / Room Deposit $100×2 / Key Deposit 150P.",
+  "isActive": true,
+  "createdAt": "2026-05-29",
+  "updatedAt": "2026-05-30",
+  "courseShortTermRates": {
+    "mode": "percent",
+    "week1": 40,
+    "week2": 65,
+    "week3": 85,
+    "week4Included": false
+  },
+  "dormShortTermRates": {
+    "mode": "percent",
+    "week1": 40,
+    "week2": 65,
+    "week3": 85,
+    "week4Included": false
+  },
+  "shortTermDataStatus": "confirmed"
+}

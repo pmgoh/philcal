@@ -69,6 +69,7 @@ export type AgencyDiscountKind =
   | 'amount_per_week'
   | 'amount_per_4weeks'
   | 'amount_flat'
+  | 'amount'
   | 'reg_fee_only'
   | 'week_tiers'
 

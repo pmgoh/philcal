@@ -1,0 +1,354 @@
+{
+  "id": "philinter",
+  "schoolCode": "PHILINTER",
+  "name": "Philinter Academy",
+  "campus": "본원",
+  "region": "세부",
+  "schoolType": "general",
+  "minWeeks": 1,
+  "allowShortTerm": true,
+  "shortTermDataStatus": "confirmed",
+  "programTags": [
+    "ESL",
+    "IELTS",
+    "TOEIC",
+    "비즈니스",
+    "주니어",
+    "가족연수",
+    "스피킹"
+  ],
+  "registrationFee": {
+    "amount": 120,
+    "currency": "USD"
+  },
+  "courses": [
+    {
+      "id": "phi_intensive_esl",
+      "name": "Intensive ESL",
+      "price4Weeks": 1000,
+      "currency": "USD"
+    },
+    {
+      "id": "phi_general_esl",
+      "name": "General ESL",
+      "price4Weeks": 870,
+      "currency": "USD"
+    },
+    {
+      "id": "phi_ips",
+      "name": "IPS (Intensive Power Speaking)",
+      "price4Weeks": 1100,
+      "currency": "USD"
+    },
+    {
+      "id": "phi_light_esl",
+      "name": "Light ESL",
+      "price4Weeks": 750,
+      "currency": "USD"
+    },
+    {
+      "id": "phi_speaking",
+      "name": "Speaking (Premium)",
+      "price4Weeks": 1400,
+      "currency": "USD",
+      "note": "8주 전용 (Premium)."
+    },
+    {
+      "id": "phi_junior_speaking",
+      "name": "Junior Speaking (Premium)",
+      "price4Weeks": 1400,
+      "currency": "USD",
+      "note": "4~6주 전용 (Premium)."
+    },
+    {
+      "id": "phi_booster_speaking",
+      "name": "Booster Speaking",
+      "price4Weeks": 1400,
+      "currency": "USD",
+      "note": "4주 전용."
+    },
+    {
+      "id": "phi_ielts_intensive",
+      "name": "IELTS Intensive",
+      "price4Weeks": 1120,
+      "currency": "USD"
+    },
+    {
+      "id": "phi_ielts_g12",
+      "name": "IELTS Guarantee 12주",
+      "price4Weeks": 1350,
+      "currency": "USD",
+      "note": "12주 전용."
+    },
+    {
+      "id": "phi_ielts_g8",
+      "name": "IELTS Guarantee 8주",
+      "price4Weeks": 1530,
+      "currency": "USD",
+      "note": "8주 전용."
+    },
+    {
+      "id": "phi_toeic_regular",
+      "name": "TOEIC Regular",
+      "price4Weeks": 1040,
+      "currency": "USD"
+    },
+    {
+      "id": "phi_toeic_g12",
+      "name": "TOEIC Guarantee 12주",
+      "price4Weeks": 1200,
+      "currency": "USD",
+      "note": "12주 전용."
+    },
+    {
+      "id": "phi_focus_industry",
+      "name": "Focus Industry",
+      "price4Weeks": 1190,
+      "currency": "USD"
+    },
+    {
+      "id": "phi_basic_biz",
+      "name": "Basic Business",
+      "price4Weeks": 1060,
+      "currency": "USD"
+    },
+    {
+      "id": "phi_adv_biz",
+      "name": "Advanced Business",
+      "price4Weeks": 1110,
+      "currency": "USD"
+    },
+    {
+      "id": "phi_primary_junior",
+      "name": "Primary English (7-11) / Junior ESL (12-17)",
+      "price4Weeks": 1300,
+      "currency": "USD"
+    },
+    {
+      "id": "phi_junior_ielts",
+      "name": "Junior IELTS (12-17)",
+      "price4Weeks": 1450,
+      "currency": "USD"
+    },
+    {
+      "id": "phi_ielts_16w_55",
+      "name": "IELTS 16-Week for 5.5",
+      "price4Weeks": 4040,
+      "currency": "USD",
+      "note": "16주 전용 패키지."
+    },
+    {
+      "id": "phi_ielts_16w_65",
+      "name": "IELTS 16-Week for 6.5",
+      "price4Weeks": 4160,
+      "currency": "USD",
+      "note": "16주 전용 패키지."
+    }
+  ],
+  "dormitories": [
+    {
+      "id": "phi_single",
+      "name": "1인실 (Single)",
+      "price4Weeks": 1400,
+      "currency": "USD"
+    },
+    {
+      "id": "phi_double",
+      "name": "2인실 (Double)",
+      "price4Weeks": 970,
+      "currency": "USD"
+    },
+    {
+      "id": "phi_triple",
+      "name": "3인실 (Triple)",
+      "price4Weeks": 810,
+      "currency": "USD"
+    },
+    {
+      "id": "phi_azon_single",
+      "name": "AZON 콘도 1인실",
+      "price4Weeks": 1690,
+      "currency": "USD"
+    },
+    {
+      "id": "phi_azon_double",
+      "name": "AZON 콘도 2인실",
+      "price4Weeks": 1100,
+      "currency": "USD"
+    },
+    {
+      "id": "phi_azon_triple",
+      "name": "AZON 콘도 3인실",
+      "price4Weeks": 890,
+      "currency": "USD",
+      "note": "가족/그룹만 가능."
+    }
+  ],
+  "packages": [],
+  "surcharges": [],
+  "localFees": [
+    {
+      "id": "phi_ssp",
+      "name": "SSP",
+      "amount": 7800,
+      "currency": "PHP",
+      "chargeUnit": "per_person"
+    },
+    {
+      "id": "phi_ssp_acr_icard",
+      "name": "SSP ACR I-Card",
+      "amount": 4500,
+      "currency": "PHP",
+      "chargeUnit": "per_person"
+    },
+    {
+      "id": "phi_tourist_acr",
+      "name": "Tourist ACR I-Card",
+      "amount": 4000,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "triggerWeeks": 7
+    },
+    {
+      "id": "phi_idcard",
+      "name": "School ID Card",
+      "amount": 400,
+      "currency": "PHP",
+      "chargeUnit": "per_person"
+    },
+    {
+      "id": "phi_water",
+      "name": "수도세 (AZON 콘도)",
+      "amount": 450,
+      "currency": "PHP",
+      "chargeUnit": "per_week",
+      "note": "1w 450 / 2w 650 / 3w 850 / 4w 1,000."
+    },
+    {
+      "id": "phi_electricity",
+      "name": "전기세 (AZON 콘도)",
+      "amount": 2000,
+      "currency": "PHP",
+      "chargeUnit": "per_4weeks",
+      "note": "1w 2,000 / 4w 2,000~3,000. 월 5,000페소 초과 시 추가."
+    },
+    {
+      "id": "phi_deposit",
+      "name": "보증금 (AZON 콘도)",
+      "amount": 2000,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "note": "3w까지 2,000 / 4w+ 3,000."
+    },
+    {
+      "id": "phi_maintenance",
+      "name": "관리비",
+      "amount": 550,
+      "currency": "PHP",
+      "chargeUnit": "per_week",
+      "note": "주당 550페소 기본. 기간별 상이."
+    },
+    {
+      "id": "phi_pickup",
+      "name": "픽업비",
+      "amount": 1200,
+      "currency": "PHP",
+      "chargeUnit": "per_person"
+    },
+    {
+      "id": "phi_visa_1",
+      "name": "1차 비자연장 (5-8주)",
+      "amount": 5140,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "triggerWeeks": 5
+    },
+    {
+      "id": "phi_visa_2",
+      "name": "2차 비자연장 (9-12주)",
+      "amount": 6920,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "triggerWeeks": 9,
+      "note": "누적 12,060."
+    },
+    {
+      "id": "phi_visa_3",
+      "name": "3차 비자연장 (13-16주)",
+      "amount": 4440,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "triggerWeeks": 13,
+      "note": "누적 16,500."
+    },
+    {
+      "id": "phi_visa_4",
+      "name": "4차 비자연장 (17-20주)",
+      "amount": 4950,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "triggerWeeks": 17,
+      "note": "누적 21,450."
+    },
+    {
+      "id": "phi_visa_5",
+      "name": "5차 비자연장 (21-24주)",
+      "amount": 5450,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "triggerWeeks": 21,
+      "note": "누적 26,900."
+    }
+  ],
+  "additionalCharges": [
+    {
+      "id": "phi_add_11_esl",
+      "label": "추가 1:1 ESL (4주)",
+      "amount": 200,
+      "currency": "USD"
+    },
+    {
+      "id": "phi_add_11_ielts",
+      "label": "추가 1:1 IELTS/TOEIC (4주)",
+      "amount": 250,
+      "currency": "USD"
+    },
+    {
+      "id": "phi_add_sg",
+      "label": "추가 Small Group (4주)",
+      "amount": 120,
+      "currency": "USD"
+    },
+    {
+      "id": "phi_add_bg",
+      "label": "추가 Big Group (4주)",
+      "amount": 80,
+      "currency": "USD"
+    },
+    {
+      "id": "phi_meal_commuter",
+      "label": "식비 (통학, 4주)",
+      "amount": 6500,
+      "currency": "PHP",
+      "note": "Lunch & Dinner."
+    }
+  ],
+  "generalNotes": "Philinter Academy. 세부 소재. 2026 학비표 기준. USD 단가.\n\n[단기 비율] 1w=45%, 2w=65%, 3w=85% of 4주 가격 (코스·기숙사 동일).\n입학금 $120 별도. 합산표에 입학금 미포함.\n\n[기숙사] Dormitory (Single/Double/Triple) + AZON Condo (Single/Double/Triple).\nAZON Triple은 가족/그룹만 가능.\n\n[통학형 (Commuter)] 코스비만 납부 (기숙사·식사 별도).\n입학금 $120 대신 $100 (통학). 식비 6,500PHP/4주 별도.\n통학생은 IELTS Guarantee, TOEIC Guarantee, Focus Industry 수강 불가.\n통학 수업료: Intensive ESL 4w=$1,190 / General ESL $1,060 / IPS $1,330 등.\n\n[현지비용 AZON 콘도 기준 총액]\n4w $25,100 / 8w $35,640 / 12w $52,960 / 16w $65,600 / 20w $79,550 / 24w $94,000 PHP.\n\n[현지비용 통학 기준 총액]\n4w $14,900 / 8w $21,690 / 12w $34,810 / 16w $42,000 / 20w $49,150 / 24w $56,800 PHP.",
+  "isActive": true,
+  "createdAt": "2026-05-29",
+  "updatedAt": "2026-05-30",
+  "courseShortTermRates": {
+    "mode": "percent",
+    "week1": 45,
+    "week2": 65,
+    "week3": 85,
+    "week4Included": false
+  },
+  "dormShortTermRates": {
+    "mode": "percent",
+    "week1": 45,
+    "week2": 65,
+    "week3": 85,
+    "week4Included": false
+  }
+}

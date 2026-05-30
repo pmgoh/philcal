@@ -1,0 +1,100 @@
+{
+  "id": "besta_bohol",
+  "schoolCode": "BESTA_BOHOL",
+  "name": "BESTA BOHOL 호텔형 가족캠프",
+  "campus": "Bohol Hotel Gabriella",
+  "region": "기타",
+  "schoolType": "general",
+  "minWeeks": 4,
+  "allowShortTerm": false,
+  "programTags": ["가족연수", "주니어"],
+  "registrationFee": {
+    "amount": 0,
+    "currency": "KRW",
+    "note": "등록금 패키지에 포함"
+  },
+  "courses": [],
+  "dormitories": [],
+  "packages": [
+    {
+      "id": "besta_bohol_summer_2026",
+      "label": "2026 여름 가족캠프 (7/26~8/22)",
+      "season": "성수기",
+      "currency": "KRW",
+      "columns": ["4주"],
+      "priceMatrix": [
+        {
+          "weeks": 4,
+          "prices": [
+            { "label": "2인실 킹베드1 (일반)", "amount": 6800000 },
+            { "label": "3인실 퀸베드1+싱글베드1 (일반)", "amount": 9050000 },
+            { "label": "3인실 킹베드1+싱글베드1 (일반)", "amount": 9200000 },
+            { "label": "3인실 킹베드1(베란다)+추가베드", "amount": 9400000 },
+            { "label": "3인실 킹베드1+싱글베드1 (베란다)", "amount": 9500000 },
+            { "label": "4인실 킹베드1 & 퀸베드1 (일반)", "amount": 11300000 }
+          ]
+        }
+      ],
+      "additionalRules": [
+        {
+          "id": "junior_exam_prep",
+          "condition": "주니어 시험준비 코스 신청시",
+          "addAmount": 100000,
+          "currency": "KRW",
+          "note": "1인당 10만원 추가"
+        }
+      ],
+      "includes": "등록금/학비/SSP비용/밴 차량지원(월-금 쇼핑몰셔틀, 일-시티 및 팡라오 드랍 및 픽업)/호텔숙박/보홀 내 픽업&샌딩 서비스/세탁(주3회)/식사/교재/줌바(화,목)/화상수업(4주)/전기세/수도세/관리비/청소(매일)/룸타월 매일 교체/풀타월 제공",
+      "excludes": "호텔보증금 P5,000(가족당) 퇴실시 반환\n왕복항공권\n여행자보험\n출국세\n개인비용\n옵션수업",
+      "includesLocalFees": true,
+      "schedules": [
+        { "startDate": "2026-07-26", "endDate": "2026-08-22", "season": "성수기", "weeks": 4 }
+      ],
+      "note": "캠프대상: 보호자 + 자녀 6세이상(2020년생) ~ 14세이하(2012년생).\n보호자 선택사항: 1) 1:1 ESL 3Time 또는 2) 스크린골프+GYM 이용권(셔틀제공).\n연수 중 보호자 방문 시 엑스트라 베드와 식사 포함 1일 2,000페소 추가 (최대6박7일까지 숙박가능)."
+    },
+    {
+      "id": "besta_bohol_winter_2027",
+      "label": "2027 겨울 가족캠프 (1/3~1/30)",
+      "season": "성수기",
+      "currency": "KRW",
+      "columns": ["4주"],
+      "priceMatrix": [
+        {
+          "weeks": 4,
+          "prices": [
+            { "label": "2인실 킹베드1 (일반)", "amount": 6900000 },
+            { "label": "3인실 퀸베드1+싱글베드1 (일반)", "amount": 9200000 },
+            { "label": "3인실 킹베드1+싱글베드1 (일반)", "amount": 9350000 },
+            { "label": "3인실 킹베드1(베란다)+추가베드", "amount": 9550000 },
+            { "label": "3인실 킹베드1+싱글베드1 (베란다)", "amount": 9650000 },
+            { "label": "4인실 킹베드1 & 퀸베드1 (일반)", "amount": 11500000 }
+          ]
+        }
+      ],
+      "additionalRules": [
+        {
+          "id": "junior_exam_prep",
+          "condition": "주니어 시험준비 코스 신청시",
+          "addAmount": 100000,
+          "currency": "KRW",
+          "note": "1인당 10만원 추가"
+        }
+      ],
+      "includes": "등록금/학비/SSP비용/밴 차량지원(월-금 쇼핑몰셔틀, 일-시티 및 팡라오 드랍 및 픽업)/호텔숙박/보홀 내 픽업&샌딩 서비스/세탁(주3회)/식사/교재/줌바(화,목)/화상수업(4주)/전기세/수도세/관리비/청소(매일)/룸타월 매일 교체/풀타월 제공",
+      "excludes": "호텔보증금 P5,000(가족당) 퇴실시 반환\n왕복항공권\n여행자보험\n출국세\n개인비용\n옵션수업",
+      "includesLocalFees": true,
+      "schedules": [
+        { "startDate": "2027-01-03", "endDate": "2027-01-30", "season": "성수기", "weeks": 4 }
+      ],
+      "note": "캠프대상: 보호자 + 자녀 6세이상(2021년생) ~ 14세이하(2013년생).\n보호자 선택사항: 1) 1:1 ESL 3Time 또는 2) 스크린골프+GYM 이용권(셔틀제공).\n연수 중 보호자 방문 시 엑스트라 베드와 식사 포함 1일 2,000페소 추가 (최대6박7일까지 숙박가능)."
+    }
+  ],
+  "surcharges": [],
+  "localFees": [],
+  "refundPolicy": "",
+  "dormitoryRules": "",
+  "generalNotes": "BESTA 보홀 호텔형 가족캠프. Bohol Hotel Gabriella 이용. 현지납부비용 패키지에 포함.\n여름(2026.07.26~08.22)과 겨울(2027.01.03~01.30) 두 시즌 운영. 가격 약간 차이 있음.",
+  "isActive": true,
+  "createdAt": "2026-05-29",
+  "updatedAt": "2026-05-29"
+}

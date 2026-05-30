@@ -1,0 +1,356 @@
+{
+  "id": "jic_premium",
+  "schoolCode": "JIC_PREMIUM",
+  "name": "JIC Premium Campus",
+  "campus": "Premium",
+  "region": "바기오",
+  "schoolType": "general",
+  "minWeeks": 1,
+  "allowShortTerm": true,
+  "shortTermRates": {
+    "week1": 0.40,
+    "week2": 0.65,
+    "week3": 0.85
+  },
+  "programTags": ["ESL", "스피킹", "토익", "워킹홀리데이", "비즈니스", "시니어"],
+  "registrationFee": {
+    "amount": 100000,
+    "currency": "KRW",
+    "note": "등록금 ₩100,000 (등록 시 1회 납부, 환불 불가)"
+  },
+  "courses": [
+    {
+      "id": "jic_p_speaking_starter",
+      "name": "Speaking Starter",
+      "category": "ESL",
+      "classDetails": "1:1 4H + 그룹 1H + 옵션 2H = 총 7H",
+      "price4Weeks": 1030000,
+      "currency": "KRW"
+    },
+    {
+      "id": "jic_p_speaking_pro",
+      "name": "Speaking Pro",
+      "category": "ESL",
+      "classDetails": "1:1 5H + 그룹 1H + 옵션 2H = 총 8H",
+      "price4Weeks": 1215000,
+      "currency": "KRW"
+    },
+    {
+      "id": "jic_p_speaking_master",
+      "name": "Speaking Master",
+      "category": "ESL",
+      "classDetails": "1:1 6H + 그룹 1H + 옵션 2H = 총 9H",
+      "price4Weeks": 1400000,
+      "currency": "KRW"
+    },
+    {
+      "id": "jic_p_tep8",
+      "name": "ESL TEP 8 (TEP 8)",
+      "category": "ESL",
+      "classDetails": "1:1 3H + 그룹 3H + 옵션 2H = 총 8H",
+      "price4Weeks": 1030000,
+      "currency": "KRW"
+    },
+    {
+      "id": "jic_p_tep9",
+      "name": "ESL TEP 9 (TEP 9)",
+      "category": "ESL",
+      "classDetails": "1:1 4H + 그룹 3H + 옵션 2H = 총 9H",
+      "price4Weeks": 1130000,
+      "currency": "KRW"
+    },
+    {
+      "id": "jic_p_tep10",
+      "name": "ESL TEP 10 (TEP 10)",
+      "category": "ESL",
+      "classDetails": "1:1 5H + 그룹 3H + 옵션 2H = 총 10H",
+      "price4Weeks": 1230000,
+      "currency": "KRW"
+    },
+    {
+      "id": "jic_p_active_senior5",
+      "name": "Active Senior 5 (AS 5)",
+      "category": "ESL",
+      "classDetails": "1:1 3H + 옵션 2H = 총 5H",
+      "price4Weeks": 830000,
+      "currency": "KRW"
+    },
+    {
+      "id": "jic_p_active_senior6",
+      "name": "Active Senior 6 (AS 6)",
+      "category": "ESL",
+      "classDetails": "1:1 4H + 옵션 2H = 총 6H",
+      "price4Weeks": 930000,
+      "currency": "KRW"
+    },
+    {
+      "id": "jic_p_working_holiday",
+      "name": "Working Holiday 8 (WH 8)",
+      "category": "Working Holiday",
+      "classDetails": "1:1 3H + 그룹 3H + 옵션 2H = 총 8H",
+      "price4Weeks": 1130000,
+      "currency": "KRW"
+    },
+    {
+      "id": "jic_p_toeic",
+      "name": "TOEIC",
+      "category": "TOEIC",
+      "classDetails": "1:1 3H + 그룹 3H + 옵션 2H = 총 8H",
+      "price4Weeks": 1130000,
+      "currency": "KRW"
+    },
+    {
+      "id": "jic_p_business_master",
+      "name": "Business Master 8 (BM 8)",
+      "category": "Master",
+      "classDetails": "1:1 6H + 옵션 2H = 총 8H",
+      "price4Weeks": 1400000,
+      "currency": "KRW"
+    }
+  ],
+  "dormitories": [
+    {
+      "id": "jic_p_room1_balcony",
+      "name": "Room for 1 Balcony",
+      "price4Weeks": 1790000,
+      "currency": "KRW"
+    },
+    {
+      "id": "jic_p_semi_single",
+      "name": "Semi-Single Room Dormitory 2",
+      "price4Weeks": 1590000,
+      "currency": "KRW"
+    },
+    {
+      "id": "jic_p_couple_balcony",
+      "name": "Couple Room Balcony",
+      "price4Weeks": 1290000,
+      "currency": "KRW"
+    },
+    {
+      "id": "jic_p_room2_balcony",
+      "name": "Room for 2 Balcony",
+      "price4Weeks": 1190000,
+      "currency": "KRW"
+    },
+    {
+      "id": "jic_p_room2_no_balcony",
+      "name": "Room for 2 No Balcony",
+      "price4Weeks": 1090000,
+      "currency": "KRW"
+    },
+    {
+      "id": "jic_p_room4_balcony",
+      "name": "Room for 4 Balcony",
+      "price4Weeks": 890000,
+      "currency": "KRW"
+    },
+    {
+      "id": "jic_p_room4_no_balcony",
+      "name": "Room for 4 No Balcony",
+      "price4Weeks": 790000,
+      "currency": "KRW"
+    }
+  ],
+  "surcharges": [
+    {
+      "id": "jic_p_peak_surcharge",
+      "label": "성수기 추가 요금",
+      "startDate": "2026-06-28",
+      "endDate": "2026-08-22",
+      "amountPerWeek": 50000,
+      "currency": "KRW",
+      "applyTo": "courses",
+      "note": "2026년 6월 28일 ~ 8월 22일 성수기 기간, 주당 50,000원 추가."
+    }
+  ],
+  "longTermDiscount": [
+    { "weeks": 12, "discount": 300000, "currency": "KRW" },
+    { "weeks": 16, "discount": 400000, "currency": "KRW" },
+    { "weeks": 20, "discount": 500000, "currency": "KRW" },
+    { "weeks": 24, "discount": 600000, "currency": "KRW" },
+    { "note": "Every additional 4 weeks: ₩100,000 OFF" }
+  ],
+  "promotions": null,
+  "localFees": [
+    {
+      "id": "jic_p_ssp",
+      "name": "SSP",
+      "amount": 7800,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "trigger": "enrollment",
+      "note": "Special Study Permit. Valid for 6 months."
+    },
+    {
+      "id": "jic_p_ssp_icard",
+      "name": "SSP I-card",
+      "amount": 4500,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "trigger": "enrollment",
+      "note": "Special Study Permit Card. Valid for 1 year."
+    },
+    {
+      "id": "jic_p_acr_icard",
+      "name": "ACR-I Card",
+      "amount": 4000,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "trigger": "stay_over_59days",
+      "triggerWeeks": 9,
+      "note": "Alien Registration Card"
+    },
+    {
+      "id": "jic_p_student_id",
+      "name": "Student ID card",
+      "amount": 200,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "trigger": "enrollment",
+      "note": "Photography included"
+    },
+    {
+      "id": "jic_p_deposit",
+      "name": "Deposit (refundable)",
+      "amount": 3000,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "trigger": "enrollment",
+      "note": "Full refund if no penalty deduction"
+    },
+    {
+      "id": "jic_p_utility",
+      "name": "Utility Bill",
+      "amount": 3000,
+      "currency": "PHP",
+      "chargeUnit": "per_4weeks",
+      "trigger": "enrollment",
+      "note": "Water & Electricity"
+    },
+    {
+      "id": "jic_p_laundry",
+      "name": "Laundry Fee",
+      "amount": 1200,
+      "currency": "PHP",
+      "chargeUnit": "per_4weeks",
+      "trigger": "enrollment",
+      "note": "Wash, dry and fold (twice a week)"
+    },
+    {
+      "id": "jic_p_maintenance",
+      "name": "Maintenance",
+      "amount": 1000,
+      "currency": "PHP",
+      "chargeUnit": "per_4weeks",
+      "trigger": "enrollment",
+      "note": "Facility management and maintenance"
+    },
+    {
+      "id": "jic_p_visa_1st",
+      "name": "VISA Extension 1st (8 weeks)",
+      "amount": 4940,
+      "currency": "PHP",
+      "chargeUnit": "cumulative",
+      "trigger": "stay_over",
+      "triggerWeeks": 5,
+      "note": "누적형. 1st extension at 8 weeks."
+    },
+    {
+      "id": "jic_p_visa_2nd",
+      "name": "VISA Extension 2nd (12 weeks)",
+      "amount": 11150,
+      "currency": "PHP",
+      "chargeUnit": "cumulative",
+      "trigger": "stay_over",
+      "triggerWeeks": 9,
+      "note": "누적형. 2nd extension at 12 weeks."
+    },
+    {
+      "id": "jic_p_visa_3rd",
+      "name": "VISA Extension 3rd (16 weeks)",
+      "amount": 15390,
+      "currency": "PHP",
+      "chargeUnit": "cumulative",
+      "trigger": "stay_over",
+      "triggerWeeks": 13,
+      "note": "누적형. 3rd extension at 16 weeks."
+    },
+    {
+      "id": "jic_p_visa_4th",
+      "name": "VISA Extension 4th (20 weeks)",
+      "amount": 19630,
+      "currency": "PHP",
+      "chargeUnit": "cumulative",
+      "trigger": "stay_over",
+      "triggerWeeks": 17,
+      "note": "누적형. 4th extension at 20 weeks."
+    },
+    {
+      "id": "jic_p_visa_5th",
+      "name": "VISA Extension 5th (24 weeks)",
+      "amount": 23870,
+      "currency": "PHP",
+      "chargeUnit": "cumulative",
+      "trigger": "stay_over",
+      "triggerWeeks": 21,
+      "note": "누적형. 5th extension at 24 weeks."
+    },
+    {
+      "id": "jic_p_odd_week",
+      "name": "Odd week (Arrival and Graduation)",
+      "amount": 8000,
+      "currency": "PHP",
+      "chargeUnit": "per_odd_week",
+      "trigger": "odd_week",
+      "note": "홀수 주차 입학/졸업 시 각 8,000페소"
+    }
+  ],
+  "packages": [],
+  "additionalCharges": [
+    {
+      "id": "jic_p_class_material",
+      "name": "교재비 (4주당, 코스별 상이)",
+      "currency": "PHP",
+      "note": "ESL Starter 7: ₱1,500 / Speaking Master 8: ₱1,900 / TOEIC 8: ₱1,600 / Working Holiday 8: ₱1,600 / Business Master 8: ₱1,900 / TEP ESL 8: ₱1,500 / TEP ESL 9: ₱1,600 / TEP ESL 10: ₱1,700 / Active Senior 5: ₱1,100 / Active Senior 6: ₱1,200 / Family Guardian: ₱900 / Family Junior: ₱1,700"
+    },
+    {
+      "id": "jic_p_additional_1on1",
+      "name": "추가 1:1 수업 (4주당)",
+      "currency": "PHP",
+      "note": "General ESL 1:1: ₱6,500 / TEP ESL 1:1: ₱7,000. 공휴일 수업 없음."
+    },
+    {
+      "id": "jic_p_additional_group",
+      "name": "추가 그룹 수업 (4주당)",
+      "currency": "PHP",
+      "note": "General ESL: ₱3,500. 공휴일 수업 없음."
+    },
+    {
+      "id": "jic_p_barista",
+      "name": "바리스타 인턴십 (1회, 12세션)",
+      "currency": "PHP",
+      "note": "Working Holiday: ₱3,500 / Others: ₱4,500. 사전 스케줄 필요."
+    },
+    {
+      "id": "jic_p_pickup_manila_sunday",
+      "name": "공항 픽업 - Manila NAIA (일요일 BESA 픽업일)",
+      "amount": 3000,
+      "currency": "PHP",
+      "note": "일요일 BESA 픽업일: 인원 무관 ₱3,000. 기타 요일: 3인 이상 ₱4,000 / 2인 ₱6,000 / 1인 ₱12,000."
+    },
+    {
+      "id": "jic_p_pickup_clark_sunday",
+      "name": "공항 픽업 - Clark CRK (일요일 BESA 픽업일)",
+      "amount": 2500,
+      "currency": "PHP",
+      "note": "일요일 BESA 픽업일: 인원 무관 ₱2,500. 기타 요일: 3인 이상 ₱3,000 / 2인 ₱4,000 / 1인 ₱7,000."
+    }
+  ],
+  "refundPolicy": "",
+  "dormitoryRules": "",
+  "generalNotes": "JIC Premium Campus. 바기오 소재.\n\n등록금: ₩100,000 (1회, 환불 불가).\n단기: 1주 40% / 2주 65% / 3주 85% of 4주 가격.\n장기할인: 12주 30만 / 16주 40만 / 20주 50만 / 24주 60만 / 추가 4주당 10만.\n성수기: 2026.6.28~8.22, 주당 5만원 추가.\n\n교재비는 코스별 상이 (현지 납부).\n공휴일 수업 없음.\n학비는 등록 당시 기준, 추후 인상 가능.\n\nFamily Guardian 교재비 ₱900, Family Junior 교재비 ₱1,700 — 가족연수 코스는 Premium 캠퍼스에서 운영.",
+  "isActive": true,
+  "createdAt": "2026-05-29",
+  "updatedAt": "2026-05-29"
+}

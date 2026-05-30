@@ -1,0 +1,48 @@
+{
+  "id": "talk_camp_adult",
+  "schoolCode": "TALK_CAMP_ADULT",
+  "name": "TALK Academy 성인 2주 단기 캠프",
+  "campus": "클락 캠퍼스",
+  "region": "클락",
+  "schoolType": "camp",
+  "programTags": ["성인일반"],
+  "minWeeks": 2,
+  "allowShortTerm": false,
+  "registrationFee": { "amount": 0, "currency": "KRW", "note": "패키지에 포함." },
+  "courses": [],
+  "dormitories": [],
+  "surcharges": [],
+  "packages": [
+    {
+      "id": "camp_adult_single",
+      "name": "성인 2주 단기 캠프 - 싱글룸",
+      "programType": "camp",
+      "includesLocalFees": true,
+      "note": "원화 2주 기준 250만원. 모든 비용이 포함된 올인원 패키지.",
+      "includes": "SSP (Special Study Permit), 전문 강사와의 영어 수업 일 6타임, 모든 교재 및 학습 자료, 편안한 기숙사 숙박, 공항 픽업 및 샌딩 서비스, 주중 3식 제공 (아침, 점심, 저녁), 주 2회 세탁 서비스, 주 2회 객실 청소, 프로그램 내 모든 액티비티 제공 (Puning Hot Spring, 마사지, 시티 투어, 환송 파티)",
+      "excludes": "왕복 항공권, 여행자보험, 개인 용돈",
+      "priceMatrix": { "columns": ["싱글룸"], "rows": [{ "weeks": 2, "prices": [2500000] }] },
+      "currency": "KRW"
+    },
+    {
+      "id": "camp_adult_double",
+      "name": "성인 2주 단기 캠프 - 더블룸",
+      "programType": "camp",
+      "includesLocalFees": true,
+      "note": "원화 2주 기준 230만원. 모든 비용이 포함된 올인원 패키지.",
+      "includes": "SSP (Special Study Permit), 전문 강사와의 영어 수업 일 6타임, 모든 교재 및 학습 자료, 편안한 기숙사 숙박, 공항 픽업 및 샌딩 서비스, 주중 3식 제공 (아침, 점심, 저녁), 주 2회 세탁 서비스, 주 2회 객실 청소, 프로그램 내 모든 액티비티 제공 (Puning Hot Spring, 마사지, 시티 투어, 환송 파티)",
+      "excludes": "왕복 항공권, 여행자보험, 개인 용돈",
+      "priceMatrix": { "columns": ["더블룸"], "rows": [{ "weeks": 2, "prices": [2300000] }] },
+      "currency": "KRW"
+    }
+  ],
+  "promotions": null,
+  "localFees": [],
+  "additionalCharges": [],
+  "refundPolicy": "",
+  "dormitoryRules": "",
+  "generalNotes": "▶캠프 개요◀\n* 클락 토크 성인 2주 단기 캠프 (26년 3월~)\n* 모든 비용이 포함된 올인원 패키지\n* SSP, 수업, 숙박, 식사, 픽업, 액티비티 모두 포함\n* 불포함: 왕복 항공권, 여행자보험, 개인 용돈",
+  "isActive": true,
+  "createdAt": "2026-05-30",
+  "updatedAt": "2026-05-30"
+}

@@ -1,0 +1,254 @@
+{
+  "id": "cella_uni",
+  "schoolCode": "CELLA_UNI",
+  "name": "CELLA 유니 스파르타 캠퍼스",
+  "campus": "유니",
+  "region": "세부",
+  "schoolType": "general",
+  "minWeeks": 1,
+  "allowShortTerm": true,
+  "programTags": [
+    "ESL",
+    "IELTS",
+    "토익",
+    "테솔",
+    "스파르타"
+  ],
+  "registrationFee": {
+    "amount": 100000,
+    "currency": "KRW",
+    "note": "등록금 10만원 별도"
+  },
+  "courses": [
+    {
+      "id": "cu_sps1",
+      "name": "스파르타 파워스피킹 1",
+      "price4Weeks": 1100000,
+      "currency": "KRW"
+    },
+    {
+      "id": "cu_sps2",
+      "name": "스파르타 파워스피킹 2",
+      "price4Weeks": 1300000,
+      "currency": "KRW"
+    },
+    {
+      "id": "cu_toeic_intro",
+      "name": "토익 입문반",
+      "price4Weeks": 1300000,
+      "currency": "KRW"
+    },
+    {
+      "id": "cu_toeic_intensive",
+      "name": "토익 집중반",
+      "price4Weeks": 1450000,
+      "currency": "KRW"
+    },
+    {
+      "id": "cu_ielts_intro",
+      "name": "아이엘츠 입문반",
+      "price4Weeks": 1300000,
+      "currency": "KRW"
+    },
+    {
+      "id": "cu_ielts_intensive",
+      "name": "아이엘츠 집중반",
+      "price4Weeks": 1450000,
+      "currency": "KRW"
+    },
+    {
+      "id": "cu_ielts_guarantee",
+      "name": "아이엘츠 보장반 (12주)",
+      "price4Weeks": 1700000,
+      "currency": "KRW",
+      "note": "12주 등록 필수"
+    },
+    {
+      "id": "cu_tesol",
+      "name": "테솔 (TESOL)",
+      "price4Weeks": 1850000,
+      "currency": "KRW",
+      "note": "등록 전 온라인 인터뷰 통과 필수. 시작일: 1/4, 2/1, 3/1, 3/29, 4/26, 5/24, 6/21, 7/19, 8/16, 9/13, 10/11, 11/8 (2026)"
+    }
+  ],
+  "dormitories": [
+    {
+      "id": "cu_1p",
+      "name": "유니 1인실",
+      "price4Weeks": 1350000,
+      "currency": "KRW"
+    },
+    {
+      "id": "cu_2p",
+      "name": "유니 2인실",
+      "price4Weeks": 1000000,
+      "currency": "KRW"
+    },
+    {
+      "id": "cu_3p",
+      "name": "유니 3인실",
+      "price4Weeks": 850000,
+      "currency": "KRW"
+    },
+    {
+      "id": "cu_4p",
+      "name": "유니 4인실",
+      "price4Weeks": 750000,
+      "currency": "KRW"
+    },
+    {
+      "id": "cu_jdn_1p",
+      "name": "JDN 외부 1인실",
+      "price4Weeks": 1350000,
+      "currency": "KRW"
+    },
+    {
+      "id": "cu_jdn_2p",
+      "name": "JDN 외부 2인실",
+      "price4Weeks": 1000000,
+      "currency": "KRW"
+    },
+    {
+      "id": "cu_jdn_3p",
+      "name": "JDN 외부 3인실",
+      "price4Weeks": 850000,
+      "currency": "KRW"
+    }
+  ],
+  "packages": [],
+  "surcharges": [
+    {
+      "id": "cella_uni_summer_surcharge",
+      "name": "여름 성수기 서차지",
+      "amountPerWeek": 50000,
+      "currency": "KRW",
+      "startDate": "2026-07-05",
+      "endDate": "2026-08-30",
+      "note": "서차지 포함 비용에서 학비&기숙사 10% 유학원 할인 가능."
+    }
+  ],
+  "localFees": [
+    {
+      "id": "cu_ssp",
+      "name": "SSP",
+      "amount": 7800,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "note": "유효기간 6개월"
+    },
+    {
+      "id": "cu_ssp_ecard",
+      "name": "SSP E-CARD",
+      "amount": 4500,
+      "currency": "PHP",
+      "chargeUnit": "per_person"
+    },
+    {
+      "id": "cu_deposit",
+      "name": "보증금",
+      "amount": 2000,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "note": "1~3주 2,000 / 4~8주 5,000 / 9~12주 8,000 / 13주이상 10,000. 퇴실시 환불."
+    },
+    {
+      "id": "cu_electric",
+      "name": "전기세",
+      "amount": 500,
+      "currency": "PHP",
+      "chargeUnit": "per_week",
+      "note": "1주 15kw 무료 / 추가 1kw당 25P"
+    },
+    {
+      "id": "cu_water",
+      "name": "수도세",
+      "amount": 300,
+      "currency": "PHP",
+      "chargeUnit": "per_week"
+    },
+    {
+      "id": "cu_maintenance",
+      "name": "관리비",
+      "amount": 1000,
+      "currency": "PHP",
+      "chargeUnit": "per_week"
+    },
+    {
+      "id": "cu_id",
+      "name": "학생증",
+      "amount": 200,
+      "currency": "PHP",
+      "chargeUnit": "per_person"
+    },
+    {
+      "id": "cu_textbook",
+      "name": "교재",
+      "amount": 200,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "note": "권당 200~600P"
+    },
+    {
+      "id": "cu_pickup",
+      "name": "픽업",
+      "amount": 1200,
+      "currency": "PHP",
+      "chargeUnit": "per_visit",
+      "note": "주말 공항픽업 (샌딩 불포함) / 가족 2,500P(최대 4명)"
+    },
+    {
+      "id": "cu_visa_1",
+      "name": "비자연장 1차 (5~8주)",
+      "amount": 5140,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "triggerWeeks": 5
+    },
+    {
+      "id": "cu_visa_2",
+      "name": "비자연장 2차 (9~12주)",
+      "amount": 6410,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "triggerWeeks": 9
+    },
+    {
+      "id": "cu_visa_3_5",
+      "name": "비자연장 3차~ (추가 1달씩)",
+      "amount": 4440,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "triggerWeeks": 13
+    },
+    {
+      "id": "cu_acr",
+      "name": "ACR I-Card",
+      "amount": 4000,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "trigger": "59일이상 체류자",
+      "triggerWeeks": 9
+    }
+  ],
+  "refundPolicy": "연수 시작일로부터 4주전 취소시 등록금 제외 후 환불.\n3주전: 등록금 및 위약금 20만원 제외.\n2주전: 등록금 및 위약금 40만원 제외.\n1주전: 등록금 및 위약금 60만원 제외.\n연수 비용은 이월 및 양도 불가.",
+  "dormitoryRules": "입실일은 일요일, 퇴실일은 토요일 오후 1시까지.\n현지비용은 첫날 페소로 지불.\n보증금은 마지막주 금요일에 정산 후 환불.\n조기 입실이나 추가 숙박은 비용 발생.\n만 15~17세 단독 연수는 마이너 비용 주당 5만원 추가.",
+  "generalNotes": "CELLA 유니 스파르타 캠퍼스.\n\n등록 규정: 프리미엄 캠퍼스와 동일.\n★ 2026년 12월 20일 ~ 2027년 1월 2일 등록시 주당 20만원 추가금 별도.\n\n익스프레서(EXP) 코스 (수업보장): 1주/2주 별도가격 — 기숙사별 상이.\n1인실: 1주 1,272,000 / 2주 1,908,000. 2인실: 1주 1,104,000 / 2주 1,656,000. 3인실: 1주 1,032,000 / 2주 1,548,000. 4인실: 1주 984,000 / 2주 1,476,000. JDN-1인실: 1주 1,272,000 / 2주 1,908,000. JDN-2인실: 1주 1,104,000 / 2주 1,656,000. JDN-3인실: 1주 1,032,000 / 2주 1,548,000.",
+  "isActive": true,
+  "createdAt": "2026-05-29",
+  "updatedAt": "2026-05-30",
+  "courseShortTermRates": {
+    "mode": "percent",
+    "week1": 40,
+    "week2": 65,
+    "week3": 85,
+    "week4Included": false
+  },
+  "dormShortTermRates": {
+    "mode": "percent",
+    "week1": 40,
+    "week2": 65,
+    "week3": 85,
+    "week4Included": false
+  },
+  "shortTermDataStatus": "confirmed"
+}

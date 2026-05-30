@@ -1,0 +1,84 @@
+{
+  "id": "emo",
+  "schoolCode": "EMO",
+  "name": "EMO International Kindergarten",
+  "campus": "본원",
+  "region": "세부",
+  "schoolType": "kindergarten",
+  "minWeeks": 1,
+  "allowShortTerm": true,
+  "shortTermDataStatus": "confirmed",
+  "programTags": ["킨더", "유치원"],
+  "registrationFee": {
+    "amount": 100000,
+    "currency": "KRW",
+    "note": "초기등록비 10만원 (1회). Welcome kit 제공 (원활동복, 미술도구). 취소 시 환불 불가."
+  },
+  "courses": [
+    {
+      "id": "emo_fullday",
+      "name": "종일반",
+      "price4Weeks": 900000,
+      "currency": "KRW",
+      "note": "09:00-15:00 또는 10:00-16:00. 점심식사, 간식 2회 포함."
+    },
+    {
+      "id": "emo_halfday",
+      "name": "반일반",
+      "price4Weeks": 500000,
+      "currency": "KRW",
+      "note": "오전반 09:00-12:00 또는 오후반 13:00-16:00. 간식 1회 포함."
+    }
+  ],
+  "courseShortTermRates": {
+    "emo_fullday": { "1w": 225000, "2w": 450000, "3w": 675000 },
+    "emo_halfday": { "1w": 125000, "2w": 250000, "3w": 375000 }
+  },
+  "dormitories": [],
+  "packages": [],
+  "surcharges": [],
+  "localFees": [
+    {
+      "id": "emo_textbook_deposit",
+      "name": "교재비 디포짓",
+      "amount": 50000,
+      "currency": "KRW",
+      "chargeUnit": "per_person",
+      "note": "사용교재에 따라 차감 후 환불. 비수기 단기(1~2주)는 면제.",
+      "triggerWeeks": 3
+    },
+    {
+      "id": "emo_shuttle",
+      "name": "차량서비스",
+      "amount": 1000,
+      "currency": "PHP",
+      "chargeUnit": "per_week",
+      "note": "숙소 위치 확인 필요. 4주 4,000페소 기준."
+    },
+    {
+      "id": "emo_lunch",
+      "name": "점심 추가 (반일반)",
+      "amount": 100000,
+      "currency": "KRW",
+      "chargeUnit": "per_4weeks",
+      "note": "반일반 학생만 신청 가능. 비수기 단기: 1주 25,000 / 2주 50,000 / 3주 75,000."
+    }
+  ],
+  "lunchShortTermRates": {
+    "1w": 25000,
+    "2w": 50000,
+    "3w": 75000
+  },
+  "additionalCharges": [],
+  "longTermDiscount": {
+    "condition": "24주 이상 등록 및 완납 시",
+    "discount": "수업비의 10% 할인",
+    "note": "장기등록 혜택. 수업비(코스비)에만 적용."
+  },
+  "refundPolicy": "등록비 환불 불가.\n100% 환불: 수업시작 8주 전.\n80% 환불: 수업시작 4주 전.\n50% 환불: 수업시작 1주 전.\n수업 시작 후 환불 없음.\n수업시작 후 환불시점에서 남은기간 4주 이상일 경우, 4주 공제 후 남은금액 환불.",
+  "dormitoryRules": "",
+  "generalNotes": "EMO International Kindergarten. 세부 소재 영어유치원.\n대상: 만3-4세 / 만4-5세 / 만5-6세. 모든 교실에 강사 2명.\n\n통학형 학원 (기숙사 없음). 견적 시 dormitories=[] 처리.\n\n비수기 단기비용 (3-6월, 9-12월): 1~3주 단기 등록 가능. 단기 가격은 courseShortTermRates 참조.\n교재비 디포짓은 3주 이상부터 발생.\n\n차량서비스: 주당 1,000페소. 숙소 위치에 따라 이용 가능 여부 확인 필요.\n점심 추가: 반일반 학생만 신청 가능 (종일반은 점심 포함).",
+  "isActive": true,
+  "createdAt": "2026-05-29",
+  "updatedAt": "2026-05-29"
+}

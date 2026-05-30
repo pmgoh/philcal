@@ -1,0 +1,464 @@
+{
+  "id": "cij",
+  "schoolCode": "CIJ",
+  "name": "CIJ Academy & School",
+  "campus": "릴로안",
+  "region": "세부",
+  "schoolType": "general",
+  "minWeeks": 1,
+  "allowShortTerm": true,
+  "programTags": [
+    "ESL",
+    "IELTS",
+    "스파르타",
+    "주니어",
+    "가족연수",
+    "골프"
+  ],
+  "registrationFee": {
+    "amount": 150000,
+    "currency": "KRW",
+    "note": "입학금 15만원"
+  },
+  "courses": [
+    {
+      "id": "cij_esl4_guardian",
+      "name": "ESL4 / Family Guardian",
+      "price4Weeks": 800000,
+      "currency": "KRW"
+    },
+    {
+      "id": "cij_general_esl",
+      "name": "General ESL",
+      "price4Weeks": 900000,
+      "currency": "KRW"
+    },
+    {
+      "id": "cij_basic_speaking",
+      "name": "Basic Speaking",
+      "price4Weeks": 1000000,
+      "currency": "KRW"
+    },
+    {
+      "id": "cij_power_speaking",
+      "name": "Power Speaking",
+      "price4Weeks": 1050000,
+      "currency": "KRW"
+    },
+    {
+      "id": "cij_sparta5",
+      "name": "Sparta 5",
+      "price4Weeks": 1050000,
+      "currency": "KRW"
+    },
+    {
+      "id": "cij_sparta6",
+      "name": "Sparta 6",
+      "price4Weeks": 1200000,
+      "currency": "KRW"
+    },
+    {
+      "id": "cij_ielts_basic",
+      "name": "IELTS Basic",
+      "price4Weeks": 1250000,
+      "currency": "KRW"
+    },
+    {
+      "id": "cij_family_kinder_am",
+      "name": "Family Kinder 오전반",
+      "price4Weeks": 1000000,
+      "currency": "KRW",
+      "note": "킨더 오전반. 현지에서 오후 반 추가 시 4주 30만원 추가."
+    },
+    {
+      "id": "cij_family_kinder_full",
+      "name": "Family Kinder 종일반",
+      "price4Weeks": 1250000,
+      "currency": "KRW"
+    },
+    {
+      "id": "cij_family_junior",
+      "name": "Family Junior",
+      "price4Weeks": 1400000,
+      "currency": "KRW"
+    },
+    {
+      "id": "cij_junior_esl",
+      "name": "주니어 ESL",
+      "price4Weeks": 1900000,
+      "currency": "KRW",
+      "note": "4~5인실 전용"
+    },
+    {
+      "id": "cij_managed_early",
+      "name": "관리형 조기유학",
+      "price4Weeks": 1700000,
+      "currency": "KRW",
+      "note": "4~5인실 전용. 입학금 50만원."
+    }
+  ],
+  "dormitories": [
+    {
+      "id": "cij_1p_liloan",
+      "name": "내부(릴로안) 1인실",
+      "price4Weeks": 1350000,
+      "currency": "KRW"
+    },
+    {
+      "id": "cij_2p_liloan",
+      "name": "내부(릴로안) 2인실",
+      "price4Weeks": 1050000,
+      "currency": "KRW"
+    },
+    {
+      "id": "cij_3p_liloan",
+      "name": "내부(릴로안) 3인실(가족)",
+      "price4Weeks": 950000,
+      "currency": "KRW"
+    },
+    {
+      "id": "cij_4p_liloan",
+      "name": "내부(릴로안) 4인실(가족)",
+      "price4Weeks": 900000,
+      "currency": "KRW"
+    },
+    {
+      "id": "cij_1p_premium",
+      "name": "외부(프리미엄) 1인실",
+      "price4Weeks": 1450000,
+      "currency": "KRW"
+    },
+    {
+      "id": "cij_2p_premium",
+      "name": "외부(프리미엄) 2인실",
+      "price4Weeks": 1150000,
+      "currency": "KRW"
+    },
+    {
+      "id": "cij_3p_premium",
+      "name": "외부(프리미엄) 3인실(가족)",
+      "price4Weeks": 1100000,
+      "currency": "KRW"
+    },
+    {
+      "id": "cij_4p_premium",
+      "name": "외부(프리미엄) 4인실(가족)",
+      "price4Weeks": 1050000,
+      "currency": "KRW"
+    }
+  ],
+  "packages": [
+    {
+      "id": "cij_family_peak",
+      "label": "성수기 가족연수",
+      "season": "성수기",
+      "currency": "KRW",
+      "columns": [
+        "4주"
+      ],
+      "priceMatrix": [
+        {
+          "weeks": 4,
+          "prices": [
+            {
+              "label": "가디언 / 2인실",
+              "amount": 2100000
+            },
+            {
+              "label": "가디언 / 3인실",
+              "amount": 2050000
+            },
+            {
+              "label": "가디언 / 4인실이상",
+              "amount": 2000000
+            },
+            {
+              "label": "유아유치 / 2인실",
+              "amount": 2300000
+            },
+            {
+              "label": "유아유치 / 3인실",
+              "amount": 2250000
+            },
+            {
+              "label": "유아유치 / 4인실이상",
+              "amount": 2200000
+            },
+            {
+              "label": "주니어 / 2인실",
+              "amount": 2700000
+            },
+            {
+              "label": "주니어 / 3인실",
+              "amount": 2260000
+            },
+            {
+              "label": "주니어 / 4인실이상",
+              "amount": 2600000
+            }
+          ]
+        }
+      ],
+      "includes": "",
+      "excludes": "항공비용, 교재, 야외활동비(액티비티), SSP발급비용, 보증금, 서류 공증 비, 비자연장비용, 아이디카드, 수료증발급, 픽업/샌딩 비용, 개인용돈, 간식비 100불/4주(성수기때 선택가능)",
+      "note": "릴로안기숙사 및 프리미엄기숙사(WEBER HOTEL).\n4주/6주/8주 등록 가능. 킨더는 오전반비용(종일반 25만원추가).\n※ 3인 가족 등록 시 2명 수업, 한 명은 수업하지 않아도 됩니다."
+    },
+    {
+      "id": "cij_family_offseason_1plus1",
+      "label": "비수기 가족연수 (1+1 특파원 프로모션)",
+      "season": "비수기",
+      "currency": "KRW",
+      "columns": [
+        "4주(2+2)",
+        "8주(4+4)"
+      ],
+      "priceMatrix": [
+        {
+          "weeks": 4,
+          "prices": [
+            {
+              "label": "2인 보호자1+주니어1",
+              "amount": 3080000
+            },
+            {
+              "label": "2인 보호자1+킨더1",
+              "amount": 2840000
+            },
+            {
+              "label": "3인 보호자1+주니어2",
+              "amount": 4620000
+            },
+            {
+              "label": "3인 보호자1+주니어1+킨더1",
+              "amount": 4380000
+            },
+            {
+              "label": "3인 보호자1+킨더2",
+              "amount": 4620000
+            },
+            {
+              "label": "4인 보호자1+주니어3",
+              "amount": 6160000
+            },
+            {
+              "label": "4인 보호자1+주니어2+킨더1",
+              "amount": 5920000
+            },
+            {
+              "label": "4인 보호자1+주니어1+킨더2",
+              "amount": 5680000
+            }
+          ]
+        },
+        {
+          "weeks": 8,
+          "prices": [
+            {
+              "label": "2인 보호자1+주니어1",
+              "amount": 4900000
+            },
+            {
+              "label": "2인 보호자1+킨더1",
+              "amount": 4500000
+            },
+            {
+              "label": "3인 보호자1+주니어2",
+              "amount": 7350000
+            },
+            {
+              "label": "3인 보호자1+주니어1+킨더1",
+              "amount": 6800000
+            },
+            {
+              "label": "3인 보호자1+킨더2",
+              "amount": 6650000
+            },
+            {
+              "label": "4인 보호자1+주니어3",
+              "amount": 9800000
+            },
+            {
+              "label": "4인 보호자1+주니어2+킨더1",
+              "amount": 9400000
+            },
+            {
+              "label": "4인 보호자1+주니어1+킨더2",
+              "amount": 9000000
+            }
+          ]
+        }
+      ],
+      "includes": "특파원참가비 (4주미만 10만원, 4주이상 15만원), 입학금, 수업료 (킨더 오전반수업료적용), 기숙사비용 (2~4인실)",
+      "excludes": "항공비용, 여행자보험비용, 픽업비용(P.2,500/가족), 교재비용, SSP및 E-Card 발급비용, VISA연장비용, 현지로컬비용(보증금, 관리비, 전기&수도요금 등)",
+      "schedules": [
+        {
+          "startDate": "2026-02-28",
+          "endDate": "2026-07-11",
+          "season": "비수기"
+        },
+        {
+          "startDate": "2026-08-29",
+          "endDate": "2026-12-19",
+          "season": "비수기"
+        }
+      ],
+      "note": "1+1 특파원 프로모션 적용가 (1주 등록 시 1주 무료). 연수후기 주 1회 작성 필수.\n특파원 미참여 시 수업+기숙사비 20% 할인 적용."
+    }
+  ],
+  "surcharges": [],
+  "localFees": [
+    {
+      "id": "cij_deposit",
+      "name": "Deposit",
+      "amount": 3000,
+      "currency": "PHP",
+      "chargeUnit": "per_person"
+    },
+    {
+      "id": "cij_ssp",
+      "name": "SSP",
+      "amount": 7800,
+      "currency": "PHP",
+      "chargeUnit": "per_person"
+    },
+    {
+      "id": "cij_ssp_ecard",
+      "name": "SSP E-Card",
+      "amount": 4500,
+      "currency": "PHP",
+      "chargeUnit": "per_person"
+    },
+    {
+      "id": "cij_electric",
+      "name": "Electricity",
+      "amount": 500,
+      "currency": "PHP",
+      "chargeUnit": "per_week",
+      "note": "Standard Charge 15kw/week. 초과 1kw당 25페소."
+    },
+    {
+      "id": "cij_water",
+      "name": "Water",
+      "amount": 300,
+      "currency": "PHP",
+      "chargeUnit": "per_week"
+    },
+    {
+      "id": "cij_utility",
+      "name": "Utility Fee",
+      "amount": 1000,
+      "currency": "PHP",
+      "chargeUnit": "per_week"
+    },
+    {
+      "id": "cij_pickup",
+      "name": "Pick-up Fee",
+      "amount": 1500,
+      "currency": "PHP",
+      "chargeUnit": "per_visit",
+      "note": "Adult 1,500P/person. Family 2,500P/family."
+    },
+    {
+      "id": "cij_sendoff",
+      "name": "Send-off Fee",
+      "amount": 1500,
+      "currency": "PHP",
+      "chargeUnit": "per_visit",
+      "note": "Adult 1,500P/person. Family 2,500P/family. 출발 3일 전 문의 필요."
+    },
+    {
+      "id": "cij_idcard",
+      "name": "ID Card Fee",
+      "amount": 350,
+      "currency": "PHP",
+      "chargeUnit": "per_person"
+    },
+    {
+      "id": "cij_picture",
+      "name": "Picture Fee",
+      "amount": 150,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "note": "2x2 size 3 pictures"
+    },
+    {
+      "id": "cij_textbook",
+      "name": "Textbook",
+      "amount": 150,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "note": "150~500페소 (보증금에서 차감)"
+    },
+    {
+      "id": "cij_visa_1",
+      "name": "비자연장 1차 (5~8주)",
+      "amount": 5130,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "triggerWeeks": 5
+    },
+    {
+      "id": "cij_visa_2",
+      "name": "비자연장 2차 (9~12주)",
+      "amount": 6410,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "triggerWeeks": 9
+    },
+    {
+      "id": "cij_visa_3",
+      "name": "비자연장 3차 (13~16주)",
+      "amount": 4540,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "triggerWeeks": 13
+    },
+    {
+      "id": "cij_visa_4",
+      "name": "비자연장 4차 (17~20주)",
+      "amount": 4540,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "triggerWeeks": 17
+    },
+    {
+      "id": "cij_visa_5",
+      "name": "비자연장 5차 (21~24주)",
+      "amount": 4540,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "triggerWeeks": 21
+    },
+    {
+      "id": "cij_acr",
+      "name": "ACR-I Card",
+      "amount": 4500,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "triggerWeeks": 9
+    }
+  ],
+  "refundPolicy": "",
+  "dormitoryRules": "하루 6번의 셔틀 밴 운행 (매주 일요일 제외). 통금시간 제한 없음. 모든 방 와이파이. 학생 휴게실 제공(간단한 조리가능). 로컬비치 1분 거리.",
+  "generalNotes": "CIJ Academy & School. 릴로안 캠퍼스.\n\n기숙사 2종류: 내부(릴로안) / 외부(프리미엄 - WEBER HOTEL).\n2025년 12월까지는 릴로안 캠퍼스와 동일 비용 적용.\n\n1+1 특파원 프로모션: 비수기(2026.2.28~7.11, 8.29~12.19) 1주 등록 시 1주 무료. 주 1회 연수후기 작성 필수. 주니어/킨더는 특파원 참가 불가(가족연수의 주니어와 킨더 특파원 혜택 희망 시 주당1,000페소 추가 현지납부). 특파원 미참여 시 수업+기숙사비 20% 할인.\n\n킨더 프로그램: 오전반/종일반. 성수기 오전반의 경우 간식비용 45불/4주 또는 종일반 70불/4주 선택 가능.\n\n골프코스: 주1회 4주코스 700불 추가 / 주2회 4주코스 1150불.",
+  "isActive": true,
+  "createdAt": "2026-05-29",
+  "updatedAt": "2026-05-30",
+  "courseShortTermRates": {
+    "mode": "percent",
+    "week1": 32.5,
+    "week2": 60,
+    "week3": 82.5,
+    "week4Included": false,
+    "note": "자료 배수 1.3/1.2/1.1 → 정비례(25/50/75)×배수 환산"
+  },
+  "dormShortTermRates": {
+    "mode": "percent",
+    "week1": 32.5,
+    "week2": 60,
+    "week3": 82.5,
+    "week4Included": false,
+    "note": "자료 배수 1.3/1.2/1.1 → 정비례(25/50/75)×배수 환산"
+  },
+  "shortTermDataStatus": "confirmed"
+}

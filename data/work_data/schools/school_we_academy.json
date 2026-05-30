@@ -1,0 +1,310 @@
+{
+  "id": "we_academy",
+  "schoolCode": "WE_ACADEMY",
+  "name": "WE Academy (WOORI)",
+  "campus": "본원",
+  "region": "기타",
+  "schoolType": "general",
+  "minWeeks": 4,
+  "allowShortTerm": true,
+  "shortTermRates": {
+    "mode": "percent",
+    "week1": 40,
+    "week2": 65,
+    "week3": 90,
+    "week4Included": false,
+    "note": "4주 미만 단기등록 시 준비용에서 15% 추가됨 (별도 가산, 운영자 수동 확인)"
+  },
+  "programTags": [
+    "ESL",
+    "IELTS",
+    "TOEIC",
+    "비즈니스",
+    "주니어",
+    "가족"
+  ],
+  "registrationFee": {
+    "amount": 0,
+    "currency": "KRW",
+    "note": "등록금 별도 없음 (수업료+기숙사 합산표에 포함되어 있음)"
+  },
+  "courses": [
+    {
+      "id": "we_esl_a",
+      "name": "ESL A course",
+      "classDetails": "1대1 3H + 소그룹 2H + 2H(17:30~19시까지 ESL 과정, 금요일제외)",
+      "price4Weeks": 660000,
+      "currency": "KRW"
+    },
+    {
+      "id": "we_esl_b",
+      "name": "ESL B course",
+      "classDetails": "1대1 4H + 소그룹 1H + 2H(17:30~19시까지 ESL 과정, 금요일제외)",
+      "price4Weeks": 730000,
+      "currency": "KRW"
+    },
+    {
+      "id": "we_esl_c",
+      "name": "ESL C course",
+      "classDetails": "1대1 4H + 소그룹 2H + 2H(17:30~19시까지 ESL 과정, 금요일제외)",
+      "price4Weeks": 780000,
+      "currency": "KRW"
+    },
+    {
+      "id": "we_esl_d",
+      "name": "ESL D course",
+      "classDetails": "1대1 5H + 소그룹 2H + 2H(17:30~19시까지 ESL 과정, 금요일제외)",
+      "price4Weeks": 950000,
+      "currency": "KRW",
+      "note": ""
+    },
+    {
+      "id": "we_toeic",
+      "name": "TOEIC course",
+      "classDetails": "1대1 4H + 소그룹 2H + 2H(17:30~19시까지 ESL 과정, 금요일제외) + 월 1회 모의시험(토요일)",
+      "price4Weeks": 900000,
+      "currency": "KRW"
+    },
+    {
+      "id": "we_business",
+      "name": "Business course",
+      "classDetails": "1대1 4H + 소그룹 2H + 2H(17:30~19시까지 ESL 과정, 금요일제외) + 월 2회 금요일 프레젠테이션",
+      "price4Weeks": 900000,
+      "currency": "KRW"
+    },
+    {
+      "id": "we_ielts",
+      "name": "IELTS course",
+      "classDetails": "1대1 4H + 소그룹 2H + 2H(17:30~19시까지 ESL 과정) + 월 1회 공식시험비용 or 월2회 5~6시 모의시험 진행",
+      "price4Weeks": 1200000,
+      "currency": "KRW"
+    },
+    {
+      "id": "we_junior",
+      "name": "Junior Course",
+      "classDetails": "1대1 6H",
+      "price4Weeks": 930000,
+      "currency": "KRW"
+    },
+    {
+      "id": "we_guardian",
+      "name": "보호자 코스 (Guardian)",
+      "classDetails": "1대1 3H. 비수기 프로모션 적용불가.",
+      "price4Weeks": 560000,
+      "currency": "KRW"
+    }
+  ],
+  "dormitories": [
+    {
+      "id": "we_1",
+      "name": "1인실",
+      "price4Weeks": 930000,
+      "currency": "KRW"
+    },
+    {
+      "id": "we_2",
+      "name": "2인실",
+      "price4Weeks": 700000,
+      "currency": "KRW",
+      "note": "PDF 기숙사표 기준 ₩700,000. 단, 합산표에서 역산 시 ₩670,000 (가족실 가격과 동일). 합산표와 30,000원 차이 있음."
+    },
+    {
+      "id": "we_3",
+      "name": "3인실",
+      "price4Weeks": 630000,
+      "currency": "KRW"
+    },
+    {
+      "id": "we_family",
+      "name": "가족실",
+      "price4Weeks": 670000,
+      "currency": "KRW"
+    }
+  ],
+  "surcharges": [],
+  "promotions": null,
+  "localFees": [
+    {
+      "id": "we_ssp",
+      "name": "SSP 발급비",
+      "amount": 7000,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "trigger": "enrollment"
+    },
+    {
+      "id": "we_textbook",
+      "name": "교재비 (현지 페소 납부)",
+      "amount": 180,
+      "currency": "PHP",
+      "chargeUnit": "per_book",
+      "trigger": "enrollment",
+      "note": "수업시간에 따라 차이남. 평당 180~450페소"
+    },
+    {
+      "id": "we_laundry",
+      "name": "세탁비용(현지지불)",
+      "amount": 150,
+      "currency": "PHP",
+      "chargeUnit": "per_usage",
+      "trigger": "usage",
+      "note": "1회 150페소. 주기 12~15일"
+    },
+    {
+      "id": "we_electricity",
+      "name": "전기세(현지 페소 납부)",
+      "amount": 500,
+      "currency": "PHP",
+      "chargeUnit": "per_4weeks_min",
+      "trigger": "enrollment",
+      "note": "기본료 500페소 + 미터 요금(1인당/월:1kw 22페소)"
+    },
+    {
+      "id": "we_water",
+      "name": "수도세(현지 페소 납부)",
+      "amount": 500,
+      "currency": "PHP",
+      "chargeUnit": "per_4weeks",
+      "trigger": "enrollment",
+      "note": "기본료 500페소 (5딥만 초과 시 사용비 1딥당 120페소)"
+    },
+    {
+      "id": "we_ssp_ecard",
+      "name": "SSP E CARD",
+      "amount": 4500,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "trigger": "enrollment",
+      "note": "2024.07.01 부터 시행"
+    },
+    {
+      "id": "we_deposit",
+      "name": "기숙사 보증금",
+      "amount": 2000,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "trigger": "enrollment",
+      "note": "2천페소. 퇴소시 반환"
+    },
+    {
+      "id": "we_id",
+      "name": "학생증 발급비",
+      "amount": 650,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "trigger": "enrollment"
+    },
+    {
+      "id": "we_travel_insurance",
+      "name": "여행보험 (필수)",
+      "amount": 0,
+      "currency": "KRW",
+      "chargeUnit": "per_person",
+      "trigger": "enrollment",
+      "note": "여행 보험 필수 납부"
+    },
+    {
+      "id": "we_airport_pickup",
+      "name": "공항서 (일로일로 공항 무료 제공)",
+      "amount": 0,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "trigger": "enrollment",
+      "note": "필리핀 현지에서 거리보 공항으로 센딩비 무료"
+    },
+    {
+      "id": "we_shuttle",
+      "name": "셔틀비",
+      "amount": 1000,
+      "currency": "PHP",
+      "chargeUnit": "per_month",
+      "trigger": "enrollment",
+      "note": "1000페소/4주"
+    },
+    {
+      "id": "we_visa_59",
+      "name": "59일 비자 (30일 무비자 + 29일)",
+      "amount": 5130,
+      "currency": "PHP",
+      "chargeUnit": "cumulative",
+      "trigger": "stay_over",
+      "triggerWeeks": 5
+    },
+    {
+      "id": "we_visa_2",
+      "name": "2차 비자연장 (30일)",
+      "amount": 5130,
+      "currency": "PHP",
+      "chargeUnit": "cumulative",
+      "trigger": "stay_over",
+      "triggerWeeks": 9
+    },
+    {
+      "id": "we_visa_3",
+      "name": "3차 비자연장 (30일)",
+      "amount": 3400,
+      "currency": "PHP",
+      "chargeUnit": "cumulative",
+      "trigger": "stay_over",
+      "triggerWeeks": 13
+    },
+    {
+      "id": "we_visa_4",
+      "name": "4차 비자연장 (30일)",
+      "amount": 3400,
+      "currency": "PHP",
+      "chargeUnit": "cumulative",
+      "trigger": "stay_over",
+      "triggerWeeks": 17
+    },
+    {
+      "id": "we_visa_5",
+      "name": "5차 비자연장 (30일)",
+      "amount": 3400,
+      "currency": "PHP",
+      "chargeUnit": "cumulative",
+      "trigger": "stay_over",
+      "triggerWeeks": 21
+    },
+    {
+      "id": "we_crtv",
+      "name": "CRTV (6개월 이상 체류시)",
+      "amount": 2500,
+      "currency": "PHP",
+      "chargeUnit": "per_person",
+      "trigger": "stay_over",
+      "triggerWeeks": 25,
+      "note": "Certificate of Residence for Temporary Visitor"
+    }
+  ],
+  "packages": [],
+  "additionalCharges": [
+    {
+      "id": "we_add_1on1",
+      "name": "1대1 수업 1시간 추가 (4주)",
+      "amount": 5000,
+      "currency": "PHP"
+    },
+    {
+      "id": "we_add_group",
+      "name": "그룹수업 1시간 추가 (4주)",
+      "amount": 5000,
+      "currency": "PHP",
+      "note": "현재 1대1 수업으로 변환 가능. 1대1 전환 시 동일 금액."
+    },
+    {
+      "id": "we_managed",
+      "name": "관리형 프로그램 (MANAGED PROGRAM)",
+      "amount": 0,
+      "currency": "KRW",
+      "note": "캠퍼맨수업에서 그룹수업으로 변경시코스 변경."
+    }
+  ],
+  "refundPolicy": "출국 2주전 최소시 입학금을 제외한 전액 환불. 출국 2주내 최소시 입학금을 제외한 총액의 85% 환불. 일정시작 활동은 4주 단위로 이루어지며 4주 이하의 경우 환불이 되지 않습니다.",
+  "dormitoryRules": "1일 추가 체류시 1000페소 추가요금 발생. 토요일 입실 또는 월요일 퇴실 등.",
+  "generalNotes": "WE Academy (WOORI). 일로일로 소재. Computer-based IDP Official IELTS Test Center.\n\n수업: 정규수업 50분 + 10분 휴식. 야간수업 45분 2타임 (금요일 제외).\n기숙사: 1일 3식 제공. 관리비/전기세/물세/세탁비 불포함.\n가족실: 670,000원/4주.\n청소 주 2회 무료.\n\n일로일로 공항 픽업/센딩 무료.\n\n4주 미만 단기등록: 준비용에서 15% 추가 (1주 40%, 2주 65%, 3주 90%).\n\n비수기 프로모션은 보호자 코스 적용 불가.\n\n2026~2027년 비용. 2026년 6월 기준.",
+  "isActive": true,
+  "createdAt": "2026-05-29",
+  "updatedAt": "2026-05-30",
+  "shortTermDataStatus": "confirmed"
+}
