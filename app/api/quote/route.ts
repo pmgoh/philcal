@@ -320,6 +320,11 @@ function buildCalcResponse(school: School, calcResult: CalcResult, rate: Exchang
   }
 }
 
+// 배포 버전 확인용 — 프론트가 로드 시 호출해 화면에 항상 표시.
+export async function GET() {
+  return NextResponse.json({ version: CODE_VERSION })
+}
+
 export async function POST(req: NextRequest) {
   try {
     const { messages, schoolsData, rateData, promotionsData, mode, directCalc, aliasData } = await req.json()

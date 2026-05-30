@@ -31,7 +31,7 @@ interface AssistantResultMessage extends BaseMessage {
   surchargeItems?: Array<{ label: string; weeks: number }>
   calcResult?: CalcResult
   school?: School
-  // 데이트피커 재계산용: 이 견적을 만든 directCalc 입력 (날짜만 바꿔 다시 계산)
+  version?: string
   calcInput?: {
     schoolId: string
     courses?: { courseId: string; weeks: number }[]
@@ -801,6 +801,8 @@ export default function QuotePage() {
   const [activeSchoolId, setActiveSchoolId] = useState<string | null>(null)
   // 코드 파서용 별칭 (Firestore에서 로드 → route에 함께 전송해 파서가 코드 기본값과 병합)
   const [aliasData, setAliasData] = useState<Record<string, string[]>>({})
+  // 배포 버전 (항상 화면에 노출 — 배포 반영 여부를 견적 안 내도 확인 가능)
+  const [appVersion, setAppVersion] = useState<string>('')
   const bottomRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
@@ -813,6 +815,8 @@ export default function QuotePage() {
       for (const d of docs) map[d.schoolCode] = d.aliases
       setAliasData(map)
     }).catch(() => {})
+    // 배포 버전 — 항상 화면에 노출
+    fetch('/api/quote').then(r => r.json()).then(d => setAppVersion(d.version ?? '')).catch(() => {})
   }, [])
 
   useEffect(() => {
@@ -911,6 +915,7 @@ export default function QuotePage() {
             startDate: data.startDate, enrollmentDate: data.enrollmentDate, totalWeeks: data.totalWeeks,
             surchargeItems: data.surchargeItems ?? [], calcResult: data.calcResult,
             school: data.schoolData ?? (data.calcResult ? schools.find(s => s.id === data.schoolId) : undefined),
+            version: data._version,
             calcInput: { schoolId: directCalc.schoolId, courses: directCalc.courses, dormitories: directCalc.dormitories, packages: directCalc.packages },
           }
           setMessages(prev => [...prev, resultMsg])
@@ -982,6 +987,7 @@ export default function QuotePage() {
           calcResult: data.calcResult,
           school: data.schoolData
             ?? (data.calcResult ? schools.find(s => s.id === data.schoolId) : undefined),
+          version: data._version,
         }
         setMessages(prev => [...prev, resultMsg])
 
@@ -1069,7 +1075,7 @@ export default function QuotePage() {
         <div className="flex items-center justify-between px-3 md:px-6 py-3 border-b border-gray-200 bg-white shadow-sm flex-shrink-0">
           <div>
             <h1 className="text-sm md:text-base font-bold text-gray-900">견적 챗봇</h1>
-            <p className="text-xs text-gray-400">{schools.length}개 학원 · ₱1={rate.phpToKrw}원</p>
+            <p className="text-xs text-gray-400">{schools.length}개 학원 · ₱1={rate.phpToKrw}원{appVersion ? ` · ${appVersion}` : ''}</p>
           </div>
           <div className="flex gap-1.5">
             {tab === 'chat' && (
@@ -1171,7 +1177,7 @@ export default function QuotePage() {
                         {m.calcResult && resultSchool ? (
                           <>
                             <QuoteResultCard school={resultSchool} calc={m.calcResult} startDate={m.startDate} />
-                            <p className="text-[10px] text-gray-300 mt-2 text-right">v7-2026.05.28</p>
+                            <p className="text-[10px] text-gray-300 mt-2 text-right">{m.version ?? appVersion ?? ''}</p>
                           </>
                         ) : (
                           <MarkdownText text={m.content} />
