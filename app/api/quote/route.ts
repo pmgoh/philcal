@@ -37,7 +37,8 @@ const EXTRACT_PROMPT = `엠버시유학 견적 시스템. 사용자는 상담원
 6. 학원 ID, 코스 ID, 기숙사 ID, 패키지 ID는 [학원 데이터]에 실제 존재하는 ID만 사용한다.
 7. 패키지에 columns(['2인가족','3인가족','주니어 1인' 등])가 있으면 columnLabel을 반드시 받는다.
 8. 사용자가 현재 모드와 안 맞는 학원(예: 일반 연수 모드에서 "CIA 캠프")을 찾으면, "그 학원은 캠프·가족·주니어 모드에 있습니다. 화면 위의 모드 토글로 전환해주세요"라고 안내한다(need_info에 question으로).
-9. [캠퍼스] 한 학원에 여러 캠퍼스가 있을 수 있다(코스·기숙사의 campus 필드로 구분, 예: BECI = EOP/스파르타/시티). 사용자가 "베시 시티", "EV 라메르"처럼 캠퍼스를 말하면 그 campus의 코스·기숙사만 후보로 삼는다. 캠퍼스를 말하지 않았는데 학원에 여러 campus가 있으면, 어느 캠퍼스인지 need_info로 반드시 묻는다(임의로 정하지 않는다). 코스와 기숙사는 같은 campus끼리만 묶는다(다른 캠퍼스 조합 금지).
+9. [캠퍼스] 캠퍼스 구분은 오직 코스·기숙사의 campus 필드 값으로만 판단한다. campus 필드에 서로 다른 값이 2개 이상 실제로 존재할 때에만 "여러 캠퍼스"로 취급한다. 코스 이름에 붙은 [Sparta]/[Semi]/[스파르타] 같은 표기는 코스 종류이지 캠퍼스가 아니다 — 이름으로 캠퍼스를 추측하지 마라. campus 필드가 모두 비어있거나(null) 한 종류뿐이면 단일 캠퍼스 학원이므로 캠퍼스를 절대 묻지 않는다. [학원 데이터]에 없는 캠퍼스명(예: 데이터에 없는 "아미사")을 지어내지 마라. campus 값이 실제로 여러 개일 때만: 사용자가 "베시 시티" 등으로 말하면 그 campus의 코스·기숙사만 후보로 삼고, 안 말했으면 need_info로 묻는다. 코스와 기숙사는 같은 campus끼리만 묶는다.
+10. [기숙사 필수] 일반 연수 모드에서는 기숙사(dormitories)가 confirm의 필수 항목이다. 사용자가 기숙사·방 종류(예: "1인실 건물뷰", "2인실 오션뷰", "스위트 1인실", "외부 콘도 1인실")를 말했으면 [학원 데이터]의 dorms에서 가장 가까운 id를 반드시 찾아 dormitories에 넣는다. 코스·주수만 있고 기숙사가 비면 절대 confirm하지 말고, need_info로 기숙사를 묻는다(이때 suggestions에 그 학원 dorms 목록을 제공). 사용자가 명시적으로 "통학"/"기숙사 없음"이라 한 경우에만 기숙사 없이 confirm한다. 방 종류 명칭이 데이터의 name과 정확히 일치하지 않아도(예: "1인실 건물뷰" → "1인실 (건물뷰)"), 의미가 같으면 매칭한다.
 
 [출력 형식 - JSON 하나만]
 정보 부족 시:
@@ -591,6 +592,12 @@ export async function POST(req: NextRequest) {
         disc: `${p.discountValue}${p.discountType==='percent'?'%':'원'}`,
       }))
 
+      // 실제 campus 필드 값 종류 (코스+기숙). 비어있으면 단일 캠퍼스 → LLM이 캠퍼스 묻지 않도록.
+      const campusSet = new Set<string>()
+      for (const c of (s.courses ?? [])) { const cv = (c as unknown as { campus?: string }).campus; if (cv) campusSet.add(cv) }
+      for (const d of (s.dormitories ?? [])) { const cv = (d as unknown as { campus?: string }).campus; if (cv) campusSet.add(cv) }
+      const campuses = [...campusSet]
+
       return {
         id: s.id, name: s.name, region: s.region,
         tags: s.programTags ?? [],
@@ -598,6 +605,7 @@ export async function POST(req: NextRequest) {
         short: s.allowShortTerm,
         shortStatus: s.shortTermDataStatus ?? 'confirmed',   // 'confirmed' | 'unconfirmed' — 단기 가격 자료 명시 여부
         hasDorms: (s.dormitories?.length ?? 0) > 0,           // 기숙사 운영 여부 (false면 외부 거주 전제 학원)
+        campuses,                                             // 실제 캠퍼스 목록(빈 배열=단일 캠퍼스, 캠퍼스 묻지 말 것)
         courses, dorms, packages,
         addCharges: additionalCharges,
         promos,
@@ -630,10 +638,19 @@ export async function POST(req: NextRequest) {
       const courseAuto = p.course?.kind === 'auto' ? p.course.pick : null
       const dormAuto = p.dorm?.kind === 'auto' ? p.dorm.pick : null
 
-      // 카드로 가로채는 조건: 학원이 코드로 확정(auto) AND 코스도 코드로 확정(auto).
-      // 이 둘이 확실하면 나머지(기숙·주수·캠퍼스 변경)는 카드 드롭다운에서 조정 가능.
-      // 학원이 choices(캠퍼스 여럿)거나 코스를 못 잡으면 → 아래 LLM 흐름이 되묻는다.
-      if (p.school.kind === 'auto' && courseAuto) {
+      // [기숙사 가드] 사용자가 기숙사/방을 언급했는데 파서가 확정(auto)하지 못했으면(choices/none)
+      // 카드로 직행하지 않는다. 빈 채로 직행하면 기숙사가 누락되거나, 엉뚱한 방으로 오인될 수 있다.
+      // 이 경우 아래 LLM 흐름이 학원 데이터 전체를 보고 정확히 매칭하거나 되묻게 한다.
+      // "통학/기숙사 없음"을 명시한 경우는 기숙사 불요이므로 가드에서 제외.
+      const mentionedDorm = /인실|인\s|기숙|룸|room|single|twin|double|triple|quad|스위트|suite|콘도|condo|디럭스|deluxe|발코니|balcony|오션|씨티|시티|건물|바깥/i.test(lastUserMsg)
+      const saidNoDorm = /통학|기숙사\s*없|기숙사\s*안|noroom|외부\s*거주/i.test(lastUserMsg)
+      const dormResolved = p.dorm?.kind === 'auto' || (p.dormRows && p.dormRows.length > 1)
+      const dormGuardFails = mentionedDorm && !saidNoDorm && !dormResolved
+
+      // 카드로 가로채는 조건: 학원이 코드로 확정(auto) AND 코스도 코드로 확정(auto)
+      // AND (기숙사를 언급 안 했거나, 언급했으면 파서가 확정했음).
+      // 학원이 choices(캠퍼스 여럿)거나 코스를 못 잡거나 기숙사 가드 실패면 → 아래 LLM 흐름이 되묻는다.
+      if (p.school.kind === 'auto' && courseAuto && !dormGuardFails) {
         const picked = p.school.pick
         const wk = p.weeks ?? 0
         // 방이동·코스변경: 파서가 행 배열을 분해했으면 그걸 쓰고, 아니면 단일 항목.

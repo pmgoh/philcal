@@ -31,6 +31,21 @@ const ALIASES: Array<[RegExp, string]> = [
   [/twin|double|트윈|더블/g, '2인'],
   [/triple|트리플/g, '3인'],
   [/quad(ruple)?|쿼드/g, '4인'],
+  // 방 수식어 한영 (데이터 명칭이 영문인 경우 매칭되도록 영문으로 통일)
+  [/스위트/g, 'suite'],
+  [/콘도(미니엄)?|condominium/g, 'condo'],
+  [/디럭스/g, 'deluxe'],
+  [/프리미엄/g, 'premium'],
+  [/스탠다드|스탠더드/g, 'standard'],
+  [/슈페리어|슈페리얼|superior/g, 'superior'],
+  [/발코니/g, 'balcony'],
+  [/오션\s*뷰|오션뷰/g, '오션뷰'],
+  [/씨티\s*뷰|시티\s*뷰|씨티뷰|시티뷰/g, '씨티뷰'],
+  [/건물\s*뷰|건물뷰/g, '건물뷰'],
+  [/바깥\s*뷰|바깥뷰|아웃사이드/g, '바깥뷰'],
+  [/외부/g, 'external'],
+  [/내부/g, 'internal'],
+  [/알리시아|알리샤|alicia/g, 'alicia'],
   // 코스 영한
   [/파워\s*스피킹|파워스피킹/g, 'powerspeaking'],
   [/비즈니스|비지니스/g, 'business'],
@@ -83,8 +98,10 @@ export function matchScore(query: string, target: string): number {
   if (t.includes(q) || q.includes(t)) {         // 포함관계
     // 짧은 쪽이 긴 쪽에 얼마나 차지하는지로 가중
     const ratio = Math.min(q.length, t.length) / Math.max(q.length, t.length)
-    // target이 query로 시작하면(예: "ev"→"evacademy") 학원코드 약어로 보고 우대
-    const startsBonus = t.startsWith(q) && q.length >= 2 ? 20 : 0
+    // target이 query로 시작하면 우대 — 단 영문 약어(ev→evacademy)에 한정.
+    // 한글 방/코스명은 접두사("2인실")가 여러 항목에 겹쳐 변별을 죽이므로 보너스 제외.
+    const isAsciiAbbr = /^[a-z0-9]+$/.test(q)
+    const startsBonus = isAsciiAbbr && t.startsWith(q) && q.length >= 2 ? 20 : 0
     return Math.min(100, Math.round(60 + 40 * ratio) + startsBonus)  // 60~100
   }
   // 핵심 토큰(인실 숫자) 일치
