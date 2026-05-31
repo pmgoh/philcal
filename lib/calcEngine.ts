@@ -525,7 +525,7 @@ export function calculateQuote(input: QuoteInput, rate: ExchangeRate): CalcResul
       })
       continue
     }
-    if (promo.condition) notes.push(`ℹ️ 프로모션 조건: ${promo.condition}`)
+    // (프로모션 조건 안내는 금액에 영향 없어 note에서 제외 — 금액 영향만 노출)
 
     // applicableItems 체크
     if (promo.applicableItems && promo.applicableItems.length > 0) {
@@ -614,9 +614,7 @@ export function calculateQuote(input: QuoteInput, rate: ExchangeRate): CalcResul
       if (!isStackable(promo)) promotionLabel = promo.label
     }
 
-    if (!toCourses && toDorms) notes.push(`ℹ️ ${promo.label}: 기숙사비에만 적용`)
-    if (toCourses && !toDorms) notes.push(`ℹ️ ${promo.label}: 코스 학비에만 적용`)
-    if (excludeIds.length > 0) notes.push(`ℹ️ ${promo.label}: 일부 코스 제외 (${excludeIds.join(', ')})`)
+    // (적용 범위·일부 제외 안내는 금액에 이미 반영됨 — note에서 제외)
 
     // agencyDiscount 처리 (v3 status 모델) — [단계분리] 여기선 status 판정 + 수집만.
     // 실제 금액 계산은 학원 할인 전체 합산 후 2차에서 (차감 후 base 정확성 위해).
@@ -698,7 +696,7 @@ export function calculateQuote(input: QuoteInput, rate: ExchangeRate): CalcResul
         thisAgencyDiscount = tier.amount
         if (tier.scope === 'per_person') notes.push(`ℹ️ ${label}: 인당 ${tier.amount.toLocaleString()}원 (인원수만큼 곱하기는 운영자 입력)`)
       } else {
-        notes.push(`ℹ️ ${label}: 주수 구간 매칭 없음 (총 ${totalWeeks}주)`)
+        // (주수 구간 매칭 없음은 내부 상태 — note 제외. 할인 0은 금액에 이미 반영)
       }
     }
 

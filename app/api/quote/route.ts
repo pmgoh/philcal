@@ -86,25 +86,6 @@ async function callClaude(system: string, messages: unknown[], maxTokens = 1000)
   return (await res.json()).content?.[0]?.text ?? ''
 }
 
-async function checkRegulations(school: School, scenario: string): Promise<string> {
-  if (!school.refundPolicy && !school.dormitoryRules && !school.generalNotes) return ''
-  const prompt = `연수 시나리오를 검토하고 상담원이 반드시 안내해야 할 사항만 간결하게 정리해줘.
-
-[시나리오]\n${scenario}
-
-[${school.name} 규정]
-${school.refundPolicy   ? `환불규정:\n${school.refundPolicy}\n`   : ''}${school.dormitoryRules ? `기숙사규정:\n${school.dormitoryRules}\n` : ''}${school.generalNotes   ? `유의사항:\n${school.generalNotes}\n`   : ''}
-
-[작성 규칙]
-- 안내사항이 많아도 잘리지 않게 핵심만 5개 이내로 간결하게.
-- 각 항목은 2-3줄로 짧게. 긴 설명 X.
-- 시나리오와 직접 관련 있는 것만. 일반론 X.
-- 문제없으면 "규정상 특이사항 없습니다." 한 줄만.`
-  try {
-    const r = (await callClaude(prompt, [{ role: 'user', content: '검토해줘.' }], 1500)).trim()
-    return r === '규정상 특이사항 없습니다.' ? '' : r
-  } catch { return '' }
-}
 
 function buildQuoteMessage(school: School, calcResult: CalcResult, _totalWeeks: number, specialNote = ''): string {
   const lines: string[] = []
@@ -523,6 +504,18 @@ export async function POST(req: NextRequest) {
       }
     }
 
+    // [429 근본 차단] 파서가 학원을 못 좁혀 filtered가 여전히 너무 크면(전체의 60% 초과),
+    // LLM에 수십 개를 통째로 보내지 않는다. 토큰 폭발 대신 "학원부터 알려달라"고 되묻는다.
+    // 학원만 정해지면 다음 턴부터 후보가 급감하므로, 되묻기가 전체 전송보다 항상 싸고 정확하다.
+    if (filtered.length > schoolsWithPromos.length * 0.6 && filtered.length > 12) {
+      return NextResponse.json({
+        action: 'need_info',
+        question: '어느 학원의 견적인가요? 학원명을 알려주시면 바로 도와드릴게요.',
+        type: 'text',
+        allowFreeText: true,
+      })
+    }
+
     const schoolsSummary = filtered.map(s => {
       const courses = (s.courses ?? [])
         .filter(c => (c as unknown as Record<string,number>).price4Weeks > 0)
@@ -630,6 +623,19 @@ export async function POST(req: NextRequest) {
       if (p.school.kind === 'auto' && courseAuto) {
         const picked = p.school.pick
         const wk = p.weeks ?? 0
+        // 방이동·코스변경: 파서가 행 배열을 분해했으면 그걸 쓰고, 아니면 단일 항목.
+        const courseArr = (p.courseRows && p.courseRows.length > 1)
+          ? p.courseRows.map(r => ({ courseId: r.id, weeks: r.weeks }))
+          : [{ courseId: courseAuto.id, weeks: wk || 4 }]
+        const courseLab = (p.courseRows && p.courseRows.length > 1)
+          ? p.courseRows.map(r => `${r.name} (${r.weeks}주)`)
+          : [`${courseAuto.name}${wk ? ` (${wk}주)` : ''}`]
+        const dormArr = (p.dormRows && p.dormRows.length > 1)
+          ? p.dormRows.map(r => ({ dormitoryId: r.id, weeks: r.weeks }))
+          : (dormAuto ? [{ dormitoryId: dormAuto.id, weeks: wk || 4 }] : [])
+        const dormLab = (p.dormRows && p.dormRows.length > 1)
+          ? p.dormRows.map(r => `${r.name} (${r.weeks}주)`)
+          : (dormAuto ? [`${dormAuto.name}${wk ? ` (${wk}주)` : ''}`] : [])
         return NextResponse.json({
           action: 'confirm',
           message: '견적 내용을 확인하고, 바꿀 항목은 직접 고르세요.',
@@ -637,10 +643,10 @@ export async function POST(req: NextRequest) {
             schoolId: picked.id,
             schoolName: picked.name,
             totalWeeks: p.weeks ?? 4,
-            courses: [{ courseId: courseAuto.id, weeks: wk || 4 }],
-            courseLabels: [`${courseAuto.name}${wk ? ` (${wk}주)` : ''}`],
-            dormitories: dormAuto ? [{ dormitoryId: dormAuto.id, weeks: wk || 4 }] : [],
-            dormLabels: dormAuto ? [`${dormAuto.name}${wk ? ` (${wk}주)` : ''}`] : [],
+            courses: courseArr,
+            courseLabels: courseLab,
+            dormitories: dormArr,
+            dormLabels: dormLab,
             packages: [],
             packageLabels: [],
             startDate: p.startDate,

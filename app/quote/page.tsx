@@ -3,11 +3,12 @@ import { useState, useEffect, useRef } from 'react'
 import AdminLayout from '@/components/AdminLayout'
 import { getSchools, getExchangeRate, getPromotions, getSchoolAliases } from '@/lib/db'
 import type { School, ExchangeRate, LocalFee } from '@/types'
-import { Send, RotateCcw, Copy, Check, ChevronDown, ChevronUp, DollarSign, FileText, MessageSquare, Calculator } from 'lucide-react'
+import { Send, RotateCcw, Copy, Check, ChevronDown, ChevronUp, DollarSign, FileText } from 'lucide-react'
 import { formatKrw } from '@/lib/utils'
 import QuoteFormModal from '@/components/QuoteFormModal'
 import QuoteResultCard from '@/components/QuoteResultCard'
-import DirectCalculator from '@/components/DirectCalculator'
+import QuoteBuilderCard from '@/components/QuoteBuilderCard'
+import { type QuoteState, emptyQuoteState, mergeAuto, commitQuote } from '@/lib/quoteState'
 import type { CalcResult, PromotionLineItem } from '@/lib/calcEngine'
 import { inferSchoolMode, MODE_LABELS, type SchoolMode } from '@/lib/schoolMode'
 
@@ -195,158 +196,6 @@ function MarkdownText({ text, isUser = false }: { text: string; isUser?: boolean
   return <div className="space-y-0.5 leading-relaxed">{result}</div>
 }
 
-// ── 견적 카드 (계산기) ───────────────────────────────────────────────────────
-// 자연어 입력 후 파서가 채운 값을 이 카드로 보여주고, 부족한 건 드롭다운으로 직접 고른다.
-// 선택지 질문→클릭→재해석 같은 대화 왕복 없이, 카드 하나에서 다 정하고 [계산하기]→directCalc.
-// 본질은 계산기다: 입력 한 번 → 카드 → 계산.
-function EditableConfirmCard({ card, schools, mode, onCalculate }: {
-  card: AssistantConfirmMessage['confirmCard']
-  schools: School[]
-  mode: SchoolMode
-  onCalculate: (payload: {
-    schoolId: string; startDate: string; enrollmentDate: string
-    courses?: { courseId: string; weeks: number }[]
-    dormitories?: { dormitoryId: string; weeks: number }[]
-    packages?: { packageId: string; weeks: number; columnLabel: string }[]
-  }) => void
-}) {
-  const [schoolId, setSchoolId] = useState<string>(card.schoolId ?? '')
-  // 코스/기숙은 "항목 + 주수" 줄의 배열. 방이동(1인실 2주+2인실 2주)·코스변경을 여러 줄로 입력.
-  const [courseRows, setCourseRows] = useState<Array<{ courseId: string; weeks: number }>>(
-    card.courses.length > 0 ? card.courses : [{ courseId: '', weeks: card.totalWeeks ?? 4 }]
-  )
-  const [dormRows, setDormRows] = useState<Array<{ dormitoryId: string; weeks: number }>>(
-    card.dormitories.length > 0 ? card.dormitories : [{ dormitoryId: '', weeks: card.totalWeeks ?? 4 }]
-  )
-  const [startDate, setStartDate] = useState<string>(card.startDate ?? '')
-
-  const baseName = (schools.find(s => s.id === (card.schoolId || schoolId))?.name ?? card.schoolName).split('(')[0].trim()
-  const schoolOpts = schools.filter(s => s.id === card.schoolId || s.name.split('(')[0].trim() === baseName)
-  const school = schools.find(s => s.id === schoolId)
-  const hasPackages = (school?.packages?.length ?? 0) > 0 && (school?.courses?.length ?? 0) === 0
-  const courseOpts = school?.courses ?? []
-  const dormOpts = school?.dormitories ?? []
-
-  const onSchoolChange = (id: string) => {
-    setSchoolId(id)
-    setCourseRows([{ courseId: '', weeks: 4 }])
-    setDormRows([{ dormitoryId: '', weeks: 4 }])
-  }
-
-  // 코스 줄 조작
-  const setCourse = (i: number, key: 'courseId' | 'weeks', v: string | number) =>
-    setCourseRows(rows => rows.map((r, idx) => idx === i ? { ...r, [key]: v } : r))
-  const addCourse = () => setCourseRows(rows => [...rows, { courseId: '', weeks: 4 }])
-  const delCourse = (i: number) => setCourseRows(rows => rows.length > 1 ? rows.filter((_, idx) => idx !== i) : rows)
-  // 기숙 줄 조작
-  const setDorm = (i: number, key: 'dormitoryId' | 'weeks', v: string | number) =>
-    setDormRows(rows => rows.map((r, idx) => idx === i ? { ...r, [key]: v } : r))
-  const addDorm = () => setDormRows(rows => [...rows, { dormitoryId: '', weeks: 4 }])
-  const delDorm = (i: number) => setDormRows(rows => rows.length > 1 ? rows.filter((_, idx) => idx !== i) : rows)
-
-  // 계산 가능: 학원 + (패키지면 통과 / 일반이면 코스 1줄 이상 선택됨)
-  const validCourses = courseRows.filter(r => r.courseId && r.weeks > 0)
-  const validDorms = dormRows.filter(r => r.dormitoryId && r.weeks > 0)
-  const ready = !!schoolId && (hasPackages || validCourses.length > 0)
-  const totalWeeks = validCourses.reduce((s, r) => s + r.weeks, 0) || (card.totalWeeks ?? 4)
-
-  const fire = () => {
-    if (!ready) return
-    onCalculate({
-      schoolId,
-      startDate, enrollmentDate: startDate,
-      courses: hasPackages ? undefined : validCourses,
-      dormitories: hasPackages ? undefined : validDorms,
-      packages: hasPackages ? (card.packages ?? []).map(p => ({ ...p, weeks: totalWeeks })) : undefined,
-    })
-  }
-
-  const rowLabel = "text-gray-500 w-16 shrink-0 text-sm pt-1.5"
-  const sel = "border border-gray-300 rounded-md px-2 py-1.5 text-sm bg-white flex-1 min-w-0"
-  const wsel = "border border-gray-300 rounded-md px-1.5 py-1.5 text-sm bg-white shrink-0"
-  const WEEKS = [1,2,3,4,5,6,7,8,9,10,11,12,16,20,24]
-  return (
-    <div className="bg-amber-50 border border-amber-300 rounded-2xl rounded-tl-sm px-4 py-3 shadow-sm space-y-2">
-      <p className="text-sm text-amber-900 font-medium">견적 내용을 확인하고, 바꿀 항목은 직접 고르세요.</p>
-      <div className="bg-white border border-amber-200 rounded-lg p-3 space-y-2.5">
-        {/* 학원 */}
-        <div className="flex items-start"><span className={rowLabel}>학원</span>
-          {schoolOpts.length > 1 ? (
-            <select value={schoolId} onChange={e => onSchoolChange(e.target.value)} className={sel}>
-              {schoolOpts.map(s => <option key={s.id} value={s.id}>{s.name}</option>)}
-            </select>
-          ) : <span className="font-medium text-sm pt-1.5">{school?.name ?? card.schoolName}</span>}
-        </div>
-
-        {/* 코스 (여러 줄 — 코스변경 지원) */}
-        {!hasPackages && (
-          <div className="flex items-start"><span className={rowLabel}>코스</span>
-            <div className="flex-1 min-w-0 space-y-1.5">
-              {courseRows.map((r, i) => (
-                <div key={i} className="flex items-center gap-1.5">
-                  <select value={r.courseId} onChange={e => setCourse(i, 'courseId', e.target.value)} className={sel}>
-                    <option value="">선택하세요</option>
-                    {courseOpts.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
-                  </select>
-                  <select value={r.weeks} onChange={e => setCourse(i, 'weeks', Number(e.target.value))} className={wsel}>
-                    {WEEKS.map(w => <option key={w} value={w}>{w}주</option>)}
-                  </select>
-                  {courseRows.length > 1 && <button onClick={() => delCourse(i)} className="text-gray-400 hover:text-red-500 text-lg leading-none px-1">×</button>}
-                </div>
-              ))}
-              <button onClick={addCourse} className="text-xs text-amber-700 hover:text-amber-900">+ 기간 나눠 추가</button>
-            </div>
-          </div>
-        )}
-
-        {/* 기숙사 (여러 줄 — 방이동 지원) */}
-        {!hasPackages && dormOpts.length > 0 && (
-          <div className="flex items-start"><span className={rowLabel}>기숙사</span>
-            <div className="flex-1 min-w-0 space-y-1.5">
-              {dormRows.map((r, i) => (
-                <div key={i} className="flex items-center gap-1.5">
-                  <select value={r.dormitoryId} onChange={e => setDorm(i, 'dormitoryId', e.target.value)} className={sel}>
-                    <option value="">통학 (기숙사 없음)</option>
-                    {dormOpts.map(d => <option key={d.id} value={d.id}>{d.name}</option>)}
-                  </select>
-                  <select value={r.weeks} onChange={e => setDorm(i, 'weeks', Number(e.target.value))} className={wsel}>
-                    {WEEKS.map(w => <option key={w} value={w}>{w}주</option>)}
-                  </select>
-                  {dormRows.length > 1 && <button onClick={() => delDorm(i)} className="text-gray-400 hover:text-red-500 text-lg leading-none px-1">×</button>}
-                </div>
-              ))}
-              <button onClick={addDorm} className="text-xs text-amber-700 hover:text-amber-900">+ 방 바꿔 추가</button>
-            </div>
-          </div>
-        )}
-
-        {hasPackages && (
-          <div className="flex items-center"><span className="text-gray-500 w-16 shrink-0 text-sm">패키지</span><span className="font-medium text-sm">{card.packageLabels?.join(', ')}</span></div>
-        )}
-
-        {/* 시작일 */}
-        <div className="flex items-center"><span className="text-gray-500 w-16 shrink-0 text-sm">시작일</span>
-          <div className="flex items-center gap-2">
-            <input type="date" value={startDate} onChange={e => setStartDate(e.target.value)} className="border border-gray-300 rounded-md px-2 py-1.5 text-sm bg-white" />
-            {startDate
-              ? <button onClick={() => setStartDate('')} className="text-xs text-gray-400 underline">미정</button>
-              : <span className="text-xs text-gray-400 italic">미정 (기본 견적)</span>}
-          </div>
-        </div>
-
-        {/* 총 주수 안내 (코스 줄 합) */}
-        {!hasPackages && validCourses.length > 1 && (
-          <p className="text-xs text-gray-400">총 {totalWeeks}주 (코스 기간 합산)</p>
-        )}
-      </div>
-
-      <button onClick={fire} disabled={!ready}
-        className={`w-full text-sm font-medium py-2 rounded-lg transition-colors ${ready ? 'bg-amber-600 hover:bg-amber-700 text-white' : 'bg-gray-200 text-gray-400 cursor-not-allowed'}`}>
-        {ready ? '계산하기' : '코스를 선택하세요'}
-      </button>
-    </div>
-  )
-}
 
 // ── 프로모션 목록 패널 ───────────────────────────────────────────────────────
 // calcResult.promotionLines를 적용/보류/미적용으로 나눠 보여준다.
@@ -830,7 +679,6 @@ export default function QuotePage() {
   const [loading, setLoading] = useState(false)
   const [copied, setCopied] = useState(false)
   const [quoteModal, setQuoteModal] = useState<{ calcResult: CalcResult; school: School; startDate: string; localFees: LocalFee[] } | null>(null)
-  const [tab, setTab] = useState<'chat' | 'direct'>('chat')
   // 챗봇 모드: 'regular'(일반 연수) | 'camp_family'(캠프·가족·주니어).
   // 모드 변경 시 채팅 이력 리셋 — 이전 모드에서 정해진 학원이 새 모드에 없을 수 있고, LLM 컨텍스트가 꼬이지 않게.
   const [mode, setMode] = useState<SchoolMode>('regular')
@@ -842,6 +690,16 @@ export default function QuotePage() {
   const [aliasData, setAliasData] = useState<Record<string, string[]>>({})
   // 배포 버전 (항상 화면에 노출 — 배포 반영 여부를 견적 안 내도 확인 가능)
   const [appVersion, setAppVersion] = useState<string>('')
+  // 단일 견적 상태 — 자연어(챗봇)와 드롭다운(수동)이 함께 채우는 temp 객체.
+  const [quote, setQuote] = useState<QuoteState>(emptyQuoteState())
+
+  // 상단 카드 [계산하기] → 현재 상태를 commit(1스택)하여 directCalc로 계산.
+  const calculateFromCard = () => {
+    const school = schools.find(s => s.id === quote.schoolId) ?? null
+    const c = commitQuote(quote, school)
+    if (!c) return
+    sendMessage('계산해주세요', c)
+  }
   const bottomRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
@@ -1061,13 +919,22 @@ export default function QuotePage() {
         }
         setMessages(prev => [...prev, needMsg])
       } else if (data.action === 'confirm' && data.confirmCard) {
-        // [v5] 사용자 확인 카드 표시. 사용자가 [계산하기] 누르면 그때 calculate.
-        const confirmMsg: AssistantConfirmMessage = {
-          role: 'assistant', type: 'confirm',
-          content: data.message ?? '아래 내용으로 계산할게요.',
-          confirmCard: data.confirmCard,
+        // 파서/LLM이 추출한 값을 상단 견적 카드(quoteState)에 병합한다.
+        // 사용자가 손댄 슬롯은 잠겨 있어 덮어쓰지 않음. 대화 중간 카드는 더 이상 안 띄움.
+        const c = data.confirmCard
+        setQuote(prev => mergeAuto(prev, {
+          schoolId: c.schoolId,
+          totalWeeks: c.totalWeeks,
+          courseRows: (c.courses ?? []).filter((r: { courseId: string }) => r.courseId),
+          dormRows: (c.dormitories ?? []).filter((r: { dormitoryId: string }) => r.dormitoryId),
+          startDate: c.startDate,
+        }))
+        // 짧은 안내만 대화에 남김 (선택지·카드 없음)
+        const msg: AssistantAnswerMessage = {
+          role: 'assistant', type: 'answer',
+          content: data.message ?? '위 견적 구성에 반영했어요. 확인 후 계산하세요.',
         }
-        setMessages(prev => [...prev, confirmMsg])
+        setMessages(prev => [...prev, msg])
       } else {
         const answerMsg: AssistantAnswerMessage = {
           role: 'assistant', type: 'answer',
@@ -1117,54 +984,30 @@ export default function QuotePage() {
             <p className="text-xs text-gray-400">{schools.length}개 학원 · ₱1={rate.phpToKrw}원{appVersion ? ` · ${appVersion}` : ''}</p>
           </div>
           <div className="flex gap-1.5">
-            {tab === 'chat' && (
-              <>
-                <button onClick={copyLastResult} className="btn-secondary flex items-center gap-1 text-xs py-1.5 px-2.5">
-                  {copied ? <><Check size={11} /> 복사됨</> : <><Copy size={11} /> <span className="hidden sm:inline">마지막 견적 </span>복사</>}
-                </button>
-                <button onClick={reset} className="btn-secondary flex items-center gap-1 text-xs py-1.5 px-2.5">
-                  <RotateCcw size={11} /> 초기화
-                </button>
-              </>
-            )}
+            <>
+              <button onClick={copyLastResult} className="btn-secondary flex items-center gap-1 text-xs py-1.5 px-2.5">
+                {copied ? <><Check size={11} /> 복사됨</> : <><Copy size={11} /> <span className="hidden sm:inline">마지막 견적 </span>복사</>}
+              </button>
+              <button onClick={reset} className="btn-secondary flex items-center gap-1 text-xs py-1.5 px-2.5">
+                <RotateCcw size={11} /> 초기화
+              </button>
+            </>
           </div>
         </div>
 
-        {/* 탭 */}
-        <div className="flex border-b border-gray-200 bg-white flex-shrink-0">
-          <button
-            onClick={() => setTab('chat')}
-            className={`flex items-center gap-1.5 px-4 py-2.5 text-sm font-medium border-b-2 transition-colors ${
-              tab === 'chat'
-                ? 'border-blue-600 text-blue-700'
-                : 'border-transparent text-gray-500 hover:text-gray-700'
-            }`}
-          >
-            <MessageSquare size={14} />
-            챗봇 상담
-          </button>
-          <button
-            onClick={() => setTab('direct')}
-            className={`flex items-center gap-1.5 px-4 py-2.5 text-sm font-medium border-b-2 transition-colors ${
-              tab === 'direct'
-                ? 'border-blue-600 text-blue-700'
-                : 'border-transparent text-gray-500 hover:text-gray-700'
-            }`}
-          >
-            <Calculator size={14} />
-            직접 계산
-          </button>
+        {/* 상단 상시 견적 카드 — 자연어·드롭다운이 함께 채우는 단일 상태 */}
+        <div className="flex-shrink-0 px-3 md:px-6 pt-3 pb-1 bg-gray-50">
+          <QuoteBuilderCard
+            state={quote}
+            schools={schools.filter(s => inferSchoolMode(s) === mode)}
+            onChange={setQuote}
+            onCalculate={calculateFromCard}
+            calculating={loading}
+          />
         </div>
 
-        {/* 직접 계산 탭 */}
-        {tab === 'direct' && (
-          <div className="flex-1 overflow-y-auto bg-gray-50">
-            <DirectCalculator schools={schools} promos={promotions} rate={rate} />
-          </div>
-        )}
-
-        {/* 챗봇 탭 (기존 내용) */}
-        {tab === 'chat' && (
+        {/* 대화 영역 */}
+        {(
         <>
         {/* 모드 토글 — 일반 연수 / 캠프·가족·주니어. 모드 변경 시 채팅 이력 리셋(이전 모드 학원이 새 모드에 없을 수 있고 LLM 컨텍스트가 꼬이지 않게). */}
         <div className="px-3 md:px-4 pt-3 pb-2 bg-white border-b border-gray-100 flex-shrink-0">
@@ -1321,20 +1164,6 @@ export default function QuotePage() {
                       <div className="bg-white border border-gray-200 rounded-2xl rounded-tl-sm px-4 py-3 shadow-sm">
                         <NeedInfoBubble msg={m} onSelect={v => sendMessage(v)} />
                       </div>
-                    )
-                  })()}
-
-                  {/* [v5] 사용자 확인 카드 - LLM이 모은 값을 계산 직전에 검증 */}
-                  {msg.type === 'confirm' && (() => {
-                    const m = msg as AssistantConfirmMessage
-                    const c = m.confirmCard
-                    return (
-                      <EditableConfirmCard
-                        card={c}
-                        schools={schools}
-                        mode={mode}
-                        onCalculate={(payload) => sendMessage('계산해주세요', payload)}
-                      />
                     )
                   })()}
 
