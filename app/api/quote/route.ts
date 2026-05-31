@@ -491,6 +491,28 @@ export async function POST(req: NextRequest) {
 
     if (filtered.length === 0) filtered = schoolsWithPromos
 
+    // [토큰 절감 — 429 방지] LLM으로 내려가기 전, 파서가 학원을 식별했으면(auto/choices)
+    // 그 학원(같은 이름의 캠퍼스 포함)만 LLM에 보낸다. 전체 81개(약 46k토큰)를 매번 보내면
+    // 분당 토큰 한도(30k)를 넘겨 429가 난다. 캠퍼스/코스를 묻는 단계에도 해당 학원만 있으면 충분.
+    {
+      const lastUserForFilter = [...((messages as Array<{ role: string; content: string }>) ?? [])]
+        .reverse().find(m => m.role === 'user')?.content ?? ''
+      if (lastUserForFilter.trim()) {
+        const pf = parseQuoteIntent(lastUserForFilter, schoolsWithPromos as School[], aliasData as Record<string, string[]> | undefined)
+        const ids = new Set<string>()
+        if (pf.school.kind === 'auto') ids.add(pf.school.pick.id)
+        else if (pf.school.kind === 'choices') pf.school.options.forEach(o => ids.add(o.id))
+        if (ids.size > 0) {
+          // 같은 베이스 이름의 캠퍼스도 포함 (EV / EV La Mer)
+          const baseNames = new Set(
+            [...ids].map(id => schoolsWithPromos.find(s => s.id === id)?.name.split('(')[0].trim()).filter(Boolean) as string[]
+          )
+          const narrowed = filtered.filter(s => ids.has(s.id) || baseNames.has(s.name.split('(')[0].trim()))
+          if (narrowed.length > 0) filtered = narrowed
+        }
+      }
+    }
+
     const schoolsSummary = filtered.map(s => {
       const courses = (s.courses ?? [])
         .filter(c => (c as unknown as Record<string,number>).price4Weeks > 0)
@@ -643,6 +665,13 @@ export async function POST(req: NextRequest) {
       const schoolId = parsed.schoolId as string | undefined
       const targetSchool = schoolId ? schoolsWithPromos.find(s => s.id === schoolId) : undefined
       const sugg = parsed.suggestions as string[] | undefined
+
+      // [토큰 절감] LLM이 schoolId를 안 줘도, 위에서 파서가 학원을 1곳으로 좁혔으면
+      // 그 ID를 응답에 실어 프론트가 activeSchoolId로 기억하게 한다(다음 메시지부터 그 학원만 전송).
+      if (!parsed.schoolId && filtered.length > 0) {
+        const baseSet = new Set(filtered.map(s => s.name.split('(')[0].trim()))
+        if (baseSet.size === 1) parsed.schoolId = filtered[0].id
+      }
 
       if (isDateQ) {
         // 시작일 미정 선택지 자동 추가. 미정 선택해도 빈 값으로 진행되게.
