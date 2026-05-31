@@ -169,7 +169,7 @@ export interface PromoEntry {
   agencyDiscountType?: AgencyDiscountKind | 'none'
   agencyDiscountValue?: number
   agencyDiscountMaxAmount?: number
-  agencyDiscountApplyTo?: 'all' | 'course_only' | 'dorm_only' | 'package_only' | 'course_and_dorm'
+  agencyDiscountApplyTo?: 'all' | 'all_with_surcharge' | 'course_only' | 'dorm_only' | 'package_only' | 'course_and_dorm'
   agencyDiscountScope?: 'per_person' | 'per_family'
   agencyDiscountMinWeeks?: number                // 유학원 할인 적용 최소 주수
   agencyDiscountRegFee?: number

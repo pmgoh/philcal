@@ -368,6 +368,9 @@ export async function POST(req: NextRequest) {
         condition: p.condition,
         note: p.note,
         applicableItems: p.applicableItems,
+        requireStayIncludes: p.requireStayIncludes,
+        excludePeriods: p.excludePeriods,
+        maxWeeks: p.maxWeeks,
         weekTiers: p.weekTiers,
         excludeCourses: p.excludeCourses,
         // 허용조건·계산방식 (자료 근거)

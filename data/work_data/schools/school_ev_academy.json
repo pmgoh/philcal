@@ -134,19 +134,11 @@
     {
       "id": "ev_peak",
       "name": "성수기 서차지",
-      "amount": 40,
-      "currency": "USD",
-      "unit": "per_week",
-      "periods": [
-        {
-          "start": "2026-07-05",
-          "end": "2026-08-29"
-        },
-        {
-          "start": "2027-07-04",
-          "end": "2027-08-28"
-        }
-      ]
+      "amountPerWeek": 50000,
+      "currency": "KRW",
+      "startDate": "2026-07-05",
+      "endDate": "2026-08-30",
+      "note": "세부 성수기 서차지. 서차지 포함 비용에서 학비&기숙사 10% 유학원 할인 가능."
     }
   ],
   "localFees": [

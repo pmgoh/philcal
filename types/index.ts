@@ -85,7 +85,7 @@ export interface AgencyDiscount {
   type: AgencyDiscountKind
   value: number
   maxAmount?: number
-  applyTo: 'all' | 'course_only' | 'dorm_only' | 'package_only' | 'course_and_dorm'
+  applyTo: 'all' | 'all_with_surcharge' | 'course_only' | 'dorm_only' | 'package_only' | 'course_and_dorm'
   scope?: 'per_person' | 'per_family'
   // [할인 기준 시점] 유학원 10%를 학원 할인 차감 전/후 어느 금액에 매기는지.
   // - 'after_discount' (기본): 학원 할인(프로모션·장기할인)을 뺀 후 금액에 적용. (CG 등 자료 명시)
@@ -137,6 +137,12 @@ export interface Promotion {
   // [계산방식 확인 여부] 자료에 계산방식 명시 없어 floor로 기본 처리한 경우 false.
   // false면 견적 시 "계산방식 미확인" 경고 자동 표시.
   methodConfirmed?: boolean
+  // [최대 주수] 이 주수 이하일 때만 적용 (예: "8주 이하" → 8). 미설정이면 상한 없음.
+  maxWeeks?: number
+  // [제외 기간] 연수 시작일이 이 기간들에 들면 적용 안 함 (예: 성수기 6~8월 제외).
+  excludePeriods?: Array<{ start: string; end: string }>
+  // [체류기간 조건] 연수 체류기간에 특정 구간이 N주 이상 포함돼야 적용 (예: 겨울 12/21~1/1 2주 포함자만).
+  requireStayIncludes?: { start: string; end: string; minWeeks?: number }
   condition?: string                // 자료 원문 보존용 (계산엔 minWeeks 사용)
   note?: string
   // 특정 기숙사/코스에만 적용 (빈 배열 또는 미설정 = 전체 적용)

@@ -499,7 +499,7 @@ export function calculateQuote(input: QuoteInput, rate: ExchangeRate): CalcResul
     // [체류기간 포함 조건] 일부 프로모션은 "체류기간에 특정 날짜 구간(예: 연말 12/21~1/1)이
     // N주 이상 포함된 학생"만 대상. 등록일/입국일 범위가 아니라 체류기간 자체를 검사해야 한다.
     // 데이터의 requireStayIncludes = { start, end, minWeeks } 가 있으면 검사.
-    const stayReq = (promo as { requireStayIncludes?: { start?: string; end?: string; minWeeks?: number } }).requireStayIncludes
+    const stayReq = promo.requireStayIncludes
     if (stayReq && stayReq.start && stayReq.end) {
       // 날짜 미정이면 판정 불가 → 적용 보류(미적용)
       if (dateUnset) continue
@@ -526,6 +526,17 @@ export function calculateQuote(input: QuoteInput, rate: ExchangeRate): CalcResul
       continue
     }
     // (프로모션 조건 안내는 금액에 영향 없어 note에서 제외 — 금액 영향만 노출)
+
+    // [최대 주수] maxWeeks 초과면 적용 안 함 (예: "8주 이하만")
+    const promoMaxWeeks = promo.maxWeeks
+    if (promoMaxWeeks != null && totalWeeks > promoMaxWeeks) continue
+
+    // [제외 기간] 연수 시작일이 제외 기간에 들면 적용 안 함 (예: 성수기 6~8월 제외).
+    const excludePeriods = promo.excludePeriods
+    if (excludePeriods && excludePeriods.length > 0 && !dateUnset) {
+      const excluded = excludePeriods.some(p => p.start && p.end && isInRange(startDate, p.start, p.end))
+      if (excluded) continue
+    }
 
     // applicableItems 체크
     if (promo.applicableItems && promo.applicableItems.length > 0) {
@@ -652,6 +663,7 @@ export function calculateQuote(input: QuoteInput, rate: ExchangeRate): CalcResul
     const dormSum   = dormItems.reduce((s,i) => s + i.krwAmount, 0)
     let base = 0
     if (applyTo === 'all')                   base = baseKrw
+    else if (applyTo === 'all_with_surcharge') base = baseKrw + surchargeKrw
     else if (applyTo === 'course_only')      base = courseSum
     else if (applyTo === 'dorm_only')        base = dormSum
     else if (applyTo === 'package_only')     base = pkgBaseKrw
@@ -661,7 +673,7 @@ export function calculateQuote(input: QuoteInput, rate: ExchangeRate): CalcResul
     const baseMode = (pad as { base?: 'after_discount'|'before_discount' }).base ?? 'after_discount'
     if (baseMode === 'after_discount' && promotionDiscount > 0 && baseKrw > 0) {
       // base가 전체(baseKrw)면 학원할인 전액 차감, 부분이면 그 비중만큼 차감
-      const ratio = base / baseKrw
+      const ratio = Math.min(1, base / baseKrw)
       base = Math.max(0, base - Math.round(promotionDiscount * ratio))
     }
 

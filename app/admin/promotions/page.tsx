@@ -612,6 +612,7 @@ export default function PromotionsPage() {
                                 onChange={e => setEditData(d => ({...d, agencyDiscountApplyTo: e.target.value as PromoEntry['agencyDiscountApplyTo']}))}
                                 className="input-field text-xs py-1.5">
                                 <option value="all">전체</option>
+                                <option value="all_with_surcharge">전체+서차지 (서차지 포함 할인)</option>
                                 <option value="course_only">학비만</option>
                                 <option value="dorm_only">기숙사만</option>
                                 <option value="course_and_dorm">학비+기숙사</option>

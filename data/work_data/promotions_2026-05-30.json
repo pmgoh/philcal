@@ -4921,7 +4921,8 @@
     "discountValue": 0,
     "promoName": "성인 ALL (CALA만)",
     "season": "all",
-    "agencyDiscountRawText": "CALA 할인가능"
+    "agencyDiscountRawText": "CALA 할인가능",
+    "agencyDiscountApplyTo": "all_with_surcharge"
   },
   {
     "region": "세부",
