@@ -995,42 +995,43 @@ export default function QuotePage() {
           </div>
         </div>
 
-        {/* 상단 상시 견적 카드 — 자연어·드롭다운이 함께 채우는 단일 상태 */}
-        <div className="flex-shrink-0 px-3 md:px-6 pt-3 pb-1 bg-gray-50">
-          <QuoteBuilderCard
-            state={quote}
-            schools={schools.filter(s => inferSchoolMode(s) === mode)}
-            onChange={setQuote}
-            onCalculate={calculateFromCard}
-            calculating={loading}
-          />
-        </div>
+        {/* 본문: 좌(계산기) | 우(채팅) 2분할. 사이드바까지 합쳐 전체 3분할. */}
+        <div className="flex-1 flex flex-row min-h-0">
 
-        {/* 대화 영역 */}
-        {(
-        <>
-        {/* 모드 토글 — 일반 연수 / 캠프·가족·주니어. 모드 변경 시 채팅 이력 리셋(이전 모드 학원이 새 모드에 없을 수 있고 LLM 컨텍스트가 꼬이지 않게). */}
-        <div className="px-3 md:px-4 pt-3 pb-2 bg-white border-b border-gray-100 flex-shrink-0">
-          <div className="text-xs font-medium text-gray-500 mb-1.5">어떤 견적인가요?</div>
-          <div className="grid grid-cols-2 gap-1.5">
-            {(['regular', 'camp_family'] as SchoolMode[]).map(m => (
-              <button key={m}
-                onClick={() => {
-                  if (m === mode) return
-                  setMode(m)
-                  reset()  // 모드 바뀌면 채팅도 처음부터
-                }}
-                className={`px-3 py-2 text-xs font-medium rounded-md border transition-colors
-                  ${mode === m
-                    ? 'bg-blue-600 text-white border-blue-600'
-                    : 'bg-white text-gray-700 border-gray-200 hover:border-blue-400 hover:bg-blue-50'}`}>
-                {MODE_LABELS[m]}
-              </button>
-            ))}
+        {/* ── 왼쪽: 계산기 (모드 토글 + 견적 카드) ── */}
+        <div className="w-[380px] xl:w-[440px] flex-shrink-0 flex flex-col border-r border-gray-200 bg-gray-50 overflow-y-auto">
+          {/* 모드 토글 — 학원보다 상위 필터라 맨 위에 둔다 */}
+          <div className="px-4 pt-3 pb-2 flex-shrink-0">
+            <div className="text-xs font-medium text-gray-500 mb-1.5">어떤 견적인가요?</div>
+            <div className="grid grid-cols-2 gap-1.5">
+              {(['regular', 'camp_family'] as SchoolMode[]).map(m => (
+                <button key={m}
+                  onClick={() => { if (m === mode) return; setMode(m); reset() }}
+                  className={`px-3 py-2 text-xs font-medium rounded-md border transition-colors
+                    ${mode === m
+                      ? 'bg-blue-600 text-white border-blue-600'
+                      : 'bg-white text-gray-700 border-gray-200 hover:border-blue-400 hover:bg-blue-50'}`}>
+                  {MODE_LABELS[m]}
+                </button>
+              ))}
+            </div>
+          </div>
+          {/* 견적 카드 */}
+          <div className="px-4 pb-4 flex-shrink-0">
+            <QuoteBuilderCard
+              state={quote}
+              schools={schools.filter(s => inferSchoolMode(s) === mode)}
+              onChange={setQuote}
+              onCalculate={calculateFromCard}
+              calculating={loading}
+            />
           </div>
         </div>
 
-        {/* 메시지 영역 */}
+        {/* ── 오른쪽: 채팅 ── */}
+        <div className="flex-1 flex flex-col min-w-0 bg-white">
+        {(
+        <>
         <div className="flex-1 overflow-y-auto px-3 md:px-4 py-4 space-y-3">
           {messages.map((msg, i) => {
             if (msg.role === 'user') {
@@ -1226,6 +1227,8 @@ export default function QuotePage() {
         </div>
         </>
         )}
+        </div>{/* 오른쪽 채팅 칸 끝 */}
+        </div>{/* 2분할 컨테이너 끝 */}
       </div>
 
       {/* 견적서 모달 */}

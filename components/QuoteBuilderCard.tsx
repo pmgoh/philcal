@@ -55,7 +55,8 @@ export default function QuoteBuilderCard({
     ? 'ring-2 ring-amber-400 ring-offset-1' : ''
 
   const rowLabel = 'text-gray-500 w-14 shrink-0 text-sm pt-1.5'
-  const sel = 'border border-gray-300 rounded-md px-2 py-1.5 text-sm bg-white'
+  const sel = "border border-gray-300 rounded-md px-2 py-1.5 text-sm bg-white"
+  const selW = "border border-gray-300 rounded-md px-1 py-1.5 text-sm bg-white shrink-0 w-16"
 
   // 코스/기숙 행이 비었으면 빈 줄 하나 보장 (편집 가능하게)
   const courseRows = state.courseRows.length > 0 ? state.courseRows : [{ courseId: '', weeks: state.totalWeeks ?? 4 }]
@@ -112,7 +113,7 @@ export default function QuoteBuilderCard({
                   <option value="">선택하세요</option>
                   {courseOpts.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
                 </select>
-                <select value={r.weeks} onChange={e => setCourse(i, { weeks: Number(e.target.value) })} className={`${sel} shrink-0`}>
+                <select value={r.weeks} onChange={e => setCourse(i, { weeks: Number(e.target.value) })} className={selW}>
                   {WEEKS.map(w => <option key={w} value={w}>{w}주</option>)}
                 </select>
                 {courseRows.length > 1 && <button onClick={() => delCourse(i)} className="text-gray-400 hover:text-red-500 text-lg leading-none px-1">×</button>}
@@ -134,7 +135,7 @@ export default function QuoteBuilderCard({
                   <option value="">통학 (기숙사 없음)</option>
                   {dormOpts.map(d => <option key={d.id} value={d.id}>{d.name}</option>)}
                 </select>
-                <select value={r.weeks} onChange={e => setDorm(i, { weeks: Number(e.target.value) })} className={`${sel} shrink-0`}>
+                <select value={r.weeks} onChange={e => setDorm(i, { weeks: Number(e.target.value) })} className={selW}>
                   {WEEKS.map(w => <option key={w} value={w}>{w}주</option>)}
                 </select>
                 {dormRows.length > 1 && <button onClick={() => delDorm(i)} className="text-gray-400 hover:text-red-500 text-lg leading-none px-1">×</button>}
