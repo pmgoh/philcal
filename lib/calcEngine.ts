@@ -726,11 +726,24 @@ export function calculateQuote(input: QuoteInput, rate: ExchangeRate): CalcResul
     agencyDiscountKrw += thisAgencyDiscount
     if (thisAgencyDiscount > 0) {
       if (!agencyDiscountNote || agencyDiscountNote === '본사 확인 필요') agencyDiscountNote = pad.note ?? ''
+      // 계산식을 근거로 남긴다 (예: "학비+기숙 2,110,000원 × 10% = 211,000원")
+      let formula = ''
+      if (pad.type === 'percent') {
+        formula = `기준액 ${Math.round(base).toLocaleString()}원 × ${pad.value}% = ${thisAgencyDiscount.toLocaleString()}원`
+      } else if (pad.type === 'amount_per_week') {
+        formula = `주당 ${pad.value.toLocaleString()}원 × ${totalWeeks}주 = ${thisAgencyDiscount.toLocaleString()}원`
+      } else if (pad.type === 'amount_per_4weeks') {
+        formula = `4주당 ${pad.value.toLocaleString()}원 = ${thisAgencyDiscount.toLocaleString()}원`
+      } else if (pad.type === 'reg_fee_only') {
+        formula = `등록비 전액 할인 = ${thisAgencyDiscount.toLocaleString()}원`
+      } else {
+        formula = `정액 할인 = ${thisAgencyDiscount.toLocaleString()}원`
+      }
       promotionLines.push({
         id: id + '__agency',
         label: `${label} (유학원 할인)`, status: 'applied', kind: 'agency',
         discountKrw: thisAgencyDiscount,
-        basis: pad.rawText ?? pad.note ?? `${pad.type}`,
+        basis: formula,
         stackable: true,
       })
     }

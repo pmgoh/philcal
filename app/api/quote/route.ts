@@ -231,6 +231,8 @@ function buildDiscountEvidence(school: School, calc: CalcResult): string {
 
   if (agencyDiscount > 0) {
     lines.push(`**엠버시유학 자체 할인**`)
+    const agencyLine = (calc.promotionLines ?? []).find(l => l.kind === 'agency' && l.status === 'applied')
+    if (agencyLine?.basis) lines.push(`- 계산: ${agencyLine.basis}`)
     if (calc.agencyDiscountNote) lines.push(`- 근거: ${calc.agencyDiscountNote}`)
     lines.push(`- 엠버시 할인: **-${formatKrw(agencyDiscount)}**`)
   }
