@@ -641,6 +641,7 @@ export function calculateQuote(input: QuoteInput, rate: ExchangeRate): CalcResul
   // base 기준: 'after_discount'(기본) = 학원 할인 차감 후 / 'before_discount' = 차감 전 원금.
   // 자료 표현대로 학원별 지정. 차감 후가 정확하려면 promotionDiscount가 확정된 이 시점이어야 함.
   let regFeeAgencyApplied = false  // 등록비성 유학원할인이 이미 한 번 적용됐는지 (중복 방지)
+  let percentAgencyApplied = false // 비율(%) 유학원할인이 이미 적용됐는지 — CALA 10%가 여러 프로모션에 있어도 한 번만
   for (const { label, id, pad } of agencyPending) {
     if (pad.minWeeks && totalWeeks < pad.minWeeks) {
       notes.push(`ℹ️ ${label}: ${pad.minWeeks}주 미만은 유학원 할인 불가 (요청 ${totalWeeks}주)`)
@@ -719,6 +720,13 @@ export function calculateQuote(input: QuoteInput, rate: ExchangeRate): CalcResul
         thisAgencyDiscount = Math.min(thisAgencyDiscount, registrationFeeKrw)
         if (thisAgencyDiscount > 0) regFeeAgencyApplied = true
       }
+    }
+
+    // [비율 유학원할인 중복 방지] CALA 10% 같은 percent 할인이 여러 프로모션에 중복 기재돼도
+    // 유학원 할인은 학비+기숙 기준 한 번만 적용한다 (각각 10%씩 더해 20%가 되면 안 됨).
+    if (pad.type === 'percent') {
+      if (percentAgencyApplied) thisAgencyDiscount = 0
+      else if (thisAgencyDiscount > 0) percentAgencyApplied = true
     }
 
     agencyDiscountKrw += thisAgencyDiscount

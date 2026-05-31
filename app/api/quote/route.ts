@@ -388,7 +388,7 @@ export async function POST(req: NextRequest) {
     const promosBySchoolId: Record<string, Promotion[]> = {}
     const orphanPromos: Array<{ schoolName?: string; promoName?: string }> = []
     for (const p of promoEntries) {
-      if (!p.active) continue
+      if (p.active === false) continue
       const matched = findSchoolForPromo(
         {
           schoolId: p.schoolId as string | undefined,
