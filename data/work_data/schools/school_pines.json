@@ -239,7 +239,17 @@
       "currency": "KRW"
     }
   ],
-  "surcharges": [],
+  "surcharges": [
+    {
+      "id": "pines_peak",
+      "name": "성수기 서차지",
+      "amountPerWeek": 50000,
+      "currency": "KRW",
+      "startDate": "2026-06-29",
+      "endDate": "2026-08-22",
+      "note": "바기오 성수기 서차지."
+    }
+  ],
   "longTermDiscount": [
     {
       "weeks": 12,

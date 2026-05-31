@@ -8,11 +8,18 @@
   "minWeeks": 1,
   "allowShortTerm": true,
   "shortTermRates": {
-    "week1": 0.40,
+    "week1": 0.4,
     "week2": 0.65,
     "week3": 0.85
   },
-  "programTags": ["ESL", "스피킹", "토익", "워킹홀리데이", "비즈니스", "시니어"],
+  "programTags": [
+    "ESL",
+    "스피킹",
+    "토익",
+    "워킹홀리데이",
+    "비즈니스",
+    "시니어"
+  ],
   "registrationFee": {
     "amount": 100000,
     "currency": "KRW",
@@ -156,20 +163,38 @@
     {
       "id": "jic_p_peak_surcharge",
       "label": "성수기 추가 요금",
-      "startDate": "2026-06-28",
+      "startDate": "2026-06-29",
       "endDate": "2026-08-22",
       "amountPerWeek": 50000,
       "currency": "KRW",
       "applyTo": "courses",
-      "note": "2026년 6월 28일 ~ 8월 22일 성수기 기간, 주당 50,000원 추가."
+      "note": "2026년 6월 29일 ~ 8월 22일 성수기 기간, 주당 50,000원 추가."
     }
   ],
   "longTermDiscount": [
-    { "weeks": 12, "discount": 300000, "currency": "KRW" },
-    { "weeks": 16, "discount": 400000, "currency": "KRW" },
-    { "weeks": 20, "discount": 500000, "currency": "KRW" },
-    { "weeks": 24, "discount": 600000, "currency": "KRW" },
-    { "note": "Every additional 4 weeks: ₩100,000 OFF" }
+    {
+      "weeks": 12,
+      "discount": 300000,
+      "currency": "KRW"
+    },
+    {
+      "weeks": 16,
+      "discount": 400000,
+      "currency": "KRW"
+    },
+    {
+      "weeks": 20,
+      "discount": 500000,
+      "currency": "KRW"
+    },
+    {
+      "weeks": 24,
+      "discount": 600000,
+      "currency": "KRW"
+    },
+    {
+      "note": "Every additional 4 weeks: ₩100,000 OFF"
+    }
   ],
   "promotions": null,
   "localFees": [

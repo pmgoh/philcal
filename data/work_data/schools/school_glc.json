@@ -167,12 +167,13 @@
   "packages": [],
   "surcharges": [
     {
-      "id": "glc_shortterm",
-      "name": "단기 연수 추가비용 (1~3주)",
-      "amount": 100000,
+      "id": "glc_peak",
+      "name": "성수기 서차지",
+      "amountPerWeek": 50000,
       "currency": "KRW",
-      "unit": "per_week",
-      "note": "1~3주 단기 연수 학생에게 주당 10만원 추가."
+      "startDate": "2026-05-31",
+      "endDate": "2026-08-30",
+      "note": "세부 성수기 서차지. 서차지 포함 비용에서 학비&기숙사 10% 유학원 할인 가능."
     }
   ],
   "localFees": [

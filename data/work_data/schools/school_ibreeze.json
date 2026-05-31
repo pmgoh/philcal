@@ -150,7 +150,18 @@
     }
   ],
   "packages": [],
-  "surcharges": [],
+  "surcharges": [
+    {
+      "id": "ibreeze_peak",
+      "name": "성수기 서차지",
+      "amountPerWeek": 50000,
+      "currency": "KRW",
+      "startDate": "2026-06-28",
+      "endDate": "2026-08-15",
+      "discountAllowed": false,
+      "note": "성수기 서차지. 유학원 할인 적용 불가."
+    }
+  ],
   "localFees": [
     {
       "id": "ib_ssp",

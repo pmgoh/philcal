@@ -1,0 +1,51 @@
+{
+  "id": "cwa",
+  "schoolCode": "CWA",
+  "name": "CWA (Clark)",
+  "region": "클락",
+  "campus": null,
+  "schoolType": "general",
+  "isActive": true,
+  "allowShortTerm": true,
+  "minWeeks": 1,
+  "registrationFee": {
+    "amount": 100000,
+    "currency": "KRW",
+    "note": "등록비 10만원"
+  },
+  "courseShortTermRates": {
+    "mode": "percent",
+    "week1": 40,
+    "week2": 60,
+    "week3": 80,
+    "week4Included": false
+  },
+  "dormShortTermRates": {
+    "mode": "percent",
+    "week1": 40,
+    "week2": 60,
+    "week3": 80,
+    "week4Included": false
+  },
+  "surcharges": [
+    {
+      "id": "cwa_summer_surcharge",
+      "name": "여름 성수기 서차지",
+      "amountPerWeek": 70000,
+      "currency": "KRW",
+      "startDate": "2026-06-28",
+      "endDate": "2026-08-29",
+      "note": "성수기 서차지 주당 70,000원."
+    }
+  ],
+  "courses": [],
+  "dormitories": [],
+  "packages": [],
+  "promotions": [],
+  "localFees": [],
+  "dormitoryRules": [],
+  "refundPolicy": null,
+  "generalNotes": "※ 껍데기 데이터 — 코스/기숙/현지비 미입력. 자료 확보 후 채울 것. 서차지만 정답 기준 반영됨.",
+  "programTags": [],
+  "updatedAt": "2026-05-31T13:04:50.054007"
+}

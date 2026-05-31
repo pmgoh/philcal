@@ -185,7 +185,17 @@
     }
   ],
   "packages": [],
-  "surcharges": [],
+  "surcharges": [
+    {
+      "id": "philinter_peak",
+      "name": "성수기 서차지",
+      "amountPerWeek": 40,
+      "currency": "USD",
+      "startDate": "2026-07-06",
+      "endDate": "2026-08-30",
+      "note": "성수기 서차지. 주당 40 USD."
+    }
+  ],
   "localFees": [
     {
       "id": "phi_ssp",
