@@ -204,7 +204,16 @@ function buildDiscountEvidence(school: School, calc: CalcResult): string {
     lines.push(`**학원 프로모션: ${calc.promotionLabel}**`)
     if (matchedPromo) {
       if (!matchedPromo.alwaysApply) lines.push(`- 기간: ${matchedPromo.startDate} ~ ${matchedPromo.endDate}`)
-      lines.push(`- 방식: ${matchedPromo.discountType === 'percent' ? `${matchedPromo.discountValue}%` : formatKrw(matchedPromo.discountValue)}`)
+      if (matchedPromo.discountType === 'percent') {
+        lines.push(`- 방식: ${matchedPromo.discountValue}%`)
+      } else if (matchedPromo.discountType === 'week_tiers' && matchedPromo.weekTiers?.length) {
+        // 주수 구간별 정액 — 적용된 구간을 표시 (discountValue는 0이므로 weekTiers를 본다)
+        const tiers = matchedPromo.weekTiers.map(t => `${t.minWeeks}주 ${formatKrw(t.amount)}`).join(' / ')
+        lines.push(`- 방식: 주수 구간별 (${tiers})`)
+        lines.push(`- 적용: ${calc.totalWeeks}주 → ${formatKrw(promoDiscount)}`)
+      } else {
+        lines.push(`- 방식: ${formatKrw(matchedPromo.discountValue)}`)
+      }
       if (matchedPromo.note) lines.push(`- 비고: ${matchedPromo.note}`)
     }
     lines.push(`- 프로모션 할인: **-${formatKrw(promoDiscount)}**`)
@@ -638,7 +647,8 @@ export async function POST(req: NextRequest) {
           : (dormAuto ? [`${dormAuto.name}${wk ? ` (${wk}주)` : ''}`] : [])
         return NextResponse.json({
           action: 'confirm',
-          message: '견적 내용을 확인하고, 바꿀 항목은 직접 고르세요.',
+          message: '왼쪽 견적 구성에 반영했어요. 확인하고 [계산하기]를 누르세요.',
+          showCalculateButton: true,
           confirmCard: {
             schoolId: picked.id,
             schoolName: picked.name,
@@ -750,7 +760,8 @@ export async function POST(req: NextRequest) {
       const sd = (parsed.startDate as string) ?? ''
       return NextResponse.json({
         action: 'confirm',
-        message: '아래 내용으로 계산할게요. 맞으면 [계산하기]를 누르고, 수정할 게 있으면 알려주세요.',
+        message: '왼쪽 견적 구성에 반영했어요. 확인하고 [계산하기]를 누르세요.',
+        showCalculateButton: true,
         confirmCard: {
           schoolId: parsed.schoolId,
           schoolName: school.name,

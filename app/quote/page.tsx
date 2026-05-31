@@ -8,7 +8,7 @@ import { formatKrw } from '@/lib/utils'
 import QuoteFormModal from '@/components/QuoteFormModal'
 import QuoteResultCard from '@/components/QuoteResultCard'
 import QuoteBuilderCard from '@/components/QuoteBuilderCard'
-import { type QuoteState, emptyQuoteState, mergeAuto, commitQuote } from '@/lib/quoteState'
+import { type QuoteState, emptyQuoteState, mergeAuto, commitQuote, validateQuote } from '@/lib/quoteState'
 import { schoolsMentioned } from '@/lib/parseQuoteIntent'
 import type { CalcResult, PromotionLineItem } from '@/lib/calcEngine'
 import { inferSchoolMode, MODE_LABELS, type SchoolMode } from '@/lib/schoolMode'
@@ -58,6 +58,7 @@ interface AssistantNeedInfoMessage extends BaseMessage {
 interface AssistantAnswerMessage extends BaseMessage {
   role: 'assistant'
   type: 'answer'
+  showCalculateButton?: boolean
 }
 
 // [v5] 사용자 확인 카드. LLM이 정보 다 모았다고 confirm 보내면, calculate 직전에
@@ -930,10 +931,11 @@ export default function QuotePage() {
           dormRows: (c.dormitories ?? []).filter((r: { dormitoryId: string }) => r.dormitoryId),
           startDate: c.startDate,
         }))
-        // 짧은 안내만 대화에 남김 (선택지·카드 없음)
+        // 짧은 안내만 대화에 남김 (선택지·카드 없음). 구성이 모였으면 채팅에도 계산 버튼 표시.
         const msg: AssistantAnswerMessage = {
           role: 'assistant', type: 'answer',
-          content: data.message ?? '위 견적 구성에 반영했어요. 확인 후 계산하세요.',
+          content: data.message ?? '왼쪽 견적 구성에 반영했어요. 확인하고 [계산하기]를 누르세요.',
+          showCalculateButton: data.showCalculateButton ?? true,
         }
         setMessages(prev => [...prev, msg])
       } else {
@@ -1173,6 +1175,19 @@ export default function QuotePage() {
                   {msg.type === 'answer' && (
                     <div className="bg-white border border-gray-200 rounded-2xl rounded-tl-sm px-4 py-3 shadow-sm">
                       <MarkdownText text={msg.content} />
+                      {(msg as AssistantAnswerMessage).showCalculateButton && (() => {
+                        const sc = schools.find(s => s.id === quote.schoolId) ?? null
+                        const cv = validateQuote(quote, sc)
+                        return (
+                          <button onClick={calculateFromCard} disabled={!cv.canCalculate || loading}
+                            className={`mt-2.5 w-full text-sm font-medium py-2 rounded-lg transition-colors ${
+                              cv.canCalculate && !loading
+                                ? 'bg-blue-600 hover:bg-blue-700 text-white'
+                                : 'bg-gray-100 text-gray-400 cursor-not-allowed'}`}>
+                            {loading ? '계산 중…' : cv.canCalculate ? '⚡ 계산하기' : (cv.nextNeeded === 'school' ? '학원을 선택하세요' : cv.nextNeeded === 'weeks' ? '총 주수를 정하세요' : cv.nextNeeded === 'course' ? '코스를 선택하세요' : '구성을 확인하세요')}
+                          </button>
+                        )
+                      })()}
                     </div>
                   )}
                 </div>
