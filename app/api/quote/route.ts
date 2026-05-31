@@ -12,7 +12,7 @@ import { parseQuoteIntent, logUnresolved } from '@/lib/parseQuoteIntent'
 // v5: LLM 주도 대화 + 사용자 확인 카드 + regulationWarning 제거
 // v6: UI/UX 개선 (시작일 달력, 견적 결과 표, 선택지 그리드, 넓은 레이아웃)
 // v7: 현지비 택일그룹(픽업 등 < > 선택) + per_4weeks 4주미만 추정경고 + 선택지 폭 확대
-const CODE_VERSION = 'v8-2026.05.30'
+const CODE_VERSION = 'v9-2026.06.01'
 
 // [LLM 역할 = 자연어 대화 주도]
 // LLM이 사용자와 자연어로 대화하며 견적에 필요한 정보를 모은다.
@@ -458,13 +458,19 @@ export async function POST(req: NextRequest) {
     const allText = (messages as {role:string; content:string}[])
       .map(m => m.content).join(' ').toLowerCase()
 
+    // [지역 판단] 전체 대화(allText)가 아니라 "마지막 유저 메시지"로만 판단한다.
+    // 누적하면, 이전에 다른 지역(예: 바기오) 학원을 봤을 때 그 단어가 남아
+    // 이어서 다른 지역(예: 세부 CIA) 학원을 물어도 옛 지역 필터에 걸려 학원이 사라진다.
+    const lastUserText = ([...(messages as {role:string; content:string}[])]
+      .reverse().find(m => m.role === 'user')?.content ?? '').toLowerCase()
+
     const isCamp    = /캠프|주니어캠프|여름캠프|겨울캠프|camp/.test(allText)
     const isFamily  = /가족연수|가족|주니어|아이|어머니|부모|아들|딸|자녀|family/.test(allText) && !isCamp
     const isAdult   = /성인|일반연수|어학연수|혼자|adult|solo/.test(allText) ||
                       (!isCamp && !isFamily)
-    const isCebu    = /세부|cebu/.test(allText)
-    const isBaguio  = /바기오|baguio/.test(allText)
-    const isOther   = /마닐라|클락|보라카이|일로일로|기타|manila|clark|boracay|iloilo/.test(allText)
+    const isCebu    = /세부|cebu/.test(lastUserText)
+    const isBaguio  = /바기오|baguio/.test(lastUserText)
+    const isOther   = /마닐라|클락|보라카이|일로일로|기타|manila|clark|boracay|iloilo/.test(lastUserText)
     const noRegion  = !isCebu && !isBaguio && !isOther
 
     let filtered = schoolsWithPromos.filter(s => {
