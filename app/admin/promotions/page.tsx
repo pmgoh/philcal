@@ -269,6 +269,7 @@ export default function PromotionsPage() {
         const existing = promos.find(p => p.id === next.id)
         if (!existing) { added.push(next); continue }
         const COMPARE_FIELDS: (keyof PromoEntry)[] = [
+          'schoolId','schoolCode','region',
           'promoName','schoolName','startDate','endDate','discountType','discountValue',
           'alwaysApply','stackable','applyToCourses','applyToDorms','applyToSurcharge','condition',
           'details','active','note','agencyDiscountNote','agencyDiscountType',

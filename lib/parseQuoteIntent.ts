@@ -276,6 +276,7 @@ export function matchSchools(text: string, schools: School[], extraAliases?: Ali
     }
   }
   // 2) 이름/코드/캠퍼스 토큰 유사 매칭
+  const hasAliasHit = Object.keys(aliasHit).length > 0
   const cands = schools
     .map(s => {
       const byName = bestTokenScore(text, s.name)
@@ -283,11 +284,16 @@ export function matchSchools(text: string, schools: School[], extraAliases?: Ali
       const byCampus = s.campus ? Math.min(bestTokenScore(text, s.campus), 60) : 0
       let score = Math.max(byName, byCode, byCampus)
       // 별칭 적중 시 그 점수로 덮어씀(별칭 우선)
-      if (s.schoolCode && aliasHit[s.schoolCode] != null) score = aliasHit[s.schoolCode]
-      return { id: s.id, name: s.name, score, campus: s.campus }
+      const aliasMatched = !!(s.schoolCode && aliasHit[s.schoolCode] != null)
+      if (aliasMatched) score = aliasHit[s.schoolCode!]
+      return { id: s.id, name: s.name, score, campus: s.campus, aliasMatched }
     })
-    .filter(c => c.score >= 50)
+    // 별칭이 하나라도 적중했으면 별칭 적중 학원만 남긴다.
+    // (학원명 매칭은 입력 속 코스/방 단어가 무관한 학원명과 우연히 겹쳐 노이즈 후보를 만든다.
+    //  예: "ev 세미esl..." 입력에서 'esl' 토큰이 English Fella 학원명에 끼는 것 방지 + LLM 토큰 절약)
+    .filter(c => hasAliasHit ? c.aliasMatched : c.score >= 50)
     .sort((a, b) => b.score - a.score)
+    .map(({ aliasMatched: _drop, ...c }) => c)
   return resolve(cands)
 }
 
