@@ -212,6 +212,31 @@ function mergedAliases(extra?: AliasOverride): Record<string, string[]> {
   return out
 }
 
+// 입력 텍스트에 '학원 별칭/이름'이 실제로 거론된 학원 id 목록.
+// 전환 판정 전용 — 방("2인실")·주수("8주")·코스("IELTS")는 학원 별칭이 아니므로 안 걸린다.
+// "베씨"는 BECI 별칭 적중 → 거론됨. "2인실로 바꿔줘"는 어떤 학원 별칭도 적중 안 함 → 빈 목록.
+export function schoolsMentioned(text: string, schools: School[], extraAliases?: AliasOverride): string[] {
+  const nText = normalize(text)
+  const ALIASES = mergedAliases(extraAliases)
+  const tokens = nText.length > 0 ? text.toLowerCase().split(/\s+/).map(normalize).filter(Boolean) : []
+  const hitCodes = new Set<string>()
+  for (const [code, aliases] of Object.entries(ALIASES)) {
+    for (const a of aliases) {
+      const na = normalize(a)
+      if (!na) continue
+      const hit = na.length <= 2 ? tokens.includes(na) : nText.includes(na)
+      if (hit) { hitCodes.add(code); break }
+    }
+  }
+  // 별칭 코드 → 학원 id. 풀네임 토큰 매칭(60점 이상)도 학원 거론으로 인정.
+  const ids = new Set<string>()
+  for (const s of schools) {
+    if (s.schoolCode && hitCodes.has(s.schoolCode)) ids.add(s.id)
+    else if (bestTokenScore(text, s.name) >= 70) ids.add(s.id)
+  }
+  return [...ids]
+}
+
 export function matchSchools(text: string, schools: School[], extraAliases?: AliasOverride): Resolution {
   const nText = normalize(text)
   const ALIASES = mergedAliases(extraAliases)

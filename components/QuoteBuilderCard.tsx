@@ -32,22 +32,26 @@ export default function QuoteBuilderCard({
   const courseOpts = school?.courses ?? []
   const dormOpts = school?.dormitories ?? []
 
-  const set = (patch: Partial<QuoteState>) => onChange({ ...state, ...patch })
-  const lock = (k: keyof QuoteState['locked']) => onChange({ ...state, locked: { ...state.locked, [k]: true } })
+  // 한 번의 onChange로 패치 + 잠금을 함께 적용 (분리 호출하면 뒤 호출이 앞을 덮어씀 = 선택 안 됨 버그)
+  const set = (patch: Partial<QuoteState>, lockKey?: keyof QuoteState['locked']) =>
+    onChange({ ...state, ...patch, locked: lockKey ? { ...state.locked, [lockKey]: true } : state.locked })
 
   // 학원 변경 → 코스/기숙 초기화 (다른 학원 id 무효)
   const setSchool = (id: string) => {
     onChange({ ...state, schoolId: id, courseRows: [], dormRows: [], packageRows: [], locked: { ...state.locked, school: true } })
   }
+  // 코스/기숙: state가 비어있어도 idx 0을 직접 만들어 갱신 (표시용 빈 행과 state 불일치 버그 수정)
   const setCourse = (i: number, patch: Partial<CourseRow>) => {
-    set({ courseRows: state.courseRows.map((r, idx) => idx === i ? { ...r, ...patch } : r), locked: { ...state.locked, course: true } })
+    const base = state.courseRows.length > 0 ? state.courseRows : [{ courseId: '', weeks: state.totalWeeks ?? 4 }]
+    set({ courseRows: base.map((r, idx) => idx === i ? { ...r, ...patch } : r) }, 'course')
   }
-  const addCourse = () => set({ courseRows: [...state.courseRows, { courseId: '', weeks: state.totalWeeks ?? 4 }] })
+  const addCourse = () => set({ courseRows: [...(state.courseRows.length > 0 ? state.courseRows : [{ courseId: '', weeks: state.totalWeeks ?? 4 }]), { courseId: '', weeks: state.totalWeeks ?? 4 }] })
   const delCourse = (i: number) => set({ courseRows: state.courseRows.filter((_, idx) => idx !== i) })
   const setDorm = (i: number, patch: Partial<DormRow>) => {
-    set({ dormRows: state.dormRows.map((r, idx) => idx === i ? { ...r, ...patch } : r), locked: { ...state.locked, dorm: true } })
+    const base = state.dormRows.length > 0 ? state.dormRows : [{ dormitoryId: '', weeks: state.totalWeeks ?? 4 }]
+    set({ dormRows: base.map((r, idx) => idx === i ? { ...r, ...patch } : r) }, 'dorm')
   }
-  const addDorm = () => set({ dormRows: [...state.dormRows, { dormitoryId: '', weeks: state.totalWeeks ?? 4 }] })
+  const addDorm = () => set({ dormRows: [...(state.dormRows.length > 0 ? state.dormRows : [{ dormitoryId: '', weeks: state.totalWeeks ?? 4 }]), { dormitoryId: '', weeks: state.totalWeeks ?? 4 }] })
   const delDorm = (i: number) => set({ dormRows: state.dormRows.filter((_, idx) => idx !== i) })
 
   // 다음에 채워야 할 슬롯 강조 (UI 길잡이)
@@ -93,7 +97,7 @@ export default function QuoteBuilderCard({
       {state.schoolId && (
         <div className="flex items-center">
           <span className="text-gray-500 w-14 shrink-0 text-sm">총 주수</span>
-          <select value={state.totalWeeks ?? ''} onChange={e => { set({ totalWeeks: Number(e.target.value) }); lock('weeks') }}
+          <select value={state.totalWeeks ?? ''} onChange={e => set({ totalWeeks: Number(e.target.value) }, 'weeks')}
             className={`${sel} ${hi('weeks')}`}>
             <option value="">선택</option>
             {WEEKS.map(w => <option key={w} value={w}>{w}주</option>)}
@@ -150,7 +154,7 @@ export default function QuoteBuilderCard({
       {state.schoolId && state.totalWeeks && (
         <div className="flex items-center">
           <span className="text-gray-500 w-14 shrink-0 text-sm">시작일</span>
-          <input type="date" value={state.startDate} onChange={e => { set({ startDate: e.target.value }); lock('date') }}
+          <input type="date" value={state.startDate} onChange={e => set({ startDate: e.target.value }, 'date')}
             className="border border-gray-300 rounded-md px-2 py-1.5 text-sm bg-white" />
           {state.startDate
             ? <button onClick={() => set({ startDate: '' })} className="ml-2 text-xs text-gray-400 underline">미정</button>

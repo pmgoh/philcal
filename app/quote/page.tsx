@@ -9,6 +9,7 @@ import QuoteFormModal from '@/components/QuoteFormModal'
 import QuoteResultCard from '@/components/QuoteResultCard'
 import QuoteBuilderCard from '@/components/QuoteBuilderCard'
 import { type QuoteState, emptyQuoteState, mergeAuto, commitQuote } from '@/lib/quoteState'
+import { schoolsMentioned } from '@/lib/parseQuoteIntent'
 import type { CalcResult, PromotionLineItem } from '@/lib/calcEngine'
 import { inferSchoolMode, MODE_LABELS, type SchoolMode } from '@/lib/schoolMode'
 
@@ -835,15 +836,15 @@ export default function QuotePage() {
       if (activeSchoolId && !wantsReset) {
         const active = schools.find(s => s.id === activeSchoolId)
         if (active) {
-          // 사용자가 활성 학원이 아닌 '다른 학원 이름'을 직접 거론하면 좁히지 않음(전환 허용).
-          const mentionsOther = modeSchools.some(s =>
-            s.id !== activeSchoolId &&
-            s.name.replace(/\s/g, '').length > 1 &&
-            text.replace(/\s/g, '').includes(s.name.replace(/\s/g, '').slice(0, 3))
-          )
+          // 사용자가 활성 학원이 아닌 '다른 학원'을 거론하면 좁히지 않음(전환 허용).
+          // [중요] 풀네임 앞글자가 아니라 파서로 판정 — "펠라" 같은 별칭으로도 전환을 감지해야 한다.
+          // 학원 별칭/이름이 실제 거론된 학원만 본다. 방·주수·코스는 안 걸림.
+          const activeBase = active.name.split('(')[0].trim()
+          const mentioned = schoolsMentioned(text, modeSchools, aliasData)
+          const mentionsOther = mentioned.some(id =>
+            id !== activeSchoolId && schools.find(s => s.id === id)?.name.split('(')[0].trim() !== activeBase)
           if (!mentionsOther) {
-            const baseName = active.name.split('(')[0].trim()
-            filteredSchools = modeSchools.filter(s => s.id === activeSchoolId || s.name.split('(')[0].trim() === baseName)
+            filteredSchools = modeSchools.filter(s => s.id === activeSchoolId || s.name.split('(')[0].trim() === activeBase)
           }
         }
       }
@@ -999,7 +1000,7 @@ export default function QuotePage() {
         <div className="flex-1 flex flex-row min-h-0">
 
         {/* ── 왼쪽: 계산기 (모드 토글 + 견적 카드) ── */}
-        <div className="w-[380px] xl:w-[440px] flex-shrink-0 flex flex-col border-r border-gray-200 bg-gray-50 overflow-y-auto">
+        <div className="w-[480px] xl:w-[540px] flex-shrink-0 flex flex-col border-r border-gray-200 bg-gray-50 overflow-y-auto">
           {/* 모드 토글 — 학원보다 상위 필터라 맨 위에 둔다 */}
           <div className="px-4 pt-3 pb-2 flex-shrink-0">
             <div className="text-xs font-medium text-gray-500 mb-1.5">어떤 견적인가요?</div>
