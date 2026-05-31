@@ -480,7 +480,15 @@ export async function POST(req: NextRequest) {
       } else if (isFamily && !isCamp) {
         if (!/가족|family|주니어|junior/.test(tags + name)) return false
       } else if (isAdult && !isFamily && !isCamp) {
-        const isOnlyFamilyCamp = /가족연수|주니어캠프/.test(tags) && !/성인일반|어학연수/.test(tags)
+        // 일반 연수 모드: "가족연수/주니어캠프 전용" 학원만 제외한다.
+        // 단, 성인 대상 코스(ESL/IELTS/TOEIC/TOEFL/비즈니스/PIC/스파르타 등)가 하나라도 있으면
+        // 일반 연수로 보이는 게 맞다. 태그에 '성인일반'이 빠져 있어도 제외하지 않는다.
+        const courseNames = (s.courses ?? []).map(c => c.name).join(' ').toLowerCase()
+        const hasAdultCourse = /esl|ielts|toeic|toefl|business|비즈니스|pic|sparta|스파르타|speaking|회화|general|일반|intensive|power/.test(courseNames)
+        const isOnlyFamilyCamp = /가족연수|주니어캠프|family\s*camp|junior\s*camp/.test(tags + name)
+          && !/성인일반|어학연수/.test(tags)
+          && !hasAdultCourse
+          && (s.courses ?? []).length === 0  // 일반 코스가 아예 없는 순수 캠프/패키지 학원만
         if (isOnlyFamilyCamp) return false
       }
       if (!noRegion) {
