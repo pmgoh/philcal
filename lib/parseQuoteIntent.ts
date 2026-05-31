@@ -262,8 +262,12 @@ export function parseQuoteIntent(text: string, schools: School[], extraAliases?:
   const { date, unset } = parseStartDate(text)
   const result: ParseResult = { school, weeks, startDate: date, dateUnset: unset }
 
-  if (school.kind === 'auto') {
-    const target = schools.find(s => s.id === school.pick.id)
+  // 학원이 auto면 그 학원, choices면 첫 후보(카드가 그 학원으로 시작) 기준으로 코스/기숙 파싱.
+  // choices라고 코스/기숙을 건너뛰면, 완전한 입력도 카드에서 다시 골라야 하는 문제가 생김.
+  const pickedSchool = school.kind === 'auto' ? school.pick
+    : school.kind === 'choices' ? school.options[0] : null
+  if (pickedSchool) {
+    const target = schools.find(s => s.id === pickedSchool.id)
     if (target) {
       result.course = matchCourses(text, target)
       result.dorm = matchDorms(text, target)

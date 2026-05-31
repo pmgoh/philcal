@@ -579,33 +579,34 @@ export async function POST(req: NextRequest) {
     //
     // [중요] 파서는 "대화의 첫 견적 요청"에만 작동한다. 선택지 클릭·되묻기 답변 같은
     // 후속 메시지는 맥락이 필요하므로 파서를 건너뛰고 기존 LLM 흐름이 처리한다.
-    // (후속 메시지를 파서가 또 해석하면 같은 질문을 반복하는 무한 루프가 생긴다)
+    // ── [투트랙] 코드가 확실히 알아들으면 카드(LLM 0), 애매하면 예전 LLM 흐름 ──────
+    // 원칙(사용자 설계):
+    //  · 학원·코스가 코드로 결정되면 → 카드로 직행. LLM 불필요.
+    //  · 코드가 못 알아들으면(학원 애매/코스 못잡음/캠퍼스 여럿) → 손대지 말고 LLM이 되묻게.
+    // 횟수(첫 턴 등)로 막지 않는다. 자유 입력이 코드로 확실히 풀리면 언제든 카드.
+    // 단, 카드/선택지에서 온 후속 처리(directCalc·calculate)는 위에서 이미 처리됨.
     const msgArr = (messages as Array<{ role: string; content: string }>) ?? []
-    const userMsgs = msgArr.filter(m => m.role === 'user')
-    const assistantMsgs = msgArr.filter(m => m.role === 'assistant')
-    const isFirstTurn = userMsgs.length === 1 && assistantMsgs.length === 0
     const lastUserMsg = [...msgArr].reverse().find(m => m.role === 'user')?.content ?? ''
-    if (isFirstTurn && chatMode === 'regular' && lastUserMsg.trim()) {
+    if (chatMode === 'regular' && lastUserMsg.trim()) {
       const p = parseQuoteIntent(lastUserMsg, schoolsWithPromos as School[], aliasData as Record<string, string[]> | undefined)
-      // 학원이 잡히면(auto 또는 choices) 견적 카드를 띄운다. 카드 안에서 학원(캠퍼스)·코스·
-      // 기숙·주수·날짜를 드롭다운으로 고르므로, 별도 선택지 질문(대화 왕복)이 필요 없다.
-      // 코드가 자신 있게 잡은 값은 카드에 미리 채워지고, 못 잡은 항목만 사용자가 고른다.
-      const picked = p.school.kind === 'auto' ? p.school.pick
-        : p.school.kind === 'choices' ? p.school.options[0] : null
-      if (picked) {
-        const sid = picked.id
-        const courseAuto = p.course?.kind === 'auto' ? p.course.pick : null
-        const dormAuto = p.dorm?.kind === 'auto' ? p.dorm.pick : null
+      const courseAuto = p.course?.kind === 'auto' ? p.course.pick : null
+      const dormAuto = p.dorm?.kind === 'auto' ? p.dorm.pick : null
+
+      // 카드로 가로채는 조건: 학원이 코드로 확정(auto) AND 코스도 코드로 확정(auto).
+      // 이 둘이 확실하면 나머지(기숙·주수·캠퍼스 변경)는 카드 드롭다운에서 조정 가능.
+      // 학원이 choices(캠퍼스 여럿)거나 코스를 못 잡으면 → 아래 LLM 흐름이 되묻는다.
+      if (p.school.kind === 'auto' && courseAuto) {
+        const picked = p.school.pick
         const wk = p.weeks ?? 0
         return NextResponse.json({
           action: 'confirm',
           message: '견적 내용을 확인하고, 바꿀 항목은 직접 고르세요.',
           confirmCard: {
-            schoolId: sid,
+            schoolId: picked.id,
             schoolName: picked.name,
             totalWeeks: p.weeks ?? 4,
-            courses: courseAuto ? [{ courseId: courseAuto.id, weeks: wk || 4 }] : [],
-            courseLabels: courseAuto ? [`${courseAuto.name}${wk ? ` (${wk}주)` : ''}`] : [],
+            courses: [{ courseId: courseAuto.id, weeks: wk || 4 }],
+            courseLabels: [`${courseAuto.name}${wk ? ` (${wk}주)` : ''}`],
             dormitories: dormAuto ? [{ dormitoryId: dormAuto.id, weeks: wk || 4 }] : [],
             dormLabels: dormAuto ? [`${dormAuto.name}${wk ? ` (${wk}주)` : ''}`] : [],
             packages: [],
@@ -617,8 +618,8 @@ export async function POST(req: NextRequest) {
           _via: 'parser',
         })
       }
-      // 학원조차 코드가 못 잡음 → 수집 후 LLM 폴백
-      logUnresolved(lastUserMsg, 'school_not_found')
+      // 코드가 확실하지 않음 → 가로채지 않고 예전 LLM 흐름으로 내려간다(되묻기/선택지).
+      if (p.school.kind === 'none') logUnresolved(lastUserMsg, 'school_not_found')
     }
 
     const rawText = await callClaude(
