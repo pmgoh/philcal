@@ -1471,7 +1471,13 @@
     "schoolId": "blue_ocean",
     "active": true,
     "schoolName": "세부블루오션",
-    "schoolCode": "BLUE_OCEAN"
+    "schoolCode": "BLUE_OCEAN",
+    "discountExcludePeriods": [
+      {
+        "start": "2026-06-28",
+        "end": "2026-08-22"
+      }
+    ]
   },
   {
     "endDate": "2026-06-30",
@@ -2753,7 +2759,8 @@
       "start": "2026-12-21",
       "end": "2027-01-01",
       "minWeeks": 2
-    }
+    },
+    "agencyDiscountApplyTo": "all_with_surcharge"
   },
   {
     "promoName": "비수기 프로모션 (성인, 하반기 시작자)",
@@ -3453,7 +3460,13 @@
     "applyToCourses": false,
     "agencyDiscountStatus": "confirmed",
     "applyToDorms": true,
-    "applyToSurcharge": false
+    "applyToSurcharge": false,
+    "excludePeriods": [
+      {
+        "start": "2026-06-01",
+        "end": "2026-08-31"
+      }
+    ]
   },
   {
     "region": "세부",
@@ -3490,7 +3503,13 @@
     "agencyDiscountRawText": "CALA 할인가능. 어학원 프로모션 상관없이 (학비+기숙사비)의 10%",
     "season": "off",
     "applyPeriodNote": "26.03.01~27.01.02 연수학생 (6,7,8월 제외)",
-    "promoName": "2026년 비수기 프로모션 (성인) - 4인실"
+    "promoName": "2026년 비수기 프로모션 (성인) - 4인실",
+    "excludePeriods": [
+      {
+        "start": "2026-06-01",
+        "end": "2026-08-31"
+      }
+    ]
   },
   {
     "region": "세부",
@@ -4461,7 +4480,8 @@
     "season": "all",
     "agencyDiscountRawText": "CALA 할인가능",
     "promoContent": "없음 (어학원 자체 할인 없음)",
-    "discountValue": 0
+    "discountValue": 0,
+    "agencyDiscountApplyTo": "all_with_surcharge"
   },
   {
     "createdAt": "2025-06-05",

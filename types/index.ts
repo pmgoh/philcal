@@ -141,6 +141,9 @@ export interface Promotion {
   maxWeeks?: number
   // [제외 기간] 연수 시작일이 이 기간들에 들면 적용 안 함 (예: 성수기 6~8월 제외).
   excludePeriods?: Array<{ start: string; end: string }>
+  // [할인 제외 기간] 프로모션은 적용되되, 연수기간 중 이 구간과 겹치는 주수는 할인 대상에서 제외
+  // (예: 블루오션 "여름 성수기 6/28~8/22 겹치는 기간은 4주당 할인 적용X"). amount_per_week/4weeks에만 영향.
+  discountExcludePeriods?: Array<{ start: string; end: string }>
   // [체류기간 조건] 연수 체류기간에 특정 구간이 N주 이상 포함돼야 적용 (예: 겨울 12/21~1/1 2주 포함자만).
   requireStayIncludes?: { start: string; end: string; minWeeks?: number }
   condition?: string                // 자료 원문 보존용 (계산엔 minWeeks 사용)

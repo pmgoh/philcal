@@ -370,6 +370,7 @@ export async function POST(req: NextRequest) {
         applicableItems: p.applicableItems,
         requireStayIncludes: p.requireStayIncludes,
         excludePeriods: p.excludePeriods,
+        discountExcludePeriods: p.discountExcludePeriods,
         maxWeeks: p.maxWeeks,
         weekTiers: p.weekTiers,
         excludeCourses: p.excludeCourses,

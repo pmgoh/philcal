@@ -180,6 +180,10 @@ export interface PromoEntry {
 
   // ── 허용조건·계산방식·호환관계 (알고리즘 v4) ──────────────────────────────
   minWeeks?: number                              // 이 주수 이상부터 적용 (condition 문자열 대신 숫자)
+  maxWeeks?: number                              // 이 주수 이하만 적용 (미설정 = 상한 없음)
+  excludePeriods?: Array<{ start: string; end: string }>            // 시작일이 이 기간이면 프로모션 자체 미적용
+  requireStayIncludes?: { start: string; end: string; minWeeks?: number }  // 체류기간 포함 조건
+  discountExcludePeriods?: Array<{ start: string; end: string }>   // 이 기간과 겹친 주수는 할인 대상서 제외
   blockMethod?: 'floor' | 'proportional'         // amount_per_4weeks 잔여 처리
   methodConfirmed?: boolean                      // 계산방식 자료 확인 여부 (false면 경고)
   stackWith?: string[]                           // 함께 적용 가능한 프로모션 ID들

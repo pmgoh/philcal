@@ -477,10 +477,11 @@ export function calculateQuote(input: QuoteInput, rate: ExchangeRate): CalcResul
       warnings.push(`⚠️ ${promo.label}: 다른 프로모션과 중복 적용 가능 여부 미확인 — 본사 확인 필요`)
     }
 
-    // 기간 체크
-    if (!promo.startDate && !promo.alwaysApply) continue
+    // 기간 체크: 시작일·종료일 중 하나도 없고 상시(alwaysApply)도 아니면 판정 불가 → 건너뜀.
+    // 단, 종료일만 있어도(예: "6/30 이전 등록") 유효한 기간 한정 프로모션이다.
+    if (!promo.startDate && !promo.endDate && !promo.alwaysApply) continue
     if (!promo.alwaysApply) {
-      if (!promo.endDate) continue
+      if (!promo.startDate && !promo.endDate) continue
       // [날짜 미정 모드] 기간 한정 프로모션은 시작일이 있어야 판정 가능 → 보류(pending)로 기록
       if (dateUnset) {
         pendingSeasonalLines.push({
@@ -576,14 +577,32 @@ export function calculateQuote(input: QuoteInput, rate: ExchangeRate): CalcResul
     } else if (promo.discountType === 'amount_per_4weeks') {
       // [계산방식] floor(기본): 4주 블록 내림 / proportional: 비례
       const method = (promo as { blockMethod?: 'floor'|'proportional' }).blockMethod ?? 'floor'
-      const blocks = method === 'proportional' ? (totalWeeks / 4) : Math.floor(totalWeeks / 4)
+      // [할인 제외 기간] 연수기간이 성수기 등 지정 구간과 겹치면 그 주수는 할인 대상에서 제외
+      // (예: 블루오션 "여름 성수기 6/28~8/22 겹치는 기간 할인 적용X")
+      let discWeeks = totalWeeks
+      const dep = (promo as { discountExcludePeriods?: Array<{ start?: string; end?: string }> }).discountExcludePeriods
+      if (dep && dep.length > 0 && !dateUnset) {
+        for (const ep of dep) {
+          if (ep.start && ep.end) discWeeks -= getOverlapWeeks(startDate, endDate, ep.start, ep.end)
+        }
+        discWeeks = Math.max(0, discWeeks)
+      }
+      const blocks = method === 'proportional' ? (discWeeks / 4) : Math.floor(discWeeks / 4)
       thisDiscount = Math.round(toKrw(promo.discountValue, promo.currency ?? 'KRW', rate) * blocks)
       // 계산방식 미확인이면 경고 (자료에 명시 없어 floor 기본 적용된 경우)
       if ((promo as { methodConfirmed?: boolean }).methodConfirmed === false) {
         warnings.push(`⚠️ ${promo.label}: 할인 계산방식 미확인 — 4주 단위 내림(적게 할인)으로 처리됨. 정확한 방식은 본사 확인 필요.`)
       }
     } else if (promo.discountType === 'amount_per_week') {
-      thisDiscount = toKrw(promo.discountValue, promo.currency ?? 'KRW', rate) * totalWeeks
+      let discWeeks = totalWeeks
+      const dep = (promo as { discountExcludePeriods?: Array<{ start?: string; end?: string }> }).discountExcludePeriods
+      if (dep && dep.length > 0 && !dateUnset) {
+        for (const ep of dep) {
+          if (ep.start && ep.end) discWeeks -= getOverlapWeeks(startDate, endDate, ep.start, ep.end)
+        }
+        discWeeks = Math.max(0, discWeeks)
+      }
+      thisDiscount = toKrw(promo.discountValue, promo.currency ?? 'KRW', rate) * discWeeks
     } else if (promo.discountType === 'week_tiers') {
       // 주수 구간별 차등 정액 할인 (학원 자체 장기등록 할인 등)
       const tiers = ('weekTiers' in promo ? (promo as { weekTiers?: Array<{ minWeeks: number; maxWeeks?: number; amount: number }> }).weekTiers : undefined) ?? []
@@ -892,6 +911,9 @@ function getOverlapWeeks(s1:string,e1:string,s2:string,e2:string): number {
 }
 function isInRange(d:string,s:string,e:string): boolean {
   // 토일월 그룹 정렬 후 비교: 입국일과 기간 경계를 같은 그룹 기준으로
-  const gd = toSatMonGroup(d), gs = toSatMonGroup(s), ge = toSatMonGroup(e)
-  return gd >= gs && gd <= ge
+  // s(시작)나 e(종료)가 비어 있으면 그쪽 경계는 제한 없음으로 본다.
+  const gd = toSatMonGroup(d)
+  const lowerOk = s ? gd >= toSatMonGroup(s) : true
+  const upperOk = e ? gd <= toSatMonGroup(e) : true
+  return lowerOk && upperOk
 }
