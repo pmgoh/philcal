@@ -167,7 +167,7 @@ function resolve(cands: Candidate[]): Resolution {
 // ── 주수 / 날짜 추출 (정규식) ────────────────────────────────────────────────
 export function parseWeeks(text: string): number | null {
   // "4주", "8 weeks", "12w"
-  const m = text.match(/(\d+)\s*(?:주|weeks?|w)\b/i) || text.match(/(\d+)\s*주/)
+  const m = text.match(/(\d+)\s*(?:주|weeks?|w)(?![가-힣a-z])/i) || text.match(/(\d+)\s*주/)
   if (m) return parseInt(m[1], 10)
   return null
 }
@@ -181,7 +181,20 @@ export function parseStartDate(text: string): { date: string; unset: boolean } {
   // 2026년 5월 1일
   m = text.match(/(20\d{2})\s*년\s*(\d{1,2})\s*월\s*(\d{1,2})\s*일/)
   if (m) return { date: `${m[1]}-${pad(m[2])}-${pad(m[3])}`, unset: false }
-  // 5월 1일 (연도 생략 → 빈값, 미정 아님: 호출측에서 연도 보완/되물음)
+  // 연도 생략: "6/8", "6.8", "6월 8일" → 가까운 미래 연도로 보완
+  //  (M/D가 오늘 이전이면 내년으로). "주" 앞 숫자(기간)와 혼동 방지: 슬래시/점/월일 형태만.
+  m = text.match(/(?<!\d)(\d{1,2})\s*[./월]\s*(\d{1,2})\s*일?(?!\s*(?:주|개월|주일|week))/)
+  if (m) {
+    const mo = parseInt(m[1], 10), da = parseInt(m[2], 10)
+    if (mo >= 1 && mo <= 12 && da >= 1 && da <= 31) {
+      const now = new Date()
+      let yr = now.getFullYear()
+      const cand = new Date(yr, mo - 1, da)
+      if (cand.getTime() < now.getTime() - 86400000) yr += 1  // 이미 지난 날짜면 내년
+      return { date: `${yr}-${pad(String(mo))}-${pad(String(da))}`, unset: false }
+    }
+  }
+  // 연도/월일 못 잡음 → 빈값(미정 아님: 호출측에서 되물음 가능)
   return { date: '', unset: false }
 }
 function pad(s: string): string { return s.padStart(2, '0') }
@@ -253,6 +266,51 @@ export interface ParseResult {
   // 코스/기숙은 학원이 auto로 정해졌을 때만 채운다 (학원 모르면 코스 후보도 무의미)
   course?: Resolution
   dorm?: Resolution
+  // 방이동·코스변경: "3인실 4주 + 2인실 2주" 처럼 항목별 주수가 여러 개면 행 배열로 분해.
+  courseRows?: Array<{ id: string; name: string; weeks: number }>
+  dormRows?: Array<{ id: string; name: string; weeks: number }>
+}
+
+// 자연어를 "N주" 경계로 토막 내어, 각 토막의 (항목, 주수)를 뽑는다.
+// 예) "PIC-4 3인실 4주 + 2인실 2주 + 1B 1주" → 토막별로 직전 명사구 + 주수.
+// items는 학원의 courses 또는 dormitories. 매칭된 행 배열을 반환.
+function parseRows(text: string, items: Array<{ id: string; name: string }>): Array<{ id: string; name: string; weeks: number }> {
+  if (items.length === 0) return []
+  // "N주"의 위치를 모두 찾는다.
+  const weekRe = /(\d+)\s*(?:주|weeks?|w)(?![가-힣a-z])/gi
+  const matches: Array<{ weeks: number; index: number }> = []
+  let m: RegExpExecArray | null
+  while ((m = weekRe.exec(text)) !== null) {
+    matches.push({ weeks: parseInt(m[1], 10), index: m.index })
+  }
+  if (matches.length <= 1) return []  // 주수가 1개 이하면 단일 처리(기존 경로)로
+
+  // 각 "N주" 앞의 텍스트 토막에서 항목을 매칭. 토막 = 직전 주수 끝 ~ 이번 주수 시작.
+  const rows: Array<{ id: string; name: string; weeks: number }> = []
+  let segStart = 0
+  let lastId: string | null = null
+  let explicitCount = 0  // 토막에서 항목명이 실제로 매칭된 횟수
+  for (const mt of matches) {
+    const segment = text.slice(segStart, mt.index)
+    const r = resolve(rankCandidates(segment, items as Array<Course | Dormitory>))
+    let picked = r.kind === 'auto' ? r.pick : r.kind === 'choices' ? r.options[0] : null
+    const explicit = !!picked
+    if (explicit) explicitCount++
+    // 이 토막에 항목명이 없으면(예: "2주"만) 직전 항목을 이어쓴다.
+    if (!picked && lastId) {
+      const prev = items.find(it => it.id === lastId)
+      if (prev) picked = { id: prev.id, name: prev.name, score: 100 }
+    }
+    if (picked) {
+      rows.push({ id: picked.id, name: picked.name, weeks: mt.weeks })
+      lastId = picked.id
+    }
+    segStart = mt.index + String(mt.weeks).length
+  }
+  // 항목명이 1번만 명시됐으면(예: 코스 "PIC-4"만, 나머지는 기숙 주수) 분해하지 않는다.
+  // → 같은 항목이 여러 주수에 잘못 복제되는 것 방지. 2개 이상 명시될 때만 진짜 변경으로 본다.
+  if (explicitCount < 2) return []
+  return rows
 }
 
 // 메인 파서: 학원을 먼저 잡고, 학원이 확정되면 그 학원 안에서 코스/기숙을 잡는다.
@@ -271,6 +329,16 @@ export function parseQuoteIntent(text: string, schools: School[], extraAliases?:
     if (target) {
       result.course = matchCourses(text, target)
       result.dorm = matchDorms(text, target)
+      // 방이동·코스변경: 항목별 주수가 여러 개면 행 배열로 분해해 카드에 채운다.
+      const cRows = parseRows(text, (target.courses ?? []).map(c => ({ id: c.id, name: c.name })))
+      const dRows = parseRows(text, (target.dormitories ?? []).map(d => ({ id: d.id, name: d.name })))
+      if (cRows.length > 1) result.courseRows = cRows
+      if (dRows.length > 1) result.dormRows = dRows
+      // 코스가 단일인데 기숙이 여러 줄이면, 코스 총 주수를 기숙 합과 맞춘다(보통 일치).
+      if ((!result.courseRows || result.courseRows.length <= 1) && result.dormRows && result.dormRows.length > 1) {
+        const dormSum = result.dormRows.reduce((s, r) => s + r.weeks, 0)
+        if (dormSum > 0) result.weeks = dormSum
+      }
     }
   }
   return result
