@@ -465,7 +465,9 @@ export async function POST(req: NextRequest) {
       .reverse().find(m => m.role === 'user')?.content ?? '').toLowerCase()
 
     const isCamp    = /캠프|주니어캠프|여름캠프|겨울캠프|camp/.test(allText)
-    const isFamily  = /가족연수|가족|주니어|아이|어머니|부모|아들|딸|자녀|family/.test(allText) && !isCamp
+    // 주의: '아이' 단독은 '아이엘츠(IELTS)'에 걸려 일반연수를 가족으로 오인하므로 쓰지 않는다.
+    //       '아이' 대신 '아이들/아이와/어린이'처럼 가족 맥락이 분명한 표현만 본다.
+    const isFamily  = /가족연수|가족|주니어|아이들|아이와|아이가|어린이|어머니|부모|아들|딸|자녀|family/.test(allText) && !isCamp
     const isAdult   = /성인|일반연수|어학연수|혼자|adult|solo/.test(allText) ||
                       (!isCamp && !isFamily)
     const isCebu    = /세부|cebu/.test(lastUserText)
@@ -505,22 +507,30 @@ export async function POST(req: NextRequest) {
     // [토큰 절감 — 429 방지] LLM으로 내려가기 전, 파서가 학원을 식별했으면(auto/choices)
     // 그 학원(같은 이름의 캠퍼스 포함)만 LLM에 보낸다. 전체 81개(약 46k토큰)를 매번 보내면
     // 분당 토큰 한도(30k)를 넘겨 429가 난다. 캠퍼스/코스를 묻는 단계에도 해당 학원만 있으면 충분.
+    //
+    // [이어지는 대화 대응] 학원명은 보통 첫 메시지에만 있고, 이후 "아이엘츠"/"2인실" 같은 답변엔 없다.
+    // 마지막 메시지만 보면 후속 턴에서 학원을 잃어버려 "어느 학원?"을 반복하게 된다.
+    // → 최근 유저 메시지부터 거슬러 올라가며 학원이 식별되는 첫 메시지를 사용한다.
     {
-      const lastUserForFilter = [...((messages as Array<{ role: string; content: string }>) ?? [])]
-        .reverse().find(m => m.role === 'user')?.content ?? ''
-      if (lastUserForFilter.trim()) {
-        const pf = parseQuoteIntent(lastUserForFilter, schoolsWithPromos as School[], aliasData as Record<string, string[]> | undefined)
-        const ids = new Set<string>()
-        if (pf.school.kind === 'auto') ids.add(pf.school.pick.id)
-        else if (pf.school.kind === 'choices') pf.school.options.forEach(o => ids.add(o.id))
-        if (ids.size > 0) {
-          // 같은 베이스 이름의 캠퍼스도 포함 (EV / EV La Mer)
-          const baseNames = new Set(
-            [...ids].map(id => schoolsWithPromos.find(s => s.id === id)?.name.split('(')[0].trim()).filter(Boolean) as string[]
-          )
-          const narrowed = filtered.filter(s => ids.has(s.id) || baseNames.has(s.name.split('(')[0].trim()))
-          if (narrowed.length > 0) filtered = narrowed
-        }
+      const userMsgs = ((messages as Array<{ role: string; content: string }>) ?? [])
+        .filter(m => m.role === 'user').map(m => m.content)
+      let ids = new Set<string>()
+      for (let i = userMsgs.length - 1; i >= 0; i--) {
+        const txt = (userMsgs[i] ?? '').trim()
+        if (!txt) continue
+        const pf = parseQuoteIntent(txt, schoolsWithPromos as School[], aliasData as Record<string, string[]> | undefined)
+        const found = new Set<string>()
+        if (pf.school.kind === 'auto') found.add(pf.school.pick.id)
+        else if (pf.school.kind === 'choices') pf.school.options.forEach(o => found.add(o.id))
+        if (found.size > 0) { ids = found; break }   // 학원이 잡히는 가장 최근 메시지에서 멈춘다
+      }
+      if (ids.size > 0) {
+        // 같은 베이스 이름의 캠퍼스도 포함 (EV / EV La Mer)
+        const baseNames = new Set(
+          [...ids].map(id => schoolsWithPromos.find(s => s.id === id)?.name.split('(')[0].trim()).filter(Boolean) as string[]
+        )
+        const narrowed = filtered.filter(s => ids.has(s.id) || baseNames.has(s.name.split('(')[0].trim()))
+        if (narrowed.length > 0) filtered = narrowed
       }
     }
 
@@ -528,11 +538,25 @@ export async function POST(req: NextRequest) {
     // LLM에 수십 개를 통째로 보내지 않는다. 토큰 폭발 대신 "학원부터 알려달라"고 되묻는다.
     // 학원만 정해지면 다음 턴부터 후보가 급감하므로, 되묻기가 전체 전송보다 항상 싸고 정확하다.
     if (filtered.length > schoolsWithPromos.length * 0.6 && filtered.length > 12) {
+      // [진단] 왜 좁히기가 안 됐는지 응답에 남긴다. 파서가 학원을 잡았는데도 여기 왔다면 좁히기 로직 문제.
+      const dbgLast = [...((messages as Array<{ role: string; content: string }>) ?? [])]
+        .reverse().find(m => m.role === 'user')?.content ?? ''
+      const dbgPf = dbgLast.trim()
+        ? parseQuoteIntent(dbgLast, schoolsWithPromos as School[], aliasData as Record<string, string[]> | undefined)
+        : null
       return NextResponse.json({
         action: 'need_info',
         question: '어느 학원의 견적인가요? 학원명을 알려주시면 바로 도와드릴게요.',
         type: 'text',
         allowFreeText: true,
+        _version: CODE_VERSION,
+        _debug: {
+          filteredCount: filtered.length,
+          totalSchools: schoolsWithPromos.length,
+          parserSchool: dbgPf ? dbgPf.school.kind : 'no-input',
+          parserPick: dbgPf && dbgPf.school.kind === 'auto' ? dbgPf.school.pick.id
+            : (dbgPf && dbgPf.school.kind === 'choices' ? dbgPf.school.options.map(o => o.id) : null),
+        },
       })
     }
 

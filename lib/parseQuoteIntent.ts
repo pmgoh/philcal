@@ -133,8 +133,19 @@ export interface Candidate {
 // (전체 문장으로 비교하면 다른 단어들이 노이즈가 되어 점수가 희석됨)
 function bestTokenScore(text: string, target: string): number {
   const tokens = text.split(/\s+/).filter(Boolean)
+  // 영문↔숫자 경계가 붙은 토큰은 분리해서도 시도한다 (예: "EV0802" → "EV","0802").
+  // 날짜/숫자가 학원 약어에 붙어버리면 매칭이 약해지는 것을 방지.
+  const splitTokens: string[] = []
+  for (const t of tokens) {
+    if (/[a-zA-Z]/.test(t) && /[0-9]/.test(t)) {
+      for (const part of t.split(/(?<=[a-zA-Z])(?=[0-9])|(?<=[0-9])(?=[a-zA-Z])/)) {
+        // 순수 숫자(날짜 등)는 학원/코스명과 무관한 노이즈이므로 제외, 영문 부분만 사용
+        if (part && /[a-zA-Z]/.test(part)) splitTokens.push(part)
+      }
+    }
+  }
   // 단일 토큰 + 인접 2-그램까지 시도 (예: "ESL Classic" 같은 2단어 코스명)
-  const grams: string[] = [...tokens, text]
+  const grams: string[] = [...tokens, ...splitTokens, text]
   for (let i = 0; i < tokens.length - 1; i++) grams.push(tokens[i] + ' ' + tokens[i + 1])
   for (let i = 0; i < tokens.length - 2; i++) grams.push(tokens[i] + ' ' + tokens[i + 1] + ' ' + tokens[i + 2])
   let best = 0
@@ -176,7 +187,12 @@ function resolve(cands: Candidate[]): Resolution {
   if (top.score >= AUTO_MIN && (!second || top.score - second.score >= AUTO_GAP)) {
     return { kind: 'auto', pick: top }
   }
-  const viable = cands.filter(c => c.score >= CHOICE_MIN).slice(0, MAX_CHOICES)
+  // 1등과 점수 격차가 큰(30 초과) 하위 후보는 노이즈로 본다.
+  // 진짜 같은 학원의 다른 캠퍼스(예: EV / EV La Mer)는 점수가 근접하므로 살아남고,
+  // 입력 속 단어가 우연히 겹친 무관한 학원(낮은 점수)은 제거되어 LLM에 안 넘어간다.
+  const viable = cands
+    .filter(c => c.score >= CHOICE_MIN && top.score - c.score <= 30)
+    .slice(0, MAX_CHOICES)
   if (viable.length > 0) return { kind: 'choices', options: viable }
   return { kind: 'none' }
 }
