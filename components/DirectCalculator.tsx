@@ -586,7 +586,7 @@ function ResultPanel({
         ))}
         {/* 7. 유학원 할인 */}
         {result.promotionLines.filter(l => l.kind === 'agency' && l.status === 'applied').map((l) => (
-          <PriceLine key={`pa-${l.id}`} label={`유학원 할인 · ${l.label.replace(' (유학원 할인)','')} (${l.basis})`} value={-l.discountKrw} discount />
+          <PriceLine key={`pa-${l.id}`} label="유학원 할인" value={-l.discountKrw} discount />
         ))}
         {/* 구버전 폴백 */}
         {result.promotionLines.length === 0 && result.promotionDiscount > 0 && (

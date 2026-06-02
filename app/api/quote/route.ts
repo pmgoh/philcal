@@ -145,7 +145,7 @@ function buildQuoteMessage(school: School, calcResult: CalcResult, _totalWeeks: 
     const appliedAgencyLines = (calcResult.promotionLines ?? []).filter(l => l.kind === 'agency' && l.status === 'applied')
     if (appliedSchoolLines.length > 0 || appliedAgencyLines.length > 0) {
       for (const l of appliedSchoolLines) lines.push(`- ${l.label} *(${l.basis})*: -${formatKrw(l.discountKrw)}`)
-      for (const l of appliedAgencyLines) lines.push(`- 유학원 할인 · ${l.label.replace(' (유학원 할인)','')}: -${formatKrw(l.discountKrw)}`)
+      for (const l of appliedAgencyLines) lines.push(`- 유학원 할인: -${formatKrw(l.discountKrw)}`)
     } else {
       if (calcResult.promotionLabel && totalPromoDiscount > 0) {
         lines.push(`- 학원 프로모션 (${calcResult.promotionLabel}): -${formatKrw(totalPromoDiscount)}`)
