@@ -51,6 +51,20 @@ function mentionsDorm(text: string): boolean {
   return /인실|기숙|룸|room|single|twin|double|triple|quad|스위트|suite|콘도|condo|디럭스|deluxe|발코니|balcony|오션|씨티|시티|건물|바깥|알리시아|alicia/i.test(text)
 }
 
+// 버튼/드롭다운 선택 텍스트에서 항목명이 데이터와 정확히 일치하는지 찾는다.
+// 선택지는 "코스명 (1,420,000원/4주)" 형태이므로 가격 꼬리표를 떼고 비교.
+// 정확 일치가 있으면 접두사([Sparta] 등)로 인한 오모호 없이 그 항목을 바로 반환.
+function matchExactName(text: string, items: Array<{ id: string; name: string }>): { id: string; name: string } | null {
+  const cleaned = text.replace(/\s*\([^)]*원[^)]*\)\s*$/g, '').trim()
+  const norm = (s: string) => s.replace(/\s+/g, ' ').trim().toLowerCase()
+  const target = norm(cleaned)
+  if (!target) return null
+  for (const it of items) {
+    if (norm(it.name) === target) return { id: it.id, name: it.name }
+  }
+  return null
+}
+
 // 코스를 언급했는지
 function mentionsCourse(text: string): boolean {
   return /esl|ielts|toeic|toefl|business|비즈니스|pic|sparta|스파르타|semi|세미|speaking|회화|스피킹|intensive|power|파워|tep|guarantee|보장|classic|클래식|specific|코스|과정/i.test(text)
@@ -130,9 +144,11 @@ export function extractSlots(
   for (const raw of userMsgs) {
     const txt = (raw ?? '').trim()
     if (!txt) continue
+    // 버튼/드롭다운 선택 텍스트의 가격 꼬리표("(1,420,000원/4주)")는 주수 파싱을 오염시키므로 제거한 사본으로 주수를 본다.
+    const txtNoPrice = txt.replace(/\([^)]*원[^)]*\)/g, ' ')
 
     // 총주수
-    const wk = parseWeeks(txt)
+    const wk = parseWeeks(txtNoPrice)
     if (wk != null) slots.totalWeeks = wk
 
     // 시작일
@@ -150,6 +166,15 @@ export function extractSlots(
     // 코스: 복합 판단은 "서로 다른 코스 종류를 몇 개 말했나"로 한다.
     // (주수 개수로 판단하면 "12주 IELTS 12주"처럼 총주수+코스주수가 겹칠 때 복합으로 오인됨)
     if (mentionsCourse(txt)) {
+      // 버튼/드롭다운 선택은 "코스명 (가격원/4주)" 형태로 들어온다.
+      // 가격 꼬리표를 떼고 코스명이 데이터와 정확히 일치하면 그대로 채택(접두사 [Sparta] 등으로 인한 오모호 방지).
+      const exactCourse = matchExactName(txt, courseList)
+      if (exactCourse) {
+        // 버튼 선택은 단일 코스. 가격 꼬리표("...4주")의 숫자를 주수로 오인하지 않도록
+        // 총주수를 우선 적용한다(없으면 0 → 나중에 총주수 자동).
+        slots.courses = [{ courseId: exactCourse.id, weeks: slots.totalWeeks ?? 0 }]
+        delete ambiguous.course
+      } else {
       const courseKeywords = countCourseKinds(txt)
       const cRows = parseRows(txt, courseList)
       if (cRows.length > 1) {
@@ -173,11 +198,16 @@ export function extractSlots(
           ambiguous.course = txt   // 코스 말했는데 종류 여러개 → 되묻기
         }
       }
+      }
     }
 
     // 기숙: 복합(방이동, 주수 2개+)이면 parseRows, 단일이면 matchDorms
     if (!slots.noDorm && mentionsDorm(txt)) {
-      const dWeekCount = (txt.match(/(\d+)\s*(?:주|weeks?|w)(?![가-힣a-z])/gi) ?? []).length
+      const exactDorm = matchExactName(txt, dormList)
+      if (exactDorm) {
+        slots.dormitories = [{ dormitoryId: exactDorm.id, weeks: slots.totalWeeks ?? 0 }]
+        delete ambiguous.dorm
+      } else {
       const dRows = parseRows(txt, dormList)
       if (dRows.length > 1) {
         slots.dormitories = dRows.map(r => ({ dormitoryId: r.id, weeks: r.weeks }))
@@ -194,10 +224,11 @@ export function extractSlots(
           delete ambiguous.dorm
         } else if (dm.kind === 'choices') {
           ambiguous.dorm = true
-        } else if (dWeekCount >= 2) {
-          // 방이동인데 못 나눔 → LLM
+        } else if ((txtNoPrice.match(/(\d+)\s*(?:주|weeks?|w)(?![가-힣a-z])/gi) ?? []).length >= 2) {
+          // 방이동(주수 2개+)인데 못 나눔 → LLM
           needsLlm = needsLlm ?? 'dorm_complex'
         }
+      }
       }
     }
   }
