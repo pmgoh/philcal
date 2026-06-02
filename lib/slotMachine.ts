@@ -147,9 +147,24 @@ export function extractSlots(
     // 버튼/드롭다운 선택 텍스트의 가격 꼬리표("(1,420,000원/4주)")는 주수 파싱을 오염시키므로 제거한 사본으로 주수를 본다.
     const txtNoPrice = txt.replace(/\([^)]*원[^)]*\)/g, ' ')
 
-    // 총주수
-    const wk = parseWeeks(txtNoPrice)
-    if (wk != null) slots.totalWeeks = wk
+    // 총주수: 부분 주수(방이동 "3인실 4주 8주", 코스 분할)가 총주수를 덮어쓰지 않게 한다.
+    //  - 한 메시지에 주수가 2개 이상이면 그건 분할(방이동/복합)이므로 총주수로 잡지 않는다.
+    //  - "총 N주" 또는 "N주 동안" 같은 명시는 항상 총주수.
+    //  - 그 외 주수 1개는, 아직 총주수가 없을 때만 채운다(이미 있으면 부분 주수일 수 있어 덮어쓰지 않음).
+    const weekMatches = (txtNoPrice.match(/(\d+)\s*(?:주|weeks?|w)(?![가-힣a-z])/gi) ?? [])
+    const explicitTotal = /총\s*\d+\s*주|\d+\s*주\s*(?:동안|짜리|과정|코스로|로\s*변경|으로\s*변경)/.test(txtNoPrice)
+    if (explicitTotal) {
+      const wk = parseWeeks(txtNoPrice)
+      if (wk != null) slots.totalWeeks = wk
+    } else if (weekMatches.length === 1) {
+      const wk = parseWeeks(txtNoPrice)
+      // 방/코스 키워드가 같이 있으면 그 주수는 부분 주수일 수 있다 → 총주수 미설정일 때만 채움
+      const hasItemKeyword = mentionsCourse(txtNoPrice) || mentionsDorm(txtNoPrice)
+      if (wk != null && (!hasItemKeyword || slots.totalWeeks == null)) {
+        slots.totalWeeks = wk
+      }
+    }
+    // weekMatches.length >= 2 → 분할 입력. 총주수는 건드리지 않는다.
 
     // 시작일
     if (/미정|무관|상관\s*없|아무\s*때|언제든|나중에/i.test(txt)) {
@@ -166,6 +181,8 @@ export function extractSlots(
     // 코스: 복합 판단은 "서로 다른 코스 종류를 몇 개 말했나"로 한다.
     // (주수 개수로 판단하면 "12주 IELTS 12주"처럼 총주수+코스주수가 겹칠 때 복합으로 오인됨)
     if (mentionsCourse(txt)) {
+      // "나머지/잔여" 자연어 분할은 파서가 못 나눔 → LLM
+      const hasRemainderC = /나머지|잔여|남은/.test(txt)
       // 버튼/드롭다운 선택은 "코스명 (가격원/4주)" 형태로 들어온다.
       // 가격 꼬리표를 떼고 코스명이 데이터와 정확히 일치하면 그대로 채택(접두사 [Sparta] 등으로 인한 오모호 방지).
       const exactCourse = matchExactName(txt, courseList)
@@ -174,6 +191,8 @@ export function extractSlots(
         // 총주수를 우선 적용한다(없으면 0 → 나중에 총주수 자동).
         slots.courses = [{ courseId: exactCourse.id, weeks: slots.totalWeeks ?? 0 }]
         delete ambiguous.course
+      } else if (hasRemainderC) {
+        needsLlm = needsLlm ?? 'course_natural'
       } else {
       const courseKeywords = countCourseKinds(txt)
       const cRows = parseRows(txt, courseList)
@@ -203,10 +222,14 @@ export function extractSlots(
 
     // 기숙: 복합(방이동, 주수 2개+)이면 parseRows, 단일이면 matchDorms
     if (!slots.noDorm && mentionsDorm(txt)) {
+      // "나머지/잔여" 같은 자연어 방이동은 파서가 완벽히 못 나눈다 → LLM에 맡긴다.
+      const hasRemainder = /나머지|잔여|남은|이후|그\s*다음/.test(txt)
       const exactDorm = matchExactName(txt, dormList)
       if (exactDorm) {
         slots.dormitories = [{ dormitoryId: exactDorm.id, weeks: slots.totalWeeks ?? 0 }]
         delete ambiguous.dorm
+      } else if (hasRemainder) {
+        needsLlm = needsLlm ?? 'dorm_natural'
       } else {
       const dRows = parseRows(txt, dormList)
       if (dRows.length > 1) {
