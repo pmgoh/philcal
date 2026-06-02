@@ -33,6 +33,7 @@ export type StepResult =
   | { kind: 'need_course_disambiguation'; schoolId: string; hint: string }          // 코스 모호 → 그 코스만 되묻기
   | { kind: 'need_dorm'; schoolId: string }                                         // 기숙 선택 필요
   | { kind: 'conflict_weeks'; which: 'course' | 'dorm'; sum: number; total: number } // 주수 합 ≠ 총주수
+  | { kind: 'need_start_date'; slots: Slots }                                       // 시작일 묻기 (미정 선택 가능)
   | { kind: 'needs_llm'; reason: string }                                           // 복합 입력 → LLM 폴백
   | { kind: 'ready'; slots: Slots }                                                 // 모든 필수 충족 → 확인/계산
 
@@ -320,6 +321,11 @@ export function nextStep(
     }
   }
 
-  // 5) 모든 필수 충족 → 시작일은 막지 않음. 확인/계산 단계로.
+  // 5) 필수(학원·주수·코스·기숙) 충족. 시작일을 아직 안 물었으면 묻는다(미정 선택 가능, 계산은 막지 않음).
+  if (!slots.startDateProvided) {
+    return { kind: 'need_start_date', slots }
+  }
+
+  // 6) 시작일까지 처리 완료 → 확인/계산 단계로.
   return { kind: 'ready', slots }
 }

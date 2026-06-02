@@ -547,6 +547,18 @@ export async function POST(req: NextRequest) {
         })
       }
 
+      if (step.kind === 'need_start_date') {
+        // 시작일은 계산을 막지 않지만, 묻는 단계를 건너뛰지 않는다. 미정 선택 시 빈 값으로 진행.
+        return NextResponse.json({
+          action: 'need_info', type: 'select', schoolId: slots.schoolId,
+          question: '입국(시작) 예정일이 언제인가요? 미정이면 날짜 없이 기본 견적으로 진행합니다.',
+          suggestions: ['미정 (날짜 없이 기본 견적)'],
+          allowFreeText: true,
+          isDateQuestion: true,   // 프론트가 데이트피커를 띄우는 플래그
+          _version: CODE_VERSION,
+        })
+      }
+
       if (step.kind === 'ready') {
         // 필수 슬롯 모두 충족 → 확인 카드. (시작일은 막지 않음: 미정이면 빈 값)
         const sc = findSchool(slots.schoolId!)!
