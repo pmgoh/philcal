@@ -4,7 +4,7 @@ import type { School, ExchangeRate, Course, Dormitory, LocalFee, Package } from 
 import type { PromoEntry } from '@/lib/db'
 import { calculateQuote, type CalcResult, type QuoteInput } from '@/lib/calcEngine'
 import { findSchoolForPromo } from '@/lib/schoolMatching'
-import { inferSchoolMode, MODE_LABELS, type SchoolMode } from '@/lib/schoolMode'
+import { schoolHasMode, MODE_LABELS, type SchoolMode } from '@/lib/schoolMode'
 import { formatKrw } from '@/lib/utils'
 import QuoteFormModal from './QuoteFormModal'
 import {
@@ -42,7 +42,7 @@ export default function DirectCalculator({ schools, promos, rate }: DirectCalcul
 
   // 지역 목록 — 모드에 해당하는 학원이 있는 지역만 표시
   const regions = useMemo(() => {
-    const filtered = schools.filter(s => inferSchoolMode(s) === mode)
+    const filtered = schools.filter(s => schoolHasMode(s, mode))
     const set = new Set(filtered.map(s => s.region))
     return Array.from(set).sort()
   }, [schools, mode])
@@ -51,7 +51,7 @@ export default function DirectCalculator({ schools, promos, rate }: DirectCalcul
   const schoolsInRegion = useMemo(() => {
     if (!region) return []
     return schools
-      .filter(s => s.region === region && inferSchoolMode(s) === mode)
+      .filter(s => s.region === region && schoolHasMode(s, mode))
       .sort((a, b) => a.name.localeCompare(b.name))
   }, [schools, region, mode])
 

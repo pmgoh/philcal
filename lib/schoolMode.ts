@@ -1,21 +1,55 @@
-// 학원 모드 자동 추론.
-// 모드는 "일반 연수"(성인 ESL/IELTS 등 코스 중심)와 "캠프·가족·주니어"(정액 패키지 중심) 둘.
-// 규칙:
-//   - courses가 1개 이상 있으면 'regular' (코스 학원). 일반 학원이 가족 패키지 1개 들고 있어도 regular로 분류 — 패키지 모드에 안 섞이게.
-//   - courses 0개이고 packages가 1개 이상 있으면 'camp_family' (패키지 학원).
-//   - 둘 다 0개이면 'unknown' — 본사 확인 대기 상태. 어느 모드에도 안 보임(데이터 점검 필요 학원).
+// 학원 모드 판정.
+// 모드(탭)는 사용자가 직접 선택해 확정한다: 'regular'(일반 연수) | 'camp_family'(캠프·가족·주니어).
 //
-// 추후 모호한 학원이 나오면 학원 JSON에 명시 필드(programType)를 옵션으로 추가해 우선시키도록 확장 가능.
+// [중요] 모드는 추론하지 않는다. 사용자가 탭으로 확정한 모드에 맞춰,
+// "이 학원이 그 모드에 해당하는 데이터(코스/패키지)를 가졌는가"만 판정한다.
+// 한 학원이 일반연수 코스와 가족/주니어 데이터를 모두 가지면, 양쪽 모드에 모두 노출된다.
+//
+// 모드 소속은 데이터로 표현한다:
+//   - 코스: target 필드 ('성인일반' | '가족연수' | '주니어' | '시니어' | 없음)
+//           target이 없으면 일반연수(regular)로 본다 (기본값).
+//   - 패키지: programType 필드 (junior | family | camp | camp_family | senior | ...)
+//           패키지는 기본적으로 캠프·가족·주니어(camp_family) 모드 데이터로 본다.
 
-import type { School } from '@/types'
+import type { School, Course } from '@/types'
 
 export type SchoolMode = 'regular' | 'camp_family' | 'unknown'
 
+// 코스가 일반연수(성인) 대상인가. target이 없으면 일반연수로 간주(기본값).
+function isRegularCourse(c: Pick<Course, 'target'>): boolean {
+  const t = (c as { target?: string }).target
+  if (!t) return true                 // target 미입력 → 일반연수 기본
+  return t === '성인일반'
+}
+
+// 코스가 캠프·가족·주니어 대상인가.
+function isCampFamilyCourse(c: Pick<Course, 'target'>): boolean {
+  const t = (c as { target?: string }).target
+  if (!t) return false
+  return t === '가족연수' || t === '주니어' || t === '시니어'
+}
+
+// 학원이 특정 모드의 데이터를 하나라도 가졌는가 (탭 노출 판정).
+export function schoolHasMode(school: Pick<School, 'courses' | 'packages'>, mode: SchoolMode): boolean {
+  const courses = school.courses ?? []
+  const packages = school.packages ?? []
+  if (mode === 'regular') {
+    // 일반연수 코스가 하나라도 있으면 노출
+    return courses.some(isRegularCourse)
+  }
+  if (mode === 'camp_family') {
+    // 가족/주니어/시니어 코스가 있거나, 패키지가 하나라도 있으면 노출
+    return courses.some(isCampFamilyCourse) || packages.length > 0
+  }
+  return false
+}
+
+// 한 학원의 "주된" 단일 모드 추론 (목록 정렬·표시 등 보조 용도. 필터엔 schoolHasMode 사용).
 export function inferSchoolMode(school: Pick<School, 'courses' | 'packages'>): SchoolMode {
-  const hasCourses = (school.courses?.length ?? 0) > 0
-  const hasPackages = (school.packages?.length ?? 0) > 0
-  if (hasCourses) return 'regular'
-  if (hasPackages) return 'camp_family'
+  const hasRegular = (school.courses ?? []).some(isRegularCourse)
+  const hasCampFamily = (school.courses ?? []).some(isCampFamilyCourse) || (school.packages?.length ?? 0) > 0
+  if (hasRegular) return 'regular'
+  if (hasCampFamily) return 'camp_family'
   return 'unknown'
 }
 
@@ -26,7 +60,7 @@ export const MODE_LABELS: Record<SchoolMode, string> = {
   unknown: '데이터 점검 필요',
 }
 
-// 학원 목록을 모드로 필터링
+// 학원 목록을 모드로 필터링 (해당 모드 데이터를 가진 학원).
 export function filterSchoolsByMode(schools: School[], mode: SchoolMode): School[] {
-  return schools.filter(s => inferSchoolMode(s) === mode)
+  return schools.filter(s => schoolHasMode(s, mode))
 }

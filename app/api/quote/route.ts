@@ -461,17 +461,28 @@ export async function POST(req: NextRequest) {
     //  순서: 학원 → 총주수 → 코스 → 기숙. 학원 미확정이면 멈춤(대기). 충돌이면 되묻기.
     //  복합/모호(needs_llm)일 때만 아래 기존 LLM 흐름으로 폴백한다.
     //  지역 판단은 하지 않는다(견적에 불필요).
+    //
+    //  [적용 범위] 일반 연수(courses+dormitories 구조)만 담당한다.
+    //  캠프·가족 모드(camp_family) 및 패키지형 학원(packages 구조)은
+    //  흐름이 다르므로(인원 컬럼 등) 슬롯 머신을 건너뛰고 기존 LLM 흐름으로 처리한다.
     // ═══════════════════════════════════════════════════════════════════════
-    {
+    if (chatMode === 'regular') {
       const userMsgsAll = ((messages as Array<{ role: string; content: string }>) ?? [])
         .filter(m => m.role === 'user').map(m => m.content)
       const { slots, schoolChoices, ambiguous, needsLlm } =
         extractSlots(userMsgsAll, schoolsWithPromos as School[], aliasData as Record<string, string[]> | undefined)
-      const step = nextStep(slots, schoolChoices, ambiguous, needsLlm)
 
-      const findSchool = (id: string) => schoolsWithPromos.find(s => s.id === id)
+      // 확정 학원이 패키지형(코스 없음 + 패키지 있음)이면 슬롯 머신 부적합 → LLM 폴백
+      const lockedSchool = slots.schoolId ? schoolsWithPromos.find(s => s.id === slots.schoolId) : undefined
+      const isPackageSchool = !!lockedSchool
+        && (lockedSchool.courses ?? []).length === 0
+        && (lockedSchool.packages ?? []).length > 0
 
-      if (step.kind === 'need_school') {
+      if (!isPackageSchool) {
+        const step = nextStep(slots, schoolChoices, ambiguous, needsLlm)
+        const findSchool = (id: string) => schoolsWithPromos.find(s => s.id === id)
+
+        if (step.kind === 'need_school') {
         // 학원 미확정 → 대기. 후보가 있으면 선택지로, 없으면 학원명 입력 요청.
         if (step.options && step.options.length > 0) {
           return NextResponse.json({
@@ -571,7 +582,8 @@ export async function POST(req: NextRequest) {
           _version: CODE_VERSION,
         })
       }
-      // step.kind === 'needs_llm' → 아래 기존 LLM 흐름으로 폴백 (복합·모호 입력)
+        // step.kind === 'needs_llm' → 아래 기존 LLM 흐름으로 폴백 (복합·모호 입력)
+      }
     }
 
     const allText = (messages as {role:string; content:string}[])

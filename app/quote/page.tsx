@@ -11,7 +11,7 @@ import QuoteBuilderCard from '@/components/QuoteBuilderCard'
 import { type QuoteState, emptyQuoteState, mergeAuto, commitQuote, validateQuote } from '@/lib/quoteState'
 import { schoolsMentioned } from '@/lib/parseQuoteIntent'
 import type { CalcResult, PromotionLineItem } from '@/lib/calcEngine'
-import { inferSchoolMode, MODE_LABELS, type SchoolMode } from '@/lib/schoolMode'
+import { schoolHasMode, MODE_LABELS, type SchoolMode } from '@/lib/schoolMode'
 
 // ── 메시지 타입 ───────────────────────────────────────────────────────────────
 type MessageRole = 'user' | 'assistant'
@@ -828,7 +828,7 @@ export default function QuotePage() {
       }
 
       // 현재 모드에 해당하는 학원만 LLM에 전달. 모드가 다른 학원은 안 보이게 해서 헷갈림 방지.
-      const modeSchools = schools.filter(s => inferSchoolMode(s) === mode)
+      const modeSchools = schools.filter(s => schoolHasMode(s, mode))
       // [토큰 절감] 사용자가 이번 메시지에서 '다른 학원/처음부터' 등 학원 전환 의사를 보이면 활성학원 해제.
       const wantsReset = /다른\s*학원|처음부터|초기화|학원\s*바꾸|reset/i.test(text)
       // 활성 학원이 정해져 있고, 사용자가 명시적으로 다른 학원명을 말하지 않았다면 그 학원(+동일 이름
@@ -1023,7 +1023,7 @@ export default function QuotePage() {
           <div className="px-4 pb-4 flex-shrink-0">
             <QuoteBuilderCard
               state={quote}
-              schools={schools.filter(s => inferSchoolMode(s) === mode)}
+              schools={schools.filter(s => schoolHasMode(s, mode))}
               onChange={setQuote}
               onCalculate={calculateFromCard}
               calculating={loading}

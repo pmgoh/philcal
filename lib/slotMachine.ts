@@ -237,6 +237,10 @@ export function nextStep(
   if (slots.courses.length === 0) {
     return { kind: 'need_course', schoolId: slots.schoolId }
   }
+  // 단일 코스인데 주수가 비었으면(나중에 총주수만 받은 경우) 총주수 자동 적용
+  if (slots.courses.length === 1 && (!slots.courses[0].weeks || slots.courses[0].weeks === 0)) {
+    slots.courses[0].weeks = slots.totalWeeks
+  }
   // 코스 주수 합 검증
   const courseSum = slots.courses.reduce((a, c) => a + (c.weeks || 0), 0)
   if (courseSum !== slots.totalWeeks) {
