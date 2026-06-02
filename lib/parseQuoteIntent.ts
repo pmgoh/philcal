@@ -338,7 +338,7 @@ export interface ParseResult {
 // 자연어를 "N주" 경계로 토막 내어, 각 토막의 (항목, 주수)를 뽑는다.
 // 예) "PIC-4 3인실 4주 + 2인실 2주 + 1B 1주" → 토막별로 직전 명사구 + 주수.
 // items는 학원의 courses 또는 dormitories. 매칭된 행 배열을 반환.
-function parseRows(text: string, items: Array<{ id: string; name: string }>): Array<{ id: string; name: string; weeks: number }> {
+export function parseRows(text: string, items: Array<{ id: string; name: string }>): Array<{ id: string; name: string; weeks: number }> {
   if (items.length === 0) return []
   // "N주"의 위치를 모두 찾는다.
   const weekRe = /(\d+)\s*(?:주|weeks?|w)(?![가-힣a-z])/gi

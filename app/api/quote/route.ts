@@ -5,6 +5,7 @@ import { buildAliasIndex, findSchoolForPromo, type AliasMap } from '@/lib/school
 import schoolAliases from '@/data/school-aliases.json'
 import type { School, ExchangeRate, Promotion } from '@/types'
 import { parseQuoteIntent, logUnresolved } from '@/lib/parseQuoteIntent'
+import { extractSlots, nextStep } from '@/lib/slotMachine'
 
 // [코드 버전] 패치마다 증가. 응답에 표시되어 어느 버전 빌드가 돌고 있는지 즉시 확인 가능.
 // v1: 초기 / v2: 단기 계산 수정 / v3: 단계 분리·날짜 미정 모드
@@ -454,6 +455,124 @@ export async function POST(req: NextRequest) {
       return NextResponse.json(buildCalcResponse(school, calcResult, rate, startDate, enrollmentDate, dc.specialNote ?? ''))
     }
     // ───────────────────────────────────────────────────────────────────────
+
+    // ═══════════════════════════════════════════════════════════════════════
+    // [슬롯 상태 머신] 입력 수집을 단계적으로 처리한다 (확정 스펙).
+    //  순서: 학원 → 총주수 → 코스 → 기숙. 학원 미확정이면 멈춤(대기). 충돌이면 되묻기.
+    //  복합/모호(needs_llm)일 때만 아래 기존 LLM 흐름으로 폴백한다.
+    //  지역 판단은 하지 않는다(견적에 불필요).
+    // ═══════════════════════════════════════════════════════════════════════
+    {
+      const userMsgsAll = ((messages as Array<{ role: string; content: string }>) ?? [])
+        .filter(m => m.role === 'user').map(m => m.content)
+      const { slots, schoolChoices, ambiguous, needsLlm } =
+        extractSlots(userMsgsAll, schoolsWithPromos as School[], aliasData as Record<string, string[]> | undefined)
+      const step = nextStep(slots, schoolChoices, ambiguous, needsLlm)
+
+      const findSchool = (id: string) => schoolsWithPromos.find(s => s.id === id)
+
+      if (step.kind === 'need_school') {
+        // 학원 미확정 → 대기. 후보가 있으면 선택지로, 없으면 학원명 입력 요청.
+        if (step.options && step.options.length > 0) {
+          return NextResponse.json({
+            action: 'need_info', type: 'select',
+            question: '어느 학원의 견적인가요? 아래에서 선택해주세요.',
+            suggestions: step.options.map(o => o.name),
+            allowFreeText: true, _version: CODE_VERSION,
+          })
+        }
+        return NextResponse.json({
+          action: 'need_info', type: 'text',
+          question: '어느 학원의 견적인가요? 학원명을 알려주세요.',
+          allowFreeText: true, _version: CODE_VERSION,
+        })
+      }
+
+      if (step.kind === 'need_weeks') {
+        return NextResponse.json({
+          action: 'need_info', type: 'select', schoolId: slots.schoolId,
+          question: '총 몇 주 과정인가요?',
+          suggestions: ['1주','2주','3주','4주','5주','6주','7주','8주','9주','10주','11주','12주','16주','20주','24주'],
+          allowFreeText: true, _version: CODE_VERSION,
+        })
+      }
+
+      if (step.kind === 'need_course' || step.kind === 'need_course_disambiguation') {
+        const sc = findSchool(step.schoolId)
+        const courseOpts = (sc?.courses ?? [])
+          .filter(c => ((c as unknown as Record<string, number>).price4Weeks ?? 0) > 0)
+          .map(c => `${c.name} (${((c as unknown as Record<string, number>).price4Weeks ?? 0).toLocaleString()}원/4주)`)
+        return NextResponse.json({
+          action: 'need_info', type: 'select', schoolId: slots.schoolId,
+          question: step.kind === 'need_course_disambiguation'
+            ? '코스 종류가 여러 개예요. 어느 것인가요?'
+            : '어떤 코스로 수강하실까요?',
+          suggestions: courseOpts,
+          allowFreeText: true, _version: CODE_VERSION,
+        })
+      }
+
+      if (step.kind === 'need_dorm') {
+        const sc = findSchool(step.schoolId)
+        const dormOpts = (sc?.dormitories ?? [])
+          .filter(d => ((d as unknown as Record<string, number>).price4Weeks ?? 0) > 0)
+          .map(d => `${d.name} (${((d as unknown as Record<string, number>).price4Weeks ?? 0).toLocaleString()}원/4주)`)
+        return NextResponse.json({
+          action: 'need_info', type: 'select', schoolId: slots.schoolId,
+          question: '기숙사는 어떻게 하실까요?',
+          suggestions: ['통학 (기숙사 없음)', ...dormOpts],
+          allowFreeText: true, _version: CODE_VERSION,
+        })
+      }
+
+      if (step.kind === 'conflict_weeks') {
+        // 주수 합 ≠ 총주수 → 무엇을 고칠지 사용자에게 묻는다(임의 우선순위 X).
+        const label = step.which === 'course' ? '코스' : '기숙사'
+        return NextResponse.json({
+          action: 'need_info', type: 'select', schoolId: slots.schoolId,
+          question: `총 주수는 ${step.total}주인데 ${label} 합이 ${step.sum}주예요. 무엇을 수정할까요?`,
+          suggestions: [`총 주수를 ${step.sum}주로 변경`, `${label} 주수를 다시 입력`],
+          allowFreeText: true, _version: CODE_VERSION,
+        })
+      }
+
+      if (step.kind === 'ready') {
+        // 필수 슬롯 모두 충족 → 확인 카드. (시작일은 막지 않음: 미정이면 빈 값)
+        const sc = findSchool(slots.schoolId!)!
+        const courseLabels = slots.courses.map(c => {
+          const cobj = (sc.courses ?? []).find(x => x.id === c.courseId)
+          return cobj ? `${cobj.name} (${c.weeks}주)` : `${c.courseId} (${c.weeks}주)`
+        })
+        const dormLabels = slots.dormitories.map(d => {
+          const dobj = (sc.dormitories ?? []).find(x => x.id === d.dormitoryId)
+          return dobj ? `${dobj.name} (${d.weeks}주)` : `${d.dormitoryId} (${d.weeks}주)`
+        })
+        const sd = slots.startDate
+        return NextResponse.json({
+          action: 'confirm',
+          message: slots.startDateProvided
+            ? '왼쪽 견적 구성에 반영했어요. 확인하고 [계산하기]를 누르세요.'
+            : '왼쪽 견적 구성에 반영했어요. 시작일을 넣으면 서차지까지 정확히 계산됩니다. 확인하고 [계산하기]를 누르세요.',
+          showCalculateButton: true,
+          confirmCard: {
+            schoolId: slots.schoolId,
+            schoolName: sc.name,
+            totalWeeks: slots.totalWeeks,
+            courses: slots.courses,
+            courseLabels,
+            dormitories: slots.dormitories,
+            dormLabels,
+            packages: [],
+            packageLabels: [],
+            startDate: sd,
+            startDateLabel: sd ? sd : '미정 (날짜 없이 기본 견적)',
+            enrollmentDate: sd,
+          },
+          _version: CODE_VERSION,
+        })
+      }
+      // step.kind === 'needs_llm' → 아래 기존 LLM 흐름으로 폴백 (복합·모호 입력)
+    }
 
     const allText = (messages as {role:string; content:string}[])
       .map(m => m.content).join(' ').toLowerCase()
