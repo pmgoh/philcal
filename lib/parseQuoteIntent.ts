@@ -340,39 +340,52 @@ export interface ParseResult {
 // items는 학원의 courses 또는 dormitories. 매칭된 행 배열을 반환.
 export function parseRows(text: string, items: Array<{ id: string; name: string }>): Array<{ id: string; name: string; weeks: number }> {
   if (items.length === 0) return []
-  // "N주"의 위치를 모두 찾는다.
   const weekRe = /(\d+)\s*(?:주|weeks?|w)(?![가-힣a-z])/gi
-  const matches: Array<{ weeks: number; index: number }> = []
+  const wm: Array<{ weeks: number; start: number; end: number }> = []
   let m: RegExpExecArray | null
   while ((m = weekRe.exec(text)) !== null) {
-    matches.push({ weeks: parseInt(m[1], 10), index: m.index })
+    wm.push({ weeks: parseInt(m[1], 10), start: m.index, end: m.index + m[0].length })
   }
-  if (matches.length <= 1) return []  // 주수가 1개 이하면 단일 처리(기존 경로)로
+  if (wm.length <= 1) return []
 
-  // 각 "N주" 앞의 텍스트 토막에서 항목을 매칭. 토막 = 직전 주수 끝 ~ 이번 주수 시작.
-  const rows: Array<{ id: string; name: string; weeks: number }> = []
-  let segStart = 0
-  let lastId: string | null = null
-  let explicitCount = 0  // 토막에서 항목명이 실제로 매칭된 횟수
-  for (const mt of matches) {
-    const segment = text.slice(segStart, mt.index)
-    const r = resolve(rankCandidates(segment, items as Array<Course | Dormitory>))
-    let picked = r.kind === 'auto' ? r.pick : r.kind === 'choices' ? r.options[0] : null
-    const explicit = !!picked
-    if (explicit) explicitCount++
-    // 이 토막에 항목명이 없으면(예: "2주"만) 직전 항목을 이어쓴다.
-    if (!picked && lastId) {
-      const prev = items.find(it => it.id === lastId)
-      if (prev) picked = { id: prev.id, name: prev.name, score: 100 }
-    }
-    if (picked) {
-      rows.push({ id: picked.id, name: picked.name, weeks: mt.weeks })
-      lastId = picked.id
-    }
-    segStart = mt.index + String(mt.weeks).length
+  // 각 주수에 대해, 주수 "앞 토막"과 "뒤 토막"을 각각 rankCandidates로 매칭해
+  // 더 확실한(점수 높은) 쪽의 항목을 그 주수의 방/코스로 본다.
+  //  - "4인실 4주"  → 앞 토막 "4인실"이 매칭 (방→주수 순서)
+  //  - "4주 4인실"  → 뒤 토막 "4인실"이 매칭 (주수→방 순서)
+  const matchSeg = (seg: string) => {
+    const r = resolve(rankCandidates(seg, items as Array<Course | Dormitory>))
+    if (r.kind === 'auto') return { pick: r.pick, score: r.pick.score ?? 100 }
+    if (r.kind === 'choices') return { pick: r.options[0], score: r.options[0].score ?? 0 }
+    return null
   }
-  // 항목명이 1번만 명시됐으면(예: 코스 "PIC-4"만, 나머지는 기숙 주수) 분해하지 않는다.
-  // → 같은 항목이 여러 주수에 잘못 복제되는 것 방지. 2개 이상 명시될 때만 진짜 변경으로 본다.
+  const rows: Array<{ id: string; name: string; weeks: number }> = []
+  let explicitCount = 0
+  let lastPick: { id: string; name: string } | null = null
+  const usedIds = new Set<string>()
+  for (let i = 0; i < wm.length; i++) {
+    const prevEnd = i === 0 ? 0 : wm[i - 1].end
+    const nextStart = i === wm.length - 1 ? text.length : wm[i + 1].start
+    const before = text.slice(prevEnd, wm[i].start)
+    const after = text.slice(wm[i].end, nextStart)
+    const mb = matchSeg(before)
+    const ma = matchSeg(after)
+    // 앞/뒤 중 점수 높은 쪽. 단 이미 쓴 항목은 감점해 중복을 피한다
+    // ("4주 4인실 8주 1인실": 4주→4인실 쓴 뒤, 8주는 앞(4인실,사용됨)보다 뒤(1인실,미사용) 우선).
+    const adj = (mm: { pick: { id: string; name: string }; score: number } | null) =>
+      mm ? mm.score - (usedIds.has(mm.pick.id) ? 50 : 0) : -Infinity
+    let chosen: { id: string; name: string } | null = null
+    const sb = adj(mb), sa = adj(ma)
+    if (sb === -Infinity && sa === -Infinity) chosen = null
+    else chosen = (sa > sb ? ma!.pick : mb!.pick)
+    if (chosen) {
+      rows.push({ id: chosen.id, name: chosen.name, weeks: wm[i].weeks })
+      lastPick = { id: chosen.id, name: chosen.name }
+      usedIds.add(chosen.id)
+      explicitCount++
+    } else if (lastPick) {
+      rows.push({ id: lastPick.id, name: lastPick.name, weeks: wm[i].weeks })
+    }
+  }
   if (explicitCount < 2) return []
   return rows
 }
