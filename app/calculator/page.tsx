@@ -15,6 +15,7 @@ import QuoteResultCard from '@/components/QuoteResultCard'
 import { PromotionPanel, EvidenceCard, LocalFeePanel, PeriodTimeline, MarkdownText, CalcEvidenceTable, DiscountEvidenceTable } from '@/components/QuoteEvidence'
 import AdminLayout from '@/components/AdminLayout'
 import MondayPicker from '@/components/MondayPicker'
+import FamilyCalculator from '@/components/FamilyCalculator'
 import QuoteFormModal from '@/components/QuoteFormModal'
 import type { School, ExchangeRate, LocalFee } from '@/types'
 import type { PromoEntry } from '@/lib/db'
@@ -22,6 +23,14 @@ import type { CalcResult } from '@/lib/calcEngine'
 import { Search, Check, Pencil, Calculator, Home, ArrowRight, RotateCcw, FileText } from 'lucide-react'
 
 type Picked = { id: string; name: string; price4Weeks: number; weeks: number }
+
+// 가족연수 코스형 학원 판정: 가족연수/주니어 코스를 가졌으면 인원별 입력(코스형). 패키지뿐이면 false.
+function isFamilyCourseSchool(school: School): boolean {
+  return (school.courses ?? []).some(c => {
+    const t = (c as { target?: string }).target
+    return t === '가족연수' || t === '주니어' || t === '시니어'
+  })
+}
 
 export default function CalculatorPage() {
   const [schools, setSchools] = useState<School[]>([])
@@ -97,7 +106,7 @@ export default function CalculatorPage() {
     : 'ready'
 
   // 계산 실행 (챗봇과 동일 엔진)
-  const runCalc = async () => {
+  const runCalcWith = async (dc: { courses: Array<{ courseId: string; weeks: number }>; dormitories: Array<{ dormitoryId: string; weeks: number }>; startDate: string }) => {
     if (!school) return
     setCalcing(true); setCalcError('')
     try {
@@ -110,9 +119,9 @@ export default function CalculatorPage() {
           mode, aliasData,
           directCalc: {
             schoolId: school.id,
-            startDate, enrollmentDate: startDate,
-            courses: courses.map(c => ({ courseId: c.id, weeks: c.weeks })),
-            dormitories: dorms.map(d => ({ dormitoryId: d.id, weeks: d.weeks })),
+            startDate: dc.startDate, enrollmentDate: dc.startDate,
+            courses: dc.courses,
+            dormitories: dc.dormitories,
             packages: [],
           },
         }),
@@ -146,7 +155,7 @@ export default function CalculatorPage() {
 
   return (
     <AdminLayout>
-    <div className="max-w-2xl mx-auto p-4 md:p-6 pb-24">
+    <div className="max-w-4xl mx-auto p-4 md:p-8 pb-24">
       {/* 헤더 */}
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2">
@@ -203,6 +212,21 @@ export default function CalculatorPage() {
               onSelect={id => { const s = schools.find(x => x.id === id); if (s) setSchool(s) }} />
           )}
 
+          {/* 가족연수: camp_family 모드 + 가족/주니어 코스 보유(코스형) → 인원별 입력 */}
+          {!calcResult && school && mode === 'camp_family' && isFamilyCourseSchool(school) && (
+            <FamilyCalculator school={school} onCalculate={(r) => {
+              setStartDate(r.startDate)
+              runCalcWith({
+                courses: r.courses,
+                dormitories: r.dormitoryId ? [{ dormitoryId: r.dormitoryId, weeks: r.totalWeeks }] : [],
+                startDate: r.startDate,
+              })
+            }} />
+          )}
+
+          {/* 일반연수(또는 가족 패키지형 미지원 안내) — 기존 흐름 */}
+          {!calcResult && school && !(mode === 'camp_family' && isFamilyCourseSchool(school)) && (
+          <>
           {!calcResult && step === 'weeks' && (
             <StepCard title="총 몇 주 과정인가요?">
               <WeekButtons onPick={w => setTotalWeeks(w)} />
@@ -229,13 +253,19 @@ export default function CalculatorPage() {
 
           {!calcResult && step === 'ready' && (
             <StepCard title="입력이 완료됐어요. 계산할까요?">
-              <button onClick={runCalc} disabled={calcing}
+              <button onClick={() => runCalcWith({
+                courses: courses.map(c => ({ courseId: c.id, weeks: c.weeks })),
+                dormitories: dorms.map(d => ({ dormitoryId: d.id, weeks: d.weeks })),
+                startDate,
+              })} disabled={calcing}
                 className="btn-primary w-full text-sm flex items-center justify-center gap-2 disabled:opacity-50">
                 {calcing ? <><div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" /> 계산 중...</>
                   : <><Calculator size={15} /> 계산하기</>}
               </button>
               {calcError && <p className="text-xs text-red-600 mt-2">{calcError}</p>}
             </StepCard>
+          )}
+          </>
           )}
 
           {/* 결과 — 챗봇과 동일 항목·순서 */}
