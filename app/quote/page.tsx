@@ -7,7 +7,7 @@ import { Send, RotateCcw, Copy, Check, ChevronDown, ChevronUp, DollarSign, FileT
 import { formatKrw } from '@/lib/utils'
 import QuoteFormModal from '@/components/QuoteFormModal'
 import QuoteResultCard from '@/components/QuoteResultCard'
-import { MarkdownText, PromotionPanel, PeriodTimeline, LocalFeePanel, EvidenceCard } from '@/components/QuoteEvidence'
+import { MarkdownText, PromotionPanel, PeriodTimeline, LocalFeePanel, EvidenceCard, CalcEvidenceTable, DiscountEvidenceTable } from '@/components/QuoteEvidence'
 import QuoteBuilderCard from '@/components/QuoteBuilderCard'
 import { type QuoteState, emptyQuoteState, mergeAuto, commitQuote, validateQuote } from '@/lib/quoteState'
 import { schoolsMentioned } from '@/lib/parseQuoteIntent'
@@ -580,6 +580,7 @@ export default function QuotePage() {
                           />
                         )}
                         {m.evidenceMessage && <EvidenceCard text={m.evidenceMessage} school={m.school} />}
+                        {m.calcResult && <CalcEvidenceTable calc={m.calcResult} phpToKrw={rate.phpToKrw} />}
                         {m.calcResult?.promotionLines && (
                           <PromotionPanel
                             lines={m.calcResult.promotionLines}
@@ -594,16 +595,7 @@ export default function QuotePage() {
                             }) : undefined}
                           />
                         )}
-                        {m.discountEvidence && (
-                          <details className="mt-2">
-                            <summary className="cursor-pointer text-xs text-red-600 font-medium px-3 py-2 bg-red-50 border border-red-200 rounded-xl hover:bg-red-100 transition-colors">
-                              ✂️ 할인 근거 보기
-                            </summary>
-                            <div className="mt-1.5 bg-red-50 border border-red-200 rounded-xl px-4 py-3">
-                              <MarkdownText text={m.discountEvidence} />
-                            </div>
-                          </details>
-                        )}
+                        {m.calcResult?.promotionLines && <DiscountEvidenceTable lines={m.calcResult.promotionLines} />}
                       </div>
                     )
                   })()}

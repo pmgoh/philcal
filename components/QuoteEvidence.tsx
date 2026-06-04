@@ -5,7 +5,7 @@ import { useState } from 'react'
 import { ChevronDown, ChevronUp, DollarSign } from 'lucide-react'
 import { formatKrw } from '@/lib/utils'
 import type { School, LocalFee } from '@/types'
-import type { PromotionLineItem } from '@/lib/calcEngine'
+import type { PromotionLineItem, CalcResult } from '@/lib/calcEngine'
 
 export function MarkdownText({ text, isUser = false }: { text: string; isUser?: boolean }) {
   const lines = text.split('\n')
@@ -422,6 +422,28 @@ export function EvidenceCard({ text, school }: { text: string; school?: School }
               </table>
             </div>
           )}
+          {/* 서차지(성수기 추가비) 규정 */}
+          {(school.surcharges ?? []).length > 0 && (
+            <div className="mb-3">
+              <p className="text-xs text-gray-500 mb-1 font-medium">서차지(성수기 추가비) 규정</p>
+              <table className="text-xs w-full border-collapse">
+                <thead><tr className="bg-gray-50">
+                  <th className="text-left px-2 py-1 border border-gray-100">기간</th>
+                  <th className="text-left px-2 py-1 border border-gray-100">적용</th>
+                  <th className="text-right px-2 py-1 border border-gray-100">주당</th>
+                </tr></thead>
+                <tbody>{(school.surcharges ?? []).map((sc, i) => (
+                  <tr key={i} className="hover:bg-gray-50">
+                    <td className="px-2 py-1 border border-gray-100">{sc.startDate}~{sc.endDate}</td>
+                    <td className="px-2 py-1 border border-gray-100 text-gray-500">{sc.label}</td>
+                    <td className="px-2 py-1 border border-gray-100 text-right font-medium">
+                      {(sc.pricePerWeek ?? 0).toLocaleString()}{sc.currency}
+                    </td>
+                  </tr>
+                ))}</tbody>
+              </table>
+            </div>
+          )}
           {/* 패키지 */}
           {(school.packages ?? []).length > 0 && (
             <div>
@@ -483,3 +505,76 @@ export function EvidenceCard({ text, school }: { text: string; school?: School }
 }
 
 // ── 질문 버블 (need_info) ─────────────────────────────────────────────────────
+
+// ── 계산 근거 표 (데이터 직접 표시 — 파싱 없이 calcResult 그대로) ──────────────
+// 요약 글이 아니라 표로 보여줘, 단가·주수·금액이 데이터와 맞는지 눈으로 검증 가능하게 한다.
+export function CalcEvidenceTable({ calc, phpToKrw }: { calc: CalcResult; phpToKrw: number }) {
+  const krw = (n: number) => n.toLocaleString() + '원'
+  const rows: Array<{ kind: string; name: string; weeks: number; unit: number; cur: string; amount: number }> = []
+  for (const it of calc.courseItems) rows.push({ kind: '학비', name: it.label.replace(/^코스:\s*/, ''), weeks: it.weeks, unit: it.unitPrice, cur: it.currency, amount: it.krwAmount })
+  for (const it of calc.dormItems) rows.push({ kind: '기숙사', name: it.label.replace(/^기숙사:\s*/, ''), weeks: it.weeks, unit: it.unitPrice, cur: it.currency, amount: it.krwAmount })
+  if (rows.length === 0) return null
+  return (
+    <div className="mt-2 border border-gray-200 rounded-xl overflow-hidden">
+      <div className="px-3 py-2 bg-gray-50 border-b border-gray-200 text-xs font-medium text-gray-700">📐 계산 근거 (항목별)</div>
+      <div className="overflow-x-auto">
+        <table className="text-xs w-full border-collapse">
+          <thead><tr className="bg-gray-50 text-gray-500">
+            <th className="text-left px-2 py-1.5 border-b border-gray-100">구분</th>
+            <th className="text-left px-2 py-1.5 border-b border-gray-100">항목</th>
+            <th className="text-right px-2 py-1.5 border-b border-gray-100">주수</th>
+            <th className="text-right px-2 py-1.5 border-b border-gray-100">4주 단가</th>
+            <th className="text-right px-2 py-1.5 border-b border-gray-100">금액</th>
+          </tr></thead>
+          <tbody>
+            {rows.map((r, i) => (
+              <tr key={i} className="hover:bg-gray-50">
+                <td className="px-2 py-1.5 border-b border-gray-50 text-gray-400">{r.kind}</td>
+                <td className="px-2 py-1.5 border-b border-gray-50 text-gray-700">{r.name}</td>
+                <td className="px-2 py-1.5 border-b border-gray-50 text-right">{r.weeks}주</td>
+                <td className="px-2 py-1.5 border-b border-gray-50 text-right text-gray-500">{(r.unit * 4).toLocaleString()}{r.cur === 'KRW' ? '원' : r.cur}</td>
+                <td className="px-2 py-1.5 border-b border-gray-50 text-right font-medium">{krw(r.amount)}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  )
+}
+
+// ── 할인 근거 표 (데이터 직접 표시) ───────────────────────────────────────────
+// 어떤 프로모션이 어떤 조건으로 얼마 적용/미적용됐는지 표로. (요약 글 대체)
+export function DiscountEvidenceTable({ lines }: { lines: PromotionLineItem[] }) {
+  const krw = (n: number) => n.toLocaleString() + '원'
+  if (!lines || lines.length === 0) return null
+  const statusLabel: Record<string, string> = { applied: '적용', pending: '보류', unmet: '미적용', manual: '수동' }
+  const statusColor: Record<string, string> = {
+    applied: 'text-emerald-600', pending: 'text-amber-600', unmet: 'text-gray-400', manual: 'text-blue-600',
+  }
+  return (
+    <div className="mt-2 border border-gray-200 rounded-xl overflow-hidden">
+      <div className="px-3 py-2 bg-gray-50 border-b border-gray-200 text-xs font-medium text-gray-700">💸 할인 근거 (조건 → 적용액)</div>
+      <div className="overflow-x-auto">
+        <table className="text-xs w-full border-collapse">
+          <thead><tr className="bg-gray-50 text-gray-500">
+            <th className="text-left px-2 py-1.5 border-b border-gray-100">상태</th>
+            <th className="text-left px-2 py-1.5 border-b border-gray-100">프로모션</th>
+            <th className="text-left px-2 py-1.5 border-b border-gray-100">조건/근거</th>
+            <th className="text-right px-2 py-1.5 border-b border-gray-100">적용액</th>
+          </tr></thead>
+          <tbody>
+            {lines.map((l, i) => (
+              <tr key={i} className="hover:bg-gray-50">
+                <td className={`px-2 py-1.5 border-b border-gray-50 ${statusColor[l.status]}`}>{statusLabel[l.status] ?? l.status}</td>
+                <td className="px-2 py-1.5 border-b border-gray-50 text-gray-700">{l.kind === 'agency' ? '유학원 할인' : l.label}</td>
+                <td className="px-2 py-1.5 border-b border-gray-50 text-gray-500">{l.basis || l.unmetReason || l.periodNote || '—'}</td>
+                <td className="px-2 py-1.5 border-b border-gray-50 text-right font-medium">{l.status === 'applied' ? `-${krw(l.discountKrw)}` : '—'}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  )
+}
