@@ -422,29 +422,7 @@ export default function SchoolForm({ schoolId }: Props) {
             )}
           </div>
 
-          {/* ── 프로모션 ── */}
-          <div className="card overflow-hidden">
-            {section('promotions', '프로모션 / 할인', (school.promotions ?? []).length)}
-            {openSection === 'promotions' && (
-              <div className="px-5 pb-5 border-t border-gray-100 pt-4 space-y-3">
-                {(school.promotions ?? []).map((p, i) => (
-                  <PromotionRow key={p.id} promotion={p}
-                    onChange={v => update('promotions', (school.promotions ?? []).map((x, j) => j === i ? v : x))}
-                    onDelete={() => update('promotions', (school.promotions ?? []).filter((_, j) => j !== i))}
-                  />
-                ))}
-                <button onClick={() => update('promotions', [...(school.promotions ?? []), {
-                  id: uuid(), label: '', basisType: 'start_date' as const,
-                  alwaysApply: false,
-                  startDate: '', endDate: '', discountType: 'percent' as const,
-                  discountValue: 10,
-                  applyToCourses: true, applyToDorms: true, applyToSurcharge: false,
-                }])} className="btn-secondary flex items-center gap-2 text-sm w-full justify-center py-2.5 border-dashed">
-                  <Plus size={14} /> 프로모션 추가
-                </button>
-              </div>
-            )}
-          </div>
+          {/* 프로모션은 학원 데이터에 넣지 않는다 — 별도 '프로모션' 탭에서 일원화 관리. */}
 
           {/* ── 현지납부비 ── */}
           <div className="card overflow-hidden">
@@ -786,109 +764,6 @@ function SurchargeRow({ surcharge, onChange, onDelete }: {
   )
 }
 
-// ── PromotionRow ───────────────────────────────────────────────────────────────
-function PromotionRow({ promotion, onChange, onDelete }: {
-  promotion: Promotion; onChange: (p: Promotion) => void; onDelete: () => void
-}) {
-  const toCourses   = promotion.applyToCourses   !== false
-  const toDorms     = promotion.applyToDorms     !== false
-  const toSurcharge = promotion.applyToSurcharge === true
-
-  return (
-    <div className="bg-gray-50 p-3 rounded-lg space-y-2">
-      {/* 프로모션명 + 할인 + 삭제 */}
-      <div className="grid grid-cols-6 md:grid-cols-12 gap-2 items-end">
-        <div className="col-span-5">
-          <label className="block text-xs text-gray-500 mb-1">프로모션명</label>
-          <input value={promotion.label} onChange={e => onChange({ ...promotion, label: e.target.value })}
-            className="input-field text-sm" placeholder="유학원 자체 할인 / 비수기 할인" />
-        </div>
-        <div className="col-span-3 md:col-span-2">
-          <label className="block text-xs text-gray-500 mb-1">타입</label>
-          <select value={promotion.discountType} onChange={e => onChange({ ...promotion, discountType: e.target.value as 'percent' | 'amount' })}
-            className="input-field text-sm">
-            <option value="percent">%</option>
-            <option value="amount">금액</option>
-          </select>
-        </div>
-        <div className="col-span-3 md:col-span-2">
-          <label className="block text-xs text-gray-500 mb-1">{promotion.discountType === 'percent' ? '할인 %' : '할인 금액'}</label>
-          <input type="number" value={promotion.discountValue}
-            onChange={e => onChange({ ...promotion, discountValue: Number(e.target.value) })}
-            className="input-field text-sm" />
-        </div>
-        <div className="col-span-2" />
-        <div className="col-span-1 md:col-span-1 flex justify-end items-end">
-          <button onClick={onDelete} className="p-2 text-red-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors">
-            <Trash2 size={14} />
-          </button>
-        </div>
-      </div>
-
-      {/* 항상 적용 토글 + 날짜 */}
-      <div className="grid grid-cols-6 md:grid-cols-12 gap-2 items-end">
-        <div className="col-span-2 flex items-center gap-2 pb-1">
-          <label className="flex items-center gap-1.5 text-xs font-medium text-gray-600 cursor-pointer">
-            <input type="checkbox" checked={!!promotion.alwaysApply}
-              onChange={e => onChange({ ...promotion, alwaysApply: e.target.checked })}
-              className="w-3.5 h-3.5 accent-blue-600" />
-            항상 적용
-          </label>
-        </div>
-        {!promotion.alwaysApply && (
-          <>
-            <div className="col-span-3 md:col-span-2">
-              <label className="block text-xs text-gray-500 mb-1">기준일</label>
-              <select value={promotion.basisType} onChange={e => onChange({ ...promotion, basisType: e.target.value as Promotion['basisType'] })}
-                className="input-field text-sm">
-                <option value="start_date">연수 시작일</option>
-                <option value="enrollment_date">등록일</option>
-                <option value="contract_date">계약일</option>
-                <option value="departure_date">출국일</option>
-              </select>
-            </div>
-            <div className="col-span-3 md:col-span-2">
-              <label className="block text-xs text-gray-500 mb-1">시작일</label>
-              <input type="date" value={promotion.startDate} onChange={e => onChange({ ...promotion, startDate: e.target.value })}
-                className="input-field text-sm" />
-            </div>
-            <div className="col-span-3 md:col-span-2">
-              <label className="block text-xs text-gray-500 mb-1">종료일</label>
-              <input type="date" value={promotion.endDate} onChange={e => onChange({ ...promotion, endDate: e.target.value })}
-                className="input-field text-sm" />
-            </div>
-          </>
-        )}
-        {promotion.alwaysApply && (
-          <div className="col-span-6 flex items-end pb-1">
-            <span className="text-xs text-blue-600 bg-blue-50 px-2 py-1 rounded">날짜 무관하게 항상 적용됩니다</span>
-          </div>
-        )}
-      </div>
-
-      {/* 적용 대상 + 조건 */}
-      <div className="flex items-center gap-4 flex-wrap pt-1">
-        <span className="text-xs text-gray-500 font-medium">적용 대상:</span>
-        {[
-          { key: 'applyToCourses', label: '코스 학비', checked: toCourses },
-          { key: 'applyToDorms',   label: '기숙사비', checked: toDorms },
-          { key: 'applyToSurcharge', label: '서차지', checked: toSurcharge },
-        ].map(({ key, label, checked }) => (
-          <label key={key} className="flex items-center gap-1.5 text-xs text-gray-600 cursor-pointer">
-            <input type="checkbox" checked={checked}
-              onChange={e => onChange({ ...promotion, [key]: e.target.checked })}
-              className="w-3.5 h-3.5 accent-blue-600" />
-            {label}
-          </label>
-        ))}
-        <div className="flex-1 min-w-32">
-          <input value={promotion.condition ?? ''} onChange={e => onChange({ ...promotion, condition: e.target.value })}
-            className="input-field text-xs py-1.5" placeholder="조건 메모 (예: 12주 이상)" />
-        </div>
-      </div>
-    </div>
-  )
-}
 
 // ── LocalFeeRow ────────────────────────────────────────────────────────────────
 const TRIGGER_OPTIONS = [

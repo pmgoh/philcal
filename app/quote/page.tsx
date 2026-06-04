@@ -42,9 +42,6 @@ interface AssistantResultMessage extends BaseMessage {
     packages?: { packageId: string; weeks: number; columnLabel: string }[]
   }
   // 검증 봇 결과
-  verification?: string
-  verifying?: boolean
-  verifyError?: string
 }
 
 interface AssistantNeedInfoMessage extends BaseMessage {
@@ -256,54 +253,6 @@ export default function QuotePage() {
     return [...history, { role: 'user' as const, content: userText }]
   }
 
-  const verifyQuote = async (messageIndex: number) => {
-    setMessages(prev => prev.map((m, i) => {
-      if (i !== messageIndex) return m
-      if (m.role !== 'assistant' || m.type !== 'result') return m
-      return { ...(m as AssistantResultMessage), verifying: true, verifyError: undefined }
-    }))
-
-    try {
-      const target = messages[messageIndex]
-      if (target?.role !== 'assistant' || target.type !== 'result') return
-      const m = target as AssistantResultMessage
-
-      const res = await fetch('/api/quote/verify', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          school: m.school,
-          calcResult: m.calcResult,
-          startDate: m.startDate,
-          enrollmentDate: m.enrollmentDate,
-          rate,
-          message: m.content,
-        }),
-      })
-      const data = await res.json()
-
-      setMessages(prev => prev.map((mm, i) => {
-        if (i !== messageIndex) return mm
-        if (mm.role !== 'assistant' || mm.type !== 'result') return mm
-        return {
-          ...(mm as AssistantResultMessage),
-          verifying: false,
-          verification: data.ok ? data.verification : undefined,
-          verifyError: data.ok ? undefined : (data.error ?? '검증 실패'),
-        }
-      }))
-    } catch (err) {
-      setMessages(prev => prev.map((mm, i) => {
-        if (i !== messageIndex) return mm
-        if (mm.role !== 'assistant' || mm.type !== 'result') return mm
-        return {
-          ...(mm as AssistantResultMessage),
-          verifying: false,
-          verifyError: err instanceof Error ? err.message : String(err),
-        }
-      }))
-    }
-  }
 
   const sendMessage = async (text: string, directCalc?: {
     schoolId: string; startDate?: string; enrollmentDate?: string
