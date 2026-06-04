@@ -305,8 +305,9 @@ export function nextStep(
   // 4) 기숙 (통학 명시면 면제)
   if (!slots.noDorm) {
     if (ambiguous.dorm) {
-      // 방을 언급했는데 못 잡음 → 복합/한영매칭 어려움 → LLM 폴백이 더 정확
-      return { kind: 'needs_llm', reason: 'dorm_ambiguous' }
+      // 방을 말했는데 여러 개로 좁혀짐(예: "3인실"→Triple/Suite Triple) → 선택지로 되묻는다.
+      // (LLM으로 보내지 않는다: 추측 금지 + 불필요한 LLM 호출 회피)
+      return { kind: 'need_dorm', schoolId: slots.schoolId }
     }
     if (slots.dormitories.length === 0) {
       return { kind: 'need_dorm', schoolId: slots.schoolId }

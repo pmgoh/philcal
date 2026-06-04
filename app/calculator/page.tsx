@@ -12,11 +12,13 @@ import { getSchools, getExchangeRate, getPromotions, getSchoolAliases } from '@/
 import { schoolHasMode, MODE_LABELS, type SchoolMode } from '@/lib/schoolMode'
 import { extractSlots } from '@/lib/slotMachine'
 import QuoteResultCard from '@/components/QuoteResultCard'
+import { PromotionPanel, EvidenceCard, LocalFeePanel } from '@/components/QuoteEvidence'
 import AdminLayout from '@/components/AdminLayout'
-import type { School, ExchangeRate } from '@/types'
+import QuoteFormModal from '@/components/QuoteFormModal'
+import type { School, ExchangeRate, LocalFee } from '@/types'
 import type { PromoEntry } from '@/lib/db'
 import type { CalcResult } from '@/lib/calcEngine'
-import { Search, Check, Pencil, Calculator, Home, ArrowRight, RotateCcw } from 'lucide-react'
+import { Search, Check, Pencil, Calculator, Home, ArrowRight, RotateCcw, FileText } from 'lucide-react'
 
 type Picked = { id: string; name: string; price4Weeks: number; weeks: number }
 
@@ -37,6 +39,7 @@ export default function CalculatorPage() {
   const [noDorm, setNoDorm] = useState(false)
   const [startDate, setStartDate] = useState('')
   const [startDateSet, setStartDateSet] = useState(false)
+  const [startDateError, setStartDateError] = useState('')
 
   // 자연어 첫 입력
   const [nlInput, setNlInput] = useState('')
@@ -44,8 +47,10 @@ export default function CalculatorPage() {
 
   // 계산 결과
   const [calcResult, setCalcResult] = useState<CalcResult | null>(null)
+  const [evidence, setEvidence] = useState<{ evidenceMessage?: string; localFeePhp?: number; localFeeKrwEstimate?: number; localFees?: unknown[] }>({})
   const [calcing, setCalcing] = useState(false)
   const [calcError, setCalcError] = useState('')
+  const [showQuoteModal, setShowQuoteModal] = useState(false)
 
   useEffect(() => {
     Promise.all([getSchools(), getExchangeRate(), getPromotions(), getSchoolAliases()]).then(([s, r, p, a]) => {
@@ -113,7 +118,15 @@ export default function CalculatorPage() {
         }),
       })
       const data = await res.json()
-      if (data.calcResult) setCalcResult(data.calcResult)
+      if (data.calcResult) {
+        setCalcResult(data.calcResult)
+        setEvidence({
+          evidenceMessage: data.evidenceMessage,
+          localFeePhp: data.localFeePhp,
+          localFeeKrwEstimate: data.localFeeKrwEstimate,
+          localFees: data.localFees,
+        })
+      }
       else setCalcError(data.question || data.error || '계산에 실패했습니다.')
     } catch (e) {
       setCalcError(String(e))
@@ -206,14 +219,26 @@ export default function CalculatorPage() {
           )}
 
           {!calcResult && step === 'startDate' && (
-            <StepCard title="입국(시작) 예정일이 언제인가요?" subtitle="미정이면 날짜 없이 기본 견적으로 진행 (서차지는 확정 시 반영)">
+            <StepCard title="입국(시작) 예정일이 언제인가요?" subtitle="입학은 월요일만 가능합니다. 미정이면 날짜 없이 기본 견적으로 진행 (서차지는 확정 시 반영)">
               <div className="flex gap-2 items-center">
-                <input type="date" value={startDate} onChange={e => setStartDate(e.target.value)} className="input-field flex-1 text-sm" />
+                <input type="date" value={startDate}
+                  onChange={e => {
+                    const v = e.target.value
+                    if (v && new Date(v + 'T00:00:00').getDay() !== 1) {
+                      setStartDateError('월요일만 선택할 수 있습니다.')
+                      setStartDate('')
+                    } else {
+                      setStartDateError('')
+                      setStartDate(v)
+                    }
+                  }}
+                  className="input-field flex-1 text-sm" />
                 <button onClick={() => setStartDateSet(true)} disabled={!startDate}
                   className="btn-primary text-sm disabled:opacity-40">확인</button>
                 <button onClick={() => { setStartDate(''); setStartDateSet(true) }}
                   className="text-sm px-3 py-2 rounded-lg bg-gray-100 text-gray-600 whitespace-nowrap">미정</button>
               </div>
+              {startDateError && <p className="text-xs text-red-600 mt-1.5">{startDateError}</p>}
             </StepCard>
           )}
 
@@ -229,12 +254,44 @@ export default function CalculatorPage() {
           )}
 
           {/* 결과 */}
-          {calcResult && school && (
+          {calcResult && school && rate && (
             <div className="card p-4">
               <QuoteResultCard school={school} calc={calcResult} startDate={startDate} />
+
+              {/* 챗봇과 동일한 견적 근거 표 */}
+              {(calcResult.localFees ?? []).length > 0 && (
+                <LocalFeePanel
+                  fees={(evidence.localFees ?? calcResult.localFees) as LocalFee[]}
+                  php={evidence.localFeePhp ?? calcResult.localFeePhp}
+                  krwEstimate={evidence.localFeeKrwEstimate ?? calcResult.localFeeKrwEstimate}
+                  weeks={calcResult.totalWeeks}
+                  phpToKrw={rate.phpToKrw}
+                />
+              )}
+              {evidence.evidenceMessage && <EvidenceCard text={evidence.evidenceMessage} school={school} />}
+              {calcResult.promotionLines && (
+                <PromotionPanel lines={calcResult.promotionLines} dateUnset={!startDate} />
+              )}
+
+              <button onClick={() => setShowQuoteModal(true)}
+                className="btn-primary w-full text-sm flex items-center justify-center gap-2 mt-3">
+                <FileText size={15} /> 견적서 뽑기
+              </button>
             </div>
           )}
         </div>
+      )}
+
+      {/* 견적서 모달 */}
+      {showQuoteModal && calcResult && school && rate && (
+        <QuoteFormModal
+          school={school}
+          calcResult={calcResult}
+          startDate={startDate}
+          localFees={calcResult.localFees ?? []}
+          phpToKrw={rate.phpToKrw}
+          onClose={() => setShowQuoteModal(false)}
+        />
       )}
     </div>
     </AdminLayout>
