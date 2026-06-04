@@ -3,7 +3,7 @@ import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 import { signOut } from 'firebase/auth'
 import { auth } from '@/lib/firebase'
-import { Building2, MessageSquare, Settings, LogOut, ChevronRight, Users, Menu, X, Tag, Pencil, FileJson, AlertTriangle, Languages } from 'lucide-react'
+import { Building2, MessageSquare, Settings, LogOut, ChevronRight, Users, Menu, X, Tag, Pencil, FileJson, AlertTriangle, Languages, ListChecks } from 'lucide-react'
 import type { AppUser } from '@/types'
 import { useState } from 'react'
 
@@ -18,6 +18,7 @@ export default function Sidebar({ appUser }: Props) {
 
   const navItems = [
     { href: '/quote',             icon: MessageSquare,   label: '견적 챗봇',       show: true },
+    { href: '/calculator',        icon: ListChecks,      label: '단계식 계산기',   show: true },
     { href: '/schools',           icon: Building2,       label: '학원 관리',       show: isAdmin },
     { href: '/admin/promotions',  icon: Tag,             label: '프로모션',        show: isAdmin },
     { href: '/admin/data-health', icon: AlertTriangle,   label: '데이터 확인 필요', show: isAdmin },
