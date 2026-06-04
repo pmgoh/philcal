@@ -3,7 +3,7 @@ import { toKrw } from './utils'
 import { normalizeSchool } from './normalizeSchool'
 
 export interface CourseItem   { courseId: string; weeks: number }
-export interface DormItem     { dormitoryId: string; weeks: number }
+export interface DormItem     { dormitoryId: string; weeks: number; persons?: number }
 export interface PackageInput {
   packageId: string
   weeks: number
@@ -18,6 +18,8 @@ export interface QuoteInput {
   courses: CourseItem[]
   dormitories: DormItem[]
   packages?: PackageInput[]    // 패키지 목록 (코스/기숙사와 독립)
+  isFamily?: boolean           // 가족연수 견적 — 프로모션 기본 제외(familyEligible만 예외)
+  familyPersons?: number       // 가족 인원수 — 인당 할인(엔칸토/조이풀 인당/주당 2.5만) 계산용
 }
 
 export interface PackageResultItem {
@@ -181,7 +183,13 @@ export function calculateQuote(input: QuoteInput, rate: ExchangeRate): CalcResul
       continue
     }
 
-    const baseAmount = toKrw(col.amount, pkg.currency, rate)
+    let baseAmount = toKrw(col.amount, pkg.currency, rate)
+    // [1인 단가 패키지] perPersonPrice=true면 가격이 1인 비용이므로 인원수만큼 곱한다(예: 조이풀).
+    // 엔칸토/딸락은 가족 전체 가격이라 곱하지 않음(perPersonPrice 없음).
+    const isPerPerson = (pkg as { perPersonPrice?: boolean }).perPersonPrice
+    if (isPerPerson && input.familyPersons && input.familyPersons > 1) {
+      baseAmount = baseAmount * input.familyPersons
+    }
 
     // 추가규정 적용
     let additionalAmount = 0
@@ -304,6 +312,7 @@ export function calculateQuote(input: QuoteInput, rate: ExchangeRate): CalcResul
     const addKrw = increaseActive ? toKrw(pi!.dormitories.find(d=>d.id===dorm.id)?.add??0, pi!.currency, rate) : 0
 
     let price: number, label: string
+    const persons = Math.max(1, Math.round(Number(di.persons) || 1))   // 가족연수: 인원수. 일반: 1
     if (isShortTerm) {
       // [단기] 코스와 동일: 주당단가 × 주수 × 목표% ÷ 정비례% (곱셈 먼저, 반올림 마지막).
       const weekly = p4w / 4
@@ -313,7 +322,12 @@ export function calculateQuote(input: QuoteInput, rate: ExchangeRate): CalcResul
       price = Math.round(p4w / 4 * w)
       label = `기숙사: ${dorm.name} × ${w}주`
     }
-    dormItems.push({ label, weeks: w, unitPrice: Math.round(price/w), currency: dorm.currency, krwAmount: toKrw(price, dorm.currency, rate) + addKrw * w })
+    // 일반 기숙사는 1인당 가격 → 인원수만큼 곱한다(가족연수). 패키지형은 이 경로를 타지 않음.
+    if (persons > 1) {
+      price = price * persons
+      label = `기숙사: ${dorm.name} × ${w}주 × ${persons}인`
+    }
+    dormItems.push({ label, weeks: w, unitPrice: Math.round(price/w), currency: dorm.currency, krwAmount: toKrw(price, dorm.currency, rate) + addKrw * w * persons })
   }
 
   // [캠퍼스 검증] 한 학원에 여러 캠퍼스(예: BECI = EOP/스파르타/시티)가 있을 때,
@@ -445,10 +459,17 @@ export function calculateQuote(input: QuoteInput, rate: ExchangeRate): CalcResul
   }
 
   for (const promo of sortedPromos) {
+    // [가족연수 프로모션 규정] 가족연수는 기본적으로 할인 없음(일반 학원과 다름).
+    // 예외: 데이터에 familyEligible=true로 표시된 프로모션만 적용(예: 엔칸토/조이풀 주당 2.5만원).
+    if (input.isFamily && !(promo as { familyEligible?: boolean }).familyEligible) {
+      notes.push(`ℹ️ ${promo.label}: 가족연수는 기본 할인 없음 — 미적용`)
+      continue
+    }
+
     // [target 필터] 일반 연수 견적(코스/기숙사로 들어온 경우)에는 캠프·주니어·가족 전용
     // 프로모션이 붙으면 안 된다(예: CPI "주니어캠프 형제자매"가 성인 코스에 오매칭).
     // 견적에 packages가 없고 courses가 있으면 일반 연수로 보고 캠프성 프로모션 제외.
-    const isGeneralCourse = (input.courses?.length ?? 0) > 0 && (input.packages?.length ?? 0) === 0
+    const isGeneralCourse = !input.isFamily && (input.courses?.length ?? 0) > 0 && (input.packages?.length ?? 0) === 0
     const promoTarget = (promo as { target?: string }).target
     if (isGeneralCourse && promoTarget && ['camp','junior','family'].includes(promoTarget)) {
       notes.push(`ℹ️ ${promo.label}: ${promoTarget} 전용 — 일반 연수 견적이라 미적용`)
@@ -702,11 +723,13 @@ export function calculateQuote(input: QuoteInput, rate: ExchangeRate): CalcResul
       if (pad.maxAmount) thisAgencyDiscount = Math.min(thisAgencyDiscount, pad.maxAmount)
     } else if (pad.type === 'amount_per_week') {
       thisAgencyDiscount = pad.value * totalWeeks
+      if ((pad as { perPerson?: boolean }).perPerson && input.familyPersons) thisAgencyDiscount *= input.familyPersons
       if (pad.maxAmount) thisAgencyDiscount = Math.min(thisAgencyDiscount, pad.maxAmount)
     } else if (pad.type === 'amount_per_4weeks') {
       const method = (pad as { blockMethod?: 'floor'|'proportional' }).blockMethod ?? 'floor'
       const blocks = method === 'proportional' ? (totalWeeks / 4) : Math.floor(totalWeeks / 4)
       thisAgencyDiscount = Math.round(pad.value * blocks)
+      if ((pad as { perPerson?: boolean }).perPerson && input.familyPersons) thisAgencyDiscount *= input.familyPersons
       if (pad.maxAmount) thisAgencyDiscount = Math.min(thisAgencyDiscount, pad.maxAmount)
       if ((pad as { methodConfirmed?: boolean }).methodConfirmed === false) {
         warnings.push(`⚠️ ${label}(유학원할인): 계산방식 미확인 — 4주 단위 내림(적게 할인)으로 처리됨. 본사 확인 필요.`)
@@ -862,9 +885,16 @@ export function calculateQuote(input: QuoteInput, rate: ExchangeRate): CalcResul
     for (const lf of localFees) {
       if (visaIds.has(lf.id)) continue   // 비자연장은 위에서 처리함
       const raw = lf as unknown as Record<string, unknown>
-      const trigger = lf.trigger ?? (raw.condition === 'one_time' ? 'always'
-        : raw.condition === 'min_weeks' ? 'over_weeks'
-        : raw.condition as string ?? 'always')
+      // [trigger 정규화] 데이터의 다양한 trigger/condition 값을 4개 표준으로 매핑.
+      //  표준: always(등록 시 1회) | per_week(주당) | per_4weeks(4주당) | over_weeks(N주 초과 시) | optional(선택)
+      //  모르는 값은 always(부과)로 본다 — 현지비가 누락되지 않도록(안전).
+      const rawTrigger = String(lf.trigger ?? raw.condition ?? 'always').toLowerCase()
+      let trigger: string
+      if (/optional|선택|usage|사용량/.test(rawTrigger)) trigger = 'optional'
+      else if (/per_week|주당|weekly|odd_week/.test(rawTrigger)) trigger = 'per_week'
+      else if (/per_4week|4주|monthly|month|6months/.test(rawTrigger)) trigger = 'per_4weeks'
+      else if (/stay_over|over_week|min_week|초과|이상|days|일|주 이상|6months_plus|plus/.test(rawTrigger)) trigger = 'over_weeks'
+      else trigger = 'always'   // enrollment, one_time, always, none, 기타 → 등록 시 1회 부과
       if (trigger === 'optional') continue
 
       // [택일 그룹] 그룹에 속하면, 기본값(groupDefault 또는 그룹 첫 항목)만 합산
@@ -890,7 +920,15 @@ export function calculateQuote(input: QuoteInput, rate: ExchangeRate): CalcResul
         }
       }
       else if (trigger === 'over_weeks') {
-        const threshold = lf.triggerWeeks ?? (raw.minWeeks as number) ?? 4
+        // 임계 주수: triggerWeeks 우선, 없으면 "59일"=약8주 등 텍스트에서 추정, 기본 4주
+        let threshold = lf.triggerWeeks ?? (raw.minWeeks as number)
+        if (threshold == null) {
+          const daysM = rawTrigger.match(/(\d+)\s*일/)
+          const weeksM = rawTrigger.match(/(\d+)\s*주/)
+          if (daysM) threshold = Math.floor(Number(daysM[1]) / 7)
+          else if (weeksM) threshold = Number(weeksM[1]) - 1   // "5주 이상" → 4주 초과
+          else threshold = 4
+        }
         if (totalWeeks > threshold) { add(amt); chargedFees.push(lf) }
       }
     }
