@@ -23,8 +23,6 @@ export default function QuoteResultCard({
   const courseTotal = calc.courseItems.reduce((s, i) => s + i.krwAmount, 0)
   const dormTotal = calc.dormItems.reduce((s, i) => s + i.krwAmount, 0)
   const hasSurcharge = calc.surchargeKrw > 0 && calc.surchargeItems.length > 0
-  const multiCourse = calc.courseItems.length > 1
-  const multiDorm = calc.dormItems.length > 1
 
   return (
     <div className="space-y-3">
@@ -40,28 +38,32 @@ export default function QuoteResultCard({
       {/* 비용 표 */}
       <table className="w-full text-sm border-collapse">
         <tbody>
-          {/* 1. 학비 (항목 나열 + 총합) */}
+          {/* 1. 학비 (항목 + 단가 상세) */}
           {calc.courseItems.map((it, i) => (
             <tr key={`c${i}`} className="border-b border-gray-50">
-              <td className="py-1.5 text-gray-700">{i === 0 && <span className="text-gray-400 text-xs mr-1.5">학비</span>}{it.label.replace(/^코스:\s*/, '')}</td>
-              <td className="py-1.5 text-right tabular-nums text-gray-600">{krw(it.krwAmount)}</td>
+              <td className="py-1.5 text-gray-700">
+                {i === 0 && <span className="text-gray-400 text-xs mr-1.5">학비</span>}{it.label.replace(/^코스:\s*/, '')}
+                <span className="block text-[11px] text-gray-400 ml-7">{it.weeks}주 × {(it.unitPrice * 4).toLocaleString()}{it.currency === 'KRW' ? '원' : it.currency}/4주</span>
+              </td>
+              <td className="py-1.5 text-right tabular-nums text-gray-600 align-top">{krw(it.krwAmount)}</td>
             </tr>
           ))}
-          {multiCourse && (
-            <tr className="border-b border-gray-100 bg-gray-50/60">
-              <td className="py-1.5 pl-7 text-gray-700 font-medium">학비 합계</td>
-              <td className="py-1.5 text-right tabular-nums font-semibold text-gray-900">{krw(courseTotal)}</td>
-            </tr>
-          )}
+          <tr className="border-b border-gray-100 bg-gray-50/60">
+            <td className="py-1.5 pl-7 text-gray-700 font-medium">학비 합계</td>
+            <td className="py-1.5 text-right tabular-nums font-semibold text-gray-900">{krw(courseTotal)}</td>
+          </tr>
 
-          {/* 2. 기숙사 (항목 나열 + 총합) */}
+          {/* 2. 기숙사 (항목 + 단가 상세) */}
           {calc.dormItems.map((it, i) => (
             <tr key={`d${i}`} className="border-b border-gray-50">
-              <td className="py-1.5 text-gray-700">{i === 0 && <span className="text-gray-400 text-xs mr-1.5">기숙사</span>}{it.label.replace(/^기숙사:\s*/, '')}</td>
-              <td className="py-1.5 text-right tabular-nums text-gray-600">{krw(it.krwAmount)}</td>
+              <td className="py-1.5 text-gray-700">
+                {i === 0 && <span className="text-gray-400 text-xs mr-1.5">기숙사</span>}{it.label.replace(/^기숙사:\s*/, '')}
+                <span className="block text-[11px] text-gray-400 ml-7">{it.weeks}주 × {(it.unitPrice * 4).toLocaleString()}{it.currency === 'KRW' ? '원' : it.currency}/4주</span>
+              </td>
+              <td className="py-1.5 text-right tabular-nums text-gray-600 align-top">{krw(it.krwAmount)}</td>
             </tr>
           ))}
-          {multiDorm && (
+          {calc.dormItems.length > 0 && (
             <tr className="border-b border-gray-100 bg-gray-50/60">
               <td className="py-1.5 pl-7 text-gray-700 font-medium">기숙사 합계</td>
               <td className="py-1.5 text-right tabular-nums font-semibold text-gray-900">{krw(dormTotal)}</td>

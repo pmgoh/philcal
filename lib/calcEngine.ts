@@ -812,6 +812,8 @@ export function calculateQuote(input: QuoteInput, rate: ExchangeRate): CalcResul
     packageItems.every(p => p.pkg.includesLocalFees === true)
 
   const localFees = school.localFees ?? []
+  // 실제 부과된 현지비 항목만 모아 결과에 담는다(견적서 표시용). 원본 전체가 아니라 해당 주수에 맞는 것만.
+  const chargedFees: LocalFee[] = []
   let localFeePhp = 0
   let localFeeKrw = 0
   let localFeeEstimateNote = false   // 4주 미만 per_4weeks 추정 부과 시 경고용
@@ -834,6 +836,7 @@ export function calculateQuote(input: QuoteInput, rate: ExchangeRate): CalcResul
     //   - 5주차부터 1차, 이후 4주마다 +1차 (triggerWeeks 5/9/13/17/21…)
     //   - cumulative(누적형): 해당하는 최대 차수 1개만 (그 금액이 누적 총액이므로)
     //   - incremental(개별형): 해당하는 차수들 모두 합산 (각 금액이 1회분이므로)
+    // 실제 부과된 현지비 항목만 모아 결과에 담는다(견적서 표시용).
     const visaItems = localFees.filter(lf => (lf as { visaMode?: string }).visaMode)
     const visaIds = new Set(visaItems.map(v => v.id))
     if (visaItems.length > 0) {
@@ -845,10 +848,12 @@ export function calculateQuote(input: QuoteInput, rate: ExchangeRate): CalcResul
           const top = reached[reached.length - 1]
           const amt = top.amount ?? 0
           if (top.currency === 'KRW') localFeeKrw += amt; else localFeePhp += amt
+          chargedFees.push(top)   // 누적: 해당 차수 1개만 표시
         } else {
           for (const v of reached) {
             const amt = v.amount ?? 0
             if (v.currency === 'KRW') localFeeKrw += amt; else localFeePhp += amt
+            chargedFees.push(v)   // 개별: 도달한 차수들 표시
           }
         }
       }
@@ -874,19 +879,19 @@ export function calculateQuote(input: QuoteInput, rate: ExchangeRate): CalcResul
       const amt = lf.amount ?? 0
       const add = (v: number) => isKrw ? (localFeeKrw += v) : (localFeePhp += v)
 
-      if (trigger === 'always')          { add(amt) }
-      else if (trigger === 'per_week')   { add(amt * totalWeeks) }
+      if (trigger === 'always')          { add(amt); chargedFees.push(lf) }
+      else if (trigger === 'per_week')   { add(amt * totalWeeks); chargedFees.push(lf) }
       else if (trigger === 'per_4weeks') {
         // 4주 미만이면 4주치(올림)로 부과 — 자료 미명시, 추정치. 현지 관리비 특성상 보통 1주라도 한 달치.
         const blocks = Math.ceil(totalWeeks / 4)
-        add(amt * blocks)
+        add(amt * blocks); chargedFees.push(lf)
         if (totalWeeks < 4 && amt > 0) {
           localFeeEstimateNote = true   // 아래에서 경고 한 번만
         }
       }
       else if (trigger === 'over_weeks') {
         const threshold = lf.triggerWeeks ?? (raw.minWeeks as number) ?? 4
-        if (totalWeeks > threshold) add(amt)
+        if (totalWeeks > threshold) { add(amt); chargedFees.push(lf) }
       }
     }
   }
@@ -904,7 +909,7 @@ export function calculateQuote(input: QuoteInput, rate: ExchangeRate): CalcResul
     agencyDiscountKrw, agencyDiscountNote,
     totalKrw,
     totalWeeks, courseTotalWeeks, dormTotalWeeks,
-    localFees, localFeePhp,
+    localFees: pkgIncludesLocal ? localFees : chargedFees, localFeePhp,
     localFeeKrwEstimate,
     promotionLines,
     warnings, notes,

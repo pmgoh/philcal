@@ -464,3 +464,55 @@ export function checkSchoolDuplicate(
 
   return { ok: true }
 }
+
+// ── [캠퍼스별 프로모션] schoolCode 접미사 → 코스 campus 값 매핑 ─────────────────
+// 한 학원에 여러 캠퍼스가 코스로 섞여 있고(예: BECI = 스파르타/시티/EOP),
+// 프로모션이 캠퍼스별 schoolCode(BECI_SPARTA 등)로 분리돼 있을 때,
+// 그 프로모션이 어느 campus용인지 정한다. 선택한 코스의 campus와 일치하는 프로모션만 적용하기 위함.
+//  매칭 규칙: schoolCode의 접미사(_뒤)를 학원의 실제 campus 값들과 정규화 비교.
+//  비자명 별칭(THE_CAFE=EOP 등)은 CAMPUS_CODE_ALIASES로 보정.
+const CAMPUS_CODE_ALIASES: Record<string, string[]> = {
+  // schoolCode 접미사(영문) → 가능한 campus 표기들(한글/영문 혼용 대비)
+  THE_CAFE: ['EOP', 'THE CAFE', 'CAFE'],
+  CAFE: ['EOP', 'THE CAFE', 'CAFE'],
+  SPARTA: ['스파르타', 'SPARTA'],
+  CITY: ['시티', 'CITY'],
+  EOP: ['EOP', '이오피'],
+  MAIN: ['메인', 'MAIN', '본원', '본관'],
+  PREMIUM: ['프리미엄', 'PREMIUM'],
+  CLASSIC: ['클래식', 'CLASSIC'],
+  MACTAN: ['막탄', 'MACTAN'],
+}
+
+function normCampusKey(s: string): string {
+  return s.toUpperCase().replace(/[\s_\-./]+/g, '').replace(/캠퍼스|CAMPUS/g, '')
+}
+
+/**
+ * 프로모션 schoolCode와 학원의 campus 목록을 받아, 그 프로모션이 적용될 campus 값을 찾는다.
+ * 반환: 매칭되는 campus 문자열 (학원 데이터의 실제 값) | null(캠퍼스 특정 안 됨 = 전체 적용).
+ */
+export function resolvePromoCampus(schoolCode: string | undefined, campusList: string[]): string | null {
+  if (!schoolCode || campusList.length === 0) return null
+  const parts = schoolCode.split('_')
+  if (parts.length < 2) return null   // 접미사 없음 → 캠퍼스 특정 안 함
+  const suffix = parts.slice(1).join('_')        // 예: BECI_THE_CAFE → "THE_CAFE"
+  const suffixKey = normCampusKey(suffix)
+  // 1) 별칭 우선
+  const aliases = CAMPUS_CODE_ALIASES[suffix.toUpperCase()] ?? CAMPUS_CODE_ALIASES[suffixKey]
+  if (aliases) {
+    for (const a of aliases) {
+      const hit = campusList.find(c => normCampusKey(c) === normCampusKey(a))
+      if (hit) return hit
+    }
+  }
+  // 2) 직접 정규화 비교 (스파르타/SPARTA, 시티/CITY 등)
+  const hit = campusList.find(c => normCampusKey(c) === suffixKey)
+  if (hit) return hit
+  // 3) 부분 포함 (한영 혼용 대비)
+  const partial = campusList.find(c => {
+    const ck = normCampusKey(c)
+    return ck.includes(suffixKey) || suffixKey.includes(ck)
+  })
+  return partial ?? null
+}

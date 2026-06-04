@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { calculateQuote, CalcResult, CourseItem, DormItem, PackageInput } from '@/lib/calcEngine'
 import { formatKrw, formatCurrency } from '@/lib/utils'
-import { buildAliasIndex, findSchoolForPromo, type AliasMap } from '@/lib/schoolMatching'
+import { buildAliasIndex, findSchoolForPromo, resolvePromoCampus, type AliasMap } from '@/lib/schoolMatching'
 import schoolAliases from '@/data/school-aliases.json'
 import type { School, ExchangeRate, Promotion } from '@/types'
 import { parseQuoteIntent, logUnresolved } from '@/lib/parseQuoteIntent'
@@ -285,14 +285,9 @@ function runCalc(school: School, item: CalcInputItem, rate: ExchangeRate): CalcR
 // 계산 결과 → result 응답 빌드 (LLM 경로의 calculate 분기와 LLM-우회 directCalc가 공유).
 // 순수 계산/포맷만 수행하며 LLM을 전혀 호출하지 않는다.
 function buildCalcResponse(school: School, calcResult: CalcResult, rate: ExchangeRate, startDate: string, enrollmentDate: string, specialNote = '') {
-  const filteredLocalFees = (calcResult.localFees ?? []).filter(lf => {
-    const t = lf.trigger ?? 'always'
-    if (t === 'optional') return false
-    if (t === 'always') return true
-    if (t === 'per_week' || t === 'per_4weeks') return true
-    if (t === 'over_weeks') return calcResult.totalWeeks > (lf.triggerWeeks ?? 4)
-    return true
-  })
+  // calcResult.localFees는 calcEngine이 이미 "실제 부과된 항목"만 담는다
+  // (비자연장은 해당 차수만, over_weeks는 충족분만, optional 제외). 추가 필터 불필요.
+  const filteredLocalFees = calcResult.localFees ?? []
   return {
     action: 'result' as const,
     message: buildQuoteMessage(school, calcResult, calcResult.totalWeeks, specialNote) + `\n\n_ver: ${CODE_VERSION}_`,
@@ -410,7 +405,17 @@ export async function POST(req: NextRequest) {
         continue
       }
       if (!promosBySchoolId[matched.id]) promosBySchoolId[matched.id] = []
-      promosBySchoolId[matched.id].push(entryToPromotion(p) as unknown as Promotion)
+      // [캠퍼스별 프로모션] 매칭된 학원에 여러 campus가 있으면, 이 프로모션이 어느 campus용인지 해석.
+      // 선택한 코스의 campus와 일치할 때만 적용되도록 calcEngine에서 필터링한다.
+      const campusList = Array.from(new Set(
+        (matched.courses ?? []).map(c => (c as { campus?: string }).campus).filter(Boolean) as string[]
+      ))
+      const promoCampus = campusList.length >= 2
+        ? resolvePromoCampus(p.schoolCode as string | undefined, campusList)
+        : null
+      const promoObj = entryToPromotion(p) as unknown as Promotion & { campus?: string }
+      if (promoCampus) promoObj.campus = promoCampus
+      promosBySchoolId[matched.id].push(promoObj as unknown as Promotion)
     }
     if (orphanPromos.length > 0) {
       console.log(`[quote] orphan promos: ${orphanPromos.length}`)
