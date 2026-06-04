@@ -17,8 +17,8 @@ export default function Sidebar({ appUser }: Props) {
   const isAdmin   = appUser?.role === 'master' || appUser?.role === 'admin'
 
   const navItems = [
-    { href: '/quote',             icon: MessageSquare,   label: '견적 챗봇',       show: true },
     { href: '/calculator',        icon: ListChecks,      label: '단계식 계산기',   show: true },
+    { href: '/quote',             icon: MessageSquare,   label: '견적 챗봇',       show: true },
     { href: '/schools',           icon: Building2,       label: '학원 관리',       show: isAdmin },
     { href: '/admin/promotions',  icon: Tag,             label: '프로모션',        show: isAdmin },
     { href: '/admin/data-health', icon: AlertTriangle,   label: '데이터 확인 필요', show: isAdmin },
