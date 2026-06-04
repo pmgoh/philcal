@@ -326,7 +326,7 @@ export default function PromotionsPage() {
 
   return (
     <AdminLayout>
-      <div className="p-4 md:p-6 max-w-5xl mx-auto">
+      <div className={`p-4 md:p-6 mx-auto ${viewMode === 'table' ? 'max-w-[1600px]' : 'max-w-5xl'}`}>
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-5">
           <div>
             <h1 className="text-xl font-bold text-gray-900">프로모션 관리</h1>
@@ -914,7 +914,8 @@ function PromoTableView({ promos, schools, onEdit, onDelete }: {
               </button>
             </div>
 
-            <div id={`promo-card-${groupKey}`} className="bg-white">
+            <div className="overflow-x-auto">
+            <div id={`promo-card-${groupKey}`} className="bg-white" style={{ minWidth: '1100px' }}>
               <table className="w-full text-xs border border-gray-200 rounded-lg overflow-hidden" style={{ borderCollapse: 'separate', borderSpacing: 0 }}>
                 <thead>
                   <tr className="bg-blue-50 text-blue-900">
@@ -1013,6 +1014,7 @@ function PromoTableView({ promos, schools, onEdit, onDelete }: {
                   })}
                 </tbody>
               </table>
+            </div>
             </div>
             <p className="text-[11px] text-gray-400 mt-2">· 이 표를 학원에 전달해 확인받습니다 · 만료 프로모션은 흐리게 표시(보관) · 수정은 '수정' 버튼(편집 리스트로 이동)</p>
           </div>
