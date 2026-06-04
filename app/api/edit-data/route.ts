@@ -31,9 +31,11 @@ op:"delete" → 항목 삭제. path+index 필요
 
 [타입 정의 — 새 항목 추가 시 필수 필드]
 
-Course: {id:"__new__",name:"코스명",target:"성인|주니어|보호자",price4Weeks:숫자,currency:"KRW"|"PHP"|"USD",note:""}
+Course: {id:"__new__",name:"코스명",target:"성인일반|가족연수|주니어|시니어",price4Weeks:숫자,currency:"KRW"|"PHP"|"USD",note:""}
 
-Dormitory: {id:"__new__",name:"기숙사명",target:"전체|성인|주니어",price4Weeks:숫자,currency:"KRW",note:""}
+Dormitory: {id:"__new__",name:"기숙사명",target:"전체|성인|주니어|가족",price4Weeks:숫자,currency:"KRW",note:""}
+비자연장(localFees): 차수별 항목. field로 visaMode("cumulative"=누적총액 / "incremental"=1회분), triggerWeeks(차수 시작 주차 5/9/13/17/21) 수정 가능.
+  예: {"op":"set","path":"localFees","index":9,"field":"visaMode","value":"cumulative"}
 
 Surcharge: {id:"__new__",label:"서차지명",startDate:"YYYY-MM-DD",endDate:"YYYY-MM-DD",pricePerWeek:숫자,currency:"KRW"|"PHP",discountAllowed:false,note:""}
 
@@ -123,17 +125,28 @@ export async function POST(req: NextRequest) {
 코스 (index: 0부터):
 ${(school.courses ?? []).map((c, i) => {
   const p = (c as unknown as Record<string,number>).price4Weeks ?? 0
-  return `  [${i}] ${c.name} / price4Weeks:${p.toLocaleString()}원 / currency:${c.currency}`
+  const t = (c as unknown as Record<string,string>).target ?? '미지정'
+  return `  [${i}] ${c.name} / price4Weeks:${p.toLocaleString()}원 / currency:${c.currency} / target:${t}`
 }).join('\n')}
 
 기숙사 (index: 0부터):
 ${(school.dormitories ?? []).map((d, i) => {
   const p = (d as unknown as Record<string,number>).price4Weeks ?? 0
-  return `  [${i}] ${d.name} / price4Weeks:${p.toLocaleString()}원`
+  const t = (d as unknown as Record<string,string>).target ?? '미지정'
+  return `  [${i}] ${d.name} / price4Weeks:${p.toLocaleString()}원 / target:${t}`
 }).join('\n')}
 
 서차지 (index: 0부터):
 ${(school.surcharges ?? []).map((s, i) => `  [${i}] ${s.label} / pricePerWeek:${s.pricePerWeek?.toLocaleString()} / ${s.startDate}~${s.endDate}`).join('\n') || '  없음'}
+
+
+현지납부비 localFees (index: 0부터):
+${(school.localFees ?? []).map((f, i) => {
+  const fa = f as unknown as Record<string, unknown>
+  const vm = fa.visaMode ? ` / visaMode:${fa.visaMode}` : ''
+  const tw = fa.triggerWeeks != null ? ` / triggerWeeks:${fa.triggerWeeks}` : ''
+  return `  [${i}] ${fa.name} / ${fa.amount}${fa.currency} / trigger:${fa.trigger ?? '-'}${tw}${vm}`
+}).join('\n') || '  없음'}
 
 등록비: amount:${school.registrationFee?.amount ?? 0} / currency:${school.registrationFee?.currency ?? 'KRW'}
 

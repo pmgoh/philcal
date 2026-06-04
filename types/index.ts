@@ -208,6 +208,12 @@ export interface LocalFee {
   exclusiveGroup?: string
   // 그룹 내 기본 선택 항목 여부 (미지정 시 그룹의 첫 항목이 기본)
   groupDefault?: boolean
+  // [비자연장] 차수별 비자연장 항목 묶음 처리 방식.
+  //  'cumulative' = 누적형(각 금액이 그 차수까지의 누적 총액) → 총주수에 맞는 차수 1개만 부과
+  //  'incremental' = 개별형(각 금액이 그 차수 1회분) → 총주수에 해당하는 차수들 합산
+  //  triggerWeeks가 차수 경계(5/9/13/17/21 = 5주차부터 1차, 이후 4주마다)이며,
+  //  같은 visaMode를 가진 항목들을 한 묶음으로 본다.
+  visaMode?: 'cumulative' | 'incremental'
 }
 
 // ─── 패키지 ───────────────────────────────────────────────────────────────────

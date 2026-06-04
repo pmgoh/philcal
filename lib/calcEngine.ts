@@ -829,7 +829,33 @@ export function calculateQuote(input: QuoteInput, rate: ExchangeRate): CalcResul
   if (pkgIncludesLocal) {
     notes.push('ℹ️ 패키지 가격에 현지납부비 포함')
   } else {
+    // ── [비자연장] 차수별 항목을 먼저 처리한다 ──────────────────────────────
+    //  visaMode가 있는 항목들을 묶어, 총주수(체류기간)에 맞는 차수만 부과.
+    //   - 5주차부터 1차, 이후 4주마다 +1차 (triggerWeeks 5/9/13/17/21…)
+    //   - cumulative(누적형): 해당하는 최대 차수 1개만 (그 금액이 누적 총액이므로)
+    //   - incremental(개별형): 해당하는 차수들 모두 합산 (각 금액이 1회분이므로)
+    const visaItems = localFees.filter(lf => (lf as { visaMode?: string }).visaMode)
+    const visaIds = new Set(visaItems.map(v => v.id))
+    if (visaItems.length > 0) {
+      const mode = (visaItems[0] as { visaMode?: string }).visaMode
+      const sorted = [...visaItems].sort((a, b) => (a.triggerWeeks ?? 0) - (b.triggerWeeks ?? 0))
+      const reached = sorted.filter(v => (v.triggerWeeks ?? Infinity) <= totalWeeks)
+      if (reached.length > 0) {
+        if (mode === 'cumulative') {
+          const top = reached[reached.length - 1]
+          const amt = top.amount ?? 0
+          if (top.currency === 'KRW') localFeeKrw += amt; else localFeePhp += amt
+        } else {
+          for (const v of reached) {
+            const amt = v.amount ?? 0
+            if (v.currency === 'KRW') localFeeKrw += amt; else localFeePhp += amt
+          }
+        }
+      }
+    }
+    // ────────────────────────────────────────────────────────────────────────
     for (const lf of localFees) {
+      if (visaIds.has(lf.id)) continue   // 비자연장은 위에서 처리함
       const raw = lf as unknown as Record<string, unknown>
       const trigger = lf.trigger ?? (raw.condition === 'one_time' ? 'always'
         : raw.condition === 'min_weeks' ? 'over_weeks'

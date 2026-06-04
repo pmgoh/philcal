@@ -86,6 +86,43 @@ export default function DataHealthPage() {
     return allow && ncourse > 0 && !hasRates && status !== 'unconfirmed'
   })
 
+  // ── 코스 target(모드 분류) 누락 점검 ──────────────────────────────────────
+  // target이 없으면 모드(일반/가족/주니어) 필터가 작동 못 해 탭에서 학원이 잘못 노출됨.
+  const targetIssues = schools.filter(s =>
+    (s.courses ?? []).some(c => !(c as { target?: string }).target)
+  ).map(s => ({
+    school: s,
+    missing: (s.courses ?? []).filter(c => !(c as { target?: string }).target).length,
+    total: (s.courses ?? []).length,
+  }))
+
+  // ── 패키지 programType 누락 점검 ──────────────────────────────────────────
+  const programTypeIssues = schools.filter(s =>
+    (s.packages ?? []).some(p => !(p as { programType?: string }).programType)
+  ).map(s => ({
+    school: s,
+    missing: (s.packages ?? []).filter(p => !(p as { programType?: string }).programType).length,
+    total: (s.packages ?? []).length,
+  }))
+
+  // ── 비자연장 visaMode/triggerWeeks 점검 ───────────────────────────────────
+  // 비자연장 항목이 2개 이상인데 visaMode가 없거나 triggerWeeks가 누락·중복이면 계산 부정확.
+  const isVisaExt = (f: { name?: string }) => {
+    const nm = String(f.name ?? ''); const low = nm.toLowerCase()
+    if (!(nm.includes('비자') || low.includes('visa'))) return false
+    return !['card', 'acr', 'i-card', 'ssp', 'e-card'].some(k => low.includes(k))
+  }
+  const visaIssues = schools.map(s => {
+    const lf = (s.localFees ?? []) as unknown as Array<Record<string, unknown>>
+    const visa = lf.filter(f => isVisaExt(f as { name?: string }))
+    if (visa.length < 2) return null
+    const noMode = visa.some(v => !v.visaMode)
+    const tws = visa.map(v => v.triggerWeeks)
+    const badTw = tws.some(t => t == null) || new Set(tws).size !== tws.length
+    if (!noMode && !badTw) return null
+    return { school: s, noMode, badTw, count: visa.length }
+  }).filter(Boolean) as Array<{ school: typeof schools[0]; noMode: boolean; badTw: boolean; count: number }>
+
   if (loading) return (
     <AdminLayout>
       <div className="flex items-center justify-center h-64">
@@ -94,7 +131,7 @@ export default function DataHealthPage() {
     </AdminLayout>
   )
 
-  const totalIssues = orphanGroups.length + unknownPromoSchools.length
+  const totalIssues = orphanGroups.length + unknownPromoSchools.length + visaIssues.length
 
   return (
     <AdminLayout>
@@ -273,6 +310,75 @@ export default function DataHealthPage() {
             )}
           </div>
         )}
+
+        {/* ── 새 구조 점검: 비자연장 · 코스 target · 패키지 programType ── */}
+        <div className="mt-6 space-y-4">
+          <h2 className="text-sm font-bold text-gray-800 flex items-center gap-2">
+            <AlertTriangle size={16} className="text-amber-500" /> 계산 구조 점검
+          </h2>
+
+          {/* 비자연장 이상 (계산 부정확) */}
+          <div className="card p-4">
+            <div className="font-semibold text-gray-900 mb-1">비자연장 설정 {visaIssues.length > 0 ? `· ${visaIssues.length}개 학원 확인 필요` : '· 정상'}</div>
+            {visaIssues.length === 0 ? (
+              <p className="text-xs text-gray-400">비자연장 항목이 누적/개별(visaMode)과 차수(triggerWeeks) 모두 설정됨.</p>
+            ) : (
+              <>
+                <p className="text-xs text-gray-500 mb-2">
+                  비자연장이 2개 이상인데 누적/개별 구분(visaMode)이 없거나 차수 주차(triggerWeeks)가 누락·중복이면
+                  비자비가 부정확하게 계산됩니다(전부 합산 등).
+                </p>
+                {visaIssues.map(v => (
+                  <div key={v.school.id} className="flex items-center justify-between py-1.5 border-t border-gray-50 text-sm">
+                    <span className="text-gray-700">{v.school.name} <span className="text-xs text-gray-400">(비자 {v.count}개)</span></span>
+                    <span className="text-xs text-amber-600">
+                      {v.noMode && '누적/개별 미설정'}{v.noMode && v.badTw && ' · '}{v.badTw && '차수 누락/중복'}
+                    </span>
+                  </div>
+                ))}
+              </>
+            )}
+          </div>
+
+          {/* 코스 target 누락 (모드 분류) */}
+          <div className="card p-4">
+            <div className="font-semibold text-gray-900 mb-1">코스 모드 분류(target) {targetIssues.length > 0 ? `· ${targetIssues.length}개 학원` : '· 정상'}</div>
+            {targetIssues.length === 0 ? (
+              <p className="text-xs text-gray-400">모든 코스에 target(성인일반/가족연수/주니어/시니어)이 설정됨.</p>
+            ) : (
+              <>
+                <p className="text-xs text-gray-500 mb-2">
+                  코스 target이 없으면 일반/가족/주니어 탭 분류가 부정확합니다. 데이터 수정에서 각 코스의 target을 지정하세요.
+                </p>
+                <div className="flex flex-wrap gap-1.5">
+                  {targetIssues.slice(0, 30).map(t => (
+                    <span key={t.school.id} className="text-xs bg-gray-100 rounded px-2 py-0.5 text-gray-600">
+                      {t.school.name} ({t.missing}/{t.total})
+                    </span>
+                  ))}
+                  {targetIssues.length > 30 && <span className="text-xs text-gray-400">외 {targetIssues.length - 30}개</span>}
+                </div>
+              </>
+            )}
+          </div>
+
+          {/* 패키지 programType 누락 */}
+          {programTypeIssues.length > 0 && (
+            <div className="card p-4">
+              <div className="font-semibold text-gray-900 mb-1">패키지 programType · {programTypeIssues.length}개 학원</div>
+              <p className="text-xs text-gray-500 mb-2">
+                패키지 programType(family/junior/camp 등)이 없으면 모드 분류가 부정확합니다.
+              </p>
+              <div className="flex flex-wrap gap-1.5">
+                {programTypeIssues.slice(0, 30).map(t => (
+                  <span key={t.school.id} className="text-xs bg-gray-100 rounded px-2 py-0.5 text-gray-600">
+                    {t.school.name} ({t.missing}/{t.total})
+                  </span>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
       </div>
     </AdminLayout>
   )

@@ -36,8 +36,8 @@ const SCHOOL_BASE_PROMPT = `당신은 필리핀 어학연수 학원 데이터 �
   "programTags": ["성인일반","IELTS","TOEIC","가족연수","주니어","워킹홀리데이","비즈니스"],
   "minWeeks": 4, "allowShortTerm": false,
   "registrationFee": {"amount": 100000, "currency": "KRW", "note": "코스별 상이하면 note에 기재"},
-  "courses": [{"id":"__new__","name":"코스명","target":"성인|주니어|보호자","price4Weeks":1100000,"currency":"KRW","note":""}],
-  "dormitories": [{"id":"__new__","name":"기숙사명(인실 포함)","target":"전체|성인|주니어","price4Weeks":1200000,"currency":"KRW","note":""}],
+  "courses": [{"id":"__new__","name":"코스명","target":"성인일반|가족연수|주니어|시니어","price4Weeks":1100000,"currency":"KRW","note":""}],
+  "dormitories": [{"id":"__new__","name":"기숙사명(인실 포함)","target":"전체|성인|주니어|가족","price4Weeks":1200000,"currency":"KRW","note":""}],
   "packages": [],
   "surcharges": [{"id":"__new__","label":"서차지명","startDate":"YYYY-MM-DD","endDate":"YYYY-MM-DD","pricePerWeek":50000,"currency":"KRW","discountAllowed":false,"note":""}],
   "localFees": [{"id":"__new__","name":"항목명","amount":7800,"currency":"PHP","trigger":"always|per_week|per_4weeks|over_weeks|optional","triggerWeeks":null,"chargeUnit":"per_person|per_trip|flat","note":""}],
@@ -49,7 +49,11 @@ const SCHOOL_BASE_PROMPT = `당신은 필리핀 어학연수 학원 데이터 �
 - always: SSP, 보증금
 - per_week: 전기세, 수도세, 관리비 (주당 청구)
 - per_4weeks: 관리비, 전기세 (4주당 청구)
-- over_weeks: 비자연장(1차:triggerWeeks=4, 2차:8, 3차:12, 4차:16, 5차:20), I-Card:8
+- over_weeks: 비자연장. triggerWeeks는 차수 시작 주차(1차:5, 2차:9, 3차:13, 4차:17, 5차:21 = 5주차부터 4주 간격). I-Card:8
+  · 비자연장 항목에는 visaMode를 반드시 넣는다:
+    - 자료의 각 차수 금액이 "그 차수까지의 누적 총액"이면 visaMode:"cumulative" (예: 1차5130, 2차11530…처럼 급증)
+    - 각 차수 금액이 "그 차수 1회분"이면 visaMode:"incremental" (예: 1차5140, 2차6400…처럼 비슷)
+  · 예: {"id":"__new__","name":"1차 비자연장","amount":5130,"currency":"PHP","trigger":"over_weeks","triggerWeeks":5,"visaMode":"cumulative","chargeUnit":"per_person","note":""}
 - optional: 픽업, 교재비, 사진비`
 
 const SCHOOL_PKG_PROMPT = `당신은 필리핀 어학연수 학원 패키지 데이터 파서입니다.
