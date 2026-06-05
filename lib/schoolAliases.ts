@@ -58,6 +58,8 @@ export const SCHOOL_ALIASES: Record<string, string[]> = {
   PHILINTER:    ["필인터", "필린터", "philinter", "휠인터"],
   PILAEDU:      ["필라에듀", "필라", "pilaedu", "필라edu"],
   PINES:        ["파인스", "파인즈", "pines", "파인스어학원"],
+  PINES_MAIN:   ["파인스메인", "파인스메인캠퍼스", "pines메인", "pinesmain", "파인스스피킹", "파인스", "파인즈", "pines"],
+  PINES_CHAPIS: ["파인스차피스", "파인스아이엘츠", "파인스ielts", "pineschapis", "pines아이엘츠", "차피스", "파인스", "파인즈", "pines"],
   PJ_ACADEMY:   ["피제이", "피자어학원", "pj", "pj피자", "피제이피자"],
   QQENGLISH_ITP:["큐큐itp", "큐큐아이티파크", "qqitp", "qq아이티파크"],
   QQENGLISH_BFC:["큐큐bfc", "큐큐비치", "qqbfc", "큐큐비프"],
