@@ -5,6 +5,7 @@ import { v4 as uuid } from 'uuid'
 import AdminLayout from '@/components/AdminLayout'
 import { getSchool, saveSchool, deleteSchool, getPromotions, type PromoEntry } from '@/lib/db'
 import SchoolDatasheet from '@/components/SchoolDatasheet'
+import { normPackages } from '@/lib/normalizeSchool'
 import type {
   School, Course, Dormitory, ShortTermRates,
   Surcharge, Promotion, PromotionBasis, LocalFee,
@@ -86,7 +87,7 @@ export default function SchoolForm({ schoolId }: Props) {
           surcharges:     s.surcharges     ?? [],
           promotions:     s.promotions     ?? [],
           localFees:      s.localFees      ?? [],
-          packages:       s.packages       ?? [],
+          packages:       normPackages(s.packages ?? []) as typeof s.packages,
         })
         setLoading(false)
       })
@@ -127,10 +128,7 @@ export default function SchoolForm({ schoolId }: Props) {
   )
 
   const section = (id: string, title: string, badge?: number) => (
-    <button
-      onClick={() => setOpenSection(openSection === id ? '' : id)}
-      className="w-full flex items-center justify-between px-5 py-4 text-left hover:bg-gray-50 transition-colors"
-    >
+    <div id={`sec-${id}`} className="scroll-mt-24 flex items-center justify-between px-5 py-4 border-b border-gray-100">
       <div className="flex items-center gap-3">
         <span className="font-semibold text-gray-800">{title}</span>
         {badge !== undefined && (
@@ -139,9 +137,24 @@ export default function SchoolForm({ schoolId }: Props) {
           </span>
         )}
       </div>
-      {openSection === id ? <ChevronUp size={16} className="text-gray-400" /> : <ChevronDown size={16} className="text-gray-400" />}
-    </button>
+    </div>
   )
+
+  // 앵커 탭 목록 (왼쪽 네비)
+  const SECTION_NAV: Array<{ id: string; label: string }> = [
+    { id: 'basic', label: '기본 정보' },
+    { id: 'regFee', label: '등록비' },
+    { id: 'priceIncrease', label: '비용 인상' },
+    { id: 'courses', label: '코스' },
+    { id: 'dormitories', label: '기숙사' },
+    { id: 'surcharges', label: '성수기 서차지' },
+    { id: 'localFees', label: '현지납부비' },
+    { id: 'packages', label: '패키지' },
+    { id: 'rules', label: '규정 안내' },
+  ]
+  const scrollToSec = (id: string) => {
+    document.getElementById(`sec-${id}`)?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+  }
 
   return (
     <AdminLayout>
@@ -191,11 +204,23 @@ export default function SchoolForm({ schoolId }: Props) {
           </div>
         </div>
 
-        <div className="space-y-4">
+        <div className="flex gap-6 items-start">
+          {/* 왼쪽 앵커 네비 (sticky) */}
+          <nav className="hidden lg:block w-40 shrink-0 sticky top-24 space-y-1">
+            {SECTION_NAV.map(n => (
+              <button key={n.id} onClick={() => scrollToSec(n.id)}
+                className="w-full text-left px-3 py-2 rounded-lg text-sm text-gray-600 hover:bg-blue-50 hover:text-blue-700 transition-colors">
+                {n.label}
+              </button>
+            ))}
+          </nav>
+
+          {/* 오른쪽 섹션 내용 */}
+          <div className="flex-1 min-w-0 space-y-4">
           {/* ── 기본 정보 ── */}
           <div className="card overflow-hidden">
             {section('basic', '기본 정보')}
-            {openSection === 'basic' && (
+            {(
               <div className="px-5 pb-5 border-t border-gray-100 space-y-4 pt-4">
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
@@ -306,7 +331,7 @@ export default function SchoolForm({ schoolId }: Props) {
           {/* ── 등록비 ── */}
           <div className="card overflow-hidden">
             {section('regFee', '등록비')}
-            {openSection === 'regFee' && (
+            {(
               <div className="px-5 pb-5 border-t border-gray-100 pt-4 space-y-3">
                 <p className="text-xs text-gray-500">1회성 등록비. 현지납부비(PHP)와 별도로 견적 총액에 포함됩니다.</p>
                 <RegistrationFeeEditor
@@ -320,7 +345,7 @@ export default function SchoolForm({ schoolId }: Props) {
           {/* ── 비용 인상 ── */}
           <div className="card overflow-hidden">
             {section('priceIncrease', '비용 인상 예정')}
-            {openSection === 'priceIncrease' && (
+            {(
               <div className="px-5 pb-5 border-t border-gray-100 pt-4">
                 <p className="text-xs text-gray-500 mb-3">
                   설정한 날짜가 되면 코스·기숙사 가격에 자동 반영됩니다. 반영 후 "기본가에 적용" 버튼으로 정리하세요.
@@ -358,7 +383,7 @@ export default function SchoolForm({ schoolId }: Props) {
           {/* ── 코스 ── */}
           <div className="card overflow-hidden">
             {section('courses', '코스', school.courses.length)}
-            {openSection === 'courses' && (
+            {(
               <div className="px-5 pb-5 border-t border-gray-100 pt-4 space-y-3">
                 <p className="text-xs text-gray-500">
                   주당 가격(4주 기준)을 입력하세요. 4주 미만 단기가는 각 코스 행의 <strong>단기가 설정</strong>에서 입력합니다.
@@ -382,7 +407,7 @@ export default function SchoolForm({ schoolId }: Props) {
           {/* ── 기숙사 ── */}
           <div className="card overflow-hidden">
             {section('dormitories', '기숙사', school.dormitories.length)}
-            {openSection === 'dormitories' && (
+            {(
               <div className="px-5 pb-5 border-t border-gray-100 pt-4 space-y-3">
                 <p className="text-xs text-gray-500">특정 기간만 운영하는 기숙사는 운영기간을 입력하세요.</p>
                 {school.dormitories.map((dorm, i) => (
@@ -404,7 +429,7 @@ export default function SchoolForm({ schoolId }: Props) {
           {/* ── 서차지 ── */}
           <div className="card overflow-hidden">
             {section('surcharges', '성수기 서차지', school.surcharges.length)}
-            {openSection === 'surcharges' && (
+            {(
               <div className="px-5 pb-5 border-t border-gray-100 pt-4 space-y-3">
                 {school.surcharges.map((s, i) => (
                   <SurchargeRow key={s.id} surcharge={s}
@@ -427,7 +452,7 @@ export default function SchoolForm({ schoolId }: Props) {
           {/* ── 현지납부비 ── */}
           <div className="card overflow-hidden">
             {section('localFees', '현지납부비 (PHP)', school.localFees.length)}
-            {openSection === 'localFees' && (
+            {(
               <div className="px-5 pb-5 border-t border-gray-100 pt-4 space-y-3">
                 <p className="text-xs text-gray-500">SSP, I-CARD, 비자연장비, 교재비 등</p>
                 {school.localFees.map((lf, i) => (
@@ -447,7 +472,7 @@ export default function SchoolForm({ schoolId }: Props) {
           {/* ── 패키지 ── */}
           <div className="card overflow-hidden">
             {section('packages', '패키지 (가족연수 등)', school.packages.length)}
-            {openSection === 'packages' && (
+            {(
               <div className="px-5 pb-5 border-t border-gray-100 pt-4 space-y-4">
                 <p className="text-xs text-gray-500">
                   가족연수, 올인클루시브 등 별도 패키지 상품. 주수×인원 행렬로 가격 입력 가능합니다.
@@ -478,7 +503,7 @@ export default function SchoolForm({ schoolId }: Props) {
           {/* ── 규정 ── */}
           <div className="card overflow-hidden">
             {section('rules', '규정 안내 텍스트')}
-            {openSection === 'rules' && (
+            {(
               <div className="px-5 pb-5 border-t border-gray-100 pt-4 space-y-4">
                 {[
                   { field: 'refundPolicy', label: '환불 규정' },
@@ -497,6 +522,7 @@ export default function SchoolForm({ schoolId }: Props) {
                 ))}
               </div>
             )}
+          </div>
           </div>
         </div>
 

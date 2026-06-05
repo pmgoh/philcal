@@ -80,7 +80,7 @@ function isWeekCol(c: string): number | null {
   const m = String(c).match(/(\d+)\s*(?:w|W|주)/)
   return m ? parseInt(m[1], 10) : null
 }
-function normPackages(list: unknown): unknown[] {
+export function normPackages(list: unknown): unknown[] {
   if (!Array.isArray(list)) return []
   return (list as Raw[]).map(p => {
     const label = (p.label ?? p.name ?? '패키지') as string

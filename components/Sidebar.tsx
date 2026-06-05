@@ -34,7 +34,7 @@ export default function Sidebar({ appUser }: Props) {
   return (
     <>
       {/* ── 데스크탑 사이드바 ── */}
-      <aside className="hidden md:flex w-56 min-h-screen bg-white border-r border-gray-200 flex-col flex-shrink-0">
+      <aside className="hidden md:flex w-56 h-screen sticky top-0 bg-white border-r border-gray-200 flex-col flex-shrink-0 overflow-y-auto">
         <div className="px-4 py-5 border-b border-gray-100">
           <div className="flex items-center gap-2.5">
             <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">

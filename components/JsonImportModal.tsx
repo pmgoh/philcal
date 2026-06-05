@@ -2,6 +2,7 @@
 import { useState, useRef, useEffect } from 'react'
 import { v4 as uuid } from 'uuid'
 import { saveSchool, getSchools, saveBatchSchools } from '@/lib/db'
+import { normPackages } from '@/lib/normalizeSchool'
 import type { School, Course, Dormitory } from '@/types'
 import { Upload, X, Check, AlertTriangle, ChevronDown, ChevronUp, FileJson, ArrowRight, Eye, EyeOff } from 'lucide-react'
 
@@ -62,13 +63,24 @@ function diffSchools(before: School, after: ReturnType<typeof normalizeSchool>):
   if (before.packages.length !== after.packages.length) {
     diffs.push({ field: 'packages', label: '패키지 수', before: `${before.packages.length}개`, after: `${after.packages.length}개`, severity: 'warn' })
   } else {
+    const normalize = (v: unknown): unknown => {
+      if (Array.isArray(v)) return v.map(normalize)
+      if (v && typeof v === 'object') {
+        return Object.keys(v as Record<string, unknown>).sort().reduce((o, k) => {
+          o[k] = normalize((v as Record<string, unknown>)[k]); return o
+        }, {} as Record<string, unknown>)
+      }
+      return v
+    }
     before.packages.forEach((p, i) => {
       const a = after.packages[i]
       if (!a) return
-      if (p.label !== a.label) diffs.push({ field: `packages[${i}]`, label: `패키지명 ${i+1}번`, before: p.label, after: a.label, severity: 'warn' })
-      const bMatrix = JSON.stringify(p.priceMatrix)
-      const aMatrix = JSON.stringify(a.priceMatrix)
-      if (bMatrix !== aMatrix) diffs.push({ field: `packages[${i}].price`, label: `패키지 "${p.label}" 가격표`, before: '(기존 가격표)', after: '(새 가격표)', severity: 'danger' })
+      const pName = (p as { label?: string; name?: string }).label ?? (p as { name?: string }).name ?? `${i + 1}번`
+      const aName = (a as { label?: string; name?: string }).label ?? (a as { name?: string }).name ?? `${i + 1}번`
+      if (pName !== aName) diffs.push({ field: `packages[${i}]`, label: `패키지명 ${i + 1}번`, before: pName, after: aName, severity: 'warn' })
+      const bMatrix = JSON.stringify(normalize(p.priceMatrix))
+      const aMatrix = JSON.stringify(normalize(a.priceMatrix))
+      if (bMatrix !== aMatrix) diffs.push({ field: `packages[${i}].price`, label: `패키지 "${pName}" 가격표`, before: '(기존 가격표)', after: '(새 가격표)', severity: 'danger' })
     })
   }
 
@@ -109,7 +121,7 @@ function normalizeSchool(raw: Record<string, unknown>): Omit<School, 'createdAt'
     surcharges: ((raw.surcharges as School['surcharges']) ?? []).map(s => ({ ...s, id: s.id || uuid() })),
     promotions: ((raw.promotions as School['promotions']) ?? []).map(p => ({ ...p, id: p.id || uuid() })),
     localFees: ((raw.localFees as School['localFees']) ?? []).map(f => ({ ...f, id: f.id || uuid() })),
-    packages: ((raw.packages as School['packages']) ?? []).map(p => ({ ...p, id: p.id || uuid() })),
+    packages: normPackages((raw.packages as School['packages']) ?? []).map(p => ({ ...(p as object), id: (p as { id?: string }).id || uuid() })) as School['packages'],
     refundPolicy: (raw.refundPolicy as string) ?? '',
     dormitoryRules: (raw.dormitoryRules as string) ?? '',
     generalNotes: (raw.generalNotes as string) ?? '',
