@@ -12,6 +12,9 @@
 export const SCHOOL_ALIASES: Record<string, string[]> = {
   BCEBU:        ["비세부", "비씨부", "비세뷰", "bcebu", "b세부"],
   BECI:         ["베시", "베씨", "비씨아이", "베씨아이", "beci"],
+  BECI_SPARTA:  ["베시스파르타", "베씨스파르타", "beci스파르타", "becisparta", "베씨스파", "베시", "베씨", "beci"],
+  BECI_CITY:    ["베시시티", "베씨시티", "beci시티", "becicity", "베씨씨티", "베시", "베씨", "beci"],
+  BECI_THE_CAFE:["베시eop", "베씨eop", "beci이오피", "becieop", "베씨카페", "베시카페", "thecafe", "베시", "베씨", "beci"],
   BLUE_OCEAN:   ["블루오션", "블루오숀", "blueocean", "blue ocean", "BO"],
   CELLA_PREMIUM:["셀라", "셀라프리미엄", "cella", "쎌라", "셀라프리"],
   CELLA_UNI:    ["셀라유니", "셀라스파르타", "cellauni"],

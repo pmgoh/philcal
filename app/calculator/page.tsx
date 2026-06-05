@@ -11,11 +11,13 @@ import { useState, useEffect, useMemo } from 'react'
 import { getSchools, getExchangeRate, getPromotions, getSchoolAliases } from '@/lib/db'
 import { schoolHasMode, MODE_LABELS, type SchoolMode } from '@/lib/schoolMode'
 import { extractSlots } from '@/lib/slotMachine'
+import { SCHOOL_ALIASES } from '@/lib/schoolAliases'
 import QuoteResultCard from '@/components/QuoteResultCard'
 import { PromotionPanel, EvidenceCard, LocalFeePanel, PeriodTimeline, MarkdownText, CalcEvidenceTable, DiscountEvidenceTable } from '@/components/QuoteEvidence'
 import AdminLayout from '@/components/AdminLayout'
 import MondayPicker from '@/components/MondayPicker'
 import FamilyCalculator from '@/components/FamilyCalculator'
+import FamilyPackageCalculator from '@/components/FamilyPackageCalculator'
 import QuoteFormModal from '@/components/QuoteFormModal'
 import type { School, ExchangeRate, LocalFee } from '@/types'
 import type { PromoEntry } from '@/lib/db'
@@ -30,6 +32,14 @@ function isFamilyCourseSchool(school: School): boolean {
     const t = (c as { target?: string }).target
     return t === '가족연수' || t === '주니어' || t === '시니어'
   })
+}
+
+// 패키지형 가족: 가족 패키지(programType=family 또는 row가 N인/가족)를 가진 학원
+function isFamilyPackageSchool(school: School): boolean {
+  return (school.packages ?? []).some(p =>
+    (p as { programType?: string }).programType === 'family' ||
+    (((p.priceMatrix as unknown as { rows?: Array<{ label?: string }> })?.rows) ?? []).some(r => /\d\s*인|가족/.test(r.label ?? ''))
+  )
 }
 
 export default function CalculatorPage() {
@@ -106,7 +116,7 @@ export default function CalculatorPage() {
     : 'ready'
 
   // 계산 실행 (챗봇과 동일 엔진)
-  const runCalcWith = async (dc: { courses: Array<{ courseId: string; weeks: number }>; dormitories: Array<{ dormitoryId: string; weeks: number }>; startDate: string }) => {
+  const runCalcWith = async (dc: { courses: Array<{ courseId: string; weeks: number }>; dormitories: Array<{ dormitoryId: string; weeks: number; persons?: number }>; packages?: Array<{ packageId: string; weeks: number; columnLabel: string }>; startDate: string; isFamily?: boolean; familyPersons?: number }) => {
     if (!school) return
     setCalcing(true); setCalcError('')
     try {
@@ -122,7 +132,9 @@ export default function CalculatorPage() {
             startDate: dc.startDate, enrollmentDate: dc.startDate,
             courses: dc.courses,
             dormitories: dc.dormitories,
-            packages: [],
+            packages: dc.packages ?? [],
+            isFamily: dc.isFamily,
+            familyPersons: dc.familyPersons,
           },
         }),
       })
@@ -208,7 +220,11 @@ export default function CalculatorPage() {
           {/* 단계별 카드 */}
           {!calcResult && step === 'school' && (
             <SearchSelect title="학원을 선택하세요"
-              items={modeSchools.map(s => ({ id: s.id, name: s.name, sub: `${s.region ?? ''} ${(s.programTags ?? []).slice(0, 2).join('·')}` }))}
+              items={modeSchools.map(s => ({
+                id: s.id, name: s.name,
+                sub: `${s.region ?? ''} ${(s.programTags ?? []).slice(0, 2).join('·')}`,
+                keywords: [s.schoolCode, ...(SCHOOL_ALIASES[s.schoolCode ?? ''] ?? []), ...(aliasData[s.schoolCode ?? ''] ?? [])].filter(Boolean).join(' '),
+              }))}
               onSelect={id => { const s = schools.find(x => x.id === id); if (s) setSchool(s) }} />
           )}
 
@@ -218,14 +234,30 @@ export default function CalculatorPage() {
               setStartDate(r.startDate)
               runCalcWith({
                 courses: r.courses,
-                dormitories: r.dormitoryId ? [{ dormitoryId: r.dormitoryId, weeks: r.totalWeeks }] : [],
+                dormitories: r.dormitoryId ? [{ dormitoryId: r.dormitoryId, weeks: r.totalWeeks, persons: r.members }] : [],
                 startDate: r.startDate,
+                isFamily: true,
               })
             }} />
           )}
 
-          {/* 일반연수(또는 가족 패키지형 미지원 안내) — 기존 흐름 */}
-          {!calcResult && school && !(mode === 'camp_family' && isFamilyCourseSchool(school)) && (
+          {/* 가족연수: 코스형 아니고 가족 패키지 보유 → 패키지형(인원=row, 주수=column) */}
+          {!calcResult && school && mode === 'camp_family' && !isFamilyCourseSchool(school) && isFamilyPackageSchool(school) && (
+            <FamilyPackageCalculator school={school} onCalculate={(r) => {
+              setStartDate(r.startDate)
+              runCalcWith({
+                courses: [],
+                dormitories: [],
+                packages: [{ packageId: r.packageId, weeks: r.weeks, columnLabel: r.columnLabel }],
+                startDate: r.startDate,
+                isFamily: true,
+                familyPersons: r.persons,
+              })
+            }} />
+          )}
+
+          {/* 일반연수 — 기존 흐름 (가족 코스형/패키지형 둘 다 아닐 때) */}
+          {!calcResult && school && !(mode === 'camp_family' && (isFamilyCourseSchool(school) || isFamilyPackageSchool(school))) && (
           <>
           {!calcResult && step === 'weeks' && (
             <StepCard title="총 몇 주 과정인가요?">
@@ -367,10 +399,10 @@ function StepCard({ title, subtitle, children }: { title: string; subtitle?: str
 
 // ── 검색-선택 (이미 로드된 목록을 키워드 필터) ──
 function SearchSelect({ title, items, onSelect }: {
-  title: string; items: Array<{ id: string; name: string; sub?: string }>; onSelect: (id: string) => void
+  title: string; items: Array<{ id: string; name: string; sub?: string; keywords?: string }>; onSelect: (id: string) => void
 }) {
   const [q, setQ] = useState('')
-  const filtered = q.trim() ? items.filter(it => (it.name + ' ' + (it.sub ?? '')).toLowerCase().includes(q.toLowerCase())) : items
+  const filtered = q.trim() ? items.filter(it => (it.name + ' ' + (it.sub ?? '') + ' ' + (it.keywords ?? '')).toLowerCase().includes(q.toLowerCase())) : items
   return (
     <div className="card p-4">
       <p className="text-sm font-medium text-gray-800 mb-2">{title}</p>
