@@ -62,7 +62,7 @@ export type PromotionBasis = 'enrollment_date' | 'start_date' | 'contract_date' 
 // - 'enabled': 정상 계산
 // - 'disabled': 자료에 "X"/"없음" 명시 → 0원 + "유학원 자체 할인 불가능 견적" 안내
 // - 'unconfirmed': 자료 빈 칸 → 0원 + "본사 확인 필요" 안내
-export type AgencyDiscountStatus = 'enabled' | 'disabled' | 'unconfirmed'
+export type AgencyDiscountStatus = 'enabled' | 'confirmed' | 'disabled' | 'unconfirmed'
 
 export type AgencyDiscountKind =
   | 'percent'

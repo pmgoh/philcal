@@ -123,6 +123,61 @@ export default function DataHealthPage() {
     return { school: s, noMode, badTw, count: visa.length }
   }).filter(Boolean) as Array<{ school: typeof schools[0]; noMode: boolean; badTw: boolean; count: number }>
 
+  // ── 유학원 할인 평시 구멍 점검 (1년 3구간 분해) ───────────────────────────
+  // 유학원 할인이 비수기 프로모션에만 묶여 있어, 평시 기간 시작 시 할인이 빠지는 학원을 찾는다.
+  // 성수기(서차지 기간) + 비수기(유학원할인 날짜 프로모션) + 상시(연중 프로모션)를 모아
+  // 1년을 하루씩 분류 → 평시(어디에도 안 속함)가 있는데 상시 유학원할인이 없으면 구멍.
+  type SeasonRun = { start: string; end: string; cls: string; days: number }
+  type GapSchool = { school: typeof schools[0]; runs: SeasonRun[]; gapDays: number; hasAlwaysAgency: boolean; agencyDesc: string }
+  const seasonGapSchools: GapSchool[] = (() => {
+    const D = (s: string) => { const [y, m, dd] = s.split('-').map(Number); return new Date(y, m - 1, dd) }
+    const fmt = (d: Date) => `${d.getMonth() + 1}월 ${d.getDate()}일`
+    const inR = (d: Date, rs: Array<[Date, Date]>) => rs.some(([s, e]) => d >= s && d <= e)
+    const out: GapSchool[] = []
+    for (const s of schools) {
+      // 이 학원의 프로모션
+      const myPromos = promos.filter(p => {
+        const m = findSchoolForPromo({ schoolId: p.schoolId, schoolCode: p.schoolCode, schoolName: p.schoolName, region: p.region }, schools, aliasIdx)
+        return m && m.id === s.id && p.active
+      })
+      // 유학원 할인 있는 날짜 프로모션 = 비수기
+      const agencyDated = myPromos.filter(p =>
+        ((p.agencyDiscountStatus as string) === 'confirmed' || (p.agencyDiscountStatus as string) === 'enabled') && (p.agencyDiscountValue ?? 0) > 0 && p.startDate && p.endDate
+        && !(p.season === 'all' || p.alwaysApply))
+      if (agencyDated.length === 0) continue   // 유학원 할인 자체가 날짜限定으로 없으면 대상 아님
+      // 상시 유학원 할인 (있으면 평시 커버됨)
+      const hasAlwaysAgency = myPromos.some(p =>
+        (p.season === 'all' || p.alwaysApply) && ((p.agencyDiscountStatus as string) === 'confirmed' || (p.agencyDiscountStatus as string) === 'enabled') && (p.agencyDiscountValue ?? 0) > 0)
+      const low: Array<[Date, Date]> = agencyDated.map(p => [D(p.startDate!), D(p.endDate!)])
+      const peak: Array<[Date, Date]> = ((s.surcharges ?? []) as Array<{ startDate?: string; endDate?: string }>)
+        .filter(su => su.startDate && su.endDate).map(su => [D(su.startDate!), D(su.endDate!)])
+      // 1년 분류
+      const runs: SeasonRun[] = []
+      let cur = new Date(2026, 0, 1); const end = new Date(2026, 11, 31)
+      let runStart = new Date(cur); let runCls = ''
+      const classify = (d: Date) => { const pk = inR(d, peak), lw = inR(d, low); return pk && lw ? '성수기이면서 비수기' : pk ? '성수기' : lw ? '비수기' : '평시' }
+      runCls = classify(cur)
+      while (cur <= end) {
+        const next = new Date(cur); next.setDate(next.getDate() + 1)
+        const nextCls = next <= end ? classify(next) : '__END__'
+        if (nextCls !== runCls) {
+          runs.push({ start: fmt(runStart), end: fmt(cur), cls: runCls, days: Math.round((cur.getTime() - runStart.getTime()) / 86400000) + 1 })
+          runStart = new Date(next); runCls = nextCls === '__END__' ? runCls : nextCls
+        }
+        cur = next
+      }
+      const gapDays = runs.filter(r => r.cls === '평시').reduce((a, r) => a + r.days, 0)
+      if (gapDays > 0 && !hasAlwaysAgency) {
+        const ad = agencyDated[0]
+        const t = ad.agencyDiscountType
+        const v = ad.agencyDiscountValue ?? 0
+        const desc = t === 'percent' ? `${v}% 할인` : t === 'amount_per_4weeks' ? `4주당 ${v.toLocaleString()}원` : t === 'amount_per_week' ? `1주당 ${v.toLocaleString()}원` : `${v.toLocaleString()}원`
+        out.push({ school: s, runs, gapDays, hasAlwaysAgency, agencyDesc: desc })
+      }
+    }
+    return out.sort((a, b) => b.gapDays - a.gapDays)
+  })()
+
   if (loading) return (
     <AdminLayout>
       <div className="flex items-center justify-center h-64">
@@ -131,7 +186,7 @@ export default function DataHealthPage() {
     </AdminLayout>
   )
 
-  const totalIssues = orphanGroups.length + unknownPromoSchools.length + visaIssues.length
+  const totalIssues = orphanGroups.length + unknownPromoSchools.length + visaIssues.length + seasonGapSchools.length
 
   return (
     <AdminLayout>
@@ -310,6 +365,50 @@ export default function DataHealthPage() {
             )}
           </div>
         )}
+
+        {/* ── 유학원 할인 평시 구멍 점검 (1년 3구간 분해) ── */}
+        <div className="mt-6 space-y-4">
+          <h2 className="text-sm font-bold text-gray-800 flex items-center gap-2">
+            <AlertTriangle size={16} className="text-amber-500" /> 유학원 할인 평시 구멍 점검
+          </h2>
+          <p className="text-xs text-gray-500">
+            유학원 할인이 비수기 프로모션에만 들어 있어, 비수기·성수기가 아닌 <b>평시 기간에 시작하면 유학원 할인이 빠지는</b> 학원입니다.
+            상시(연중) 프로모션에 유학원 할인을 켜면 평시·성수기까지 적용됩니다.
+          </p>
+          {seasonGapSchools.length === 0 ? (
+            <div className="card p-4 text-sm text-gray-400">평시 구멍이 있는 학원이 없습니다.</div>
+          ) : (
+            seasonGapSchools.map(g => (
+              <div key={g.school.id} className="card p-4">
+                <div className="flex items-center justify-between mb-2">
+                  <div className="font-medium text-gray-900">{g.school.name}</div>
+                  <div className="text-xs text-amber-600 font-medium">평시 구멍 {g.gapDays}일</div>
+                </div>
+                <div className="text-xs text-gray-500 mb-3">비수기 유학원 할인: {g.agencyDesc} · 상시 프로모션: 없음 (평시 할인 넣으려면 연중 프로모션 추가 필요)</div>
+                <div className="overflow-x-auto">
+                  <table className="w-full text-xs" style={{ minWidth: '440px' }}>
+                    <thead>
+                      <tr className="text-gray-400 border-b border-gray-100">
+                        <th className="text-left py-1 font-medium">기간</th>
+                        <th className="text-left py-1 font-medium">구분</th>
+                        <th className="text-right py-1 font-medium">일수</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {g.runs.map((r, i) => (
+                        <tr key={i} className={r.cls === '평시' ? 'bg-amber-50' : ''}>
+                          <td className="py-1">{r.start} ~ {r.end}</td>
+                          <td className="py-1">{r.cls}{r.cls === '평시' && <span className="text-amber-600 font-medium"> ← 할인 빠짐</span>}</td>
+                          <td className="py-1 text-right">{r.days}일</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            ))
+          )}
+        </div>
 
         {/* ── 새 구조 점검: 비자연장 · 코스 target · 패키지 programType ── */}
         <div className="mt-6 space-y-4">

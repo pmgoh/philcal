@@ -101,7 +101,7 @@ export async function saveExchangeRate(rate: Omit<ExchangeRate, 'updatedAt'>): P
 // - 'enabled': 자료에 구체값 명시 → 정상 계산
 // - 'disabled': 자료에 "X"/"없음" 명시 → 0원 + "유학원 자체 할인 불가능" 견적
 // - 'unconfirmed': 자료에 빈 칸 → 0원 + "본사 확인 필요" 안내
-export type AgencyDiscountStatus = 'enabled' | 'disabled' | 'unconfirmed'
+export type AgencyDiscountStatus = 'enabled' | 'confirmed' | 'disabled' | 'unconfirmed'
 
 // AgencyDiscount 세부 타입 (v3)
 export type AgencyDiscountKind =
