@@ -716,7 +716,7 @@ export function calculateQuote(input: QuoteInput, rate: ExchangeRate): CalcResul
           const isAlways = (promo as { alwaysApply?: boolean }).alwaysApply || (promo as { season?: string }).season === 'all'
           const ps = (promo as { startDate?: string }).startDate
           const pe = (promo as { endDate?: string }).endDate
-          const periodDesc = isAlways ? '상시(연중·평시 포함)' : (ps && pe ? `${ps}~${pe} 기간` : '기간 미상')
+          const periodDesc = isAlways ? '상시 적용 (기간 제한 없음)' : (ps && pe ? `${ps}~${pe} 기간` : '기간 미상')
           agencyPending.push({ label: promo.label, id: (promo as { id?: string }).id ?? promo.label, pad, periodDesc } as typeof agencyPending[0])
         }
       }
@@ -926,13 +926,24 @@ export function calculateQuote(input: QuoteInput, rate: ExchangeRate): CalcResul
       //  표준: always(등록 시 1회) | per_week(주당) | per_4weeks(4주당) | over_weeks(N주 초과 시) | optional(선택)
       //  모르는 값은 always(부과)로 본다 — 현지비가 누락되지 않도록(안전).
       const rawTrigger = String(lf.trigger ?? raw.condition ?? 'always').toLowerCase()
+      const rawChargeUnit = String((lf as { chargeUnit?: string }).chargeUnit ?? '').toLowerCase()
       let trigger: string
+      // chargeUnit(부과 단위)이 명시돼 있으면 그것을 우선 — trigger는 '시점'이라 부과 빈도와 무관할 수 있음
+      // (예: Utility는 trigger=enrollment 이지만 chargeUnit=per_4weeks → 4주마다 부과)
       if (/optional|선택|usage|사용량/.test(rawTrigger)) trigger = 'optional'
-      else if (/per_week|주당|weekly|odd_week/.test(rawTrigger)) trigger = 'per_week'
+      else if (/odd_week|홀수/.test(rawTrigger) || /odd_week/.test(rawChargeUnit)) trigger = 'odd_week'
+      else if (/per_4week|4주/.test(rawChargeUnit)) trigger = 'per_4weeks'
+      else if (/per_week|주당/.test(rawChargeUnit)) trigger = 'per_week'
+      else if (/per_week|주당|weekly/.test(rawTrigger)) trigger = 'per_week'
       else if (/per_4week|4주|monthly|month|6months/.test(rawTrigger)) trigger = 'per_4weeks'
       else if (/stay_over|over_week|min_week|초과|이상|days|일|주 이상|6months_plus|plus/.test(rawTrigger)) trigger = 'over_weeks'
       else trigger = 'always'   // enrollment, one_time, always, none, 기타 → 등록 시 1회 부과
       if (trigger === 'optional') continue
+      // odd_week: 홀수 주차 입학/졸업 시 부과되는 선택성 항목 → 기본 견적에서 제외(불확실), 안내만
+      if (trigger === 'odd_week') {
+        notes.push(`ℹ️ ${lf.name}: 홀수 주차 입학/졸업 시에만 부과 (해당 시 ${(lf.amount ?? 0).toLocaleString()}${lf.currency === 'KRW' ? '원' : '페소'}, 입학/졸업 각 1회). 기본 견적 미포함.`)
+        continue
+      }
 
       // [택일 그룹] 그룹에 속하면, 기본값(groupDefault 또는 그룹 첫 항목)만 합산
       const grp = (lf as { exclusiveGroup?: string }).exclusiveGroup

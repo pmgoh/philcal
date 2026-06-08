@@ -117,10 +117,28 @@ export default function QuoteResultCard({
           )}
         </tbody>
         <tfoot>
-          <tr className="border-t-2 border-gray-300">
-            <td className="py-2 font-bold text-gray-900">연수비용 총합</td>
-            <td className="py-2 text-right font-bold text-blue-700 tabular-nums">{krw(calc.totalKrw)}</td>
-          </tr>
+          {(() => {
+            const beforeDiscount = calc.baseKrw + calc.surchargeKrw + calc.registrationFeeKrw
+            const totalDiscount = (calc.promotionDiscount ?? 0) + (calc.surchargeDiscount ?? 0) + (calc.agencyDiscountKrw ?? 0)
+            return (
+              <>
+                <tr className="border-t-2 border-gray-300">
+                  <td className="py-1.5 text-gray-600">할인 전 합계 <span className="text-gray-400 text-xs">(학비+기숙사+서차지+등록비)</span></td>
+                  <td className="py-1.5 text-right tabular-nums text-gray-600">{krw(beforeDiscount)}</td>
+                </tr>
+                {totalDiscount > 0 && (
+                  <tr>
+                    <td className="py-1.5 text-rose-600">총 할인액 <span className="text-gray-400 text-xs">(프로모션+유학원)</span></td>
+                    <td className="py-1.5 text-right tabular-nums text-rose-600">−{krw(totalDiscount)}</td>
+                  </tr>
+                )}
+                <tr className="border-t border-gray-200">
+                  <td className="py-2 font-bold text-gray-900">연수비용 총합 <span className="text-gray-400 text-xs font-normal">(할인 적용 후)</span></td>
+                  <td className="py-2 text-right font-bold text-blue-700 tabular-nums">{krw(calc.totalKrw)}</td>
+                </tr>
+              </>
+            )
+          })()}
         </tfoot>
       </table>
       <p className="text-xs text-gray-400">※ 학비·기숙사·등록비·서차지·할인을 합한 금액입니다. 현지납부비는 별도(아래 참조).</p>
