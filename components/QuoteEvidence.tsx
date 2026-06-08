@@ -125,7 +125,7 @@ export function PromotionPanel({ lines, dateUnset, onPickDate }: {
 }) {
   const applied = lines.filter(l => l.status === 'applied')
   const pending = lines.filter(l => l.status === 'pending')
-  const others  = lines.filter(l => l.status === 'unmet' || l.status === 'manual')
+  const others  = lines.filter(l => l.status === 'unmet' || l.status === 'manual' || l.status === 'not_applicable')
   if (applied.length === 0 && pending.length === 0 && others.length === 0) return null
 
   const fmt = (n: number) => n.toLocaleString() + '원'

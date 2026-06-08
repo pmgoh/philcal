@@ -40,7 +40,7 @@ export interface PackageResultItem {
 export interface PromotionLineItem {
   id: string
   label: string
-  status: 'applied' | 'unmet' | 'manual' | 'pending'
+  status: 'applied' | 'unmet' | 'manual' | 'pending' | 'not_applicable'
   kind: 'school' | 'agency'    // 학원 자체 할인 / 유학원(필자닷컴) 할인
   discountKrw: number          // 이 프로모션의 할인액 (원화, 양수). pending이면 0
   basis: string                // 적용/미적용 근거 (예: "비수기 4주 이상, 4주당 25만원")
@@ -389,6 +389,14 @@ export function calculateQuote(input: QuoteInput, rate: ExchangeRate): CalcResul
       surchargeItems.push({ label: `서차지: ${sc.label} (${overlap}주 × ${sc.pricePerWeek.toLocaleString()}${sc.currency}/주)`, weeks: overlap, unitPrice: sc.pricePerWeek, currency: sc.currency, krwAmount: krw })
       surchargeKrw += krw
       surchargeDetails.push({ krw, discountAllowed: sc.discountAllowed, label: sc.label })
+    } else {
+      // 성수기 기간에 안 겹침 → 해당없음 명시 (검증용)
+      pendingSeasonalLines.push({
+        id: `surcharge_na__${sc.label}`, label: `성수기 추가비: ${sc.label}`,
+        status: 'not_applicable', kind: 'school', discountKrw: 0,
+        basis: `해당 없음 (성수기 ${sc.startDate}~${sc.endDate}와 연수기간 미겹침)`,
+        stackable: true,
+      })
     }
   }
 
@@ -401,7 +409,7 @@ export function calculateQuote(input: QuoteInput, rate: ExchangeRate): CalcResul
   const promotionLines: PromotionLineItem[] = []   // 상태별 근거 기록 (화면 표시용)
   // [단계 분리] 유학원 할인은 학원 할인이 전부 합산된 뒤 계산해야 차감 후 base가 정확하다.
   // 1차 루프에서는 학원 할인만 계산하고, 유학원 할인은 이 배열에 모아 2차에서 처리.
-  const agencyPending: Array<{ label: string; id: string; pad: NonNullable<Promotion['agencyDiscount']> }> = []
+  const agencyPending: Array<{ label: string; id: string; pad: NonNullable<Promotion["agencyDiscount"]>; periodDesc?: string }> = []
 
   const schoolPromotions = school.promotions ?? []
   const promoWidth = (p: typeof schoolPromotions[0]) => {
@@ -610,9 +618,10 @@ export function calculateQuote(input: QuoteInput, rate: ExchangeRate): CalcResul
       }
       const blocks = method === 'proportional' ? (discWeeks / 4) : Math.floor(discWeeks / 4)
       thisDiscount = Math.round(toKrw(promo.discountValue, promo.currency ?? 'KRW', rate) * blocks)
-      // 계산방식 미확인이면 경고 (자료에 명시 없어 floor 기본 적용된 경우)
+      // 계산방식 미확인이면 경고 (자료에 명시 없어 기본 방식 적용된 경우)
       if ((promo as { methodConfirmed?: boolean }).methodConfirmed === false) {
-        warnings.push(`⚠️ ${promo.label}: 할인 계산방식 미확인 — 4주 단위 내림(적게 할인)으로 처리됨. 정확한 방식은 본사 확인 필요.`)
+        const mlabel = method === 'proportional' ? '비례 배분(주수에 정비례)' : '4주 단위 내림(적게 할인)'
+        warnings.push(`⚠️ ${promo.label}: 할인은 적용됐으나 계산방식이 자료에 명시 안 됨 — 현재 ${mlabel}으로 처리. 정확한 방식은 본사 확인 권장.`)
       }
     } else if (promo.discountType === 'amount_per_week') {
       let discWeeks = totalWeeks
@@ -649,16 +658,38 @@ export function calculateQuote(input: QuoteInput, rate: ExchangeRate): CalcResul
       appliedPromoLabels.push(promo.label)
       appliedPromoIds.push(promoId(promo))
       appliedPromoDetails.push({ label: promo.label, discount: thisDiscount })
-      // 근거 문자열 구성
+      // 근거 문자열 구성 (검증용 상세: 기간 + 적용주차 + 계산방식)
       const basisParts: string[] = []
-      if (promo.discountType === 'percent') basisParts.push(`${promo.discountValue}% 할인`)
-      else if (promo.discountType === 'amount_per_week') basisParts.push(`주당 ${promo.discountValue.toLocaleString()} × ${totalWeeks}주`)
-      else if (promo.discountType === 'amount_per_4weeks') basisParts.push(`4주당 ${promo.discountValue.toLocaleString()}`)
-      else basisParts.push(promo.condition ?? '할인')
+      const fmtPeriod = () => {
+        const s = (promo as { startDate?: string }).startDate
+        const e = (promo as { endDate?: string }).endDate
+        if ((promo as { alwaysApply?: boolean }).alwaysApply || (promo as { season?: string }).season === 'all') return '상시(연중)'
+        if (s && e) return `${s}~${e}`
+        return null
+      }
+      const period = fmtPeriod()
+      if (promo.discountType === 'percent') {
+        basisParts.push(`${promo.discountValue}% 할인`)
+      } else if (promo.discountType === 'amount_per_week') {
+        basisParts.push(`주당 ${promo.discountValue.toLocaleString()}원 × ${totalWeeks}주`)
+      } else if (promo.discountType === 'amount_per_4weeks') {
+        const mthd = (promo as { blockMethod?: 'floor'|'proportional' }).blockMethod ?? 'floor'
+        const blk = mthd === 'proportional' ? (totalWeeks / 4) : Math.floor(totalWeeks / 4)
+        basisParts.push(`4주당 ${promo.discountValue.toLocaleString()}원 × ${blk}블록(${totalWeeks}주 ${mthd === 'floor' ? '내림' : '비례'})`)
+      } else if (promo.discountType === 'week_tiers') {
+        const tiers = ('weekTiers' in promo ? (promo as { weekTiers?: Array<{ minWeeks: number; maxWeeks?: number; amount: number }> }).weekTiers : undefined) ?? []
+        const matched = tiers.filter(t => totalWeeks >= t.minWeeks && (t.maxWeeks == null || totalWeeks <= t.maxWeeks)).sort((a, b) => b.amount - a.amount)[0]
+        if (matched) basisParts.push(`${matched.minWeeks}주 이상 → ${matched.amount.toLocaleString()}원 (현재 ${totalWeeks}주)`)
+        else basisParts.push(promo.condition ?? '장기등록 할인')
+      } else {
+        basisParts.push(promo.condition ?? '할인')
+      }
+      if (period) basisParts.push(period)
+      if (dateUnset && period && period !== '상시(연중)') basisParts.push('⚠️시작일 미정-기간확인요')
       promotionLines.push({
         id: (promo as { id?: string }).id ?? promo.label,
         label: promo.label, status: 'applied', kind: 'school', discountKrw: thisDiscount,
-        basis: basisParts.join(', '),
+        basis: basisParts.join(' · '),
         stackable: isStackable(promo),
       })
       // 단독 적용 프로모션 표시 (legacy 호환)
@@ -681,8 +712,12 @@ export function calculateQuote(input: QuoteInput, rate: ExchangeRate): CalcResul
           warnings.push(`⚠️ ${promo.label}: 유학원 할인 정보 미확정 — 본사 확인 필요`)
           if (!agencyDiscountNote) agencyDiscountNote = pad.note || '본사 확인 필요'
         } else {
-          // enabled → 2차 처리용으로 수집
-          agencyPending.push({ label: promo.label, id: (promo as { id?: string }).id ?? promo.label, pad })
+          // enabled → 2차 처리용으로 수집 (기간/상시 정보 포함)
+          const isAlways = (promo as { alwaysApply?: boolean }).alwaysApply || (promo as { season?: string }).season === 'all'
+          const ps = (promo as { startDate?: string }).startDate
+          const pe = (promo as { endDate?: string }).endDate
+          const periodDesc = isAlways ? '상시(연중·평시 포함)' : (ps && pe ? `${ps}~${pe} 기간` : '기간 미상')
+          agencyPending.push({ label: promo.label, id: (promo as { id?: string }).id ?? promo.label, pad, periodDesc } as typeof agencyPending[0])
         }
       }
     }
@@ -693,7 +728,7 @@ export function calculateQuote(input: QuoteInput, rate: ExchangeRate): CalcResul
   // 자료 표현대로 학원별 지정. 차감 후가 정확하려면 promotionDiscount가 확정된 이 시점이어야 함.
   let regFeeAgencyApplied = false  // 등록비성 유학원할인이 이미 한 번 적용됐는지 (중복 방지)
   let percentAgencyApplied = false // 비율(%) 유학원할인이 이미 적용됐는지 — CALA 10%가 여러 프로모션에 있어도 한 번만
-  for (const { label, id, pad } of agencyPending) {
+  for (const { label, id, pad, periodDesc } of agencyPending) {
     if (pad.minWeeks && totalWeeks < pad.minWeeks) {
       notes.push(`ℹ️ ${label}: ${pad.minWeeks}주 미만은 유학원 할인 불가 (요청 ${totalWeeks}주)`)
       continue
@@ -763,8 +798,10 @@ export function calculateQuote(input: QuoteInput, rate: ExchangeRate): CalcResul
 
     // [등록비성 정액할인 중복 방지] PILAedu·BCEBU처럼 여러 프로모션에 같은 "등록비 N만원 할인"이
     // 중복 기재된 경우, 등록비는 한 번만 내므로 할인도 한 번만. 또한 등록비를 초과해 깎을 수 없다.
-    const isRegFeeDiscount = (pad.type === 'amount' || pad.type === 'amount_flat' || pad.type === 'reg_fee_only')
-      && /등록비|등록금|입학금/.test(pad.rawText ?? pad.note ?? '')
+    // reg_fee_only 타입은 정의상 등록비 할인이므로 무조건 대상. amount류는 rawText로 판별.
+    const isRegFeeDiscount = pad.type === 'reg_fee_only'
+      || ((pad.type === 'amount' || pad.type === 'amount_flat')
+          && /등록비|등록금|입학금/.test(pad.rawText ?? pad.note ?? ''))
     if (isRegFeeDiscount) {
       if (regFeeAgencyApplied) {
         // 이미 등록비성 유학원할인을 적용함 → 이번 건은 중복이므로 적용하지 않음
@@ -803,7 +840,7 @@ export function calculateQuote(input: QuoteInput, rate: ExchangeRate): CalcResul
         id: id + '__agency',
         label: `${label} (유학원 할인)`, status: 'applied', kind: 'agency',
         discountKrw: thisAgencyDiscount,
-        basis: formula,
+        basis: periodDesc ? `${formula} · ${periodDesc}` : formula,
         stackable: true,
       })
     }
