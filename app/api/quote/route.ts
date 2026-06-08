@@ -25,6 +25,24 @@ const EXTRACT_PROMPT = `엠버시유학 견적 시스템. 사용자는 상담원
 사용자와 자연어로 대화하며 견적에 필요한 정보를 모은다.
 다 모이면 "confirm" 액션으로 코드에 인계한다. 그 외엔 "need_info"로 다음 필요 정보를 묻는다.
 
+[중요 경계 — 너의 역할은 "조건 인식(자연어→슬롯)"이다. 계산에는 절대 참여하지 않는다]
+- 너는 사용자의 복잡한 자연어 문장에서 조건(학원/코스/기숙사/패키지/주수/인원/시작일/구성)을 정확히 읽어내 슬롯으로 변환하는 역할만 한다.
+- 금액·할인·서차지·현지비·총액 등 어떤 숫자도 계산하지 않고, 추정하지도 않는다. 계산은 전부 코드(계산 엔진)가 한다.
+- confirm으로 넘긴 슬롯(ID·주수·인원 등)만 코드가 받아 계산한다. 너는 가격을 말하거나 비교하지 않는다.
+
+[복잡한 자연어 인식 — 적극적으로 분해한다]
+복잡하거나 긴 문장도 끝까지 읽어 한 번에 여러 슬롯을 채운다. 예시:
+- "애 둘이랑 와이프랑 8주, 애들은 주니어 영어 와이프는 회화 위주, 방은 다 같이 큰 방" → 인원 3명(보호자1+자녀2), 총주수 8주, 자녀 코스=주니어, 보호자 코스=회화 계열, 기숙=인원수에 맞는 방. 각 구성원 코스를 courses에 모두 담는다.
+- "6월 말 시작해서 12주, 처음 4주는 스파르타 나머지는 일반" → 시작일 추정(가까운 월요일은 코드가 보정), 총주수 12주, 코스 두 개(스파르타 4주 + 일반 8주).
+- "스파르타 ESL 8주에 4인실 쓰다가 마지막 2주는 1인실로" → 코스 ESL 8주(또는 10주), 기숙사 4인실 8주 + 1인실 2주로 분리.
+- 한 문장에 여러 코스·여러 기숙사·기간 분할이 섞여 있으면 각각 분리해 배열로 담는다.
+- 구어체·생략·오타·줄임말(예: "베씨", "이엘츠", "쌤이지")도 [학원 데이터]의 이름/별칭과 의미로 매칭한다.
+- 모든 조건을 다 읽었는데도 정말 빠진 필수 슬롯이 있을 때만 need_info로 묻는다. 한 문장에 다 있으면 되묻지 말고 바로 confirm한다.
+
+[모호할 때의 원칙]
+- 사용자가 "더 싼 거", "적당한 거" 처럼 가격 기반으로 모호하게 말하면, 네가 가격을 비교하지 말고 후보를 need_info로 제시해 사용자가 고르게 한다(가격은 코드가 보여준다).
+- 한 슬롯만 모호하면 그 슬롯만 되묻고, 이미 인식한 다른 슬롯은 유지한다.
+
 [현재 모드는 시스템 프롬프트 아래에 표시된다]
 - 일반 연수 모드: 코스 + 기숙사 + 주수 + 시작일을 모은다. 학원 데이터에 packages가 있어도 무시한다.
 - 캠프·가족·주니어 모드: 패키지 + 주수 + 구성(2인가족/주니어 1인 등 columnLabel) + 시작일을 모은다. 코스·기숙사는 묻지 않는다(패키지에 포함됨).
@@ -266,6 +284,8 @@ type DirectCalcPayload = {
   dormitories?: DormItem[]
   packages?: PackageInput[]
   specialNote?: string
+  isFamily?: boolean
+  familyPersons?: number
 }
 
 function runCalc(school: School, item: CalcInputItem, rate: ExchangeRate): CalcResult {
@@ -274,11 +294,13 @@ function runCalc(school: School, item: CalcInputItem, rate: ExchangeRate): CalcR
     startDate: item.startDate,
     enrollmentDate: item.enrollmentDate || item.startDate,
     courses: (item.courses ?? []).map(c => ({ courseId: c.courseId, weeks: Number(c.weeks) })),
-    dormitories: (item.dormitories ?? []).map(d => ({ dormitoryId: d.dormitoryId, weeks: Number(d.weeks) })),
+    dormitories: (item.dormitories ?? []).map(d => ({ dormitoryId: d.dormitoryId, weeks: Number(d.weeks), persons: d.persons ? Number(d.persons) : undefined })),
     packages: (item.packages ?? []).map(p => ({
       packageId: p.packageId, weeks: Number(p.weeks),
       columnLabel: p.columnLabel, additionalRuleIds: p.additionalRuleIds,
     })),
+    isFamily: (item as { isFamily?: boolean }).isFamily,
+    familyPersons: (item as { familyPersons?: number }).familyPersons,
   }, rate)
 }
 
@@ -342,6 +364,7 @@ export async function POST(req: NextRequest) {
           weekTiers: p.agencyDiscountWeekTiers,
           regFeeDiscount: p.agencyDiscountRegFee,
           base: p.agencyDiscountBase ?? 'after_discount',
+          perPerson: p.agencyDiscountPerPerson ?? false,
           rawText: p.agencyDiscountRawText,
           note: p.agencyDiscountNote ?? '',
         }
@@ -350,6 +373,7 @@ export async function POST(req: NextRequest) {
         id: p.id,
         label: p.promoName,
         target: p.target,
+        familyEligible: p.familyEligible ?? false,
         basisType: p.basisType ?? 'enrollment_date',
         alwaysApply: p.alwaysApply ?? false,
         // stackable 기본 true (중복 적용 가능). 명시적 false 시에만 단독.
@@ -456,7 +480,9 @@ export async function POST(req: NextRequest) {
         courses: dc.courses ?? [],
         dormitories: dc.dormitories ?? [],
         packages: dc.packages ?? [],
-      }, rate)
+        isFamily: dc.isFamily,
+        familyPersons: dc.familyPersons,
+      } as CalcInputItem & { isFamily?: boolean; familyPersons?: number }, rate)
       return NextResponse.json(buildCalcResponse(school, calcResult, rate, startDate, enrollmentDate, dc.specialNote ?? ''))
     }
     // ───────────────────────────────────────────────────────────────────────
@@ -985,14 +1011,34 @@ export async function POST(req: NextRequest) {
 
       const specialNote = (parsed.specialNote as string) ?? ''
 
+      // [가족 모드 일치] camp_family 모드면 계산기와 동일하게 isFamily/인원수를 채운다.
+      //  인원수: 패키지 columnLabel("3인...")이나 가족 코스 개수에서 추출.
+      const isFamilyMode = chatMode === 'camp_family'
+      let familyPersons: number | undefined
+      if (isFamilyMode) {
+        const pkgs = (parsed.packages as PackageInput[]) ?? []
+        const crs = (parsed.courses as CourseItem[]) ?? []
+        // 패키지 columnLabel에서 "N인" 추출
+        for (const pk of pkgs) {
+          const m = String(pk.columnLabel ?? '').match(/(\d)\s*인/)
+          if (m) { familyPersons = parseInt(m[1], 10); break }
+        }
+        // 패키지에서 못 찾으면 가족 코스 개수 = 인원수(인원별 코스 1개씩)
+        if (familyPersons == null && crs.length > 0) familyPersons = crs.length
+      }
+      const famDorms = ((parsed.dormitories as DormItem[]) ?? []).map(d =>
+        isFamilyMode && familyPersons ? { ...d, persons: familyPersons } : d)
+
       const calcResult = runCalc(school, {
         schoolId: parsed.schoolId as string,
         startDate: (parsed.startDate as string) ?? '',
         enrollmentDate: (parsed.enrollmentDate as string) ?? (parsed.startDate as string) ?? '',
         courses: (parsed.courses as CourseItem[]) ?? [],
-        dormitories: (parsed.dormitories as DormItem[]) ?? [],
+        dormitories: famDorms,
         packages: (parsed.packages as PackageInput[]) ?? [],
-      }, rate)
+        isFamily: isFamilyMode || undefined,
+        familyPersons,
+      } as CalcInputItem & { isFamily?: boolean; familyPersons?: number }, rate)
 
       const filteredLocalFees = (calcResult.localFees ?? []).filter(lf => {
         const t = lf.trigger ?? 'always'

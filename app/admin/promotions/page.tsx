@@ -275,8 +275,11 @@ export default function PromotionsPage() {
           'details','active','note','agencyDiscountNote','agencyDiscountType',
           'agencyDiscountValue','agencyDiscountApplyTo','isUrgent','urgentDays',
           'minWeeks','blockMethod','methodConfirmed',
-          'stackWith','exclusiveWith','relationConfirmed','agencyDiscountBase'
-        ]
+          'stackWith','exclusiveWith','relationConfirmed','agencyDiscountBase',
+          'agencyDiscountStatus','agencyDiscountScope','agencyDiscountPerPerson',
+          'agencyDiscountMaxAmount','agencyDiscountMinWeeks','agencyDiscountRegFee',
+          'agencyDiscountRawText','target','familyEligible',
+        ] as (keyof PromoEntry)[]
         const normalize = (v: unknown) => {
           if (v === null || v === undefined || v === '') return ''
           return JSON.stringify(v)

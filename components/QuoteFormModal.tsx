@@ -255,7 +255,7 @@ export default function QuoteFormModal({ school, calcResult, startDate, localFee
 
             {/* 엠버시 브랜딩 */}
             <div style={{ marginTop: '12px', textAlign: 'right' }}>
-              <span style={{ fontSize: '11px', color: '#aaa' }}>엠버시유학 · philcal.vercel.app</span>
+              <span style={{ fontSize: '11px', color: '#aaa' }}>엠버시유학</span>
             </div>
           </div>
 
