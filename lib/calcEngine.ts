@@ -259,10 +259,11 @@ export function calculateQuote(input: QuoteInput, rate: ExchangeRate): CalcResul
     }
   }
 
-  const today = new Date().toISOString().split('T')[0]
+  // 가격 인상: 견적의 시작일(없으면 오늘) 기준으로 판정 — 과거 자료 검산 시 그 당시 가격이 나오도록
+  const refDate = startDate || new Date().toISOString().split('T')[0]
   const pi = school.priceIncrease
-  const increaseActive = pi && pi.fromDate <= today
-  if (increaseActive) notes.push(`ℹ️ ${pi!.label ?? '비용 인상'} 적용 중 (${pi!.fromDate}~)`)
+  const increaseActive = pi && pi.fromDate <= refDate
+  if (increaseActive) notes.push(`ℹ️ ${pi!.label ?? '비용 인상'} 적용 중 (${pi!.fromDate}~, 시작일 ${refDate} 기준)`)
 
   // [단기 비율] 총 주수가 4주 미만이면 "정비례 대비 목표 비율"을 분자/분모로 들고 곱셈 먼저 적용.
   // 대전제: 총 주수 하나로 결정, 코스 조합 무관. 학원은 %로 주므로 데이터는 %.
@@ -607,7 +608,6 @@ export function calculateQuote(input: QuoteInput, rate: ExchangeRate): CalcResul
       // [계산방식] floor(기본): 4주 블록 내림 / proportional: 비례
       const method = (promo as { blockMethod?: 'floor'|'proportional' }).blockMethod ?? 'floor'
       // [할인 제외 기간] 연수기간이 성수기 등 지정 구간과 겹치면 그 주수는 할인 대상에서 제외
-      // (예: 블루오션 "여름 성수기 6/28~8/22 겹치는 기간 할인 적용X")
       let discWeeks = totalWeeks
       const dep = (promo as { discountExcludePeriods?: Array<{ start?: string; end?: string }> }).discountExcludePeriods
       if (dep && dep.length > 0 && !dateUnset) {
@@ -617,7 +617,28 @@ export function calculateQuote(input: QuoteInput, rate: ExchangeRate): CalcResul
         discWeeks = Math.max(0, discWeeks)
       }
       const blocks = method === 'proportional' ? (discWeeks / 4) : Math.floor(discWeeks / 4)
-      thisDiscount = Math.round(toKrw(promo.discountValue, promo.currency ?? 'KRW', rate) * blocks)
+      // [룸타입/코스별 차등] dormTierAmounts: 기숙 id → 4주당 할인액. 명시 안 된 항목은 기본값(discountValue).
+      //   예: JIC 비수기 — 기본 5만, 4인실만 15만. 선택된 기숙사 id로 금액 결정.
+      const dormTiers = (promo as { dormTierAmounts?: Record<string, number> }).dormTierAmounts
+      const courseTiers = (promo as { courseTierAmounts?: Record<string, number> }).courseTierAmounts
+      if (dormTiers || courseTiers) {
+        // 항목(코스/기숙)별로 해당 4주당액 × 블록 합산. applyToDorms/applyToCourses 존중.
+        thisDiscount = 0
+        if (promo.applyToDorms !== false) {
+          for (const di of input.dormitories) {
+            const per = dormTiers?.[di.dormitoryId] ?? promo.discountValue
+            thisDiscount += Math.round(toKrw(per, promo.currency ?? 'KRW', rate) * blocks)
+          }
+        }
+        if (promo.applyToCourses === true) {
+          for (const cinp of input.courses) {
+            const per = courseTiers?.[cinp.courseId] ?? promo.discountValue
+            thisDiscount += Math.round(toKrw(per, promo.currency ?? 'KRW', rate) * blocks)
+          }
+        }
+      } else {
+        thisDiscount = Math.round(toKrw(promo.discountValue, promo.currency ?? 'KRW', rate) * blocks)
+      }
       // 계산방식 미확인이면 경고 (자료에 명시 없어 기본 방식 적용된 경우)
       if ((promo as { methodConfirmed?: boolean }).methodConfirmed === false) {
         const mlabel = method === 'proportional' ? '비례 배분(주수에 정비례)' : '4주 단위 내림(적게 할인)'
