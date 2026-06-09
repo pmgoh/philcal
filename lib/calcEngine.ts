@@ -266,14 +266,24 @@ export function calculateQuote(input: QuoteInput, rate: ExchangeRate): CalcResul
   if (increaseActive) notes.push(`ℹ️ ${pi!.label ?? '비용 인상'} 적용 중 (${pi!.fromDate}~, 시작일 ${refDate} 기준)`)
 
   // [단기 비율] 총 주수가 4주 미만이면 "정비례 대비 목표 비율"을 분자/분모로 들고 곱셈 먼저 적용.
-  // 대전제: 총 주수 하나로 결정, 코스 조합 무관. 학원은 %로 주므로 데이터는 %.
-  // 핵심: 배율(80/75)을 미리 나눠 무한소수로 만들지 말 것. price = round(주당 × 주수 × pct / propPct)로
-  //       곱셈을 먼저 하고 나눗셈(반올림)을 마지막에 한 번만 → %로 계산할 때처럼 오차 0.
+  // 대전제: 총 주수 하나로 결정, 코스 조합 무관.
+  // mode='percent': 4주가의 N%. mode='amount': 4주가 + 주차별 정액 추가(GLC식).
+  // unavailableWeeks: 해당 주수 등록 불가(CNS/MONOL 1주 등) → 경고.
   // rates 미확인이면 pct=propPct(배율 1, 정비례 그대로).
-  function shortTermPct(rates?: ShortTermRates): { pct: number; propPct: number } {
+  function shortTermPct(rates?: ShortTermRates): { pct: number; propPct: number; addAmount?: number; currency?: string } {
     const propPct = totalWeeks * 100 / 4   // 정비례 시 % (3주 → 75)
     if (!isShortTerm || !rates) return { pct: propPct, propPct }
+    const unavail = (rates as { unavailableWeeks?: number[] }).unavailableWeeks
+    if (unavail && unavail.includes(totalWeeks)) {
+      warnings.push(`🔴 ${school.name}: ${totalWeeks}주 등록은 불가합니다 (학원 정책). 최소 등록 주수를 확인하세요.`)
+    }
     const raw = rates[`week${totalWeeks}` as 'week1'|'week2'|'week3']
+    if (rates.mode === 'amount') {
+      // 정액 추가: 4주가 + addN (주차별 추가금). pct는 정비례로 두고 addAmount 별도 반환.
+      const addMap = (rates as { addByWeek?: Record<string, number> }).addByWeek
+      const add = addMap?.[`week${totalWeeks}`] ?? 0
+      return { pct: propPct, propPct, addAmount: add, currency: (rates as { currency?: string }).currency ?? 'KRW' }
+    }
     if (rates.mode === 'percent' && raw != null) return { pct: raw, propPct }
     return { pct: propPct, propPct }   // fixed 등은 정비례 fallback
   }
@@ -329,6 +339,16 @@ export function calculateQuote(input: QuoteInput, rate: ExchangeRate): CalcResul
       label = `기숙사: ${dorm.name} × ${w}주 × ${persons}인`
     }
     dormItems.push({ label, weeks: w, unitPrice: Math.round(price/w), currency: dorm.currency, krwAmount: toKrw(price, dorm.currency, rate) + addKrw * w * persons })
+  }
+
+  // [단기 정액 추가] GLC식: 4주 미만 시 주차별 정액(1주 10만/2주 20만/3주 30만)을 견적에 1회 추가.
+  // mode='amount'인 단기비. 코스 단기비에 설정된 addAmount를 1회만 더한다(코스 개수만큼 곱하지 않음).
+  if (isShortTerm && courseSt.addAmount && courseSt.addAmount > 0 && input.courses.length > 0) {
+    const addK = toKrw(courseSt.addAmount, (courseSt.currency as 'KRW'|'PHP'|'USD') ?? 'KRW', rate)
+    courseItems.push({
+      label: `단기 추가비 (${totalWeeks}주 단기 등록)`, weeks: totalWeeks,
+      unitPrice: addK, currency: (courseSt.currency as 'KRW'|'PHP'|'USD') ?? 'KRW', krwAmount: addK,
+    })
   }
 
   // [캠퍼스 검증] 한 학원에 여러 캠퍼스(예: BECI = EOP/스파르타/시티)가 있을 때,

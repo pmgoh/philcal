@@ -9,12 +9,16 @@ export type ProgramTag =
 // ─── 단기가 (1~3주) ───────────────────────────────────────────────────────────
 // mode: 'percent' → 4주 총액 대비 %, 'fixed' → 직접 금액
 export interface ShortTermRates {
-  mode: 'percent' | 'fixed'
+  mode: 'percent' | 'fixed' | 'amount'
   week1: number
   week2: number
   week3: number
   week4Included: boolean   // 4주도 별도 가격으로 덮어쓸지
   week4?: number
+  unavailableWeeks?: number[]              // 등록 불가 주수 (예: CNS/MONOL [1])
+  addByWeek?: Record<string, number>       // mode='amount': 주차별 정액 추가 (week1/week2/week3)
+  currency?: 'KRW' | 'PHP' | 'USD'         // 정액 추가 통화
+  note?: string
 }
 
 // price4Weeks: 4주 기준 총 금액 (주당이 아님)

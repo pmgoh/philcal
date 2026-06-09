@@ -36,6 +36,8 @@ function normShortRates(r: unknown, priceMap?: Record<string, number>): unknown 
   if (!r || typeof r !== 'object') return r
   const o = r as Raw
   if (o.mode === 'percent' && o.week1 !== undefined) return o
+  // amount 모드(GLC식 정액 추가)는 percent로 변형하지 않고 그대로 보존
+  if (o.mode === 'amount') return o
 
   const pickPct = (v: unknown): number | undefined => {
     if (typeof v !== 'number') return undefined
