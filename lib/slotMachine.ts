@@ -287,7 +287,9 @@ export function nextStep(
 
   // 3) 코스
   if (ambiguous.course) {
-    return { kind: 'need_course_disambiguation', schoolId: slots.schoolId, hint: ambiguous.course }
+    // 사용자가 코스를 말했는데 파서가 못 좁혔다 = 비정형/구어 표현일 가능성.
+    // 곧장 선택지로 떠넘기지 말고 LLM이 먼저 이해를 시도하게 한다(추측이 아니라 자연어 해석).
+    return { kind: 'needs_llm', reason: 'course_ambiguous' }
   }
   if (slots.courses.length === 0) {
     return { kind: 'need_course', schoolId: slots.schoolId }
@@ -305,9 +307,8 @@ export function nextStep(
   // 4) 기숙 (통학 명시면 면제)
   if (!slots.noDorm) {
     if (ambiguous.dorm) {
-      // 방을 말했는데 여러 개로 좁혀짐(예: "3인실"→Triple/Suite Triple) → 선택지로 되묻는다.
-      // (LLM으로 보내지 않는다: 추측 금지 + 불필요한 LLM 호출 회피)
-      return { kind: 'need_dorm', schoolId: slots.schoolId }
+      // 방을 말했는데 여러 개로 좁혀짐 → 선택지보다 LLM이 먼저 자연어 해석을 시도한다.
+      return { kind: 'needs_llm', reason: 'dorm_ambiguous' }
     }
     if (slots.dormitories.length === 0) {
       return { kind: 'need_dorm', schoolId: slots.schoolId }
