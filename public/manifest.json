@@ -1,0 +1,14 @@
+{
+  "name": "엠버시 견적 계산기",
+  "short_name": "견적계산기",
+  "description": "필리핀 어학연수 학비 견적 계산기",
+  "start_url": "/app",
+  "scope": "/app",
+  "display": "standalone",
+  "background_color": "#f9fafb",
+  "theme_color": "#2563eb",
+  "icons": [
+    { "src": "/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
+    { "src": "/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ]
+}

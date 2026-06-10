@@ -4,6 +4,11 @@ import './globals.css'
 export const metadata: Metadata = {
   title: '엠버시 견적 시스템',
   description: '필리핀 어학연수 학비 견적',
+  manifest: '/manifest.json',
+}
+
+export const viewport = {
+  themeColor: '#2563eb',
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
