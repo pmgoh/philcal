@@ -6,7 +6,7 @@ import { auth } from '@/lib/firebase'
 import { getOrCreateUser } from '@/lib/users'
 import type { AppUser } from '@/types'
 import PendingPage from '@/components/PendingPage'
-import { Calculator, LayoutGrid, LogOut } from 'lucide-react'
+import { Calculator, LayoutGrid, LogOut, Download } from 'lucide-react'
 
 // 계산기/챗봇 전용 "앱 모드" 레이아웃.
 // 기존 어드민 웹(사이드바 포함 AdminLayout)은 그대로 두고,
@@ -37,6 +37,32 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
     }
   }, [])
 
+  // PWA 설치: beforeinstallprompt 이벤트를 잡아 "설치" 버튼으로 직접 띄운다.
+  const [installPrompt, setInstallPrompt] = useState<{ prompt: () => Promise<void>; userChoice: Promise<{ outcome: string }> } | null>(null)
+  const [installed, setInstalled] = useState(false)
+  useEffect(() => {
+    // 이미 설치(독립 창)로 실행 중이면 버튼 숨김
+    if (window.matchMedia('(display-mode: standalone)').matches) setInstalled(true)
+    const onPrompt = (e: Event) => {
+      e.preventDefault()
+      setInstallPrompt(e as unknown as { prompt: () => Promise<void>; userChoice: Promise<{ outcome: string }> })
+    }
+    const onInstalled = () => { setInstalled(true); setInstallPrompt(null) }
+    window.addEventListener('beforeinstallprompt', onPrompt)
+    window.addEventListener('appinstalled', onInstalled)
+    return () => {
+      window.removeEventListener('beforeinstallprompt', onPrompt)
+      window.removeEventListener('appinstalled', onInstalled)
+    }
+  }, [])
+  const handleInstall = async () => {
+    if (!installPrompt) return
+    await installPrompt.prompt()
+    const { outcome } = await installPrompt.userChoice
+    if (outcome === 'accepted') setInstalled(true)
+    setInstallPrompt(null)
+  }
+
   if (!ready) return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50">
       <div className="animate-spin w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full" />
@@ -59,6 +85,15 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
             <span className="font-semibold text-gray-800 text-sm">엠버시 견적 계산기</span>
           </div>
           <div className="flex items-center gap-1">
+            {!installed && installPrompt && (
+              <button
+                onClick={handleInstall}
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium text-blue-600 bg-blue-50 hover:bg-blue-100 transition-colors"
+                title="바탕화면에 앱으로 설치"
+              >
+                <Download size={15} /> 앱 설치
+              </button>
+            )}
             {isAdmin && (
               <button
                 onClick={() => router.push('/calculator')}
