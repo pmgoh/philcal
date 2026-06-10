@@ -67,7 +67,7 @@ export default function MondayPicker({ value, onSelect }: {
           const isMonday = d.getDay() === 1
           const isPast = d < todayMid
           const selected = value === ymd(d)
-          const selectable = isMonday && !isPast
+          const selectable = isMonday   // 과거 월요일도 선택 가능 (지난 자료 검산용)
           return (
             <button
               key={ymd(d)}
@@ -76,8 +76,8 @@ export default function MondayPicker({ value, onSelect }: {
               className={[
                 'text-center text-sm py-1.5 rounded-lg transition-colors',
                 selected ? 'bg-blue-600 text-white font-semibold'
-                  : selectable ? 'bg-blue-50 text-blue-700 hover:bg-blue-100 font-medium cursor-pointer'
-                  : isMonday ? 'text-gray-300 cursor-not-allowed'      // 지난 월요일
+                  : selectable && !isPast ? 'bg-blue-50 text-blue-700 hover:bg-blue-100 font-medium cursor-pointer'
+                  : selectable && isPast ? 'bg-gray-50 text-gray-500 hover:bg-gray-100 cursor-pointer'  // 지난 월요일(검산용, 흐리게)
                   : 'text-gray-300 cursor-not-allowed',                 // 비-월요일
               ].join(' ')}
             >
