@@ -62,4 +62,4 @@
 .widget-mode .btn-primary { padding: 7px 12px !important; }
 .widget-mode button.py-2 { padding-top: 6px !important; padding-bottom: 6px !important; }
 /* 입력 필드 축소 */
-.widget-mode .input-field { padding: 6px 10px !important; }
+.widget-mode .input-field { padding-top: 6px !important; padding-bottom: 6px !important; }

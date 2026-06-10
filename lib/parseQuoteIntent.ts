@@ -59,6 +59,13 @@ const ALIASES: Array<[RegExp, string]> = [
   [/주니어/g, 'junior'],
   [/가디언|보호자/g, 'guardian'],
   [/인텐시브|집중/g, 'intensive'],
+  [/베이직|베이식|기초/g, 'basic'],
+  [/개런티|개런트|보장|guarantee/g, 'guarantee'],
+  [/프리미어|프리미얼|premier/g, 'premier'],
+  [/부스터|booster/g, 'booster'],
+  [/레귤러|regular/g, 'regular'],
+  [/스피킹\s*마스터|스피킹마스터/g, 'speakingmaster'],
+  [/세미/g, 'semi'],
   // 학원명에 흔한 꼬리말 제거 (매칭 노이즈)
   [/아카데미|어학원|academy|english|campus|캠퍼스/g, ''],
   // 자주 쓰는 학원 음역 (한글 발음 → 영문코드). 부족하면 계속 추가.
@@ -184,6 +191,17 @@ function resolve(cands: Candidate[]): Resolution {
   if (cands.length === 0) return { kind: 'none' }
   const top = cands[0]
   const second = cands[1]
+  // [동일 베이스 학원 구분] 1등 이름이 다른 후보 이름에 포함되면(예: "CIJ Academy & School" ⊂
+  // "CIJ Academy & School (특파원 1+1)"), 같은 학원의 변형(특파원/주니어/캠퍼스)이므로
+  // 단정(auto)하지 말고 선택지로 띄워 사용자가 고르게 한다.
+  const baseName = normalize(top.name)
+  const siblings = cands.filter(c => {
+    const cn = normalize(c.name)
+    return cn === baseName || cn.includes(baseName) || baseName.includes(cn)
+  })
+  if (siblings.length >= 2) {
+    return { kind: 'choices', options: siblings.slice(0, MAX_CHOICES) }
+  }
   if (top.score >= AUTO_MIN && (!second || top.score - second.score >= AUTO_GAP)) {
     return { kind: 'auto', pick: top }
   }
@@ -310,6 +328,24 @@ export function matchSchools(text: string, schools: School[], extraAliases?: Ali
     .filter(c => hasAliasHit ? c.aliasMatched : c.score >= 50)
     .sort((a, b) => b.score - a.score)
     .map(({ aliasMatched: _drop, ...c }) => c)
+
+  // [동일 베이스 학원 보강] 1등 학원 이름을 다른 학원 이름이 포함하면(예: "CIJ Academy & School" ⊂
+  // "CIJ Academy & School (특파원 1+1)"), 그 형제 학원이 점수 필터로 빠졌거나 별칭이 한 학원만
+  // 가리켰더라도 후보에 넣어 resolve가 선택지로 띄우게 한다. (특파원/주니어/캠퍼스 변형을 놓치지 않도록)
+  // 단, 입력 별칭이 특정 변형을 정확히 지목한 경우(예: "cij주니어")는 그 학원 점수가 가장 높아 그대로 확정된다.
+  if (cands.length > 0) {
+    const topName = normalize(cands[0].name)
+    const existing = new Set(cands.map(c => c.id))
+    for (const s of schools) {
+      if (existing.has(s.id)) continue
+      const sn = normalize(s.name)
+      // normalize가 같거나(괄호 부가설명만 다른 변형: 특파원/캠퍼스) 포함관계면 형제로 본다.
+      if (sn === topName || sn.includes(topName) || topName.includes(sn)) {
+        cands.push({ id: s.id, name: s.name, score: cands[0].score, campus: s.campus })
+      }
+    }
+  }
+
   return resolve(cands)
 }
 
