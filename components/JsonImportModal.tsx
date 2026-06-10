@@ -126,6 +126,7 @@ function normalizeSchool(raw: Record<string, unknown>): Omit<School, 'createdAt'
     dormitoryRules: (raw.dormitoryRules as string) ?? '',
     generalNotes: (raw.generalNotes as string) ?? '',
     isActive: (raw.isActive as boolean) ?? true,
+    reporterMode: (raw.reporterMode as boolean) ?? undefined,
   }
 }
 

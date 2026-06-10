@@ -330,6 +330,7 @@ export interface School {
   dormitoryRules: string
   generalNotes: string
   isActive: boolean
+  reporterMode?: boolean   // 특파원 1+1 학원: 입력=실등록 주수, 기간·현지비는 2배, 참가비 별도
   createdAt: string
   updatedAt: string
 }
