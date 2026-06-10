@@ -115,10 +115,17 @@ export default function QuoteResultCard({
               <td className="py-1.5 text-right tabular-nums text-gray-600">{krw(calc.registrationFeeKrw)}</td>
             </tr>
           )}
+          {/* 6-1. 특파원 참가비 (reporterMode) */}
+          {(calc.reporterFeeKrw ?? 0) > 0 && (
+            <tr className="border-b border-gray-100">
+              <td className="py-1.5 text-gray-700"><span className="text-gray-400 text-xs mr-1.5">특파원</span>참가비</td>
+              <td className="py-1.5 text-right tabular-nums text-gray-600">{krw(calc.reporterFeeKrw!)}</td>
+            </tr>
+          )}
         </tbody>
         <tfoot>
           {(() => {
-            const beforeDiscount = calc.baseKrw + calc.surchargeKrw + calc.registrationFeeKrw
+            const beforeDiscount = calc.baseKrw + calc.surchargeKrw + calc.registrationFeeKrw + (calc.reporterFeeKrw ?? 0)
             const totalDiscount = (calc.promotionDiscount ?? 0) + (calc.surchargeDiscount ?? 0) + (calc.agencyDiscountKrw ?? 0)
             return (
               <>

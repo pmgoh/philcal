@@ -255,9 +255,21 @@ export default function CalculatorBody() {
           {/* 일반연수 — 기존 흐름 (가족 코스형/패키지형 둘 다 아닐 때) */}
           {!calcResult && school && !(mode === 'camp_family' && (isFamilyCourseSchool(school) || isFamilyPackageSchool(school))) && (
           <>
+          {/* 특파원 학원 사용법 경고 */}
+          {(school as { reporterMode?: boolean }).reporterMode && (
+            <div className="card p-4 mb-4 bg-amber-50 border-amber-200">
+              <p className="text-sm text-amber-800 font-medium mb-1">📣 특파원 1+1 학원입니다</p>
+              <p className="text-xs text-amber-700 leading-relaxed">
+                주수는 <b>실제 결제(실등록) 주수</b>를 입력하세요. 1주 등록 시 1주가 무료라,
+                예를 들어 <b>3주를 입력하면 실제 연수기간은 6주</b>로 산출됩니다.
+                학비·기숙사는 실등록 주수 기준(4주 미만은 단기 배수 적용), 연수기간·현지납부비는 2배로 계산됩니다.
+                특파원 참가비(실등록 4주 미만 10만원 / 4주 이상 15만원)가 별도 부과되며, 유학원 할인은 적용되지 않습니다.
+              </p>
+            </div>
+          )}
           {!calcResult && step === 'weeks' && (
-            <StepCard title="총 몇 주 과정인가요?">
-              <WeekButtons onPick={w => setTotalWeeks(w)} />
+            <StepCard title="총 몇 주 과정인가요?" subtitle={(school as { reporterMode?: boolean }).reporterMode ? '실등록(결제) 주수를 입력하세요. 입력한 주수의 2배가 실제 연수기간으로 산출됩니다.' : undefined}>
+              <WeekButtons onPick={w => setTotalWeeks(w)} reporterMode={(school as { reporterMode?: boolean }).reporterMode} />
             </StepCard>
           )}
 
@@ -421,7 +433,7 @@ function SearchSelect({ title, items, onSelect }: {
 }
 
 // ── 주수 버튼 ──
-function WeekButtons({ onPick }: { onPick: (w: number) => void }) {
+function WeekButtons({ onPick, reporterMode }: { onPick: (w: number) => void; reporterMode?: boolean }) {
   const [custom, setCustom] = useState('')
   const common = [1, 2, 3, 4, 8, 12, 16, 20, 24]
   return (
@@ -429,15 +441,20 @@ function WeekButtons({ onPick }: { onPick: (w: number) => void }) {
       <div className="flex flex-wrap gap-1.5 mb-2">
         {common.map(w => (
           <button key={w} onClick={() => onPick(w)}
-            className="px-3 py-1.5 rounded-lg bg-gray-100 hover:bg-blue-100 text-sm">{w}주</button>
+            className="px-3 py-1.5 rounded-lg bg-gray-100 hover:bg-blue-100 text-sm">
+            {w}주{reporterMode ? ` (${w * 2}주로 산출)` : ''}
+          </button>
         ))}
       </div>
       <div className="flex gap-2">
-        <input value={custom} onChange={e => setCustom(e.target.value.replace(/\D/g, ''))} placeholder="직접 입력"
+        <input value={custom} onChange={e => setCustom(e.target.value.replace(/\D/g, ''))} placeholder={reporterMode ? '실등록 주수 직접 입력' : '직접 입력'}
           className="input-field flex-1 text-sm" />
         <button onClick={() => custom && onPick(parseInt(custom, 10))} disabled={!custom}
           className="btn-primary text-sm disabled:opacity-40">확인</button>
       </div>
+      {reporterMode && custom && (
+        <p className="text-xs text-amber-600 mt-1">→ {custom}주 입력 시 실제 연수기간 {parseInt(custom, 10) * 2}주로 산출됩니다</p>
+      )}
     </div>
   )
 }

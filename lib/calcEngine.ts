@@ -62,6 +62,7 @@ export interface CalcResult {
   subtotal: number
   registrationFee?: RegistrationFee
   registrationFeeKrw: number
+  reporterFeeKrw?: number           // 특파원 참가비 (reporterMode 학원만)
   agencyDiscountKrw: number        // 엠버시 자체 할인 (자동 계산)
   agencyDiscountNote: string
   totalKrw: number                 // 등록비+학비+기숙사+서차지-프로모션할인-엠버시할인
@@ -231,6 +232,15 @@ export function calculateQuote(input: QuoteInput, rate: ExchangeRate): CalcResul
   // 단기가 적용 여부 — 총 주수가 4 미만일 때만
   const isShortTerm = school.allowShortTerm && totalWeeks < 4
 
+  // [특파원 1+1 모드] reporterMode 학원: 입력 주수는 "실등록 주수"(학비/기숙은 그대로 단기 계산),
+  // 단 연수기간과 현지납부비는 신청 주수(=실등록×2) 기준으로 산출한다.
+  // 예: 3주 입력 → 학비/기숙 3주치(단기배수 적용), 연수기간·현지비는 6주.
+  const reporterMode = (school as { reporterMode?: boolean }).reporterMode === true
+  const feeWeeks = reporterMode ? totalWeeks * 2 : totalWeeks   // 기간·현지비용 산출 기준 주수
+  if (reporterMode) {
+    notes.push(`📣 특파원 1+1: 입력하신 ${totalWeeks}주는 실등록(결제) 주수이며, 실제 연수기간·현지납부비는 ${feeWeeks}주 기준으로 산출됩니다.`)
+  }
+
   // 단기 가격 정보 미확인 학원에 4주 미만 견적 요청 시 — 강한 경고 자동 추가
   // (정보 없음 ≠ 불가 원칙: 계산은 정비례 fallback으로 진행하되 견적이 추정값임을 명시)
   if (totalWeeks < 4 && school.shortTermDataStatus === 'unconfirmed') {
@@ -375,6 +385,14 @@ export function calculateQuote(input: QuoteInput, rate: ExchangeRate): CalcResul
   const regFee = school.registrationFee
   let registrationFeeKrw = regFee ? toKrw(regFee.amount, regFee.currency, rate) : 0
 
+  // [특파원 참가비] reporterMode 학원: 실등록 주수(totalWeeks) 4주 미만이면 10만, 4주 이상이면 15만.
+  // 학비완납 항목(현지비 아님). 유학원 할인은 적용되지 않음.
+  let reporterFeeKrw = 0
+  if (reporterMode) {
+    reporterFeeKrw = totalWeeks < 4 ? 100000 : 150000
+    notes.push(`📣 특파원 참가비 ${reporterFeeKrw.toLocaleString()}원 (실등록 ${totalWeeks}주 ${totalWeeks < 4 ? '< 4주' : '≥ 4주'})`)
+  }
+
   const pkgBaseKrw = packageItems.reduce((s, p) => s + p.totalKrw, 0)
   const baseKrw = [...courseItems, ...dormItems].reduce((s,i) => s + i.krwAmount, 0) + pkgBaseKrw
 
@@ -387,7 +405,7 @@ export function calculateQuote(input: QuoteInput, rate: ExchangeRate): CalcResul
   // 학비·기숙사·등록비·현지납부비는 날짜와 무관하게 정상 계산 → "덜 확정적인 견적" 제공.
   const dateUnset = !startDate || startDate.trim() === ''
   let surchargeKrw = 0
-  const endDate = dateUnset ? '' : addWeeksHelper(startDate, totalWeeks)
+  const endDate = dateUnset ? '' : addWeeksHelper(startDate, feeWeeks)
   const surchargeDetails: Array<{krw:number; discountAllowed:boolean; label:string}> = []
   const pendingSeasonalLines: PromotionLineItem[] = []   // 날짜 미정 보류 항목
 
@@ -905,7 +923,7 @@ export function calculateQuote(input: QuoteInput, rate: ExchangeRate): CalcResul
   }
 
   const subtotal = baseKrw + surchargeKrw - promotionDiscount - surchargeDiscount
-  const totalKrw = subtotal + registrationFeeKrw - agencyDiscountKrw
+  const totalKrw = subtotal + registrationFeeKrw + reporterFeeKrw - agencyDiscountKrw
 
   // 현지납부비 (총 주수 기준)
   // 패키지에 현지납부비 포함된 경우 스킵
@@ -943,7 +961,7 @@ export function calculateQuote(input: QuoteInput, rate: ExchangeRate): CalcResul
     if (visaItems.length > 0) {
       const mode = (visaItems[0] as { visaMode?: string }).visaMode
       const sorted = [...visaItems].sort((a, b) => (a.triggerWeeks ?? 0) - (b.triggerWeeks ?? 0))
-      const reached = sorted.filter(v => (v.triggerWeeks ?? Infinity) <= totalWeeks)
+      const reached = sorted.filter(v => (v.triggerWeeks ?? Infinity) <= feeWeeks)
       if (reached.length > 0) {
         if (mode === 'cumulative') {
           const top = reached[reached.length - 1]
@@ -999,12 +1017,12 @@ export function calculateQuote(input: QuoteInput, rate: ExchangeRate): CalcResul
       const add = (v: number) => isKrw ? (localFeeKrw += v) : (localFeePhp += v)
 
       if (trigger === 'always')          { add(amt); chargedFees.push(lf) }
-      else if (trigger === 'per_week')   { add(amt * totalWeeks); chargedFees.push(lf) }
+      else if (trigger === 'per_week')   { add(amt * feeWeeks); chargedFees.push(lf) }
       else if (trigger === 'per_4weeks') {
         // 4주 미만이면 4주치(올림)로 부과 — 자료 미명시, 추정치. 현지 관리비 특성상 보통 1주라도 한 달치.
-        const blocks = Math.ceil(totalWeeks / 4)
+        const blocks = Math.ceil(feeWeeks / 4)
         add(amt * blocks); chargedFees.push(lf)
-        if (totalWeeks < 4 && amt > 0) {
+        if (feeWeeks < 4 && amt > 0) {
           localFeeEstimateNote = true   // 아래에서 경고 한 번만
         }
       }
@@ -1018,7 +1036,7 @@ export function calculateQuote(input: QuoteInput, rate: ExchangeRate): CalcResul
           else if (weeksM) threshold = Number(weeksM[1]) - 1   // "5주 이상" → 4주 초과
           else threshold = 4
         }
-        if (totalWeeks > threshold) { add(amt); chargedFees.push(lf) }
+        if (feeWeeks > threshold) { add(amt); chargedFees.push(lf) }
       }
     }
   }
@@ -1033,6 +1051,7 @@ export function calculateQuote(input: QuoteInput, rate: ExchangeRate): CalcResul
     promotionLabel, promotionDiscount, surchargeDiscount,
     baseKrw, surchargeKrw, subtotal,
     registrationFee: regFee, registrationFeeKrw,
+    reporterFeeKrw,
     agencyDiscountKrw, agencyDiscountNote,
     totalKrw,
     totalWeeks, courseTotalWeeks, dormTotalWeeks,
