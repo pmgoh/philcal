@@ -146,8 +146,13 @@ export default function DataHealthPage() {
         && !(p.season === 'all' || p.alwaysApply))
       if (agencyDated.length === 0) continue   // 유학원 할인 자체가 날짜限定으로 없으면 대상 아님
       // 상시 유학원 할인 (있으면 평시 커버됨)
-      const hasAlwaysAgency = myPromos.some(p =>
-        (p.season === 'all' || p.alwaysApply) && ((p.agencyDiscountStatus as string) === 'confirmed' || (p.agencyDiscountStatus as string) === 'enabled') && (p.agencyDiscountValue ?? 0) > 0)
+      // reg_fee_only(등록비 전액 할인)는 value=0이어도 유효한 할인이므로 value>0 조건에서 예외 처리
+      const hasAlwaysAgency = myPromos.some(p => {
+        const okStatus = (p.agencyDiscountStatus as string) === 'confirmed' || (p.agencyDiscountStatus as string) === 'enabled'
+        const isAlways = p.season === 'all' || p.alwaysApply
+        const isRegFee = (p.agencyDiscountType as string) === 'reg_fee_only'
+        return isAlways && okStatus && (isRegFee || (p.agencyDiscountValue ?? 0) > 0)
+      })
       const low: Array<[Date, Date]> = agencyDated.map(p => [D(p.startDate!), D(p.endDate!)])
       const peak: Array<[Date, Date]> = ((s.surcharges ?? []) as Array<{ startDate?: string; endDate?: string }>)
         .filter(su => su.startDate && su.endDate).map(su => [D(su.startDate!), D(su.endDate!)])
