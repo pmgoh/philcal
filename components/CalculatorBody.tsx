@@ -52,6 +52,7 @@ export default function CalculatorBody() {
 
   // ── 슬롯 상태 ──
   const [school, setSchool] = useState<School | null>(null)
+  const [schoolChoices, setSchoolChoices] = useState<Array<{ id: string; name: string }> | null>(null)
   const [totalWeeks, setTotalWeeks] = useState<number | null>(null)
   const [courses, setCourses] = useState<Picked[]>([])
   const [dorms, setDorms] = useState<Picked[]>([])
@@ -87,17 +88,21 @@ export default function CalculatorBody() {
   const startFromNL = () => {
     setNlDone(true)
     if (!nlInput.trim()) return
-    const { slots } = extractSlots([nlInput], modeSchools as School[], aliasData)
+    const { slots, schoolChoices: choices } = extractSlots([nlInput], modeSchools as School[], aliasData)
     if (slots.schoolId) {
       const sc = schools.find(s => s.id === slots.schoolId)
       if (sc) setSchool(sc)
+      setSchoolChoices(null)
+    } else if (choices && choices.length > 0) {
+      // 여러 학원이 후보(예: CIJ 일반/특파원) → 선택지 버튼으로 고르게 한다.
+      setSchoolChoices(choices)
     }
     if (slots.totalWeeks) setTotalWeeks(slots.totalWeeks)
     // 코스/기숙은 단계에서 확인 (자연어로 다 채우지 않고 확인 위주)
   }
 
   const reset = () => {
-    setSchool(null); setTotalWeeks(null); setCourses([]); setDorms([])
+    setSchool(null); setSchoolChoices(null); setTotalWeeks(null); setCourses([]); setDorms([])
     setNoDorm(false); setStartDate(''); setStartDateSet(false)
     setNlInput(''); setNlDone(false); setCalcResult(null); setCalcError('')
   }
@@ -214,7 +219,24 @@ export default function CalculatorBody() {
           />
 
           {/* 단계별 카드 */}
-          {!calcResult && step === 'school' && (
+          {!calcResult && step === 'school' && schoolChoices && schoolChoices.length > 0 && (
+            <StepCard title="어느 학원을 말씀하신 건가요?" subtitle="여러 학원이 검색되었어요. 하나를 선택해 주세요.">
+              <div className="space-y-1.5">
+                {schoolChoices.map(c => (
+                  <button key={c.id}
+                    onClick={() => { const s = schools.find(x => x.id === c.id); if (s) { setSchool(s); setSchoolChoices(null) } }}
+                    className="w-full text-left px-3 py-2.5 rounded-lg border border-gray-200 hover:bg-blue-50 hover:border-blue-300 text-sm text-gray-800 transition-colors">
+                    {c.name}
+                  </button>
+                ))}
+                <button onClick={() => setSchoolChoices(null)}
+                  className="w-full text-center px-3 py-2 text-xs text-gray-400 hover:text-gray-600">
+                  ↳ 직접 검색해서 찾기
+                </button>
+              </div>
+            </StepCard>
+          )}
+          {!calcResult && step === 'school' && !(schoolChoices && schoolChoices.length > 0) && (
             <SearchSelect title="학원을 선택하세요"
               items={modeSchools.map(s => ({
                 id: s.id, name: s.name,
