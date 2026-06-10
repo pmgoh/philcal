@@ -53,6 +53,12 @@ export default function CalculatorBody() {
   // ── 슬롯 상태 ──
   const [school, setSchool] = useState<School | null>(null)
   const [schoolChoices, setSchoolChoices] = useState<Array<{ id: string; name: string }> | null>(null)
+  // 특파원 학원 감지: reporterMode 플래그 우선, 데이터 누락 대비 코드/이름으로도 인식
+  const isReporter = !!school && (
+    (school as { reporterMode?: boolean }).reporterMode === true
+    || /reporter|특파원/i.test(school.schoolCode ?? '')
+    || /특파원/.test(school.name ?? '')
+  )
   const [totalWeeks, setTotalWeeks] = useState<number | null>(null)
   const [courses, setCourses] = useState<Picked[]>([])
   const [dorms, setDorms] = useState<Picked[]>([])
@@ -278,7 +284,7 @@ export default function CalculatorBody() {
           {!calcResult && school && !(mode === 'camp_family' && (isFamilyCourseSchool(school) || isFamilyPackageSchool(school))) && (
           <>
           {/* 특파원 학원 사용법 경고 */}
-          {(school as { reporterMode?: boolean }).reporterMode && (
+          {isReporter && (
             <div className="card p-4 mb-4 bg-amber-50 border-amber-200">
               <p className="text-sm text-amber-800 font-medium mb-1">📣 특파원 1+1 학원입니다</p>
               <p className="text-xs text-amber-700 leading-relaxed">
@@ -290,8 +296,8 @@ export default function CalculatorBody() {
             </div>
           )}
           {!calcResult && step === 'weeks' && (
-            <StepCard title="총 몇 주 과정인가요?" subtitle={(school as { reporterMode?: boolean }).reporterMode ? '실등록(결제) 주수를 입력하세요. 입력한 주수의 2배가 실제 연수기간으로 산출됩니다.' : undefined}>
-              <WeekButtons onPick={w => setTotalWeeks(w)} reporterMode={(school as { reporterMode?: boolean }).reporterMode} />
+            <StepCard title="총 몇 주 과정인가요?" subtitle={isReporter ? '실등록(결제) 주수를 입력하세요. 입력한 주수의 2배가 실제 연수기간으로 산출됩니다.' : undefined}>
+              <WeekButtons onPick={w => setTotalWeeks(w)} reporterMode={isReporter} />
             </StepCard>
           )}
 

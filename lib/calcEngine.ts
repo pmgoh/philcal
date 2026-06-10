@@ -235,7 +235,10 @@ export function calculateQuote(input: QuoteInput, rate: ExchangeRate): CalcResul
   // [특파원 1+1 모드] reporterMode 학원: 입력 주수는 "실등록 주수"(학비/기숙은 그대로 단기 계산),
   // 단 연수기간과 현지납부비는 신청 주수(=실등록×2) 기준으로 산출한다.
   // 예: 3주 입력 → 학비/기숙 3주치(단기배수 적용), 연수기간·현지비는 6주.
+  // 플래그(reporterMode)가 우선이되, 데이터 누락 대비 schoolCode/이름으로도 인식한다.
   const reporterMode = (school as { reporterMode?: boolean }).reporterMode === true
+    || /reporter|특파원/i.test(school.schoolCode ?? '')
+    || /특파원/.test(school.name ?? '')
   const feeWeeks = reporterMode ? totalWeeks * 2 : totalWeeks   // 기간·현지비용 산출 기준 주수
   if (reporterMode) {
     notes.push(`📣 특파원 1+1: 입력하신 ${totalWeeks}주는 실등록(결제) 주수이며, 실제 연수기간·현지납부비는 ${feeWeeks}주 기준으로 산출됩니다.`)
